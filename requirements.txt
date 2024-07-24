@@ -271,6 +271,8 @@ mdurl==0.1.2
     # via markdown-it-py
 milksnake==0.1.6
     # via rustface
+nanoid==2.0.0
+    # via -r kausal_common/requirements-common.txt
 networkx==3.3
     # via -r requirements.in
 oauthlib==3.2.2
@@ -455,6 +457,8 @@ urllib3==1.26.18
     #   pygithub
     #   requests
     #   sentry-sdk
+uuid-utils==0.8.0
+    # via -r kausal_common/requirements-common.txt
 vine==5.1.0
     # via
     #   amqp

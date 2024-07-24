@@ -1,3 +1,4 @@
+-r kausal_common/requirements-common.txt
 django
 wagtail-orderable
 djangorestframework
