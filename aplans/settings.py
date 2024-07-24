@@ -21,7 +21,7 @@ from environ.environ import ImproperlyConfigured
 from typing import Any, Literal
 from urllib.parse import ParseResult
 
-from aplans.storage import storage_settings_from_s3_url
+from kausal_common.storage import storage_settings_from_s3_url
 
 root = environ.Path(__file__) - 2  # two folders back
 env = environ.FileAwareEnv(
