@@ -55,8 +55,9 @@ x-django-build: &django-build
   context: .
   dockerfile: docker/app/Dockerfile
   args:
-    - EXTRA_PYPI_INDEX
     - STATIC_ROOT
+  secrets:
+    - EXTRA_PYPI_INDEX
 
 x-common-runtime: &common-runtime
   restart: 'unless-stopped'
@@ -144,3 +145,7 @@ volumes:
   db_data:
   aplans_media:
   elasticsearch_data:
+
+secrets:
+  EXTRA_PYPI_INDEX:
+    environment: EXTRA_PYPI_INDEX
