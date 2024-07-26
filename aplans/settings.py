@@ -793,7 +793,7 @@ LOG_GRAPHQL_QUERIES = env('LOG_GRAPHQL_QUERIES') and DEBUG
 if env('CONFIGURE_LOGGING') and 'LOGGING' not in locals():
     from loguru import logger
     from .log_handler import LogHandler, LogFmtHandlerError, LogFmtHandlerInfo
-    
+
     is_kube = env.bool('KUBERNETES_MODE')
 
     if is_kube:
@@ -885,6 +885,7 @@ if env('CONFIGURE_LOGGING') and 'LOGGING' not in locals():
             'watchfiles': level('INFO'),
             'watchdog': level('INFO'),
             'uwsgi-req': level('DEBUG', handler='uwsgi-req'),
+            'botocore': level('INFO'),
         }
     }
 
