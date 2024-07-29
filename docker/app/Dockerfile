@@ -11,7 +11,7 @@ ARG runtime_deps="libpq5 postgresql-client gettext \
     libproj25 ^libgdal3[4567]$ libjpeg6[2345]-turbo$ libtiff6 libxml2 libffi8 libxslt1.1 \
     libwebp7 libvoikko1 voikko-fi curl libpcre3 \
     iputils-ping inetutils-telnet redis-tools restic procps git \
-    ca-certificates"
+    ca-certificates media-types"
 ARG build_time_deps="libpq-dev build-essential \
     zlib1g-dev libjpeg-dev libtiff-dev libopenjp2-7-dev libwebp-dev \
     binutils libproj-dev libgdal-dev \
