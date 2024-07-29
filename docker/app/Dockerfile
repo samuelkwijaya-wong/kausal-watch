@@ -16,7 +16,8 @@ ARG build_time_deps="libpq-dev build-essential \
     zlib1g-dev libjpeg-dev libtiff-dev libopenjp2-7-dev libwebp-dev \
     binutils libproj-dev libgdal-dev \
     libxml2-dev libxslt1-dev libffi-dev"
-    # ARG node_install_url="https://deb.nodesource.com/setup_lts.x"
+
+    ARG node_install_url="https://deb.nodesource.com/setup_lts.x"
 ARG app_path=/code
 ARG app_user_uid=1000
 ARG app_user_gid=1000
@@ -34,10 +35,10 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     --mount=type=cache,target=/var/lib/apt,sharing=locked \
   apt update && apt upgrade -y && apt install --no-install-recommends -y \
     ${runtime_deps}
-#RUN update-alternatives --install /usr/bin/python python /usr/bin/python3.12 1
-#  && \
-#  (curl -fsSL "${node_install_url}" | bash) && \
-#  apt install --no-install-recommends -y nodejs
+
+RUN \
+  (curl -fsSL "${node_install_url}" | bash) && \
+  apt install --no-install-recommends -y nodejs
 
 #
 # Builder stage
@@ -87,8 +88,8 @@ RUN --mount=type=secret,id=EXTRA_PYPI_INDEX \
         ${PIP_INSTALL} --extra-index-url "$(cat /run/secrets/EXTRA_PYPI_INDEX)" -r ${app_path}/requirements-kausal.txt ; \
     fi
 
-# COPY package.json package-lock.json ${app_path}/
-# RUN npm install
+COPY package.json package-lock.json ${app_path}/
+RUN npm install
 
 ARG INSTALL_DEV_DEPS
 COPY requirements-dev.txt ${app_path}/
@@ -108,7 +109,7 @@ RUN \
   echo ${UV_HOME}/*/lib | tee /etc/ld.so.conf.d/uv-python.conf && \
   ldconfig
 COPY --from=builder --chown=${app_user_uid}:${app_user_gid} /venv /venv
-# COPY --from=builder --chown=${app_user_uid}:${app_user_gid} ${app_path}/node_modules ${app_path}/node_modules
+COPY --from=builder --chown=${app_user_uid}:${app_user_gid} ${app_path}/node_modules ${app_path}/node_modules
 
 COPY . ${app_path}/
 
