@@ -4,6 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "kausal-watch"
+requires-python = ">= 3.12"
 dynamic = ["version"]
 
 [tool.ruff]
@@ -69,3 +70,9 @@ django_settings_module = "aplans.settings"
 
 [tool.setuptools]
 include-package-data = false
+
+[tool.setuptools.dynamic]
+dependencies = {file = ["requirements.txt", "kausal_common/requirements-common.txt"]}
+optional-dependencies.dev = { file = ["requirements-dev.txt", "requirements-lint.txt"] }
+optional-dependencies.lint = { file = ["requirements-lint.txt"] }
+optional-dependencies.prod = { file = ["requirements-prod.txt"] }
