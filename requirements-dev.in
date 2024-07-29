@@ -2,6 +2,6 @@
 -c requirements-lint.txt
 watchfiles
 ipython
-pip-tools
+pre-commit
 ipdb
 pdbpp
