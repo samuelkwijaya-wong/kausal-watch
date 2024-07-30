@@ -1,5 +1,3 @@
-import typing
-
 import graphene
 import graphene_django_optimizer as gql_optimizer
 
@@ -28,11 +26,10 @@ from orgs.models import Organization
 from pages import schema as pages_schema
 from people import schema as people_schema
 from people.models import Person
-from reports import schema as reports_schema
 from search import schema as search_schema
 
 from .graphql_helpers import get_fields
-from .graphql_types import DjangoNode, GQLInfo, get_plan_from_context, graphene_registry, WorkflowStateEnum, register_graphene_node
+from .graphql_types import DjangoNode, GQLInfo, get_plan_from_context, graphene_registry, WorkflowStateEnum
 
 
 def mp_node_get_ancestors(qs, include_self=False):
@@ -228,7 +225,7 @@ class WorkflowStateDirective(GraphQLDirective):
                 GraphQLArgument(
                     type_= graphene_enum_type,
                     description="State of content to show",
-                    default_value='published'
+                    default_value=WorkflowStateEnum.PUBLISHED,
                 )
             },
             locations=[DirectiveLocation.QUERY]
