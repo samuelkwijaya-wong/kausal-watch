@@ -36,7 +36,7 @@ from actions.api import all_views as actions_api_views, all_routers as actions_a
 from actions.autocomplete import (
     ActionAutocomplete, CategoryAutocomplete, CommonCategoryTypeAutocomplete,
 )
-from admin_site.views import account, RootRedirectView, WadminRedirectView
+from admin_site.views import RootRedirectView, WadminRedirectView
 from admin_site.wagtail_hooks import restrict_chooser_pages_to_plan
 from indicators.autocomplete import (
     QuantityAutocomplete, UnitAutocomplete, CommonIndicatorAutocomplete, IndicatorAutocomplete
@@ -174,8 +174,6 @@ urlpatterns = [
     # FIXME: This overrides the URLs in Wagtail's admin/urls/pages.py to allow filtering the queryset
     path("admin/pages/search/", PageSearchView.as_view(), name="search"),
     path("admin/pages/search/results/", PageSearchResultsView.as_view(), name="search_results"),
-    # FIXME: This overrides the URL in Wagtail's admin/urls/__init__.py to disable dark mode until we fix CSS issues
-    re_path("^admin/account/", account, name="wagtailadmin_account"),
     re_path(r'^admin/', include(wagtailadmin_urls)),
     re_path(r'^wadmin', WadminRedirectView.as_view(), name='wadmin-redirect'),
     re_path(r'^documents/', include(wagtaildocs_urls)),
