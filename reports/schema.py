@@ -49,3 +49,7 @@ class ReportTypeNode(DjangoNode):
     class Meta:
         model = ReportType
         fields = public_fields(ReportType)
+
+
+class Query:
+    pass
