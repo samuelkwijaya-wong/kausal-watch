@@ -265,39 +265,40 @@ class DatasetButtonMixin:
 
         if obj is None:
             return buttons
-        ct = ContentType.objects.get_for_model(obj)
         for schema in DatasetSchema.get_for_model(obj):
-            matching_dataset = None
-            matching_datasets = [ds for ds in schema.datasets.all() if ds.scope_content_type == ct and ds.scope_id == obj.pk]
-            if matching_datasets:
-                if len(matching_datasets) != 1:
-                    return []
-                matching_dataset = matching_datasets[0]
+            dataset_cache = self.request.admin_cache.datasets_by_scope_by_schema
+            matching_dataset = dataset_cache.get(
+                self.model._meta.label, {}
+            ).get(
+                obj.pk, {}
+            ).get(
+                str(schema.uuid), None
+            )
+            classname = self.finalise_classname(
+                classnames_add=classnames_add,
+                classnames_exclude=classnames_exclude
+            )
             if matching_dataset:
                 edit_url = reverse(DatasetViewSet().get_url_name('edit'), args=[matching_dataset.pk])
                 label = _("Edit %(schema_name)s") % {"schema_name": schema.name}
                 button = {
                     'url': edit_url,
                     'label': label,
-                    'classname': self.finalise_classname(
-                        classnames_add=classnames_add,
-                        classnames_exclude=classnames_exclude
-                    ),
+                    'classname': classname,
                     'icon': 'edit',
                 }
             else:
                 add_url = reverse(DatasetViewSet().get_url_name('add'))
-                add_url += f'?dataset_schema_uuid={schema.uuid}'
-                add_url += f'&model={self.model._meta.label}'
-                add_url += f'&object_id={obj.pk}'
+                add_url += (
+                    f'?dataset_schema_uuid={schema.uuid}'
+                    f'&model={self.model._meta.label}'
+                    f'&object_id={obj.pk}'
+                )
                 label = _("Add %(schema_name)s") % {"schema_name": schema.name}
                 button = {
                     'url': add_url,
                     'label': label,
-                    'classname': self.finalise_classname(
-                        classnames_add=classnames_add,
-                        classnames_exclude=classnames_exclude
-                    ),
+                    'classname': classname,
                     'icon': 'plus',
                 }
             buttons.append(button)

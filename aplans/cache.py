@@ -6,16 +6,15 @@ from django.contrib.contenttypes.models import ContentType
 from wagtail.models import Revision
 
 from aplans.graphql_types import WorkflowStateEnum
-from aplans.types import UserOrAnon
 from actions.models import (
-    ActionStatus, ActionImplementationPhase, Plan, AttributeTypeChoiceOption, AttributeType, Action
+    ActionStatus, ActionImplementationPhase, Plan, AttributeTypeChoiceOption, AttributeType, Action, CategoryType
 )
 from actions.models.action import ActionQuerySet
 from reports.models import Report
-from typing import TypeVar, Type
+from budget.models import Dataset
+from typing import TypeVar
 import typing
 if typing.TYPE_CHECKING:
-    from typing import Sequence, Iterable
     from orgs.models import Organization, OrganizationQuerySet
     from people.models import Person, PersonQuerySet
 
@@ -41,6 +40,26 @@ class PlanSpecificCache:
     @cached_property
     def implementation_phases(self) -> list[ActionImplementationPhase]:
         return list(self.plan.action_implementation_phases.all())
+
+    @cached_property
+    def datasets_by_scope_by_schema(self) -> dict[str, dict[int, dict[str, Dataset]]]:
+        result: dict[str, dict[int, dict[str, Dataset]]] = {}
+        plan_content_type = ContentType.objects.get_for_model(Plan)
+        category_type_content_type = ContentType.objects.get_for_model(CategoryType)
+        action_datasets = Dataset.objects.filter(
+            schema__scopes__scope_content_type=plan_content_type, schema__scopes__scope_id=self.plan.pk
+        )
+        category_type_ids = self.plan.category_types.values_list('id', flat=True)
+        category_datasets = Dataset.objects.filter(
+            schema__scopes__scope_content_type=category_type_content_type, schema__scopes__scope_id__in=category_type_ids
+        )
+        for ds in action_datasets:
+            if ds.scope_id is not None:
+                result.setdefault('actions.Action', {}).setdefault(ds.scope_id, {})[str(ds.schema.uuid)] = ds
+        for ds in category_datasets:
+            if ds.scope_id is not None:
+                result.setdefault('actions.Category', {}).setdefault(ds.scope_id, {})[str(ds.schema.uuid)] = ds
+        return result
 
     def populate_organizations(self, organizations: OrganizationQuerySet) -> None:
         '''Add the organizations from a queryset to the cache, keeping any organizations that might already be in the cache.'''

@@ -103,7 +103,7 @@ class DatasetSchema(models.Model):
         return list(
             DatasetSchema.objects.filter(
                 scopes__scope_id=scope_id, scopes__scope_content_type__id=scope_content_type_id
-            ).prefetch_related('datasets')
+            )
         )
 
     @staticmethod
@@ -119,6 +119,15 @@ class DatasetSchema(models.Model):
         if scope_id is not None:
             return DatasetSchema.get_for_scope(scope_id, scope_content_type_id)
         return []
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        DatasetSchema.get_for_scope.cache_clear()
+
+    def delete(self, *args, **kwargs):
+        retval = super().delete(*args, **kwargs)
+        DatasetSchema.get_for_scope.cache_clear()
+        return retval
 
 
 class DatasetSchemaDimensionCategory(OrderedModel):
@@ -175,6 +184,15 @@ class DatasetSchemaScope(models.Model):
     scope: models.ForeignKey[Plan, Plan] | models.ForeignKey[CategoryType, CategoryType] = GenericForeignKey(
         'scope_content_type', 'scope_id'
     ) # type: ignore[assignment]
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        DatasetSchema.get_for_scope.cache_clear()
+
+    def delete(self, *args, **kwargs):
+        retval = super().delete(*args, **kwargs)
+        DatasetSchema.get_for_scope.cache_clear()
+        return retval
 
 
 class DataPoint(models.Model):
