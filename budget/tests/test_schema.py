@@ -328,9 +328,10 @@ def test_integration_for_category(graphql_client_query_data, plan, category):
     dim_category1 = DimensionCategoryFactory(dimension=dimension)
     dim_category2 = DimensionCategoryFactory(dimension=dimension)
 
-    schema = DatasetSchemaFactory()
-    dataset1 = DatasetFactory(scope=category, schema=schema)
-    dataset2 = DatasetFactory(scope=category, schema=schema)
+    schema1 = DatasetSchemaFactory()
+    schema2 = DatasetSchemaFactory()
+    dataset1 = DatasetFactory(scope=category, schema=schema1)
+    dataset2 = DatasetFactory(scope=category, schema=schema2)
 
     data_point1 = DataPointFactory(dataset=dataset1, date=date(2024, 1, 1), value=10.51)
     data_point1.dimension_categories.set([dim_category1])
@@ -386,10 +387,10 @@ def test_integration_for_category(graphql_client_query_data, plan, category):
                         'uuid': str(dataset1.uuid),
                         'schema': {
                             '__typename': 'DatasetSchema',
-                            'uuid': str(schema.uuid),
-                            'name': schema.name,
-                            'timeResolution': schema.time_resolution.upper(),
-                            'unit': schema.unit,
+                            'uuid': str(schema1.uuid),
+                            'name': schema1.name,
+                            'timeResolution': schema1.time_resolution.upper(),
+                            'unit': schema1.unit,
                         },
                         'dataPoints': [
                             {
@@ -429,10 +430,10 @@ def test_integration_for_category(graphql_client_query_data, plan, category):
                         'uuid': str(dataset2.uuid),
                         'schema': {
                             '__typename': 'DatasetSchema',
-                            'uuid': str(schema.uuid),
-                            'name': schema.name,
-                            'timeResolution': schema.time_resolution.upper(),
-                            'unit': schema.unit,
+                            'uuid': str(schema2.uuid),
+                            'name': schema2.name,
+                            'timeResolution': schema2.time_resolution.upper(),
+                            'unit': schema2.unit,
                         },
                         'dataPoints': [
                             {
@@ -471,9 +472,10 @@ def test_integration_for_action(graphql_client_query_data, action):
     dim_category1 = DimensionCategoryFactory(dimension=dimension)
     dim_category2 = DimensionCategoryFactory(dimension=dimension)
 
-    schema = DatasetSchemaFactory()
-    dataset1 = DatasetFactory(scope=action, schema=schema)
-    dataset2 = DatasetFactory(scope=action, schema=schema)
+    schema1 = DatasetSchemaFactory()
+    schema2 = DatasetSchemaFactory()
+    dataset1 = DatasetFactory(scope=action, schema=schema1)
+    dataset2 = DatasetFactory(scope=action, schema=schema2)
 
     data_point1 = DataPointFactory(dataset=dataset1, date=date(2024, 1, 1), value=10.51)
     data_point1.dimension_categories.set([dim_category1])
@@ -528,10 +530,10 @@ def test_integration_for_action(graphql_client_query_data, action):
                     'uuid': str(dataset1.uuid),
                     'schema': {
                         '__typename': 'DatasetSchema',
-                        'uuid': str(schema.uuid),
-                        'name': schema.name,
-                        'timeResolution': schema.time_resolution.upper(),
-                        'unit': schema.unit,
+                        'uuid': str(schema1.uuid),
+                        'name': schema1.name,
+                        'timeResolution': schema1.time_resolution.upper(),
+                        'unit': schema1.unit,
                     },
                     'dataPoints': [
                         {
@@ -571,10 +573,10 @@ def test_integration_for_action(graphql_client_query_data, action):
                     'uuid': str(dataset2.uuid),
                     'schema': {
                         '__typename': 'DatasetSchema',
-                        'uuid': str(schema.uuid),
-                        'name': schema.name,
-                        'timeResolution': schema.time_resolution.upper(),
-                        'unit': schema.unit,
+                        'uuid': str(schema2.uuid),
+                        'name': schema2.name,
+                        'timeResolution': schema2.time_resolution.upper(),
+                        'unit': schema2.unit,
                     },
                     'dataPoints': [
                         {

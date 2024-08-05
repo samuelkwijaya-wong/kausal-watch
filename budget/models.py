@@ -134,6 +134,12 @@ class Dataset(models.Model):
         verbose_name = _('dataset')
         verbose_name_plural = _('datasets')
         ordering = ['id']
+        constraints = [
+            models.UniqueConstraint(
+                fields=['schema', 'scope_content_type', 'scope_id'],
+                name='unique_dataset_per_instance_per_schema'
+            )
+        ]
 
 
 class DatasetSchemaScope(models.Model):
