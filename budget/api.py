@@ -118,7 +118,7 @@ class DatasetSerializer(I18nFieldSerializerMixin, serializers.ModelSerializer):
 
     class Meta:
         model = Dataset
-        fields = ['uuid', 'schema', 'data_points']
+        fields = ['uuid', 'schema', 'data_points', 'scope_id', 'scope_content_type']
 
 
 class DatasetViewSet(viewsets.ModelViewSet):
