@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from functools import lru_cache
+
 import reversion
 import uuid
 from django.contrib.contenttypes.fields import GenericForeignKey
@@ -90,11 +92,33 @@ class DatasetSchema(models.Model):
     unit_i18n: str
     name_i18n: str
 
-
     def __str__(self):
         if self.name_i18n:
             return f'{self.name_i18n} ({self.uuid})'
         return str(self.uuid)
+
+    @staticmethod
+    @lru_cache
+    def get_for_scope(scope_id: int, scope_content_type_id: int) -> list[DatasetSchema]:
+        return list(
+            DatasetSchema.objects.filter(
+                scopes__scope_id=scope_id, scopes__scope_content_type__id=scope_content_type_id
+            ).prefetch_related('datasets')
+        )
+
+    @staticmethod
+    def get_for_model(obj: models.Model) -> list[DatasetSchema]:
+        scope_id = None
+        scope_content_type_id = None
+        if isinstance(obj, Action):
+            scope_id = obj.plan.pk
+            scope_content_type_id = ContentType.objects.get_for_model(Plan).pk
+        elif isinstance(obj, Category):
+            scope_id = obj.type.pk
+            scope_content_type_id = ContentType.objects.get_for_model(CategoryType).pk
+        if scope_id is not None:
+            return DatasetSchema.get_for_scope(scope_id, scope_content_type_id)
+        return []
 
 
 class DatasetSchemaDimensionCategory(OrderedModel):

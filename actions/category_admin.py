@@ -21,6 +21,7 @@ from admin_site.wagtail import (
 )
 from aplans.context_vars import ctx_instance, ctx_request
 from aplans.utils import append_query_parameter
+from admin_site.wagtail import DatasetButtonMixin
 
 
 class CategoryTypeFilter(SimpleListFilter):
@@ -291,7 +292,7 @@ class CategoryDeleteView(CategoryTypeQueryParameterMixin, DeleteView):
     pass
 
 
-class CategoryAdminButtonHelper(ButtonHelper):
+class CategoryAdminButtonHelper(DatasetButtonMixin, ButtonHelper):
     # TODO: duplicated as AttributeTypeAdminButtonHelper
     def add_button(self, *args, **kwargs):
         """
@@ -319,6 +320,12 @@ class CategoryAdminButtonHelper(ButtonHelper):
         data = super().delete_button(*args, **kwargs)
         data['url'] = append_query_parameter(self.request, data['url'], 'category_type')
         return data
+
+    def get_buttons_for_obj(self, obj, exclude=None, classnames_add=None, classnames_exclude=None):
+        buttons = super().get_buttons_for_obj(obj, exclude, classnames_add, classnames_exclude)
+        dataset_buttons = self.dataset_buttons(obj, classnames_add or [], classnames_exclude)
+        buttons.extend(dataset_buttons)
+        return buttons
 
 
 class CategoryAdminMenuItem(ModelAdminMenuItem):

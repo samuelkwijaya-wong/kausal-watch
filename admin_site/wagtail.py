@@ -1,6 +1,7 @@
 from __future__ import annotations
 from contextlib import contextmanager
-from typing import List, TYPE_CHECKING
+import importlib
+from typing import Callable, List, TYPE_CHECKING, Protocol
 from urllib.parse import urljoin
 
 from django import forms
@@ -18,7 +19,6 @@ from django.utils.decorators import method_decorator
 from django.utils.text import capfirst
 from django.utils.translation import gettext as _
 from modeltrans.translator import get_i18n_field
-from modeltrans.utils import get_instance_field_value
 from wagtail.admin import messages
 from wagtail.admin.forms.models import WagtailAdminModelForm
 from wagtail.admin.panels import (
@@ -39,11 +39,11 @@ from aplans.context_vars import set_instance
 from aplans.types import WatchAdminRequest
 from aplans.utils import PlanDefaultsModel, PlanRelatedModel, InstancesVisibleForMixin, get_language_from_default_language_field
 from pages.models import ActionListPage
+from budget.models import DatasetSchema
 
 from .utils import FieldLabelRenderer
 
 if TYPE_CHECKING:
-    from wagtail_modeladmin.views import ModelFormView
     from users.models import User
     from django.db.models import Model
 
@@ -245,7 +245,66 @@ class CustomizableBuiltInPlanFilteredFieldPanel(FieldPanel):  # Ugh...
         pass
 
 
-class AplansButtonHelper(ButtonHelper):
+class ButtonHelperProtocol(Protocol):
+    finalise_classname: Callable
+    model: Model
+    request: WatchAdminRequest
+
+
+class DatasetButtonMixin:
+    def dataset_buttons(
+            self: ButtonHelperProtocol,
+            obj: Model,
+            classnames_add: list[str] = [],
+            classnames_exclude: list[str] | None = None) -> list[dict]:
+        buttons: list[dict] = []
+        if importlib.util.find_spec('kausal_watch_extensions') is not None:
+            from kausal_watch_extensions.dataset_editor import DatasetViewSet
+        else:
+            return buttons
+
+        if obj is None:
+            return buttons
+        ct = ContentType.objects.get_for_model(obj)
+        for schema in DatasetSchema.get_for_model(obj):
+            matching_dataset = None
+            matching_datasets = [ds for ds in schema.datasets.all() if ds.scope_content_type == ct and ds.scope_id == obj.pk]
+            if matching_datasets:
+                if len(matching_datasets) != 1:
+                    return []
+                matching_dataset = matching_datasets[0]
+            if matching_dataset:
+                edit_url = reverse(DatasetViewSet().get_url_name('edit'), args=[matching_dataset.pk])
+                label = _("Edit %(schema_name)s") % {"schema_name": schema.name}
+                button = {
+                    'url': edit_url,
+                    'label': label,
+                    'classname': self.finalise_classname(
+                        classnames_add=classnames_add,
+                        classnames_exclude=classnames_exclude
+                    ),
+                    'icon': 'edit',
+                }
+            else:
+                add_url = reverse(DatasetViewSet().get_url_name('add'))
+                add_url += f'?dataset_schema_uuid={schema.uuid}'
+                add_url += f'&model={self.model._meta.label}'
+                add_url += f'&object_id={obj.pk}'
+                label = _("Add %(schema_name)s") % {"schema_name": schema.name}
+                button = {
+                    'url': add_url,
+                    'label': label,
+                    'classname': self.finalise_classname(
+                        classnames_add=classnames_add,
+                        classnames_exclude=classnames_exclude
+                    ),
+                    'icon': 'plus',
+                }
+            buttons.append(button)
+        return buttons
+
+
+class AplansButtonHelper(DatasetButtonMixin, ButtonHelper):
     request: WatchAdminRequest
     edit_button_classnames = ['button-primary']
 
@@ -279,14 +338,15 @@ class AplansButtonHelper(ButtonHelper):
             'target': '_blank',
         }
 
-    def get_buttons_for_obj(self, obj, exclude=None, classnames_add=None,
-                            classnames_exclude=None):
+    def get_buttons_for_obj(self, obj, exclude=None, classnames_add=None, classnames_exclude=None):
         buttons = super().get_buttons_for_obj(obj, exclude, classnames_add, classnames_exclude)
         view_live_button = self.view_live_button(
             obj, classnames_add=classnames_add, classnames_exclude=classnames_exclude
         )
         if view_live_button:
             buttons.append(view_live_button)
+        dataset_buttons = self.dataset_buttons(obj, classnames_add or [], classnames_exclude)
+        buttons.extend(dataset_buttons)
         return buttons
 
 
@@ -651,7 +711,7 @@ class ActionListPageBlockFormMixin(forms.Form):
         instance = super().save(commit)
         action_list_page = self.plan.root_page.get_children().type(ActionListPage).get().specific
         action_list_filter_section = self.cleaned_data.get('action_list_filter_section')
-        for field_name in (f for f, _ in self.ACTION_LIST_FILTER_SECTION_CHOICES if f):
+        for field_name in (f for f, __ in self.ACTION_LIST_FILTER_SECTION_CHOICES if f):
             if action_list_filter_section == field_name:
                 if not action_list_page.contains_model_instance_block(instance, field_name):
                     action_list_page.insert_model_instance_block(instance, field_name)
@@ -662,7 +722,7 @@ class ActionListPageBlockFormMixin(forms.Form):
                     # Don't care if instance wasn't there in the first place
                     pass
         action_detail_content_section = self.cleaned_data.get('action_detail_content_section')
-        for field_name in (f for f, _ in self.ACTION_DETAIL_CONTENT_SECTION_CHOICES if f):
+        for field_name in (f for f, __ in self.ACTION_DETAIL_CONTENT_SECTION_CHOICES if f):
             if action_detail_content_section == field_name:
                 if not action_list_page.contains_model_instance_block(instance, field_name):
                     action_list_page.insert_model_instance_block(instance, field_name)
