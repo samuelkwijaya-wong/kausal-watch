@@ -8,13 +8,31 @@ requires-python = ">= 3.12"
 dynamic = ["version"]
 
 [tool.ruff]
-line-length = 140
+line-length = 130
 exclude = [
     "node_modules",
     "*/migrations",
     "Attic",
+    ".venv",
 ]
+target-version = "py312"
 
+[tool.ruff.lint]
+select = ["ALL"]
+ignore = [
+    "D1", "CPY", "Q000", "ANN204", "ERA", "ANN201", "ANN0", "PGH003", "TD0", "FIX002", "DJ001", "S101", "F401",
+    "ARG001", "UP031", "G002", "BLE001", "SIM108", "SIM103", "SLF001", "C408", "RET504",
+    "TRY003", "EM101", "FIX001", "UP035"
+]
+unfixable = ["F401"]  # for now
+
+[tool.ruff.lint.isort]
+split-on-trailing-comma = true
+combine-as-imports = true
+# required-imports = ["from __future__ import annotations"]
+
+[tool.ruff.format]
+preview = true
 
 [tool.isort]
 atomic = true
@@ -46,13 +64,16 @@ testpaths = [
 plugins = [
     "mypy_django_plugin.main",
 ]
-mypy_path = "typings"
+mypy_path = "$MYPY_CONFIG_FILE_DIR/kausal_common/typings"
 exclude = [
     '^Attic/',
     '^typings/',
     '^local_settings\.py',
+    '^kausal_common/typings/',
 ]
 check_untyped_defs = true
+sqlite_cache = true
+enable_incomplete_feature = ['NewGenericSyntax']
 
 
 [[tool.mypy.overrides]]
