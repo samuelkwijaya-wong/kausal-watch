@@ -1,3 +1,5 @@
+from typing import TYPE_CHECKING
+
 import django_filters as filters
 from django.db import transaction
 from drf_spectacular.types import OpenApiTypes
@@ -10,7 +12,6 @@ from rest_framework.response import Response
 from actions.api import plan_router
 from actions.models import Plan
 from aplans.rest_api import BulkListSerializer, BulkModelViewSet
-from aplans.types import AuthenticatedWatchRequest
 from aplans.utils import register_view_helper
 
 from .models import (
@@ -23,6 +24,9 @@ from .models import (
     RelatedIndicator,
     Unit,
 )
+
+if TYPE_CHECKING:
+    from aplans.types import AuthenticatedWatchRequest
 
 all_views = []
 

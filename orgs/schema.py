@@ -1,9 +1,10 @@
+from typing import TYPE_CHECKING
+
 import graphene
 import graphene_django_optimizer as gql_optimizer
 from graphene_django.forms.mutation import DjangoModelFormMutation
 
 from actions.models import Plan
-from actions.models.plan import PlanQuerySet
 from aplans import graphql_gis  # noqa
 from aplans.graphql_helpers import (
     AdminButtonsMixin,
@@ -15,6 +16,9 @@ from aplans.graphql_types import AuthenticatedUserNode, DjangoNode, GQLInfo, reg
 from aplans.utils import public_fields
 from orgs.forms import NodeForm
 from orgs.models import Organization, OrganizationClass
+
+if TYPE_CHECKING:
+    from actions.models.plan import PlanQuerySet
 
 
 # This form is just used in the GraphQL schema, not in Wagtail. For Wagtail, a different form class is created in

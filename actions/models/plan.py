@@ -30,7 +30,6 @@ from wagtail.models import Collection, Page, Site, WorkflowTask
 from wagtail.models.i18n import Locale
 from wagtail_localize.operations import TranslationCreator  # type: ignore
 
-from aplans.types import UserOrAnon, WatchAPIRequest, WatchRequest
 from aplans.utils import (
     ChoiceArrayField,
     IdentifierField,
@@ -49,6 +48,7 @@ if typing.TYPE_CHECKING:
     from django.db.models.manager import RelatedManager
 
     from aplans.graphql_types import WorkflowStateEnum
+    from aplans.types import UserOrAnon, WatchAPIRequest, WatchRequest
     from feedback.models import UserFeedback
     from orgs.models import OrganizationPlanAdmin
     from reports.models import ReportType
@@ -304,7 +304,7 @@ class Plan(ClusterableModel, ModelWithPrimaryLanguage):
         ),
     )
 
-    superseded_by: models.ForeignKey['Plan' | None, 'Plan' | None] = models.ForeignKey(  # type: ignore[assignment]
+    superseded_by: models.ForeignKey[Plan | None, Plan | None] = models.ForeignKey(  # type: ignore[assignment]
         'self', verbose_name=pgettext_lazy('plan', 'superseded by'), blank=True, null=True, on_delete=models.SET_NULL,
         related_name='superseded_plans', help_text=_('Set if this plan is superseded by another plan'),
     )

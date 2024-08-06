@@ -1,8 +1,9 @@
 import secrets
 import string
+from typing import List
+
 from django.core.management.base import BaseCommand
 from django.db import transaction
-from typing import List
 
 from people.models import Person
 

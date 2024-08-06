@@ -15,7 +15,7 @@ class DocumentLinkHandler(WagtailDocumentLinkHandler):
     identifier = 'document'
 
     @classmethod
-    def expand_one(cls, doc: 'AplansDocument') -> str:
+    def expand_one(cls, doc: AplansDocument) -> str:
         base, ext = path.splitext(doc.file.name)
         ext = ext.lstrip('.')
         return '<a href="%s" data-link-type="document" data-file-extension="%s">' % (escape(doc.url), escape(ext))

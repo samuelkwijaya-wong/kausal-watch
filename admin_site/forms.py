@@ -1,6 +1,7 @@
+from typing import TYPE_CHECKING
+
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm
-from django.db.models import Model
 from django.utils.translation import gettext_lazy
 from modeltrans.conf import get_available_languages
 from modeltrans.translator import get_i18n_field
@@ -8,6 +9,9 @@ from modeltrans.utils import build_localized_fieldname
 from wagtail.admin.forms import WagtailAdminModelForm
 
 from actions.models.plan import Plan
+
+if TYPE_CHECKING:
+    from django.db.models import Model
 
 
 class LoginForm(AuthenticationForm):

@@ -62,7 +62,6 @@ from actions.models import (
     PublicationStatus,
     Scenario,
 )
-from actions.models.action import ActionQuerySet
 from actions.models.action_deps import ActionDependencyRelationship, ActionDependencyRole
 from actions.models.attributes import ModelWithAttributes
 from aplans.cache import SerializedDictWithRelatedObjectCache
@@ -86,11 +85,12 @@ from pages import schema as pages_schema
 from pages.models import ActionListPage, AplansPage, CategoryPage, Page
 from people.models import Person
 from search.backends import get_search_backend
-from users.models import User
 
 if typing.TYPE_CHECKING:
+    from actions.models.action import ActionQuerySet
     from actions.models.attributes import Attribute
     from aplans.cache import PlanSpecificCache
+    from users.models import User
 
 
 logger = logging.getLogger(__name__)

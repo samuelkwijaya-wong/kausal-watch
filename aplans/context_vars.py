@@ -30,7 +30,7 @@ def set_context_var(var: ContextVar, value):
 
 
 @contextmanager
-def set_request(request: 'WatchRequest'):
+def set_request(request: WatchRequest):
     with set_context_var(ctx_request, request):
         yield
 

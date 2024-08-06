@@ -1,12 +1,13 @@
 from __future__ import annotations
 
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from django.conf import settings
 from modeltrans.utils import build_localized_fieldname
 from wagtail.admin.panels import FieldPanel, FieldRowPanel, MultiFieldPanel
 
-from aplans.types import WatchAdminRequest
+if TYPE_CHECKING:
+    from aplans.types import WatchAdminRequest
 
 
 class TranslatedLanguagePanel(FieldPanel):

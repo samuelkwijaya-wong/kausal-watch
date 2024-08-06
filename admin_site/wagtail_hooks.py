@@ -1,4 +1,4 @@
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from django.db.models import Q
 from django.templatetags.static import static
@@ -15,9 +15,11 @@ from wagtail.snippets.views.snippets import SnippetViewSet
 
 from actions.models import CommonCategoryType
 from actions.wagtail_admin import PlanAdmin
-from aplans.types import WatchAdminRequest
 
 from .models import Client
+
+if TYPE_CHECKING:
+    from aplans.types import WatchAdminRequest
 
 
 # FIXME: Refactor duplicated code for categories, common categories, attribute types and reports

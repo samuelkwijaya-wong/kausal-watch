@@ -10,15 +10,12 @@ from typing import Any, Sequence, TypedDict
 import polars
 import xlsxwriter
 from django.contrib.contenttypes.models import ContentType
-from django.db.models import QuerySet
 from django.utils import timezone, translation
 from django.utils.text import slugify
 from django.utils.translation import gettext as _, pgettext
 from reversion.models import Version
-from xlsxwriter.format import Format
 
 from actions.models.action import Action, ActionImplementationPhase, ActionStatus
-from actions.models.category import Category, CategoryType
 from orgs.models import Organization
 from reports.utils import group_by_model
 
@@ -26,6 +23,10 @@ from .action_print_layout import write_action_summaries
 from .cursor_writer import Cell, CursorWriter
 
 if typing.TYPE_CHECKING:
+    from django.db.models import QuerySet
+    from xlsxwriter.format import Format
+
+    from actions.models.category import Category, CategoryType
     from reports.blocks.action_content import ReportFieldBlock
     from reports.models import ActionSnapshot, Report, SerializedActionVersion, SerializedVersion
 
@@ -152,7 +153,7 @@ class ExcelFormats(dict):
     def __getattr__(self, name):
         return self[name]
 
-    def set_for_field(self, field: 'ReportFieldBlock', labels: list) -> None:
+    def set_for_field(self, field: ReportFieldBlock, labels: list) -> None:
         if None not in set((self._formats_for_fields.get(label) for label in labels)):
             return
         cell_format_specs: dict = field.block.get_xlsx_cell_format(field.value)
@@ -172,10 +173,10 @@ class ExcelFormats(dict):
 
 class ExcelReport:
     language: str
-    report: 'Report'
+    report: Report
     workbook: xlsxwriter.Workbook
     formats: ExcelFormats
-    plan_current_related_objects: 'PlanRelatedObjects'
+    plan_current_related_objects: PlanRelatedObjects
     field_to_column_labels: dict[str, set[str]]
     has_macros: bool
 
@@ -187,7 +188,7 @@ class ExcelReport:
         statuses: dict[int, ActionStatus]
         action_content_type: ContentType
 
-        def __init__(self, report: 'Report'):
+        def __init__(self, report: Report):
             plan = report.type.plan
             self.category_types = self._keyed_dict(plan.category_types.all())
             self.categories = self._keyed_dict([c for ct in self.category_types.values() for c in ct.categories.all()])
@@ -203,7 +204,7 @@ class ExcelReport:
         def _keyed_dict(seq, key='pk'):
             return {getattr(el, key): el for el in seq}
 
-    def __init__(self, report: 'Report', language: str|None = None):
+    def __init__(self, report: Report, language: str|None = None):
         # Currently only language None is properly supported, defaulting
         # to the plan's primary language. When implementing support for
         # other languages, make sure the action contents and other

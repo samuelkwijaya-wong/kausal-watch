@@ -12,10 +12,11 @@ from django.utils.translation import gettext_lazy as _
 from modelcluster.fields import ParentalKey
 from modeltrans.fields import TranslationField
 
-from aplans.types import UserOrAnon
 from aplans.utils import OrderedModel
 
 if typing.TYPE_CHECKING:
+    from aplans.types import UserOrAnon
+
     from .action import Action
     from .plan import Plan
 
@@ -73,7 +74,7 @@ class ActionDependencyRelationshipQuerySet(models.QuerySet['ActionDependencyRela
 
 
 class ActionDependencyRelationship(models.Model):
-    preceding: ForeignKey['Action'] = ParentalKey(
+    preceding: ForeignKey[Action] = ParentalKey(
         'actions.Action', on_delete=models.CASCADE, related_name='dependent_relationships',
         verbose_name=_("Preceding action"),
     )

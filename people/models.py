@@ -29,13 +29,13 @@ from wagtail.search import index
 
 from actions.models import ActionContactPerson
 from admin_site.models import Client
-from aplans.types import UserOrAnon, WatchRequest
 from orgs.models import Organization
 
 if typing.TYPE_CHECKING:
     from django.db.models.manager import RelatedManager
 
     from actions.models import Action, Plan
+    from aplans.types import UserOrAnon, WatchRequest
     from indicators.models import Indicator
     from orgs.models import OrganizationPlanAdmin
     from users.models import User as UserModel

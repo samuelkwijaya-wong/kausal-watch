@@ -2,7 +2,7 @@ import hashlib
 import importlib
 import json
 import os
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import sentry_sdk
 from django.conf import settings
@@ -20,13 +20,15 @@ from rich.syntax import Syntax
 from sentry_sdk import tracing as sentry_tracing
 
 from actions.models import Plan
-from actions.models.plan import PlanQuerySet
 from aplans.settings import LOG_SQL_QUERIES
 from aplans.types import WatchAPIRequest
 from users.models import User
 
 from .graphql_helpers import GraphQLAuthFailedError, GraphQLAuthRequiredError
 from .graphql_types import AuthenticatedUserNode, WorkflowStateEnum
+
+if TYPE_CHECKING:
+    from actions.models.plan import PlanQuerySet
 
 SUPPORTED_LANGUAGES = {x[0].lower() for x in settings.LANGUAGES}
 

@@ -2,17 +2,14 @@ from __future__ import annotations
 
 import typing
 from abc import ABC, abstractmethod
-from collections.abc import Iterable
 from typing import Any, List, Optional, Type
 
-import graphene
 from django.utils.formats import date_format
 from django.utils.translation import gettext_lazy as _, pgettext
 from grapple.models import GraphQLForeignKey
 from wagtail import blocks, fields
 
 from actions.attributes import AttributeType
-from actions.models import Plan
 from actions.models.action import (
     Action,
     ActionImplementationPhase,
@@ -34,6 +31,11 @@ from reports.graphene_types import GrapheneValueClassProperties, generate_graphe
 from reports.utils import get_attribute_for_type_from_related_objects, get_related_model_instances_for_action
 
 if typing.TYPE_CHECKING:
+    from collections.abc import Iterable
+
+    import graphene
+
+    from actions.models import Plan
     from reports.models import ActionSnapshot
     from reports.spreadsheets import ExcelReport
     from reports.utils import AttributePath, SerializedAttributeVersion, SerializedVersion
@@ -68,7 +70,7 @@ class ReportFieldFormatter(ABC):
 
     @abstractmethod
     def extract_action_values(
-            self, report: 'ExcelReport', block_value: dict, action: dict,
+            self, report: ExcelReport, block_value: dict, action: dict,
             related_objects: dict[str, list[SerializedVersion]],
             attribute_versions: dict[AttributePath, SerializedAttributeVersion],
             ) -> Any | None:
@@ -98,7 +100,7 @@ class ActionSimpleFieldFormatter(ReportFieldFormatter):
 
     def extract_action_values(
             self,
-            report: 'ExcelReport',
+            report: ExcelReport,
             block_value: dict,
             action: dict,
             related_objects: dict[str, list[SerializedVersion]],
@@ -133,7 +135,7 @@ class ActionManyToOneFieldFormatter(ReportFieldFormatter):
     '''
 
     def extract_action_values(
-            self, report: 'ExcelReport', block_value: dict, action: dict,
+            self, report: ExcelReport, block_value: dict, action: dict,
             related_objects: dict[str, list[SerializedVersion]],
             attribute_versions: dict[AttributePath, SerializedAttributeVersion],
             ) -> Any | None:
@@ -156,7 +158,7 @@ class ActionManyToOneFieldFormatter(ReportFieldFormatter):
 
 class ActionTasksFormatter(ActionManyToOneFieldFormatter):
     def extract_action_values(
-            self, report: 'ExcelReport',
+            self, report: ExcelReport,
             block_value: dict,
             action: dict,
             related_objects: dict[str, list[SerializedVersion]],
@@ -218,7 +220,7 @@ class ActionAttributeTypeReportFieldFormatter(ReportFieldFormatter):
         )
 
     def extract_action_values(
-            self, report: 'ExcelReport', block_value: dict, action: dict,
+            self, report: ExcelReport, block_value: dict, action: dict,
             related_objects: dict[str, list[SerializedVersion]],
             attribute_versions: dict[AttributePath, SerializedAttributeVersion],
             ) -> Any | None:
@@ -258,7 +260,7 @@ class ActionCategoryReportFieldFormatter(ReportFieldFormatter):
     ]
 
     def extract_action_values(
-            self, report: 'ExcelReport', block_value: dict, action: dict,
+            self, report: ExcelReport, block_value: dict, action: dict,
             related_objects: dict[str, list[SerializedVersion]],
             attribute_versions: dict[AttributePath, SerializedAttributeVersion],
             ) -> Any | None:
@@ -321,7 +323,7 @@ class ActionImplementationPhaseReportFieldFormatter(ReportFieldFormatter):
         return None
 
     def extract_action_values(
-            self, report: 'ExcelReport', block_value: dict, action: dict,
+            self, report: ExcelReport, block_value: dict, action: dict,
             related_objects: dict[str, list[SerializedVersion]],
             attribute_versions: dict[AttributePath, SerializedAttributeVersion],
             ) -> list[str | None]:
@@ -347,7 +349,7 @@ class ActionImplementationPhaseReportFieldFormatter(ReportFieldFormatter):
 
 class ActionStatusReportFieldFormatter(ReportFieldFormatter):
     def extract_action_values(
-            self, report: 'ExcelReport', block_value: dict, action: dict,
+            self, report: ExcelReport, block_value: dict, action: dict,
             related_objects: dict[str, list[SerializedVersion]],
             attribute_versions: dict[AttributePath, SerializedAttributeVersion],
             ) -> Any | None:
@@ -363,7 +365,7 @@ class ActionStatusReportFieldFormatter(ReportFieldFormatter):
     def get_xlsx_cell_format(self, block_value: dict[str, Any]) -> dict[str, str] | None:
         return None
 
-    def value_for_action_snapshot(self, block_value, snapshot: 'ActionSnapshot'):
+    def value_for_action_snapshot(self, block_value, snapshot: ActionSnapshot):
         status_id = snapshot.action_version.field_dict['status_id']
         try:
             return ActionStatus.objects.get(pk=status_id)
@@ -401,7 +403,7 @@ class ActionResponsiblePartyReportFieldFormatter(ReportFieldFormatter):
             return None
 
     def extract_action_values(
-            self, report: 'ExcelReport', block_value: dict, action: dict,
+            self, report: ExcelReport, block_value: dict, action: dict,
             related_objects: dict[str, list[SerializedVersion]],
             attribute_versions: dict[AttributePath, SerializedAttributeVersion],
             ) -> Any | None:
@@ -473,7 +475,7 @@ class ActionReportContentField(blocks.Block):
         return self.report_value_formatter.graphql_value_for_action_snapshot(field, snapshot)
 
     def extract_action_values(
-            self, report: 'ExcelReport', block_value: dict, action: dict,
+            self, report: ExcelReport, block_value: dict, action: dict,
             related_objects: dict[str, list[SerializedVersion]],
             attribute_versions: dict[AttributePath, SerializedAttributeVersion],
             ) -> Any | None:

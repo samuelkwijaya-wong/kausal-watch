@@ -28,7 +28,6 @@ from wagtail.search.queryset import SearchableQuerySetMixin
 
 from actions.models.features import OrderBy
 from aplans import utils
-from aplans.types import UserOrAnon
 from aplans.utils import (
     IdentifierField,
     ModificationTracking,
@@ -46,6 +45,7 @@ if typing.TYPE_CHECKING:
 
     from actions.models import Action, Plan
     from actions.models.category import CategoryType
+    from aplans.types import UserOrAnon
 
 
 User = get_user_model()
@@ -921,7 +921,7 @@ class ActionIndicatorQuerySet(models.QuerySet):
     def visible_for_public(self) -> Self:
         return self.visible_for_user(None)
 
-    def order_by_setting(self, plan: "Plan"):
+    def order_by_setting(self, plan: Plan):
         indicator_ordering = plan.features.indicator_ordering
         if indicator_ordering == OrderBy.NAME:
             lang = plan.primary_language

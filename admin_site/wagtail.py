@@ -41,7 +41,6 @@ from wagtailautocomplete.edit_handlers import AutocompletePanel as WagtailAutoco
 
 from actions.models.plan import Plan
 from aplans.context_vars import set_instance
-from aplans.types import WatchAdminRequest
 from aplans.utils import InstancesVisibleForMixin, PlanDefaultsModel, PlanRelatedModel, get_language_from_default_language_field
 from budget.models import DatasetSchema
 from pages.models import ActionListPage
@@ -51,6 +50,7 @@ from .utils import FieldLabelRenderer
 if TYPE_CHECKING:
     from django.db.models import Model
 
+    from aplans.types import WatchAdminRequest
     from users.models import User
 
 

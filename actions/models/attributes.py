@@ -17,7 +17,6 @@ from modeltrans.fields import TranslationField
 from modeltrans.manager import MultilingualManager
 from wagtail.fields import RichTextField
 
-from aplans.types import UserOrAnon
 from aplans.utils import (
     ChoiceArrayField,
     InstancesEditableByMixin,
@@ -33,13 +32,14 @@ if typing.TYPE_CHECKING:
     from django.db.models.manager import RelatedManager
 
     from actions.attributes import AttributeType as AttributeTypeWrapper, DraftAttributes
+    from aplans.types import UserOrAnon
 
     from .category import CategoryType
     from .plan import Plan
 
 
 class AttributeTypeQuerySet(models.QuerySet['AttributeType']):
-    def for_categories(self, plan: 'Plan'):
+    def for_categories(self, plan: Plan):
         from .category import CategoryType
 
         ct = ContentType.objects.get_for_model(CategoryType)
@@ -47,7 +47,7 @@ class AttributeTypeQuerySet(models.QuerySet['AttributeType']):
         f = Q(scope_content_type=ct) & Q(scope_id__in=ct_qs)
         return self.filter(f)
 
-    def for_actions(self, plan: 'Plan'):
+    def for_actions(self, plan: Plan):
         from .plan import Plan
 
         ct = ContentType.objects.get_for_model(Plan)

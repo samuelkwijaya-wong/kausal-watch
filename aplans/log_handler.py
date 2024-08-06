@@ -59,7 +59,7 @@ class LogRender:
         output.add_column(ratio=1, style="log.message", overflow="fold")
         if self.show_path and path:
             output.add_column(style="log.path")
-        row: list["RenderableType"] = []
+        row: list[RenderableType] = []
         if self.show_time:
             log_time = log_time or console.get_datetime()
             time_format = time_format or self.time_format

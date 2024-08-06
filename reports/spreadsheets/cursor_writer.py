@@ -5,10 +5,10 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import Any, Sequence
 
-from xlsxwriter.format import Format
-from xlsxwriter.workbook import Worksheet
-
 if typing.TYPE_CHECKING:
+    from xlsxwriter.format import Format
+    from xlsxwriter.workbook import Worksheet
+
     from reports.spreadsheets.excel_report import ExcelFormats
 
 

@@ -9,12 +9,12 @@ from django.db.models import Q
 from django.utils.translation import gettext_lazy as _, pgettext
 from markupsafe import Markup
 
-from actions.models import Action, ActionTask, Plan
-from feedback.models import UserFeedback
-from indicators.models import Indicator
-
 if typing.TYPE_CHECKING:
     from django_stubs_ext import StrPromise
+
+    from actions.models import Action, ActionTask, Plan
+    from feedback.models import UserFeedback
+    from indicators.models import Indicator
 
     from . import NotificationObject
     from .engine import NotificationEngine

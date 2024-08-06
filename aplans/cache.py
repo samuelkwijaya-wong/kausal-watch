@@ -17,22 +17,22 @@ from actions.models import (
     CategoryType,
     Plan,
 )
-from actions.models.action import ActionQuerySet
 from aplans.graphql_types import WorkflowStateEnum
 from budget.models import Dataset
 from reports.models import Report
 
 if typing.TYPE_CHECKING:
+    from actions.models.action import ActionQuerySet
     from orgs.models import Organization, OrganizationQuerySet
     from people.models import Person, PersonQuerySet
 
 
 class PlanSpecificCache:
-    plan: 'Plan'
+    plan: Plan
     organizations: dict[int, Organization]
     persons: dict[int, Person]
 
-    def __init__(self, plan: 'Plan'):
+    def __init__(self, plan: Plan):
         self.plan = plan
         self.organizations = {}
         self.persons = {}

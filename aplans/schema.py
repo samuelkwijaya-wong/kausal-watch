@@ -1,3 +1,5 @@
+from typing import TYPE_CHECKING
+
 import graphene
 import graphene_django_optimizer as gql_optimizer
 from django.db.models import Count, Q
@@ -13,7 +15,6 @@ from graphql.type import (
 from grapple.registry import registry as grapple_registry
 
 from actions import schema as actions_schema
-from actions.models import Plan
 from actions.models.action import Action
 from aplans.cache import OrganizationActionCountCache
 from aplans.graphql_types import WorkflowStateGrapheneEnum
@@ -33,6 +34,9 @@ from search import schema as search_schema
 from . import graphql_gis  # noqa
 from .graphql_helpers import get_fields
 from .graphql_types import DjangoNode, GQLInfo, WorkflowStateEnum, get_plan_from_context, graphene_registry
+
+if TYPE_CHECKING:
+    from actions.models import Plan
 
 
 def mp_node_get_ancestors(qs, include_self=False):

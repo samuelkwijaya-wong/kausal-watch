@@ -33,7 +33,6 @@ from admin_site.wagtail import (
     insert_model_translation_panels,
 )
 from aplans.context_vars import ctx_instance, ctx_request
-from aplans.types import WatchAdminRequest
 from notifications.models import NotificationSettings
 from orgs.chooser import OrganizationChooser
 from orgs.models import Organization
@@ -48,6 +47,7 @@ from . import (
 from .models import ActionImpact, ActionStatus, Plan, PlanFeatures
 
 if typing.TYPE_CHECKING:
+    from aplans.types import WatchAdminRequest
     from users.models import User
 
 

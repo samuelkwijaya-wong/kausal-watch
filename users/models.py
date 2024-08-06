@@ -55,10 +55,10 @@ class User(AbstractUser):  # type: ignore[django-manager-missing]
     person: Person
     _corresponding_person: Person
     _active_admin_plan: Plan
-    _adminable_plans: 'models.QuerySet[Plan]'
+    _adminable_plans: models.QuerySet[Plan]
     _instance_visibility_perms: set[InstancesVisibleForMixin.VisibleFor]
     _instance_editable_perms: set[InstancesEditableByMixin.EditableBy]
-    _org_admin_for_actions: 'models.QuerySet[Action]'
+    _org_admin_for_actions: models.QuerySet[Action]
 
     autocomplete_search_field = 'email'
 

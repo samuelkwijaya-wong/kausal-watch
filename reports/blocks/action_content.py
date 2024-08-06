@@ -1,9 +1,9 @@
 from __future__ import annotations
 
 from collections.abc import Iterable
+from typing import TYPE_CHECKING
 
 from django.apps import apps
-from django.db.models import Model
 from django.utils.translation import gettext_lazy as _
 from grapple.helpers import register_streamfield_block
 from wagtail import blocks
@@ -13,6 +13,9 @@ from actions.blocks.action_content import get_action_block_for_field
 from actions.blocks.choosers import ActionAttributeTypeChooserBlock, CategoryLevelChooserBlock, CategoryTypeChooserBlock
 from reports import report_formatters as formatters
 from reports.report_formatters import ActionReportContentField
+
+if TYPE_CHECKING:
+    from django.db.models import Model
 
 
 class FieldBlockWithHelpPanel(ActionReportContentField):

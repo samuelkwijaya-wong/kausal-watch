@@ -10,11 +10,11 @@ from actions.action_admin import ActionAdmin
 from actions.tests.factories import ActionContactFactory, ActionFactory, PlanFactory
 from actions.wagtail_admin import ActivePlanAdmin
 from admin_site.tests.factories import ClientPlanFactory
-from aplans.types import WatchAdminRequest
-from conftest import ModelAdminEditTest
 
 if typing.TYPE_CHECKING:
     from actions.models import Action
+    from aplans.types import WatchAdminRequest
+    from conftest import ModelAdminEditTest
     from people.models import Person
     from users.models import User
 

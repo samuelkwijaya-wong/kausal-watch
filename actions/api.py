@@ -10,7 +10,6 @@ import rest_framework.fields
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import FieldDoesNotExist
 from django.db import models
-from django.db.models import Model
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from drf_spectacular.types import OpenApiTypes
@@ -20,7 +19,6 @@ from rest_framework_nested import routers
 
 from actions.models.action import ActionContactPerson, ActionImplementationPhase
 from actions.models.attributes import AttributeType, ModelWithAttributes
-from actions.models.plan import PlanQuerySet
 from aplans.api_router import router
 from aplans.model_images import (
     ModelWithImageSerializerMixin,
@@ -33,7 +31,6 @@ from aplans.rest_api import (
     HandleProtectedErrorMixin,
     PlanRelatedModelSerializer,
 )
-from aplans.types import AuthenticatedWatchRequest, WatchAdminRequest, WatchAPIRequest
 from aplans.utils import generate_identifier, public_fields, register_view_helper
 from orgs.models import Organization
 from people.models import Person
@@ -57,7 +54,13 @@ from .models import (
 )
 
 if typing.TYPE_CHECKING:
-    from django.db.models import QuerySet  # noqa
+    from django.db.models import (
+        Model,
+        QuerySet,  # noqa
+    )
+
+    from actions.models.plan import PlanQuerySet
+    from aplans.types import AuthenticatedWatchRequest, WatchAdminRequest, WatchAPIRequest
 
 all_views = []
 all_routers = []

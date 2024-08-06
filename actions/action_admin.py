@@ -9,7 +9,6 @@ from dal import autocomplete, forward as dal_forward
 from django.contrib.admin.utils import quote
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
-from django.db.models import Model
 from django.urls import path, re_path
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
@@ -54,7 +53,6 @@ from admin_site.wagtail import (
 )
 from aplans.context_vars import ctx_instance, ctx_request
 from aplans.extensions import modeladmin_register
-from aplans.types import WatchAdminRequest
 from aplans.utils import naturaltime
 from aplans.wagtail_utils import _get_category_fields
 from orgs.models import Organization
@@ -66,7 +64,10 @@ from .action_admin_mixins import SnippetsEditViewCompatibilityMixin
 from .models.action import Action, ActionContactPerson, ActionResponsibleParty, ActionTask, ModelWithRole
 
 if typing.TYPE_CHECKING:
+    from django.db.models import Model
+
     from actions.attributes import DraftAttributes
+    from aplans.types import WatchAdminRequest
     from users.models import User
 
 logger = logging.getLogger(__name__)

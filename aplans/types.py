@@ -3,10 +3,11 @@ from __future__ import annotations
 import typing
 from typing import TYPE_CHECKING, Type, TypeGuard, TypeVar
 
-from django.contrib.auth.models import AnonymousUser
 from django.http import HttpRequest
 
 if typing.TYPE_CHECKING:
+    from django.contrib.auth.models import AnonymousUser
+
     from actions.models import Plan
     from users.models import User
 

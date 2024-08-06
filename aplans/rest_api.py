@@ -8,10 +8,11 @@ from rest_framework import exceptions, response, serializers, status, viewsets
 from rest_framework.exceptions import ValidationError
 
 from actions.models import Plan
-from aplans.types import WatchAPIRequest
 
 if typing.TYPE_CHECKING:
     from django.db.models import QuerySet
+
+    from aplans.types import WatchAPIRequest
 
 
 class BulkListSerializer(serializers.ListSerializer):

@@ -5,18 +5,17 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import Any, Dict, Optional
 
-from django.db import models
-
-from people.models import Person
-
-from .notifications import Notification
 from .queue import NotificationQueueItem
 
 if typing.TYPE_CHECKING:
+    from django.db import models
+
     from admin_site.models import Client
+    from people.models import Person
 
     from . import NotificationObject
     from .models import SentNotification
+    from .notifications import Notification
 
 
 class NotificationRecipient(ABC):

@@ -18,7 +18,6 @@ from django.utils.translation import gettext_lazy as _, override
 from modelcluster.fields import ParentalKey
 from modelcluster.models import ClusterableModel
 from modeltrans.fields import TranslationField
-from modeltrans.manager import MultilingualManager
 from modeltrans.translator import get_i18n_field
 from modeltrans.utils import get_available_languages
 from wagtail.models import Collection, Page
@@ -30,7 +29,6 @@ from aplans.utils import (
     OrderedModel,
     PlanRelatedModel,
     ReferenceIndexedModelMixin,
-    UserOrAnon,
     generate_identifier,
     get_supported_languages,
     validate_css_color,
@@ -42,8 +40,10 @@ from .attributes import AttributeType as AttributeTypeModel, ModelWithAttributes
 if typing.TYPE_CHECKING:
     from django.db.models.expressions import Combinable
     from django.db.models.manager import RelatedManager
+    from modeltrans.manager import MultilingualManager
 
     from actions.models.plan import Plan
+    from aplans.utils import UserOrAnon
     from indicators.models import Indicator
     from pages.models import CategoryPage, CategoryTypePage, CategoryTypePageLevelLayout
 

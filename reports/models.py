@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from contextlib import contextmanager
 from dataclasses import asdict, dataclass, field
-from datetime import datetime
 from typing import TYPE_CHECKING
 
 import reversion
@@ -15,7 +14,6 @@ from modelcluster.fields import ParentalManyToManyDescriptor
 from reversion.models import Version
 from reversion.revisions import _current_frame, add_to_revision, create_revision
 from sentry_sdk import capture_message
-from wagtail.blocks.stream_block import StreamValue
 from wagtail.fields import StreamField
 
 from actions.models.action import Action
@@ -29,7 +27,10 @@ from reports.spreadsheets.action_print_layout import ReportActionPrintLayoutCust
 from .spreadsheets import ExcelReport
 
 if TYPE_CHECKING:
+    from datetime import datetime
+
     from django.db.models.manager import RelatedManager
+    from wagtail.blocks.stream_block import StreamValue
 
     from actions.models import AttributeType
     from users.models import User

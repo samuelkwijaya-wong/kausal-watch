@@ -146,7 +146,7 @@ class ActionStatusSummaryIdentifier(MetadataEnum):
         return f'{self.name}.{str(self.value)}'
 
     @classmethod
-    def for_status(cls, status: 'ActionStatus'):
+    def for_status(cls, status: ActionStatus):
         if status is None:
             return cls.UNDEFINED
         status_identifier = status.identifier.lower() if status else None
@@ -156,7 +156,7 @@ class ActionStatusSummaryIdentifier(MetadataEnum):
             return cls.UNDEFINED
 
     @classmethod
-    def for_action(cls, action: 'Action'):
+    def for_action(cls, action: Action):
         # FIXME: Some plans in production have inconsistent Capitalized identifiers
         # Once the db has been cleaned up, this match logic
         # should be revisited
@@ -181,13 +181,13 @@ class ActionTimeliness(ConstantMetadata['ActionTimelinessIdentifier', SummaryCon
     color: str | None
     sentiment: Sentiment | None
     label: str | None
-    boundary: Callable[['Plan'], int]
+    boundary: Callable[[Plan], int]
     comparison: Comparison | None
-    identifier: 'ActionTimelinessIdentifier'
+    identifier: ActionTimelinessIdentifier
     days: int
 
     def __init__(self,
-        boundary: Callable[['Plan'], int],
+        boundary: Callable[[Plan], int],
         color: str | None = None,
         sentiment: Sentiment | None = None,
         label: str | None = None,
@@ -199,12 +199,12 @@ class ActionTimeliness(ConstantMetadata['ActionTimelinessIdentifier', SummaryCon
         self.comparison = comparison
         self.boundary = boundary
 
-    def _get_label(self, plan: 'Plan'):
+    def _get_label(self, plan: Plan):
         if self.comparison == Comparison.LTE:
             return _('Under %d days') % self._get_days(plan)
         return _('Over %d days') % self._get_days(plan)
 
-    def _get_days(self, plan: 'Plan'):
+    def _get_days(self, plan: Plan):
         return self.boundary(plan)
 
     def with_context(self, context: SummaryContext):
@@ -246,7 +246,7 @@ class ActionTimelinessIdentifier(MetadataEnum):
     )
 
     @classmethod
-    def for_action(cls, action: 'Action'):
+    def for_action(cls, action: Action):
         plan = action.plan
         age = timezone.now() - action.updated_at
         if age <= datetime.timedelta(days=cls.OPTIMAL.value.boundary(plan)):

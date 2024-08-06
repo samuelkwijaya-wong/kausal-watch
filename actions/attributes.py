@@ -32,7 +32,7 @@ class AttributeFieldPanel(FieldPanel):
 @dataclass
 class FormField:
     plan: Plan
-    attribute_type: 'AttributeType'
+    attribute_type: AttributeType
     django_field: forms.Field
     name: str
     label: str = ''
@@ -112,7 +112,7 @@ class OrderedChoiceAttributeValue(AttributeValue):
 
 @dataclass
 class CategoryChoiceAttributeValue(AttributeValue):
-    categories: QuerySet['Category']
+    categories: QuerySet[Category]
 
     @classmethod
     def from_serialized_value(cls, value: Any, cache: PlanSpecificCache | None = None) -> CategoryChoiceAttributeValue:

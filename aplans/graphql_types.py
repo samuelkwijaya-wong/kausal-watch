@@ -16,14 +16,17 @@ from graphene.utils.str_converters import to_camel_case, to_snake_case
 from graphene.utils.trim_docstring import trim_docstring
 from graphene_django import DjangoObjectType
 from graphql import GraphQLResolveInfo
-from graphql.language.ast import OperationDefinitionNode
 from grapple.registry import registry as grapple_registry
 from modeltrans.translator import get_i18n_field
 
 from actions.models.plan import Plan
-from aplans.types import WatchAPIRequest
 from aplans.utils import get_language_from_default_language_field
-from users.models import User
+
+if typing.TYPE_CHECKING:
+    from graphql.language.ast import OperationDefinitionNode
+
+    from aplans.types import WatchAPIRequest
+    from users.models import User
 
 graphene_registry: list[type[graphene.ObjectType | graphene.Interface]] = []
 

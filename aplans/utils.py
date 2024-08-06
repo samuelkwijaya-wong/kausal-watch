@@ -4,7 +4,6 @@ import abc
 import logging
 import random
 import re
-from datetime import datetime, timedelta
 from enum import Enum
 from typing import TYPE_CHECKING, Generic, Iterable, List, Protocol, Self, Sequence, TypeVar
 
@@ -22,18 +21,20 @@ from django.core.validators import RegexValidator
 from django.db import models
 from django.utils.translation import get_language, gettext_lazy as _
 from modelcluster.forms import BaseChildFormSet
-from modeltrans.fields import TranslationField
 from modeltrans.translator import get_i18n_field
 from modeltrans.utils import get_instance_field_value
 from tinycss2.color3 import parse_color  # type: ignore
 from wagtail.fields import StreamField
 from wagtail.models import Page, ReferenceIndex
 
-from aplans.types import UserOrAnon
-
 if TYPE_CHECKING:
+    from datetime import datetime, timedelta
+
+    from modeltrans.fields import TranslationField
+
     from actions.models.action import Action, Plan
     from actions.models.plan import Plan
+    from aplans.types import UserOrAnon
 
 
 logger = logging.getLogger(__name__)
@@ -639,7 +640,7 @@ CM = TypeVar('CM', bound=ConstantMetadata)
 
 
 class MetadataEnum(Enum):
-    value: 'ConstantMetadata'
+    value: ConstantMetadata
 
     def get_data(self, context=None):
         return self.value.with_identifier(self).with_context(context)

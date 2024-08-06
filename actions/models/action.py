@@ -28,7 +28,6 @@ from wagtail.models import DraftStateMixin, LockableMixin, RevisionMixin, Task, 
 from wagtail.search import index
 from wagtail.search.queryset import SearchableQuerySetMixin
 
-from aplans.types import UserOrAnon
 from aplans.utils import (
     ConstantMetadata,
     DateFormatField,
@@ -56,6 +55,7 @@ if typing.TYPE_CHECKING:
     from actions.attributes import DraftAttributes
     from aplans.cache import WatchObjectCache
     from aplans.graphql_types import WorkflowStateEnum
+    from aplans.types import UserOrAnon
     from people.models import Person
 
     from .action_deps import ActionDependencyRelationshipQuerySet
@@ -422,8 +422,8 @@ class Action(  # type: ignore[django-manager-missing]
     merged_actions: RelatedManager[Action]
     superseded_actions: RelatedManager[Action]
     tasks: RelatedManager[ActionTask]
-    dependent_relationships: RelatedManager['ActionDependencyRelationship']
-    preceding_relationships: RelatedManager['ActionDependencyRelationship']
+    dependent_relationships: RelatedManager[ActionDependencyRelationship]
+    preceding_relationships: RelatedManager[ActionDependencyRelationship]
 
     verbose_name_partitive = pgettext_lazy('partitive', 'action')
 
@@ -855,7 +855,7 @@ class Action(  # type: ignore[django-manager-missing]
 
     def get_status_summary(
             self, cache: WatchObjectCache | None = None,
-    ) -> ConstantMetadata['ActionStatusSummaryIdentifier', SummaryContext]:
+    ) -> ConstantMetadata[ActionStatusSummaryIdentifier, SummaryContext]:
         return ActionStatusSummaryIdentifier.for_action(self).get_data({'plan_id': self.plan_id, 'cache': cache})
 
     def get_timeliness(self, cache: WatchObjectCache | None = None):
