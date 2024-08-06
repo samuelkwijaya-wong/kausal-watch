@@ -81,9 +81,7 @@ class ReadOnlyInlinePanel(Panel):
         super().__init__(*args, **kwargs)
 
     def clone_kwargs(self):
-        """
-        Return a dictionary of keyword arguments that can be used to create a clone of this panel definition.
-        """
+        """Return a dictionary of keyword arguments that can be used to create a clone of this panel definition."""
         result = super().clone_kwargs()
         result['relation_name'] = self.relation_name
         return result
@@ -235,7 +233,8 @@ class ActionAdminForm(WagtailAdminModelForm):
         return obj
 
     def save_related_objects_with_role(self, manager, formsets, original_objects, commit=True):
-        """Saves the related objects from the given role-specific formsets.
+        """
+        Saves the related objects from the given role-specific formsets.
 
         For contact persons: If the plan does not distinguish contact persons by role, then there are no role-specific formsets and the
         contact persons (in the formset `contact_persons`) are saved in `super().save()`.
@@ -293,9 +292,11 @@ class ModelWithRoleInlinePanel(InlinePanel):
             return ResponsiblePartiesInlinePanel(*args, **kwargs)
         if _cls == ActionContactPerson:
             return ContactPersonsInlinePanel(*args, **kwargs)
+        return None
 
     def __init__(self, filter_by_role: bool, role: ModelWithRole.Role | None = None, *args, **kwargs):
-        """If `filter_by_role` is false, we show all instances in this panel, otherwise only the ones with the given
+        """
+        If `filter_by_role` is false, we show all instances in this panel, otherwise only the ones with the given
         role. (`None` is a possible role for ActionResponsibleParty.)
 
         For the latter to work, make sure that your form contains formsets `contact_persons_<role>` (or equivalent for
@@ -429,7 +430,8 @@ class RelatedModelWithRolePanel(MultiFieldPanel):
         editable_roles: Iterable[ModelWithRole.Role | None] | None = None,
         *args, **kwargs,
     ):
-        """Display inline panels for contact persons, optionally separated by roles.
+        """
+        Display inline panels for contact persons, optionally separated by roles.
 
         If `editable_roles` is None, a single inline panel will be shown for all contact persons without distuinguishing
         them by roles.

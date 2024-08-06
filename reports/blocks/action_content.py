@@ -26,7 +26,7 @@ class FieldBlockWithHelpPanel(ActionReportContentField):
         value = self.value_for_action_snapshot(block_value, snapshot) or ''
         if not isinstance(value, Iterable) or isinstance(value, str):
             value = [value]
-        value = "; ".join((str(v) for v in value))
+        value = "; ".join(str(v) for v in value)
         label = self.get_help_label(block_value)
         if label is None:
             label = self.label
@@ -84,12 +84,12 @@ class ActionStatusReportFieldBlock(blocks.StaticBlock, FieldBlockWithHelpPanel):
 
 @register_streamfield_block
 class ActionResponsiblePartyReportFieldBlock(blocks.StructBlock, FieldBlockWithHelpPanel):
-    '''
+    """
     FIXME: Note that this block is currently actually exporting only the primary
     responsible parties. That's why the label is set accordingly.
     There should be a field to configure which role(s) should
     be exported and that should affect the label(s)
-    '''
+    """
 
     target_ancestor_depth = blocks.IntegerBlock(
         label=_('Level of containing organization'),

@@ -8,7 +8,8 @@ from wagtail.images.models import AbstractImage, AbstractRendition, Image as Wag
 
 
 def truncate_filename(directories: list[str], filename: str) -> str:
-    """Joins all elements of the list `directories` and the string `filename` with a path separator and makes sure the
+    """
+    Joins all elements of the list `directories` and the string `filename` with a path separator and makes sure the
     result fits into a Django file field.
     """
     # Adapted from wagtail/images/models.py

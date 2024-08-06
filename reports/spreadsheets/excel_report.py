@@ -32,7 +32,7 @@ if typing.TYPE_CHECKING:
 
 
 def clean(value: Any) -> Any:
-    '''Translate Windows linefeeds to \n for Excel'''
+    """Translate Windows linefeeds to \n for Excel"""
     if not isinstance(value, str):
         return value
     return value.replace("\r\n", "\n")
@@ -154,7 +154,7 @@ class ExcelFormats(dict):
         return self[name]
 
     def set_for_field(self, field: ReportFieldBlock, labels: list) -> None:
-        if None not in set((self._formats_for_fields.get(label) for label in labels)):
+        if None not in {self._formats_for_fields.get(label) for label in labels}:
             return
         cell_format_specs: dict = field.block.get_xlsx_cell_format(field.value)
         cell_format = self.workbook.add_format(cell_format_specs)
@@ -477,7 +477,7 @@ class ExcelReport:
             self._write_sheet(worksheet, aggregated, small=True)
             chart_type = spec['type']
             chart = self.workbook.add_chart({'type': chart_type, 'subtype': spec.get('subtype')})
-            for i in range(0, aggregated.width - 1):
+            for i in range(aggregated.width - 1):
                 series = {
                     'categories': [sheet_name, 1, 0, aggregated.height, 0],
                     'values': [sheet_name, 1, 1 + i, aggregated.height, 1 + i],

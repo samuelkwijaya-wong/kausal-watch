@@ -9,7 +9,7 @@ class FocalPointImage:
 
     def get_focal_point(self):
         if not self.focal_point:
-            return
+            return None
         return Rect(*self.focal_point)
 
 

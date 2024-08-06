@@ -60,7 +60,8 @@ class TranslatedFieldMixin:
 
 
 class TranslatedFieldRowPanel(TranslatedFieldMixin, FieldRowPanel):
-    """Panel that automatically adds panels also for translated versions of the
+    """
+    Panel that automatically adds panels also for translated versions of the
     string according to the languages of the action plan. The panels are added
     side by side.
     """
@@ -69,7 +70,8 @@ class TranslatedFieldRowPanel(TranslatedFieldMixin, FieldRowPanel):
 
 
 class TranslatedFieldPanel(TranslatedFieldMixin, MultiFieldPanel):
-    """Panel that automatically adds panels also for translated versions of the
+    """
+    Panel that automatically adds panels also for translated versions of the
     string according to the languages of the action plan. The panels are added
     on top of each other.
     """

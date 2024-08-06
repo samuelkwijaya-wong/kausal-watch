@@ -802,7 +802,7 @@ def test_indicator_visibility(graphql_client_query_data):
             name
           }
         }
-        """, variables=dict(plan=plan.identifier,),
+        """, variables=dict(plan=plan.identifier),
     )
 
     expected = {

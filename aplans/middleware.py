@@ -23,10 +23,10 @@ class SocialAuthExceptionMiddleware(MiddlewareMixin):
         strategy = getattr(request, 'social_strategy', None)
         if strategy is None or settings.DEBUG:
             # Let the exception fly
-            return
+            return None
 
         if not isinstance(exception, SocialAuthBaseException):
-            return
+            return None
 
         backend = getattr(request, 'backend', None)
         backend_name = getattr(backend, 'name', 'unknown-backend')

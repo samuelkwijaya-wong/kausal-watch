@@ -6,7 +6,8 @@ from aplans.types import WatchAdminRequest
 
 
 class PlanSpecificSingletonModelMenuItem(MenuItem):
-    """Menu item for models of which there's only one instance of them per
+    """
+    Menu item for models of which there's only one instance of them per
     action plan. Since there's only one instance of the model, the user is
     directed straight to the edit view (instead of the index view).
     """

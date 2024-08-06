@@ -312,10 +312,10 @@ class AutomaticNotificationTemplate(NotificationTemplate):
             recipients += action_contacts.get(action.id, [])
             if not recipients:
                 if fall_back_to_org_admins:
-                    org_ids = set((p.organization_id for p in action.responsible_parties.all()))
+                    org_ids = {p.organization_id for p in action.responsible_parties.all()}
                     org_ids.add(action.primary_org_id)
                     opa_lists = (organization_plan_admins.get(org_id, []) for org_id in org_ids)
-                    recipients += set(recipient for opas in opa_lists for recipient in opas)
+                    recipients += {recipient for opas in opa_lists for recipient in opas}
                     if not recipients and fall_back_to_plan_admins:
                         recipients += plan_admins
 

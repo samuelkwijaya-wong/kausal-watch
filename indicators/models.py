@@ -309,7 +309,8 @@ class IndicatorQuerySet(SearchableQuerySetMixin, models.QuerySet):
         return self.filter(organization__in=related_orgs)
 
     def visible_for_user(self, user: UserOrAnon | None) -> Self:
-        """ A None value is interpreted identically
+        """
+        A None value is interpreted identically
         to a non-authenticated user"""
         if user is None or not user.is_authenticated:
             return self.filter(visibility=RestrictedVisibilityModel.VisibilityState.PUBLIC)
@@ -628,7 +629,8 @@ class Indicator(ClusterableModel, index.Indexed, ModificationTracking, PlanDefau
             g.save(update_fields=['normalized_values'])
 
     def is_visible_for_user(self, user: UserOrAnon):
-        """ A None value is interpreted identically
+        """
+        A None value is interpreted identically
         to a non-authenticated user"""
         if (user is None or not user.is_authenticated) and self.visibility != RestrictedVisibilityModel.VisibilityState.PUBLIC:
             return False
@@ -672,7 +674,8 @@ class Indicator(ClusterableModel, index.Indexed, ModificationTracking, PlanDefau
 
 @reversion.register()
 class Dimension(ClusterableModel):
-    """A dimension for indicators.
+    """
+    A dimension for indicators.
 
     Dimensions will have several dimension categories.
     """
@@ -690,7 +693,8 @@ class Dimension(ClusterableModel):
 
 
 class DimensionCategory(OrderedModel):
-    """A category in a dimension.
+    """
+    A category in a dimension.
 
     Indicator values are grouped with this.
     """
@@ -756,7 +760,8 @@ class CommonIndicatorDimension(OrderedModel):
 class IndicatorLevelQuerySet(SearchableQuerySetMixin, models.QuerySet):
 
     def visible_for_user(self, user: UserOrAnon | None) -> Self:
-        """ A None value is interpreted identically
+        """
+        A None value is interpreted identically
         to a non-authenticated user"""
         if user is None or not user.is_authenticated:
             return self.filter(indicator__visibility=RestrictedVisibilityModel.VisibilityState.PUBLIC)
@@ -767,7 +772,8 @@ class IndicatorLevelQuerySet(SearchableQuerySetMixin, models.QuerySet):
 
 
 class IndicatorLevel(ClusterableModel):
-    """The level for an indicator in an action plan.
+    """
+    The level for an indicator in an action plan.
 
     Indicator levels include: operational, tactical and strategic.
     """
@@ -912,7 +918,8 @@ class RelatedIndicator(IndicatorRelationship):
 
 class ActionIndicatorQuerySet(models.QuerySet):
     def visible_for_user(self, user: UserOrAnon | None) -> Self:
-        """ A None value is interpreted identically
+        """
+        A None value is interpreted identically
         to a non-authenticated user"""
         if user is None or not user.is_authenticated:
             return self.filter(indicator__visibility=RestrictedVisibilityModel.VisibilityState.PUBLIC)
@@ -982,7 +989,7 @@ class IndicatorContactPerson(OrderedModel):
         indexes = [
             models.Index(fields=['indicator', 'order']),
         ]
-        unique_together = (('indicator', 'person',),)
+        unique_together = (('indicator', 'person'),)
         verbose_name = _('indicator contact person')
         verbose_name_plural = _('indicator contact persons')
 

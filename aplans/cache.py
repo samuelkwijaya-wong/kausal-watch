@@ -70,12 +70,12 @@ class PlanSpecificCache:
         return result
 
     def populate_organizations(self, organizations: OrganizationQuerySet) -> None:
-        '''Add the organizations from a queryset to the cache, keeping any organizations that might already be in the cache.'''
+        """Add the organizations from a queryset to the cache, keeping any organizations that might already be in the cache."""
         for org in organizations:
             self.organizations[org.pk] = org
 
     def populate_persons(self, persons: PersonQuerySet) -> None:
-        '''Add the persons from a queryset to the cache, keeping any persons that might already be in the cache.'''
+        """Add the persons from a queryset to the cache, keeping any persons that might already be in the cache."""
         for person in persons:
             self.persons[person.pk] = person
 

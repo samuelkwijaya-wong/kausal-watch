@@ -491,7 +491,7 @@ def test_attribute_category_choices_are_resolved_correctly(
     category_type_host = category_page.category.type
     category_host = category_page.category
     category_type_for_attribute = category_type_factory()
-    categories = [category_factory(type=category_type_for_attribute) for c in range(0, 5)]
+    categories = [category_factory(type=category_type_for_attribute) for c in range(5)]
     at0 = attribute_type_factory(scope=category_type_host)
     acc0 = attribute_category_choice_factory(type=at0, content_object=category_host, categories=categories)
 

@@ -304,14 +304,14 @@ class PlanNode(DjangoNode):
     def resolve_pages(root: Plan, info: GQLInfo):
         root_page: Page | None = root.root_page
         if not root_page:
-            return
+            return None
         return root_page.get_descendants(inclusive=True).live().public().type(AplansPage).specific()
 
     @staticmethod
     def resolve_action_list_page(root: Plan, info: GQLInfo):
         root_page: Page | None = root.get_translated_root_page()
         if not root_page:
-            return
+            return None
         return root_page.get_descendants().live().public().type(ActionListPage).first().specific
 
     @staticmethod
@@ -498,6 +498,7 @@ class AttributeInterface(graphene.Interface):
             return AttributeNumericValueNode
         elif isinstance(instance, AttributeCategoryChoice):
             return AttributeCategoryChoiceNode
+        return None
 
 
 @register_graphene_node
@@ -1199,7 +1200,7 @@ class ActionNode(AdminButtonsMixin, AttributesMixin, DjangoNode):
     @staticmethod
     @gql_optimizer.resolver_hints(
         model_field=('merged_with',),
-        select_related=('status', 'implementation_phase',),
+        select_related=('status', 'implementation_phase'),
     )
     def resolve_status_summary(root: Action, info: GQLInfo):
         return root.get_status_summary(cache=info.context.watch_cache)

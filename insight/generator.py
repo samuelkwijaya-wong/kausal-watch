@@ -139,6 +139,7 @@ class ActionGraphGenerator(GraphGenerator):
             else:
                 return self.filter_indicators(obj.related_causes.filter(
                     causal_indicator__visibility=RestrictedVisibilityModel.VisibilityState.PUBLIC), 'causal_indicator')
+        return None
 
     def add_node(self, obj):
         node_id = self.make_node_id(obj)

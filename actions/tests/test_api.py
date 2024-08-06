@@ -32,7 +32,7 @@ def tree_to_org(tree: Tree, parent: Organization | None=None):
     return org
 
 
-@pytest.fixture
+@pytest.fixture()
 def org_hierarchy():
     trees = parse_tree_string("""
         1
@@ -91,7 +91,7 @@ PERSON_COUNT = 10
 
 
 def test_person_api_get_not_authenticated(api_client, person_list_url, action_contact_factory):
-    persons = [action_contact_factory().person for _ in range(0, PERSON_COUNT)]
+    persons = [action_contact_factory().person for _ in range(PERSON_COUNT)]
     response = api_client.get(person_list_url)
     data = response.json_data
     assert len(data['results']) == PERSON_COUNT
@@ -110,7 +110,8 @@ def test_person_api_get_for_plan_unauthenticated(api_client, person_list_url, pl
     data = response.json_data
     assert response.status_code == 403
     keys = data.keys()
-    assert len(keys) == 1 and 'detail' in keys
+    assert len(keys) == 1
+    assert 'detail' in keys
 
 
 def test_person_api_get_authenticated_and_authorized_for_single_plan(
@@ -122,7 +123,7 @@ def test_person_api_get_authenticated_and_authorized_for_single_plan(
 
     plan_not_accessible_by_admin_person = plan_factory()
 
-    persons_found = [action_contact_factory(action__plan=plan_of_admin_person).person for _ in range(0, PERSON_COUNT)]
+    persons_found = [action_contact_factory(action__plan=plan_of_admin_person).person for _ in range(PERSON_COUNT)]
     person_not_found = action_contact_factory(action__plan=plan_not_accessible_by_admin_person).person
 
     api_client.force_login(admin_person.user)
@@ -154,7 +155,8 @@ def test_person_api_get_authenticated_and_unauthorized(
     data = response.json_data
     assert response.status_code == 403
     keys = data.keys()
-    assert len(keys) == 1 and 'detail' in keys
+    assert len(keys) == 1
+    assert 'detail' in keys
 
 
 def test_person_api_get_unknown_plan(
@@ -170,7 +172,8 @@ def test_person_api_get_unknown_plan(
     data = response.json_data
     assert response.status_code == 404
     keys = data.keys()
-    assert len(keys) == 1 and 'detail' in keys
+    assert len(keys) == 1
+    assert 'detail' in keys
 
 
 def test_action_api_post_unauthenticated(

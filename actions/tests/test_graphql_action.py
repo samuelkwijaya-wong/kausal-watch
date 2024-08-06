@@ -121,7 +121,7 @@ def test_action_visibility(graphql_client_query_data, actions_with_relations_fac
                 api_object = individual_data[other_action.id]['action']
                 value = api_object.get(field_name)
                 if isinstance(value, list):
-                    assert str(action.id) not in set((a['id'] for a in value)), field_name
+                    assert str(action.id) not in {a['id'] for a in value}, field_name
                 elif isinstance(value, dict):
                     assert str(action.id) != value['id'], field_name
 

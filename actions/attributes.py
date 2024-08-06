@@ -52,7 +52,8 @@ class FormField:
 
 
 class AttributeValue(ABC):
-    """Representation of data stored inside an Attribute instance.
+    """
+    Representation of data stored inside an Attribute instance.
 
     AttributeValue may sometimes contain the same data as an element of Django's dict `cleaned_data` after validation,
     but for some attribute types we need to assemble multiple values from `cleaned_data` to construct the respective
@@ -74,7 +75,8 @@ class AttributeValue(ABC):
 
     @abstractmethod
     def should_exist_in_database(self) -> bool:
-        """If this returns true, committing an attribute will create or update an attribute model instance; otherwise,
+        """
+        If this returns true, committing an attribute will create or update an attribute model instance; otherwise,
         committing will delete any existing attribute model instance for the respective attribute type."""
         pass
 
@@ -232,7 +234,8 @@ class AttributeType(ABC, Generic[T]):
         obj: models.ModelWithAttributes | None = None,
         draft_attributes: DraftAttributes | None = None,
     ) -> list[FormField]:
-        """Get form fields for this attribute type.
+        """
+        Get form fields for this attribute type.
 
         There can be more than one field for an attribute type because some types contain composite information (e.g.,
         choice with text).
@@ -419,8 +422,8 @@ class OrderedChoice(AttributeType[models.AttributeChoice]):
         if not attribute:
             return [None]
         choice = next(
-            (o.data['name'] for o in related_data_objects['actions.models.attributes.AttributeTypeChoiceOption']
-             if o.data['id'] == attribute.data['choice_id']))
+            o.data['name'] for o in related_data_objects['actions.models.attributes.AttributeTypeChoiceOption']
+             if o.data['id'] == attribute.data['choice_id'])
         return [choice]
 
 
@@ -604,8 +607,8 @@ class OptionalChoiceWithText(AttributeType[models.AttributeChoiceWithText]):
             return [None, None]
         try:
             choice = next(
-                (o.data['name'] for o in related_data_objects['actions.models.attributes.AttributeTypeChoiceOption']
-                 if o.data['id'] == attribute.data['choice_id']))
+                o.data['name'] for o in related_data_objects['actions.models.attributes.AttributeTypeChoiceOption']
+                 if o.data['id'] == attribute.data['choice_id'])
         except StopIteration:
             choice = None
         rich_text = attribute.data['text']
@@ -780,7 +783,8 @@ class Numeric(AttributeType[models.AttributeNumericValue]):
 
 
 class DraftAttributes:
-    """Contains the values of all draft attributes of a ModelWithAttributes instance.
+    """
+    Contains the values of all draft attributes of a ModelWithAttributes instance.
 
     "Draft attribute" means attributes that are not necessarily commited to the model's database table yet.
     """

@@ -415,6 +415,7 @@ class User(AbstractUser):  # type: ignore[django-manager-missing]
             return self._check_moderation_publish_permissions(action, person)
         elif moderation_action == ModerationAction.APPROVE:
             return self._check_moderation_approve_permissions(action, person)
+        return None
 
     def can_publish_action(self, action: Action):
         return self._check_moderation_permissions(ModerationAction.PUBLISH, action)

@@ -349,7 +349,7 @@ class IndicatorEditHandler(AplansTabbedInterface):
         self.base_form_class = type(
             'IndicatorForm',
             (IndicatorForm,),
-            {**cat_fields, },
+            {**cat_fields },
         )
 
         form_class = super().get_form_class()
@@ -364,7 +364,7 @@ class IndicatorAdmin(AplansModelAdmin):
     menu_icon = 'kausal-indicator'
     menu_order = 3
     menu_label = _('Indicators')
-    list_display = ('name', 'organization', 'unit_display', 'quantity', 'has_data',)
+    list_display = ('name', 'organization', 'unit_display', 'quantity', 'has_data')
     list_filter = (DisconnectedIndicatorFilter,)
     search_fields = ('name',)
     permission_helper_class = IndicatorPermissionHelper

@@ -6,7 +6,7 @@ from aplans.graphql_errors import ErrorCode
 pytestmark = pytest.mark.django_db
 
 
-@pytest.fixture
+@pytest.fixture()
 def query_action_workflow_status():
     return """
       query ($id: ID!) {

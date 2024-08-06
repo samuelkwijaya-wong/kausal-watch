@@ -77,9 +77,9 @@ PAGE_TRANSLATED_FIELDS = ['title', 'slug', 'url_path']
 class AplansPage(Page):
     i18n = models.JSONField(blank=True, null=True)
     show_in_footer = models.BooleanField(default=False, verbose_name=_('show in footer'),
-                                         help_text=_('Should the page be shown in the footer?'),)
+                                         help_text=_('Should the page be shown in the footer?'))
     show_in_additional_links = models.BooleanField(default=False, verbose_name=_('show in additional links'),
-                                                   help_text=_('Should the page be shown in the additional links?'),)
+                                                   help_text=_('Should the page be shown in the additional links?'))
     link_in_all_child_plans = models.BooleanField(default=False, verbose_name=_('show link in child plans'),
                                                 help_text=_("Should this additional link be displayed in child plans?"))
 

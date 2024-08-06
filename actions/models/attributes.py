@@ -147,7 +147,7 @@ class AttributeType(  # type: ignore[django-manager-missing]
         unique_together = (('object_content_type', 'scope_content_type', 'scope_id', 'identifier'),)
         verbose_name = _('field')
         verbose_name_plural = _('fields')
-        ordering = ('scope_content_type', 'scope_id', 'order',)
+        ordering = ('scope_content_type', 'scope_id', 'order')
 
     def clean(self):
         from actions.models.action import Action
@@ -366,7 +366,8 @@ class AttributeNumericValue(Attribute):
 
 
 class ModelWithAttributes(models.Model):
-    """Fields for models with attributes.
+    """
+    Fields for models with attributes.
 
     Models inheriting from this should implement a couple of abstract methods (see below). Unfortunately Django models
     don't get along well with the `abc` package. (Decorating with `@abstractmethod` only has an effect if deriving from

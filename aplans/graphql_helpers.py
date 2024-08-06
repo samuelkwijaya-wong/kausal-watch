@@ -14,7 +14,8 @@ from .graphql_types import AdminButton, AuthenticatedUserNode, GQLInfo
 
 
 def collect_fields(node, fragments):
-    """Recursively collects fields from the AST
+    """
+    Recursively collects fields from the AST
     Args:
         node (dict): A node in the AST
         fragments (dict): Fragment definitions
@@ -43,7 +44,8 @@ def collect_fields(node, fragments):
 
 
 def get_fields(info: GraphQLResolveInfo):
-    """A convenience function to call collect_fields with info
+    """
+    A convenience function to call collect_fields with info
     Args:
         info (ResolveInfo)
     Returns:

@@ -191,7 +191,8 @@ class Report(models.Model, PlanRelatedModel):
         raise ValueError(_("The report is already marked as complete."))
 
     def get_live_versions(self) -> LiveVersions:
-        """Returns action versions and related object versions for an incomplete report
+        """
+        Returns action versions and related object versions for an incomplete report
         similar to those that would be saved to the database when completing a report.
         """
         if self.is_complete:
@@ -260,7 +261,8 @@ class Report(models.Model, PlanRelatedModel):
         return result
 
     def mark_as_complete(self, user: User):
-        """Mark this report as complete, as well as all actions that are not yet complete.
+        """
+        Mark this report as complete, as well as all actions that are not yet complete.
 
         The snapshots for actions that are marked as complete by this will have `created_explicitly` set to False.
         """
@@ -316,7 +318,8 @@ class ActionSnapshot(models.Model):
 
     @contextmanager
     def inspect(self):
-        """Use like this to temporarily revert the action to this snapshot:
+        """
+        Use like this to temporarily revert the action to this snapshot:
         with snapshot.inspect() as action:
             pass  # action is reverted here and will be rolled back afterwards
         """
@@ -329,7 +332,8 @@ class ActionSnapshot(models.Model):
             pass
 
     def get_related_versions(self) -> models.QuerySet[Version]:
-        """Get all Version instances from the same revision as this action version's.
+        """
+        Get all Version instances from the same revision as this action version's.
 
         There may be more than one action version in this revision.
         """
@@ -375,7 +379,8 @@ class ActionSnapshot(models.Model):
         return None
 
     def get_attribute_for_type(self, attribute_type):
-        """Get the first action attribute of the given type in this snapshot.
+        """
+        Get the first action attribute of the given type in this snapshot.
 
         Returns None if there is no such attribute.
 

@@ -1,4 +1,5 @@
-"""A module for writing action data in  a spreadsheet in a format which aims to
+"""
+A module for writing action data in  a spreadsheet in a format which aims to
 fit a visually pleasing  amount of data in one printed page  of the sheet. This
 module writes explicit horizontal page breaks with worksheet.set_h_pagebreaks()
 

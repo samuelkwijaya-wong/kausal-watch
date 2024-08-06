@@ -13,12 +13,12 @@ ALPHANUM = 'abcdefghijklmnopqrstuvwxyz0123456789'
 
 
 def generate_draftail_block_key():
-    return ''.join((ALPHANUM[randrange(0, len(ALPHANUM))] for _ in range(0, 5)))
+    return ''.join(ALPHANUM[randrange(0, len(ALPHANUM))] for _ in range(5))
 
 
 def split_into_draftail_paragraphs(s):
-    return "\n".join((f'<p data-block-key="{generate_draftail_block_key()}">{x.strip()}</p>'
-                      for x in re.split(r'\n\n+', s.strip())))
+    return "\n".join(f'<p data-block-key="{generate_draftail_block_key()}">{x.strip()}</p>'
+                      for x in re.split(r'\n\n+', s.strip()))
 
 
 def initialize_notification_templates(

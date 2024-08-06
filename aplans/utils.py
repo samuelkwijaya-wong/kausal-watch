@@ -224,7 +224,8 @@ class OrderedModel(models.Model):
 
 
 class OrderedModelChildFormSet(BaseChildFormSet):
-    """Fix ordering issues when using an `OrderedModel` in an `InlinePanel`.
+    """
+    Fix ordering issues when using an `OrderedModel` in an `InlinePanel`.
 
     When using an `OrderedModel` in at `InlinePanel`, you will probably run into problems with the order field values
     being messed up by modelcluster's saving logic as it does not make sure that, e.g., the order of existing instances
@@ -257,11 +258,12 @@ class OrderedModelChildFormSet(BaseChildFormSet):
 
 
 class PlanDefaultsModel:
-    '''Model instances of this mixin have
+    """
+    Model instances of this mixin have
     some plan-specific default values that
     must be set when creating new instances
     in the admin.
-    '''
+    """
 
     def initialize_plan_defaults(self, plan: Plan):
         raise NotImplementedError()
@@ -307,7 +309,8 @@ class RestrictedVisibilityModel(models.Model):
         abstract = True
 
 class InstancesEditableByMixin(models.Model):
-    """Mixin for models such as CategoryType and AttributeType to restrict editing rights of categories/attributes.
+    """
+    Mixin for models such as CategoryType and AttributeType to restrict editing rights of categories/attributes.
 
     When you use this mixin, make sure in the validation of your model that `EditableBy.CONTACT_PERSONS` and
     `EditableBy.MODERATORS` are only accepted for `instances_editable_by` if your model instance can be associated with
@@ -377,7 +380,8 @@ class InstancesEditableByMixin(models.Model):
 
 
 class InstancesVisibleForMixin(models.Model):
-    """Mixin for models such as AttributeType to restrict visibility of attributes.
+    """
+    Mixin for models such as AttributeType to restrict visibility of attributes.
 
     When you use this mixin, make sure in the validation of your model that `VisibleFor.CONTACT_PERSONS` and
     `VisibleFor.MODERATORS` are only accepted for `instances_visible_for` if your model instance can be associated with
@@ -493,7 +497,7 @@ class ChoiceArrayField(ArrayField):
 
 def generate_identifier(qs, type_letter: str, field_name: str) -> str:
     # Try a couple of times to generate a unique identifier.
-    for i in range(0, 10):
+    for i in range(10):
         rand = random.randint(0, 65535)
         identifier = '%s%04x' % (type_letter, rand)
         f = '%s__iexact' % field_name

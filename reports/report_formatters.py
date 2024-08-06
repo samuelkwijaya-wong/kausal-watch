@@ -90,7 +90,8 @@ class ReportFieldFormatter(ABC):
 
 
 class ActionSimpleFieldFormatter(ReportFieldFormatter):
-    """A simple field is a field whose value is trivial to convert
+    """
+    A simple field is a field whose value is trivial to convert
     to a string with str
     """
 
@@ -129,10 +130,10 @@ class ActionSimpleFieldFormatter(ReportFieldFormatter):
         )
 
 class ActionManyToOneFieldFormatter(ReportFieldFormatter):
-    '''
+    """
     Formats the many values related to one action by concatenating
     the values so they can be output into one spreadsheet cell
-    '''
+    """
 
     def extract_action_values(
             self, report: ExcelReport, block_value: dict, action: dict,
@@ -395,10 +396,10 @@ class ActionResponsiblePartyReportFieldFormatter(ReportFieldFormatter):
 
     def _find_organization_id(self, action_responsible_parties: Iterable[dict], action_id):
         try:
-            return next((
+            return next(
                 arp['organization_id'] for arp in action_responsible_parties
                 if arp.get('action_id') == action_id and arp.get('role') == 'primary'
-            ))
+            )
         except StopIteration:
             return None
 

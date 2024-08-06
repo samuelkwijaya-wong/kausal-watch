@@ -128,7 +128,8 @@ class LogHandler(RichHandler):
         traceback: Traceback | None,
         message_renderable: "ConsoleRenderable",
     ) -> "ConsoleRenderable":
-        """Render log for display.
+        """
+        Render log for display.
 
         Args:
             record (LogRecord): logging Record.

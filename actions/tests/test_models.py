@@ -162,14 +162,14 @@ def test_category_move_to_new_sibling_changes_page_hierarchy(plan_with_pages):
             cat1.category_pages.filter(locale=locale).get())
 
 
-@pytest.fixture
+@pytest.fixture()
 def category_type_with_category_hierarchy(category_type, category_level_factory, category_factory):
     """
     Constructs a three level category hierarchy with a balanced structure,
     with the category identifiers matching the hierarchy structure
     """
     ct_id = category_type
-    for _ in range(0, 3):
+    for _ in range(3):
         category_level_factory(type=category_type)
 
     p1 = category_factory(type=ct_id, identifier="C1", parent_id=None)
@@ -215,7 +215,7 @@ def test_categories_projected_by_level(category_type_with_category_hierarchy):
     level_projections = ct.categories_projected_by_level()
     levels = ct.levels.all()
 
-    for depth in range(0, 3):
+    for depth in range(3):
         level_proj = level_projections[levels[depth].pk]
         for cat in cat_by_pk.values():
             identifier_prefix = cat.identifier[0:(2*(depth+1))]

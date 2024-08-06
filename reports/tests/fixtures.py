@@ -22,7 +22,7 @@ register(ReportTypeFactory)
 register(ReportFactory)
 
 
-@pytest.fixture
+@pytest.fixture()
 def report_type_with_all_attributes(
         plan,
         category_type,
@@ -53,7 +53,7 @@ def report_type_with_all_attributes(
     )
 
 
-@pytest.fixture
+@pytest.fixture()
 def report_with_all_attributes(
         report_type_with_all_attributes,
         report_factory,
@@ -65,7 +65,7 @@ def report_with_all_attributes(
     return report
 
 
-@pytest.fixture
+@pytest.fixture()
 def plan_with_report_and_attributes(
         plan,
         actions_having_attributes,

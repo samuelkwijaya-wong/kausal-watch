@@ -115,7 +115,8 @@ class PlanQuerySet(models.QuerySet['Plan']):
 
 
 def help_text_with_default_disclaimer(help_text, default_value=None):
-    """Lazily formats a help text with the default value injected
+    """
+    Lazily formats a help text with the default value injected
        for clarity if one is available.
     """
     disclaimer = _('If you leave this blank the application will use the default value')
@@ -146,7 +147,8 @@ class UsageStatus(models.TextChoices):
     'action_statuses', 'action_implementation_phases',  # fixme
 ])
 class Plan(ClusterableModel, ModelWithPrimaryLanguage):
-    """The Action Plan under monitoring.
+    """
+    The Action Plan under monitoring.
 
     Most information in this service is linked to a Plan.
     """
@@ -407,7 +409,8 @@ class Plan(ClusterableModel, ModelWithPrimaryLanguage):
         return root
 
     def get_translated_documentation_root_page(self, fallback=True) -> Page | None:
-        """Return documentation root page in activated language.
+        """
+        Return documentation root page in activated language.
 
         If `fallback` is true, falls back to to the plan's primary language or, if this fails, to any language.
         """
@@ -504,7 +507,8 @@ class Plan(ClusterableModel, ModelWithPrimaryLanguage):
         super().save(update_fields=['cache_invalidated_at'])
 
     def create_default_pages(self):
-        """For each language of the plan, create plan root page as well as subpages that should be always there.
+        """
+        For each language of the plan, create plan root page as well as subpages that should be always there.
 
         Return root page in primary language."""
         from pages.models import (
@@ -575,7 +579,8 @@ class Plan(ClusterableModel, ModelWithPrimaryLanguage):
         return next((f'/{lang}' for lang in self.other_languages if lang.lower() == locale.lower()), '')
 
     def get_view_url(self, client_url: str | None = None, active_locale: str | None = None) -> str:
-        """Return an URL for the homepage of the plan.
+        """
+        Return an URL for the homepage of the plan.
 
         If `client_url` is given, try to return the URL that matches the supplied
         `client_url` the best:
@@ -794,7 +799,8 @@ class Plan(ClusterableModel, ModelWithPrimaryLanguage):
         return tasks
 
     def get_next_workflow_task(self, workflow_state: WorkflowStateEnum) -> WorkflowTask | None:
-        """Returns the next workflow task that is active after the
+        """
+        Returns the next workflow task that is active after the
         desired workflow_state has been reached. For example, in a workflow
         with an approval task (1) and after that a separate publishing task (2),
         for an action to be in a "APPROVED" state, task (2) must be the current
@@ -847,7 +853,7 @@ class GeneralPlanAdmin(OrderedModel):
         indexes = [
             models.Index(fields=['plan', 'order']),
         ]
-        unique_together = (('plan', 'person',),)
+        unique_together = (('plan', 'person'),)
         verbose_name = _('general plan admin')
         verbose_name_plural = _('general plan admins')
 
@@ -869,7 +875,7 @@ class PlanPublicSiteViewer(models.Model):
                                related_name='plans_with_public_site_access')
 
     class Meta:
-        unique_together = (('plan', 'person',),)
+        unique_together = (('plan', 'person'),)
         verbose_name = _('public site viewer')
         verbose_name_plural = _('public site viewers')
 

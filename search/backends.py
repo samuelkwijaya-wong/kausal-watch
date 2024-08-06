@@ -66,9 +66,7 @@ class WatchSearchResults(Elasticsearch7SearchResults):
         return body
 
     def _get_results_from_hits(self, hits):
-        """
-        Yields Django model instances from a page of hits returned by Elasticsearch
-        """
+        """Yields Django model instances from a page of hits returned by Elasticsearch"""
         # Get pks from results
         pks = [hit['fields']['pk'][0] for hit in hits]
         scores = {str(hit['fields']['pk'][0]): hit['_score'] for hit in hits}

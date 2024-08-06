@@ -112,6 +112,7 @@ class WorkflowStateMiddleware:
                 else:
                     str_val = arg.value.value
                 return WorkflowStateEnum(str_val)
+        return None
 
     def resolve(self, next, root, info, **kwargs):
         if root is None:
@@ -136,6 +137,7 @@ class LocaleMiddleware:
                     raise GraphQLError("unsupported language: %s" % lang)
                 info.context._graphql_query_language = lang
                 return lang
+        return None
 
     def resolve(self, next, root, info, **kwargs):
         if root is None:

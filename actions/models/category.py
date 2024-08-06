@@ -180,7 +180,8 @@ class CommonCategoryType(CategoryTypeBase, ModelWithPrimaryLanguage):
 class CategoryType(  # type: ignore[django-manager-missing]
     InstancesEditableByMixin, ReferenceIndexedModelMixin, CategoryTypeBase, ClusterableModel, PlanRelatedModel,
 ):
-    """Type of the categories.
+    """
+    Type of the categories.
 
     Is used to group categories together. One action plan can have several
     category types.
@@ -293,7 +294,8 @@ class CategoryType(  # type: ignore[django-manager-missing]
 
 @reversion.register()
 class CategoryLevel(OrderedModel):
-    """Hierarchy level within a CategoryType.
+    """
+    Hierarchy level within a CategoryType.
 
     Root level has order=0, first child level order=1 and so on.
     """
@@ -570,7 +572,8 @@ class Category(ModelWithAttributes, CategoryBase, ClusterableModel, PlanRelatedM
             return self._get_icon_without_fallback_to_common_category(language=None)
 
     def get_icon(self, language=None):
-        """Get CategoryIcon in the given language, falling back to no language and the common category's icon.
+        """
+        Get CategoryIcon in the given language, falling back to no language and the common category's icon.
 
         If self has an icon (no matter the language, if any), does not fall back to the common category's icon.
         Otherwise falls back to the common category's icon in the requested language and finally to the common

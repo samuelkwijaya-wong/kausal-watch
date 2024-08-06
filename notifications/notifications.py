@@ -70,8 +70,9 @@ class Notification(ABC):
     @classmethod
     @abstractmethod
     def get_default_intro_text(cls) -> str | None:
-        '''Return None if this notification type does not need a default text
-        when initializing the default notification templates, otherwise a string'''
+        """
+        Return None if this notification type does not need a default text
+        when initializing the default notification templates, otherwise a string"""
         pass
 
     @classmethod

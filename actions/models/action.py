@@ -189,7 +189,8 @@ class Action(  # type: ignore[django-manager-missing]
         return super().save_revision(*args, **kwargs)
 
     def commit_attributes(self, attributes: dict[str, typing.Any], user):
-        """Called when the serialized draft contents of attribute values must be persisted to the actual Attribute models
+        """
+        Called when the serialized draft contents of attribute values must be persisted to the actual Attribute models
         when publishing an action from a draft"""
         from actions.attributes import DraftAttributes
         draft_attributes = DraftAttributes.from_revision_content(attributes)
@@ -657,8 +658,8 @@ class Action(  # type: ignore[django-manager-missing]
             self.categories.add(cat)
 
     def set_responsible_parties(self, data: list[ResponsiblePartyDict]):
-        existing_orgs = set((p.organization for p in self.responsible_parties.all()))
-        new_orgs = set(d['organization'] for d in data)
+        existing_orgs = {p.organization for p in self.responsible_parties.all()}
+        new_orgs = {d['organization'] for d in data}
         ActionResponsibleParty.objects.filter(
             action=self, organization__in=(existing_orgs - new_orgs),
         ).delete()
@@ -670,8 +671,8 @@ class Action(  # type: ignore[django-manager-missing]
             )
 
     def set_contact_persons(self, data: list):
-        existing_persons = set((p.person for p in self.contact_persons.all()))
-        new_persons = set(d['person'] for d in data)
+        existing_persons = {p.person for p in self.contact_persons.all()}
+        new_persons = {d['person'] for d in data}
         ActionContactPerson.objects.filter(
             action=self, person__in=(existing_persons - new_persons),
         ).delete()
@@ -807,7 +808,8 @@ class Action(  # type: ignore[django-manager-missing]
         return qs
 
     def get_latest_snapshot(self, report=None):
-        """Return the latest snapshot of this action, optionally restricted to those for the given report.
+        """
+        Return the latest snapshot of this action, optionally restricted to those for the given report.
 
         Raises ActionSnapshot.DoesNotExist if no such snapshot exists.
         """
@@ -874,7 +876,7 @@ class Action(  # type: ignore[django-manager-missing]
         return self.plan.features.moderation_workflow
 
     def get_workflow_progress(self) -> tuple[int, int]:
-        '''
+        """
         Return a numerical digest of where in the moderation workflow the latest available action revision is,
         from 0 to n, including the maximum n as the second element in the tuple
 
@@ -884,7 +886,7 @@ class Action(  # type: ignore[django-manager-missing]
                   with at least one approval
                   (if n == 2, this state does not exist)
         n         there is only the public live version
-        '''
+        """
         workflow = self.get_workflow()
         workflow_tasks = [t.specific for t in workflow.tasks.all()]
         min_progress = 0
@@ -1016,7 +1018,7 @@ class ActionContactPerson(OrderedModel, ModelWithRole):
         indexes = [
             models.Index(fields=['action', 'order']),
         ]
-        unique_together = (('action', 'person',),)
+        unique_together = (('action', 'person'),)
         verbose_name = _('action contact person')
         verbose_name_plural = _('action contact persons')
 
@@ -1177,7 +1179,8 @@ class ActionRelatedModelTransModelMixin():
 
 @reversion.register()
 class ActionTask(ActionRelatedModelTransModelMixin, models.Model):
-    """A task that should be completed during the execution of an action.
+    """
+    A task that should be completed during the execution of an action.
 
     The task will have at least a name and an estimate of the due date.
     """

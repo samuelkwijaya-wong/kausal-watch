@@ -14,7 +14,8 @@ def render_html_label_for_visibility(text_content: str | Promise, public: bool):
 
 
 class FieldLabelRenderer:
-    """This class provides a function which adds an additional label to field labels, specifying the visibility restrictions for the field
+    """
+    This class provides a function which adds an additional label to field labels, specifying the visibility restrictions for the field
     in question to help users see what information will be shown on the public Watch site and which is for internal users only. The feature
     is switched on with a flag in PlanFeatures; if it's not enabled this doesn't modify the passed field label.
 

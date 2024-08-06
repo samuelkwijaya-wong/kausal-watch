@@ -25,16 +25,17 @@ ignore = [
     "D1", "CPY", "Q000", "ANN204", "ERA", "ANN201", "ANN0", "PGH003", "TD0", "FIX002", "DJ001", "S101", "F401",
     "ARG001", "UP031", "G002", "BLE001", "SIM108", "SIM103", "SLF001", "C408", "RET504",
     "TRY003", "EM101", "FIX001", "UP035", "ARG002", "ARG004", "RUF012", "FBT002", "PLR2004",
-    "FBT001", "TID252"
+    "FBT001", "TID252", "RSE102", "PIE790", "D202", "PLR1722", "SIM118", "SIM114",
+    "T201", "C401",
 ]
-unfixable = ["F401"]  # for now
+unfixable = ["F401", ]  # for now
 
 [tool.ruff.lint.isort]
 split-on-trailing-comma = true
 combine-as-imports = true
 
 [tool.ruff.format]
-preview = true
+quote-style = "single"
 
 [tool.isort]
 atomic = true

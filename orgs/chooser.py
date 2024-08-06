@@ -10,7 +10,8 @@ from .models import Organization
 
 
 class OrganizationChooserMixin(ModelChooserMixin):
-    """This chooser is currently intended only for choosing (and creating) top level organizations
+    """
+    This chooser is currently intended only for choosing (and creating) top level organizations
     by superusers creating new plans. That's why it only supports root level organizations
     at the moment.
     """

@@ -64,7 +64,8 @@ class DimensionScope(OrderedModel):
 
 class DatasetSchema(models.Model):
     class TimeResolution(models.TextChoices):
-        """Time resolution of all data points.
+        """
+        Time resolution of all data points.
 
         If a dataset has, e.g., monthly time resolution, then each data point applies to the entire month in which
         the data point's time is.

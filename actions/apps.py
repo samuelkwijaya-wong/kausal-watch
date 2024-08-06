@@ -32,6 +32,7 @@ class CollectionFilter(SimpleListFilter):
     def queryset(self, request, queryset):
         if self.value():
             return queryset.filter(collection=self.value())
+        return None
 
 
 def get_unfiltered_object_list(self):

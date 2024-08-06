@@ -536,15 +536,15 @@ class AttributesSerializerMixin:
         return attribute_operations
 
     def to_attribute_value_input(self, item: Any) ->  Any:
-        '''
+        """
         Format the incoming REST API data to conform
         to the format expected by each actions.attributes.AttributeValue
         subclass as the value parameter of the from_serialized_value method
-        '''
+        """
         return self.to_value_parameter(item)
 
     def to_value_parameter(self, item: Any) -> dict[str, Any]:
-        '''
+        """
         Format the incoming REST API data to conform
         to the format expected by an existing Attribute model
         instance, setting the instance attributes with
@@ -555,7 +555,7 @@ class AttributesSerializerMixin:
         for that attribute type's attribute model instances
         and the corresponding dict values must be compatible
         values for that field.
-        '''
+        """
         raise NotImplementedError
 
 

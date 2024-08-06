@@ -56,14 +56,16 @@ def test_superuser_can_get_permissions_to_delete_person_or_deactivate_user(plan)
     superuser = UserFactory(is_superuser=True)
     person = PersonFactory()
 
-    assert person.user is not None and person.user.pk is not None
+    assert person.user is not None
+    assert person.user.pk is not None
     assert superuser.can_edit_or_delete_person_within_plan(person, plan=plan)
 
 
 def test_plan_admin_can_get_permissions_to_delete_person_or_deactivate_user(plan, plan_admin_user):
     person = PersonFactory()
     assert plan_admin_user.is_general_admin_for_plan(plan)
-    assert person.user is not None and person.user.pk is not None
+    assert person.user is not None
+    assert person.user.pk is not None
     plan.organization = person.organization
     plan.save()
     assert plan_admin_user.can_edit_or_delete_person_within_plan(person, plan=plan)

@@ -12,7 +12,7 @@ from .fixtures import *  # noqa
 pytestmark = pytest.mark.django_db
 
 
-@pytest.fixture
+@pytest.fixture()
 def report_type_with_multiple_reports(plan, report_type_factory, report_factory):
     rt = report_type_factory(plan=plan)
     report_factory(type=rt, name='Report 1')
@@ -21,15 +21,16 @@ def report_type_with_multiple_reports(plan, report_type_factory, report_factory)
     return rt
 
 
-@pytest.fixture
+@pytest.fixture()
 def plan_with_some_actions(plan, action_factory):
-    for _ in range(0, 9):
+    for _ in range(9):
         action_factory(plan=plan)
     return plan
 
 
 def test_report_action_snapshots(plan_with_some_actions, report_type_with_multiple_reports, user):
-    """ This test intentionally creates revisions sequentially
+    """
+    This test intentionally creates revisions sequentially
     to test that the correct revisions / versions get tied to
     the actions when reporting / completing
     """

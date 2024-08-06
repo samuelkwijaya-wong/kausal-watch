@@ -538,9 +538,7 @@ class CreateEditViewOptionalFeaturesMixin:
 
 class HookResponseMixin:
     # Source: wagtail.admin.views.generic.mixins.HookResponseMixin
-    """
-    A mixin for class-based views to run hooks by `hook_name`.
-    """
+    """A mixin for class-based views to run hooks by `hook_name`."""
 
     def run_hook(self, hook_name, *args, **kwargs):
         """

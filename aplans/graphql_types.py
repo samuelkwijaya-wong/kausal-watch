@@ -239,6 +239,7 @@ class WorkflowStateEnum(Enum):
             return _('Approved')
         if self == WorkflowStateEnum.DRAFT:
             return _('Draft')
+        return None
 
 
 WorkflowStateGrapheneEnum = graphene.Enum.from_enum(WorkflowStateEnum, name='WorkflowState')  # type: ignore
