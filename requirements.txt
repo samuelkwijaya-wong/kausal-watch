@@ -305,6 +305,8 @@ promise==2.3
     # via graphene-django
 prompt-toolkit==3.0.43
     # via click-repl
+psutil==6.0.0
+    # via -r requirements.in
 psycopg==3.1.19
     # via -r requirements.in
 psycopg-binary==3.1.19

@@ -79,3 +79,4 @@ django-hijack
 requests>=2.31
 logfmter
 s3cmd
+psutil
