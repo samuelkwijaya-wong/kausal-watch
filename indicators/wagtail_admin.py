@@ -22,6 +22,7 @@ from admin_site.wagtail import (
     AplansEditView,
     AplansModelAdmin,
     AplansTabbedInterface,
+    BuiltInFieldCustomizationAwareEditHandlerMixin,
     CondensedInlinePanel,
     CustomizableBuiltInFieldPanel,
     InitializeFormWithPlanMixin,
@@ -337,7 +338,7 @@ class IndicatorEditView(InitializeFormWithPlanMixin, AplansEditView):
     pass
 
 
-class IndicatorEditHandler(AplansTabbedInterface):
+class IndicatorEditHandler(BuiltInFieldCustomizationAwareEditHandlerMixin, AplansTabbedInterface):
     def get_form_class(self):
         request = ctx_request.get()
         instance = ctx_instance.get()
@@ -373,24 +374,25 @@ class IndicatorAdmin(AplansModelAdmin):
     base_form_class = IndicatorForm
 
     basic_panels = [
-        FieldPanel('name'),
-        FieldPanel('time_resolution'),
-        FieldPanel('updated_values_due_at'),
-        FieldPanel('min_value'),
-        FieldPanel('max_value'),
-        FieldPanel('level'),
-        FieldPanel('reference'),
-        FieldPanel('internal_notes'),
+        CustomizableBuiltInFieldPanel('name'),
+        CustomizableBuiltInFieldPanel('time_resolution'),
+        CustomizableBuiltInFieldPanel('updated_values_due_at'),
+        CustomizableBuiltInFieldPanel('min_value'),
+        CustomizableBuiltInFieldPanel('max_value'),
+        CustomizableBuiltInFieldPanel('level'),
+        CustomizableBuiltInFieldPanel('reference'),
+        CustomizableBuiltInFieldPanel('internal_notes'),
         InlinePanel(
             'related_actions',
             panels=[
+                # TODO: Can we use CustomizableBuiltInFieldPanel here, nested in the inline panel?
                 FieldPanel('action', widget=autocomplete.ModelSelect2(url='action-autocomplete')),
                 FieldPanel('effect_type'),
                 FieldPanel('indicates_action_progress'),
             ],
             heading=_('Indicator for actions'),
         ),
-        FieldPanel('description'),
+        CustomizableBuiltInFieldPanel('description'),
     ]
 
     advanced_panels = []
