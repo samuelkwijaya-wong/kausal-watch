@@ -753,12 +753,12 @@ class ActionAdmin(AplansModelAdmin):
     ]
 
     task_panels = [
-        FieldPanel('name'),
-        FieldPanel('due_at'),
-        FieldPanel('date_format'),
-        FieldPanel('state'),
-        FieldPanel('completed_at'),
-        FieldPanel('comment'),
+        CustomizableBuiltInFieldPanel('name'),
+        CustomizableBuiltInFieldPanel('due_at'),
+        CustomizableBuiltInFieldPanel('date_format'),
+        CustomizableBuiltInFieldPanel('state'),
+        CustomizableBuiltInFieldPanel('completed_at'),
+        CustomizableBuiltInFieldPanel('comment'),
     ]
 
     task_header_from_js = """
