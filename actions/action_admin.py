@@ -43,6 +43,7 @@ from admin_site.wagtail import (
     AplansEditView,
     AplansModelAdmin,
     AplansTabbedInterface,
+    BuiltInFieldCustomizationAwareEditHandlerMixin,
     CondensedInlinePanel,
     CustomizableBuiltInFieldPanel,
     CustomizableBuiltInPlanFilteredFieldPanel,
@@ -471,7 +472,7 @@ class RelatedModelWithRolePanel(MultiFieldPanel):
         return kwargs
 
 
-class ActionEditHandler(AplansTabbedInterface):
+class ActionEditHandler(BuiltInFieldCustomizationAwareEditHandlerMixin, AplansTabbedInterface):
     def __init__(self, *args, draft_attributes: DraftAttributes | None = None, **kwargs):
         super().__init__(*args, **kwargs)
         self.draft_attributes = draft_attributes
@@ -482,8 +483,6 @@ class ActionEditHandler(AplansTabbedInterface):
         return result
 
     def get_form_class(self):
-        from admin_site.models import BuiltInFieldCustomization
-
         request = ctx_request.get()
         instance = ctx_instance.get()
         assert isinstance(instance, Action)
@@ -523,22 +522,7 @@ class ActionEditHandler(AplansTabbedInterface):
             form_class.base_fields['official_name'].disabled = True
             form_class.base_fields['official_name'].required = False
 
-        # Disable / remove built-in fields that are not editable / visible due to customization
-        customizations_qs = BuiltInFieldCustomization.objects.filter(
-            plan=plan,
-            content_type=ContentType.objects.get_for_model(Action),
-        )
-        customizations: dict[str, BuiltInFieldCustomization] = {c.field_name: c for c in customizations_qs}
-        for field_name in list(form_class.base_fields.keys()):
-            customization = customizations.get(field_name)
-            if customization:
-                if not customization.is_instance_visible_for(user, plan, instance):
-                    del form_class.base_fields[field_name]
-                    continue
-                if not customization.is_instance_editable_by(user, plan, instance):
-                    form_class.base_fields[field_name].disabled = True
-                    form_class.base_fields[field_name].required = False
-
+        # TODO: Move this to BuiltInFieldCustomizationAwareEditHandlerMixin or somewhere else so it can be reused?
         if not user.is_general_admin_for_plan(plan):
             for panel in list(self.children):
                 if not isinstance(panel, AdminOnlyPanel):

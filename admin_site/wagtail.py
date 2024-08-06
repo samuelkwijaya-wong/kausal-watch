@@ -40,7 +40,7 @@ from wagtail_modeladmin.views import CreateView, EditView, IndexView
 from wagtailautocomplete.edit_handlers import AutocompletePanel as WagtailAutocompletePanel
 
 from actions.models.plan import Plan
-from aplans.context_vars import set_instance
+from aplans.context_vars import ctx_instance, ctx_request, set_instance
 from aplans.utils import InstancesVisibleForMixin, PlanDefaultsModel, PlanRelatedModel, get_language_from_default_language_field
 from budget.models import DatasetSchema
 from pages.models import ActionListPage
@@ -251,6 +251,40 @@ class CustomizableBuiltInFieldPanel(FieldPanel):
 class CustomizableBuiltInPlanFilteredFieldPanel(FieldPanel):  # Ugh...
     class BoundPanel(BoundCustomizableBuiltInFieldPanelMixin, BoundPlanFilteredFieldPanelMixin, FieldPanel.BoundPanel):
         pass
+
+
+class BuiltInFieldCustomizationAwareEditHandlerMixin:
+    """Mixin to make an edit handler take instances of BuiltInFieldCustomization into account.
+
+    It will delete all fields from the edit handler's form that are not visible to the current user.
+    """
+    def get_form_class(self):
+        from admin_site.models import BuiltInFieldCustomization
+
+        form_class = super().get_form_class()
+
+        request = ctx_request.get()
+        instance = ctx_instance.get()
+        user = request.user
+        plan = request.get_active_admin_plan()
+
+        # Disable / remove built-in fields that are not editable / visible due to customization
+        customizations_qs = BuiltInFieldCustomization.objects.filter(
+            plan=plan,
+            content_type=ContentType.objects.get_for_model(self.model),
+        )
+        customizations: dict[str, BuiltInFieldCustomization] = {c.field_name: c for c in customizations_qs}
+        for field_name in list(form_class.base_fields.keys()):
+            customization = customizations.get(field_name)
+            if customization:
+                if not customization.is_instance_visible_for(user, plan, instance):
+                    del form_class.base_fields[field_name]
+                    continue
+                if not customization.is_instance_editable_by(user, plan, instance):
+                    form_class.base_fields[field_name].disabled = True
+                    form_class.base_fields[field_name].required = False
+
+        return form_class
 
 
 class ButtonHelperProtocol(Protocol):
