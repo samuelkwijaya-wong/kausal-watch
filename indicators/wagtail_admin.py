@@ -385,10 +385,9 @@ class IndicatorAdmin(AplansModelAdmin):
         InlinePanel(
             'related_actions',
             panels=[
-                # TODO: Can we use CustomizableBuiltInFieldPanel here, nested in the inline panel?
-                FieldPanel('action', widget=autocomplete.ModelSelect2(url='action-autocomplete')),
-                FieldPanel('effect_type'),
-                FieldPanel('indicates_action_progress'),
+                CustomizableBuiltInFieldPanel('action', widget=autocomplete.ModelSelect2(url='action-autocomplete')),
+                CustomizableBuiltInFieldPanel('effect_type'),
+                CustomizableBuiltInFieldPanel('indicates_action_progress'),
             ],
             heading=_('Indicator for actions'),
         ),
