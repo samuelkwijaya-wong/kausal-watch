@@ -11,16 +11,20 @@ from wagtail_modeladmin.mixins import ThumbnailMixin
 from wagtail_modeladmin.options import ModelAdmin
 from wagtailgeowidget import __version__ as WAGTAILGEOWIDGET_VERSION
 
-from .forms import NodeForm
-from .models import Organization, OrganizationMetadataAdmin
-from .views import (
-    OrganizationCreateView, OrganizationDeleteView, OrganizationEditView, SetOrganizationRelatedToActivePlanView,
-    CreateChildNodeView,
-)
 from admin_site.wagtail import CondensedInlinePanel, get_translation_tabs
 from aplans.context_vars import ctx_instance, ctx_request
 from aplans.extensions import modeladmin_register
 from people.chooser import PersonChooser
+
+from .forms import NodeForm
+from .models import Organization, OrganizationMetadataAdmin
+from .views import (
+    CreateChildNodeView,
+    OrganizationCreateView,
+    OrganizationDeleteView,
+    OrganizationEditView,
+    SetOrganizationRelatedToActivePlanView,
+)
 
 if int(WAGTAILGEOWIDGET_VERSION.split('.')[0]) >= 7:
     from wagtailgeowidget.panels import GoogleMapsPanel
@@ -42,7 +46,7 @@ class NodeButtonHelper(ButtonHelper):
         classnames = self.prepare_classnames(
             start=self.edit_button_classnames,
             add=kwargs.get('classnames_add'),
-            exclude=kwargs.get('classnames_exclude')
+            exclude=kwargs.get('classnames_exclude'),
         )
         return {
             'classname': classnames,
@@ -56,7 +60,7 @@ class NodeButtonHelper(ButtonHelper):
         classnames = self.prepare_classnames(
             start=self.edit_button_classnames,
             add=kwargs.get('classnames_add'),
-            exclude=kwargs.get('classnames_exclude')
+            exclude=kwargs.get('classnames_exclude'),
         )
         return {
             'classname': classnames,
@@ -71,7 +75,7 @@ class NodeButtonHelper(ButtonHelper):
 
         add_child_button = self.add_child_button(
             pk=getattr(obj, self.opts.pk.attname),
-            **kwargs
+            **kwargs,
         )
         user = self.request.user
         plan = user.get_active_admin_plan()
@@ -128,17 +132,17 @@ class NodeAdmin(ModelAdmin):
         add_child_url = re_path(
             self.url_helper.get_action_url_pattern('add_child'),
             self.add_child_view,
-            name=self.url_helper.get_action_url_name('add_child')
+            name=self.url_helper.get_action_url_name('add_child'),
         )
         include_organization_in_active_plan_url = re_path(
             self.url_helper.get_action_url_pattern('include_organization_in_active_plan'),
             self.include_organization_in_active_plan_view,
-            name=self.url_helper.get_action_url_name('include_organization_in_active_plan')
+            name=self.url_helper.get_action_url_name('include_organization_in_active_plan'),
         )
         exclude_organization_from_active_plan_url = re_path(
             self.url_helper.get_action_url_pattern('exclude_organization_from_active_plan'),
             self.exclude_organization_from_active_plan_view,
-            name=self.url_helper.get_action_url_name('exclude_organization_from_active_plan')
+            name=self.url_helper.get_action_url_name('exclude_organization_from_active_plan'),
         )
         return urls + (
             add_child_url,
@@ -242,7 +246,7 @@ class OrganizationButtonHelper(NodeButtonHelper):
         classnames = self.prepare_classnames(
             start=self.edit_button_classnames,
             add=kwargs.get('classnames_add'),
-            exclude=kwargs.get('classnames_exclude')
+            exclude=kwargs.get('classnames_exclude'),
         )
         return {
             'classname': classnames,
@@ -256,7 +260,7 @@ class OrganizationButtonHelper(NodeButtonHelper):
         classnames = self.prepare_classnames(
             start=self.edit_button_classnames,
             add=kwargs.get('classnames_add'),
-            exclude=kwargs.get('classnames_exclude')
+            exclude=kwargs.get('classnames_exclude'),
         )
         return {
             'classname': classnames,
@@ -276,13 +280,13 @@ class OrganizationButtonHelper(NodeButtonHelper):
             if obj.pk in plan.related_organizations.values_list('pk', flat=True):
                 exclude_organization_from_active_plan_button = self.exclude_organization_from_active_plan_button(
                     pk=getattr(obj, self.opts.pk.attname),
-                    **kwargs
+                    **kwargs,
                 )
                 buttons.append(exclude_organization_from_active_plan_button)
             else:
                 include_organization_in_active_plan_button = self.include_organization_in_active_plan_button(
                     pk=getattr(obj, self.opts.pk.attname),
-                    **kwargs
+                    **kwargs,
                 )
                 buttons.append(include_organization_in_active_plan_button)
 
@@ -308,7 +312,7 @@ class OrganizationAdmin(ThumbnailMixin, NodeAdmin):
     basic_panels = NodeAdmin.panels + [
         FieldPanel(
             # virtual field, needs to be specified in the form
-            'parent', heading=pgettext_lazy('organization', 'Parent')
+            'parent', heading=pgettext_lazy('organization', 'Parent'),
         ),
         FieldPanel('logo'),
         FieldPanel('abbreviation'),

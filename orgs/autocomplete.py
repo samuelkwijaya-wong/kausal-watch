@@ -1,8 +1,8 @@
 from dal import autocomplete
 from django.db.models import Q
 
-from orgs.models import Organization
 from aplans.types import WatchAdminRequest
+from orgs.models import Organization
 
 
 class OrganizationAutocomplete(autocomplete.Select2QuerySetView):
@@ -28,7 +28,7 @@ class OrganizationAutocomplete(autocomplete.Select2QuerySetView):
                 Q(distinct_name__icontains=self.q) |
                 Q(name__icontains=self.q) |
                 Q(internal_abbreviation__icontains=self.q) |
-                Q(abbreviation__icontains=self.q)
+                Q(abbreviation__icontains=self.q),
             )
 
         return qs

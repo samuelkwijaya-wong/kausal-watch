@@ -22,7 +22,7 @@ class NotificationQueue:
     # between the differing templates for each instance of them.
     # In the future, we might want to abstract this from the user and provide a nice interface for getting the data in
     # various ways.
-    items_for_recipient: Dict[NotificationRecipient, Dict[NotificationType, Dict[str | None, List[NotificationQueueItem]]]]
+    items_for_recipient: dict[NotificationRecipient, dict[NotificationType, dict[str | None, list[NotificationQueueItem]]]]
 
     def __init__(self):
         self.items_for_recipient = {}

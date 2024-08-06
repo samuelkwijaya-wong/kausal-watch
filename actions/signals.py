@@ -1,13 +1,15 @@
 import logging
-from anymail.signals import pre_send, post_send
+
+from anymail.signals import post_send, pre_send
 from django.db.models.signals import post_delete, post_save
 from django.dispatch import receiver
-from wagtail.signals import task_submitted, task_cancelled
+from wagtail.signals import task_cancelled, task_submitted
+
+from notifications.models import NotificationSettings
 
 from .mail import ActionModeratorApprovalTaskStateSubmissionEmailNotifier, ActionModeratorCancelTaskStateSubmissionEmailNotifier
 from .models import Action, Category, Plan, PlanFeatures
 from .models.attributes import AttributeType
-from notifications.models import NotificationSettings
 
 logger = logging.getLogger(__name__)
 
@@ -34,7 +36,7 @@ def log_email_send_status(sender, message, status, esp_name, **kwargs):
     for email, recipient_status in status.recipients.items():
         logger.info(
             f"Email send status '{recipient_status.status}' (message ID {recipient_status.message_id}) from {esp_name} for "
-            f"email with subject '{message.subject}' to recipient {email}"
+            f"email with subject '{message.subject}' to recipient {email}",
         )
 
 

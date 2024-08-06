@@ -1,24 +1,33 @@
 from django.conf import settings
 from django.forms import BaseFormSet, Select
+from django.utils import formats
 from django.utils.text import format_lazy
 from django.utils.translation import gettext_lazy as _
-from django.utils import formats
-
+from wagtail import hooks
 from wagtail.admin.panels import (
-    FieldPanel, FieldRowPanel, InlinePanel, MultiFieldPanel, ObjectList
+    FieldPanel,
+    FieldRowPanel,
+    InlinePanel,
+    MultiFieldPanel,
+    ObjectList,
 )
 from wagtail.admin.views.account import BaseSettingsPanel, notifications_tab
-from wagtail_modeladmin.options import modeladmin_register, ModelAdminMenuItem
-from wagtail import hooks
+from wagtail_modeladmin.options import ModelAdminMenuItem, modeladmin_register
+
+from admin_site.wagtail import (
+    AplansAdminModelForm,
+    AplansCreateView,
+    AplansEditView,
+    AplansModelAdmin,
+    AplansTabbedInterface,
+    CondensedInlinePanel,
+    PlanFilteredFieldPanel,
+    SuccessUrlEditPageModelAdminMixin,
+)
+from aplans.context_vars import ctx_request
 
 from .forms import NotificationPreferencesForm
 from .models import BaseTemplate
-from admin_site.wagtail import (
-    AplansModelAdmin, AplansTabbedInterface, CondensedInlinePanel,
-    PlanFilteredFieldPanel, AplansCreateView, AplansEditView, SuccessUrlEditPageModelAdminMixin,
-    AplansAdminModelForm
-)
-from aplans.context_vars import ctx_request
 
 
 class BaseTemplateEditView(SuccessUrlEditPageModelAdminMixin, AplansEditView):
@@ -83,7 +92,7 @@ class BaseTemplateAdmin(AplansModelAdmin):
     block_panels = [
         FieldPanel('content'),
         PlanFilteredFieldPanel('template'),
-        FieldPanel('identifier')
+        FieldPanel('identifier'),
     ]
 
     def get_manually_scheduled_notification_panels(self, send_at_time):
@@ -93,7 +102,7 @@ class BaseTemplateAdmin(AplansModelAdmin):
                 format_lazy(
                     '{msg} {time}.',
                     msg=_("The email message will be sent on the specified day at"),
-                    time=send_at_time
+                    time=send_at_time,
                 )
             )),
             FieldPanel('content'),
@@ -140,22 +149,22 @@ class BaseTemplateAdmin(AplansModelAdmin):
             ObjectList([
                 InlinePanel(
                     'manually_scheduled_notification_templates',
-                    panels=self.get_manually_scheduled_notification_panels(time)
+                    panels=self.get_manually_scheduled_notification_panels(time),
                 )],
                 heading=_('Single notifications')),
             ObjectList([
                 InlinePanel(
                     'templates',
-                    panels=self.templates_panels
+                    panels=self.templates_panels,
                 )],
                 heading=_('Automatic notifications')),
             ObjectList([
                 CondensedInlinePanel(
                     'content_blocks',
-                    panels=self.block_panels
+                    panels=self.block_panels,
                 )],
-                heading=_('Notification contents')
-            )
+                heading=_('Notification contents'),
+            ),
         ])
         handler.base_form_class = BaseTemplateForm
         return handler

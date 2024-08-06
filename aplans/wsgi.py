@@ -8,11 +8,11 @@ https://docs.djangoproject.com/en/2.1/howto/deployment/wsgi/
 """
 
 import os
-from datetime import datetime, UTC
 import typing
-from loguru import logger
+from datetime import UTC, datetime
 
 from django.core.wsgi import get_wsgi_application
+from loguru import logger
 
 if typing.TYPE_CHECKING:
     from django.http.response import HttpResponseBase

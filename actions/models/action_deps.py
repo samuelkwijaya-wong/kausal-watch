@@ -1,24 +1,23 @@
 from __future__ import annotations
-import functools
 
+import functools
 import typing
 from typing import ClassVar, Self, cast
 
+import networkx as nx
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.db.models import Q, ForeignKey
+from django.db.models import ForeignKey, Q
 from django.utils.translation import gettext_lazy as _
 from modelcluster.fields import ParentalKey
 from modeltrans.fields import TranslationField
-
-import networkx as nx
 
 from aplans.types import UserOrAnon
 from aplans.utils import OrderedModel
 
 if typing.TYPE_CHECKING:
-    from .plan import Plan
     from .action import Action
+    from .plan import Plan
 
 
 class ActionDependencyRole(OrderedModel):
@@ -69,18 +68,18 @@ class ActionDependencyRelationshipQuerySet(models.QuerySet['ActionDependencyRela
 
     def for_plan(self, plan: Plan) -> Self:
         return self.filter(
-            Q(preceding__plan=plan) | Q(dependent__plan=plan)
+            Q(preceding__plan=plan) | Q(dependent__plan=plan),
         )
 
 
 class ActionDependencyRelationship(models.Model):
     preceding: ForeignKey['Action'] = ParentalKey(
         'actions.Action', on_delete=models.CASCADE, related_name='dependent_relationships',
-        verbose_name=_("Preceding action")
+        verbose_name=_("Preceding action"),
     )
     dependent = ForeignKey(
         'actions.Action', on_delete=models.CASCADE, related_name='preceding_relationships',
-        verbose_name=_("Dependent action")
+        verbose_name=_("Dependent action"),
     )
 
     objects = ActionDependencyRelationshipQuerySet.as_manager()
@@ -91,7 +90,7 @@ class ActionDependencyRelationship(models.Model):
 
     class Meta:
         constraints = [
-            models.UniqueConstraint(fields=['preceding', 'dependent'], name='unique_pairs') # , nulls_distinct=False)  # type: ignore[call-overload]
+            models.UniqueConstraint(fields=['preceding', 'dependent'], name='unique_pairs'), # , nulls_distinct=False)  # type: ignore[call-overload]
         ]
 
     @classmethod

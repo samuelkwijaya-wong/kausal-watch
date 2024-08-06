@@ -9,7 +9,8 @@ from django.utils.translation import gettext as _
 from django.views.generic import TemplateView
 from wagtail.admin import messages
 from wagtail.admin.views.generic.base import (
-    BaseObjectMixin, WagtailAdminTemplateMixin
+    BaseObjectMixin,
+    WagtailAdminTemplateMixin,
 )
 from wagtail.admin.views.generic.permissions import PermissionCheckedMixin
 
@@ -23,7 +24,7 @@ class SetUserFeedbackProcessedView(
     BaseObjectMixin,
     PermissionCheckedMixin,
     WagtailAdminTemplateMixin,
-    TemplateView
+    TemplateView,
 ):
     model = UserFeedback
     permission_policy: UserFeedbackPermissionPolicy

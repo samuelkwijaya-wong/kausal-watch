@@ -1,13 +1,17 @@
-from actions.models.plan import PlanQuerySet
 import graphene
 import graphene_django_optimizer as gql_optimizer
-from aplans.graphql_helpers import (
-    AdminButtonsMixin, CreateModelInstanceMutation, DeleteModelInstanceMutation, UpdateModelInstanceMutation,
-)
-from aplans.graphql_types import AuthenticatedUserNode, DjangoNode, GQLInfo, register_django_node
 from graphene_django.forms.mutation import DjangoModelFormMutation
 
 from actions.models import Plan
+from actions.models.plan import PlanQuerySet
+from aplans import graphql_gis  # noqa
+from aplans.graphql_helpers import (
+    AdminButtonsMixin,
+    CreateModelInstanceMutation,
+    DeleteModelInstanceMutation,
+    UpdateModelInstanceMutation,
+)
+from aplans.graphql_types import AuthenticatedUserNode, DjangoNode, GQLInfo, register_django_node
 from aplans.utils import public_fields
 from orgs.forms import NodeForm
 from orgs.models import Organization, OrganizationClass
@@ -35,12 +39,12 @@ class OrganizationNode(AdminButtonsMixin, DjangoNode):
     action_count = graphene.Int(description='Number of actions this organization is responsible for', required=True)
     contact_person_count = graphene.Int(
         description='Number of contact persons that are associated with this organization',
-        required=True
+        required=True,
     )
     parent = graphene.Field(lambda: OrganizationNode, required=False)
     logo = graphene.Field('images.schema.ImageNode', parent_fallback=graphene.Boolean(default_value=False), required=False)
     plans_with_action_responsibilities = graphene.List(
-        graphene.NonNull('actions.schema.PlanNode'), except_plan=graphene.ID(required=False), required=True
+        graphene.NonNull('actions.schema.PlanNode'), except_plan=graphene.ID(required=False), required=True,
     )
 
     @staticmethod
@@ -69,14 +73,14 @@ class OrganizationNode(AdminButtonsMixin, DjangoNode):
         return getattr(parent, 'contact_person_count', 0)
 
     @gql_optimizer.resolver_hints(
-        only=('path', 'depth')
+        only=('path', 'depth'),
     )
     def resolve_parent(parent: Organization, info):
         return parent.get_parent()
 
     @gql_optimizer.resolver_hints(
         only=('logo',),
-        select_related=('logo',)
+        select_related=('logo',),
     )
     def resolve_logo(self: Organization, info: GQLInfo, parent_fallback=False):
         if self.logo is not None:
@@ -92,10 +96,10 @@ class OrganizationNode(AdminButtonsMixin, DjangoNode):
 
     @staticmethod
     def resolve_plans_with_action_responsibilities(
-        root: Organization, info: GQLInfo, except_plan: str | None = None
+        root: Organization, info: GQLInfo, except_plan: str | None = None,
     ):
         qs: PlanQuerySet = Plan.objects.filter(
-            id__in=root.responsible_for_actions.values_list('plan')
+            id__in=root.responsible_for_actions.values_list('plan'),
         )
         qs = qs.live()
         if except_plan:

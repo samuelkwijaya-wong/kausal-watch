@@ -1,27 +1,28 @@
 from __future__ import annotations
+
 import abc
-from django.contrib.auth.models import AnonymousUser
-import humanize
-import libvoikko  # type: ignore
 import logging
 import random
 import re
-from typing import Generic, Iterable, List, Protocol, Self, Sequence, TYPE_CHECKING, TypeVar
-from modelcluster.forms import BaseChildFormSet
-from modeltrans.fields import TranslationField
-
-import sentry_sdk
 from datetime import datetime, timedelta
+from enum import Enum
+from typing import TYPE_CHECKING, Generic, Iterable, List, Protocol, Self, Sequence, TypeVar
+
+import html2text
+import humanize
+import libvoikko  # type: ignore
+import sentry_sdk
 from django import forms
 from django.conf import settings
+from django.contrib.auth.models import AnonymousUser
 from django.contrib.postgres.fields import ArrayField
 from django.core import checks
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
 from django.db import models
 from django.utils.translation import get_language, gettext_lazy as _
-from enum import Enum
-import html2text
+from modelcluster.forms import BaseChildFormSet
+from modeltrans.fields import TranslationField
 from modeltrans.translator import get_i18n_field
 from modeltrans.utils import get_instance_field_value
 from tinycss2.color3 import parse_color  # type: ignore
@@ -99,14 +100,14 @@ def underscore_to_camelcase(value: str) -> str:
 
 
 class HasPublicFields(Protocol):
-    public_fields: List[str]
+    public_fields: list[str]
 
 
 def public_fields(
     model: HasPublicFields,
     add_fields: Iterable[str] | None = None,
-    remove_fields: Iterable[str] | None = None
-) -> List[str]:
+    remove_fields: Iterable[str] | None = None,
+) -> list[str]:
     fields = list(model.public_fields)
     if remove_fields is not None:
         fields = [f for f in fields if f not in remove_fields]
@@ -162,6 +163,7 @@ class IdentifierField(models.CharField):
 
 class OrderedModel(models.Model):
     """Like wagtailorderable.models.Orderable, but with additional functionality in filter_siblings()."""
+
     order = models.PositiveIntegerField(default=0, editable=True, verbose_name=_('order'))
     sort_order_field = 'order'
     order_on_create: int | None
@@ -259,6 +261,7 @@ class PlanDefaultsModel:
     must be set when creating new instances
     in the admin.
     '''
+
     def initialize_plan_defaults(self, plan: Plan):
         raise NotImplementedError()
 
@@ -315,6 +318,7 @@ class InstancesEditableByMixin(models.Model):
     For example, action attribute types and built-in field customizations are action-specific, whereas category types
     and category attribute types are not.
     """
+
     class EditableBy(models.TextChoices):
         AUTHENTICATED = 'authenticated', _('Authenticated users')  # practically you also need access to the edit page
         CONTACT_PERSONS = 'contact_persons', _('Contact persons')  # regardless of role; plan admins also can edit
@@ -384,6 +388,7 @@ class InstancesVisibleForMixin(models.Model):
     For example, action attribute types and built-in field customizations are action-specific, whereas category types
     and category attribute types are not.
     """
+
     class VisibleFor(models.TextChoices):
         PUBLIC = 'public', _('Public')
         AUTHENTICATED = 'authenticated', _('Authenticated users')
@@ -537,7 +542,7 @@ def get_default_language_lowercase():
 
 def get_language_from_default_language_field(
         instance: models.Model,
-        i18n_field: TranslationField | None = None
+        i18n_field: TranslationField | None = None,
 ):
     """Return the primary language from the default language field"""
 
@@ -576,10 +581,10 @@ class ModelWithPrimaryLanguage(models.Model):
 
 class ModificationTracking(models.Model):
     updated_at = models.DateTimeField(
-        auto_now=True, editable=False, verbose_name=_('updated at')
+        auto_now=True, editable=False, verbose_name=_('updated at'),
     )
     created_at = models.DateTimeField(
-        auto_now_add=True, editable=False, verbose_name=_('created at')
+        auto_now_add=True, editable=False, verbose_name=_('created at'),
     )
     updated_by = models.ForeignKey(
         'users.User', blank=True, null=True, on_delete=models.SET_NULL,

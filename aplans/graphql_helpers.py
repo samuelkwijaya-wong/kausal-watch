@@ -1,4 +1,5 @@
 from typing import Type
+
 import graphene
 from django.db.models import Model
 from django.utils.module_loading import import_string
@@ -7,8 +8,9 @@ from graphql import GraphQLResolveInfo
 from graphql.error import GraphQLError
 from graphql.utilities.ast_to_dict import ast_to_dict
 
-from .graphql_types import AdminButton, AuthenticatedUserNode, GQLInfo
 from admin_site.wagtail import AplansModelAdmin, PlanRelatedModelAdminPermissionHelper
+
+from .graphql_types import AdminButton, AuthenticatedUserNode, GQLInfo
 
 
 def collect_fields(node, fragments):
@@ -31,7 +33,7 @@ def collect_fields(node, fragments):
         for leaf in node['selection_set']['selections']:
             if leaf['kind'].lower() == 'field':
                 field.update({
-                    leaf['name']['value']: collect_fields(leaf, fragments)
+                    leaf['name']['value']: collect_fields(leaf, fragments),
                 })
             elif leaf['kind'].replace('_', '').lower() == 'fragmentspread':
                 field.update(collect_fields(fragments[leaf['name']['value']],
@@ -81,7 +83,7 @@ class CreateModelInstanceMutation(DjangoModelFormMutation, AuthenticatedUserNode
         abstract = True
 
     @classmethod
-    def __init_subclass_with_meta__(cls, *args, **kwargs):
+    def __init_subclass_with_meta__(cls, *args, **kwargs) -> None:
         # Exclude `id`, otherwise we could change an existing instance by specifying an ID
         kwargs['exclude_fields'] = ['id']
         super().__init_subclass_with_meta__(*args, **kwargs)
@@ -107,7 +109,7 @@ class DeleteModelInstanceMutation(graphene.Mutation, AuthenticatedUserNode):
     ok = graphene.Boolean()
 
     @classmethod
-    def __init_subclass_with_meta__(cls, *args, **kwargs):
+    def __init_subclass_with_meta__(cls, *args, **kwargs) -> None:
         cls.model = kwargs.pop('model')
         super().__init_subclass_with_meta__(*args, **kwargs)
 
@@ -123,7 +125,7 @@ class AdminButtonsMixin:
 
     @staticmethod
     def resolve_admin_buttons(root: Model, info: GQLInfo):
-        ModelAdmin: Type[AplansModelAdmin] = import_string(root.MODEL_ADMIN_CLASS)  # type: ignore
+        ModelAdmin: type[AplansModelAdmin] = import_string(root.MODEL_ADMIN_CLASS)  # type: ignore
 
         if not info.context.user.is_staff:
             return []

@@ -1,13 +1,17 @@
 from __future__ import annotations
 
-import graphene
-import graphene_django_optimizer as gql_optimizer
 import logging
-import sentry_sdk
 import typing
 import uuid
+from itertools import chain
+from typing import Generic, Iterable, Optional, Protocol, TypeVar
+from urllib.parse import urlparse
+
+import graphene
+import graphene_django_optimizer as gql_optimizer
+import sentry_sdk
 from django.contrib.contenttypes.models import ContentType
-from django.db.models import Q, Prefetch, prefetch_related_objects
+from django.db.models import Prefetch, Q, prefetch_related_objects
 from django.forms import ModelForm
 from django.utils.translation import get_language
 from graphene_django import DjangoObjectType
@@ -15,53 +19,74 @@ from graphene_django.converter import convert_django_field_with_choices
 from graphql.error import GraphQLError
 from grapple.registry import registry as grapple_registry
 from grapple.types.pages import PageInterface
-from itertools import chain
-from typing import Generic, Iterable, Optional, Protocol, TypeVar
-from urllib.parse import urlparse
 from wagtail.models import Revision, WorkflowState
 from wagtail.rich_text import RichText
 
-
 from actions.action_admin import ActionAdmin
-from actions.models import (
-    Action, ActionContactPerson, ActionImpact,
-    ActionImplementationPhase, ActionLink, ActionResponsibleParty,
-    ActionSchedule, ActionStatus, ActionStatusUpdate, ActionTask,
-    Category, CategoryLevel, AttributeCategoryChoice, AttributeChoice as AttributeChoiceModel,
-    AttributeChoiceWithText, AttributeNumericValue, AttributeText, AttributeRichText,
-    AttributeType, AttributeTypeChoiceOption, CategoryType,
-    ImpactGroup, ImpactGroupAction, MonitoringQualityPoint, Plan,
-    PlanDomain, PublicationStatus, PlanFeatures, Scenario, CommonCategory,
-    CommonCategoryType
-)
 from actions.action_status_summary import (
-    ActionStatusSummaryIdentifier, ActionTimelinessIdentifier, Sentiment as SentimentEnum, Comparison
+    ActionStatusSummaryIdentifier,
+    ActionTimelinessIdentifier,
+    Comparison,
+    Sentiment as SentimentEnum,
+)
+from actions.models import (
+    Action,
+    ActionContactPerson,
+    ActionImpact,
+    ActionImplementationPhase,
+    ActionLink,
+    ActionResponsibleParty,
+    ActionSchedule,
+    ActionStatus,
+    ActionStatusUpdate,
+    ActionTask,
+    AttributeCategoryChoice,
+    AttributeChoice as AttributeChoiceModel,
+    AttributeChoiceWithText,
+    AttributeNumericValue,
+    AttributeRichText,
+    AttributeText,
+    AttributeType,
+    AttributeTypeChoiceOption,
+    Category,
+    CategoryLevel,
+    CategoryType,
+    CommonCategory,
+    CommonCategoryType,
+    ImpactGroup,
+    ImpactGroupAction,
+    MonitoringQualityPoint,
+    Plan,
+    PlanDomain,
+    PlanFeatures,
+    PublicationStatus,
+    Scenario,
 )
 from actions.models.action import ActionQuerySet
 from actions.models.action_deps import ActionDependencyRelationship, ActionDependencyRole
 from actions.models.attributes import ModelWithAttributes
-from budget.models import Dataset
-from orgs.models import Organization
-from people.models import Person
-from users.models import User
+from aplans.cache import SerializedDictWithRelatedObjectCache
 from aplans.graphql_helpers import AdminButtonsMixin, UpdateModelInstanceMutation
 from aplans.graphql_types import (
     DjangoNode,
     GQLInfo,
-    WorkflowStateEnum,
     WorkflowStateDescription,
+    WorkflowStateEnum,
     get_plan_from_context,
     order_queryset,
     register_django_node,
     register_graphene_node,
-    set_active_plan
+    set_active_plan,
 )
-from aplans.cache import SerializedDictWithRelatedObjectCache
 from aplans.types import is_authenticated
 from aplans.utils import hyphenate_fi, public_fields
+from budget.models import Dataset
+from orgs.models import Organization
 from pages import schema as pages_schema
-from pages.models import AplansPage, CategoryPage, Page, ActionListPage
+from pages.models import ActionListPage, AplansPage, CategoryPage, Page
+from people.models import Person
 from search.backends import get_search_backend
+from users.models import User
 
 if typing.TYPE_CHECKING:
     from actions.models.attributes import Attribute
@@ -85,7 +110,7 @@ class PlanDomainNode(DjangoNode):
             'google_site_verification_tag',
             'matomo_analytics_url',
             'status',
-            'status_message'
+            'status_message',
         )
 
 
@@ -108,6 +133,7 @@ class PlanFeaturesNode(DjangoNode):
 
 def get_action_list_page_node():
     from grapple.registry import registry
+
     from pages.models import ActionListPage
 
     return registry.pages[ActionListPage]
@@ -178,7 +204,7 @@ class PlanNode(DjangoNode):
         graphene.NonNull('actions.schema.CategoryTypeNode'),
         required=True,
         usable_for_indicators=graphene.Boolean(),
-        usable_for_actions=graphene.Boolean()
+        usable_for_actions=graphene.Boolean(),
     )
     actions = graphene.List(
         graphene.NonNull('actions.schema.ActionNode'), identifier=graphene.ID(), id=graphene.ID(),
@@ -186,7 +212,7 @@ class PlanNode(DjangoNode):
         first=graphene.Int(required=False), restrict_to_publicly_visible=graphene.Boolean(default_value=True), required=True,
     )
     action_attribute_types = graphene.List(
-        graphene.NonNull('actions.schema.AttributeTypeNode', required=True), required=True
+        graphene.NonNull('actions.schema.AttributeTypeNode', required=True), required=True,
     )
     impact_groups = graphene.List('actions.schema.ImpactGroupNode', first=graphene.Int(), required=True)
     image = graphene.Field('images.schema.ImageNode', required=False)
@@ -223,10 +249,10 @@ class PlanNode(DjangoNode):
         required=True,
     )
     action_status_summaries = graphene.List(
-        graphene.NonNull('actions.schema.ActionStatusSummaryNode'), required=True
+        graphene.NonNull('actions.schema.ActionStatusSummaryNode'), required=True,
     )
     action_timeliness_classes = graphene.List(
-        graphene.NonNull('actions.schema.ActionTimelinessNode'), required=True
+        graphene.NonNull('actions.schema.ActionTimelinessNode'), required=True,
     )
 
     has_indicator_relationships = graphene.Boolean()
@@ -289,7 +315,7 @@ class PlanNode(DjangoNode):
         return root_page.get_descendants().live().public().type(ActionListPage).first().specific
 
     @staticmethod
-    def resolve_view_url(root: Plan, info, client_url: Optional[str] = None):
+    def resolve_view_url(root: Plan, info, client_url: str | None = None):
         if client_url:
             try:
                 urlparse(client_url)
@@ -318,7 +344,7 @@ class PlanNode(DjangoNode):
             only_mine=False,
             restrict_to_publicly_visible=True,
             responsible_organization=None,
-            first: int | None = None
+            first: int | None = None,
     ):
         user = info.context.user
         qs = root.actions.get_queryset()
@@ -362,14 +388,14 @@ class PlanNode(DjangoNode):
 
     @staticmethod
     @gql_optimizer.resolver_hints(
-        select_related=('features',)
+        select_related=('features',),
     )
     def resolve_hide_action_lead_paragraph(root: Plan, info):
         return not root.features.has_action_lead_paragraph
 
     @staticmethod
     @gql_optimizer.resolver_hints(
-        select_related=('features',)
+        select_related=('features',),
     )
     def resolve_hide_action_official_name(root: Plan, info):
         return not root.features.has_action_official_name
@@ -384,7 +410,7 @@ class PlanNode(DjangoNode):
     @staticmethod
     @gql_optimizer.resolver_hints(
         select_related=('image',),
-        only=('image',)
+        only=('image',),
     )
     def resolve_image(root: Plan, info):
         return root.image
@@ -392,7 +418,7 @@ class PlanNode(DjangoNode):
     @staticmethod
     @gql_optimizer.resolver_hints(
         select_related=('primary_action_classification',),
-        only=('primary_action_classification',)
+        only=('primary_action_classification',),
     )
     def resolve_primary_action_classification(root: Plan, info):
         return root.primary_action_classification
@@ -400,7 +426,7 @@ class PlanNode(DjangoNode):
     @staticmethod
     @gql_optimizer.resolver_hints(
         select_related=('secondary_action_classification',),
-        only=('secondary_action_classification',)
+        only=('secondary_action_classification',),
     )
     def resolve_secondary_action_classification(root: Plan, info):
         return root.secondary_action_classification
@@ -432,7 +458,7 @@ class PlanNode(DjangoNode):
         fields = public_fields(Plan)
 
 
-AttributeObject = typing.Union[
+type AttributeObject = typing.Union[
     AttributeCategoryChoice, AttributeChoiceModel, AttributeChoiceWithText,
     AttributeText, AttributeRichText, AttributeNumericValue,
 ]
@@ -478,7 +504,7 @@ class AttributeInterface(graphene.Interface):
 class AttributeChoice(graphene.ObjectType):
     id = graphene.ID(required=True)
     choice = graphene.Field(
-        'actions.schema.AttributeTypeChoiceOptionNode', required=False
+        'actions.schema.AttributeTypeChoiceOptionNode', required=False,
     )
     text = graphene.String(required=False)
 
@@ -583,7 +609,7 @@ class CategoryTypeNode(ResolveShortDescriptionFromLeadParagraphShim, DjangoNode)
         graphene.NonNull('actions.schema.CategoryNode'),
         only_root=graphene.Boolean(default_value=False),
         only_with_actions=graphene.Boolean(default_value=False),
-        required=True
+        required=True,
     )
 
     class Meta:
@@ -641,7 +667,7 @@ def get_translated_category_page(info, **kwargs) -> Prefetch:
 
 def prefetch_workflow_states(info, **_kwargs) -> Prefetch:
     workflow_states = WorkflowState.objects.active().select_related(
-        "current_task_state__task"
+        "current_task_state__task",
     )
     return Prefetch(
         "_workflow_states",
@@ -658,7 +684,7 @@ class AttributesMixin:
         prefetch_related=[
             *chain(*[(f'{rel}__type', f'{rel}__content_object') for rel in ModelWithAttributes.ATTRIBUTE_RELATIONS]),
             *['choice_attributes__choice__type', 'choice_with_text_attributes__choice__type'],
-        ]
+        ],
     )
     def resolve_attributes(root: Category | Action, info: GQLInfo, id: str | None = None):
         request = info.context
@@ -739,7 +765,7 @@ class CategoryNode(ResolveShortDescriptionFromLeadParagraphShim, AttributesMixin
 
     @staticmethod
     @gql_optimizer.resolver_hints(
-        prefetch_related=get_translated_category_page
+        prefetch_related=get_translated_category_page,
     )
     def resolve_category_page(root: Category, info):
         # If we have prefetched the page in the right locale, use that
@@ -758,7 +784,7 @@ class CategoryNode(ResolveShortDescriptionFromLeadParagraphShim, AttributesMixin
     @gql_optimizer.resolver_hints(
         prefetch_related=('icons',),
         select_related=('common',),
-        only=('common',)
+        only=('common',),
     )
     def resolve_icon_image(root: Category, info):
         icon = root.get_icon(get_language())
@@ -770,7 +796,7 @@ class CategoryNode(ResolveShortDescriptionFromLeadParagraphShim, AttributesMixin
     @gql_optimizer.resolver_hints(
         prefetch_related=('icons',),
         select_related=('common',),
-        only=('common',)
+        only=('common',),
     )
     def resolve_icon_svg_url(root: Category, info):
         icon = root.get_icon(get_language())
@@ -797,7 +823,7 @@ class CategoryNode(ResolveShortDescriptionFromLeadParagraphShim, AttributesMixin
         category_content_type = ContentType.objects.get_for_model(Category)
         return Dataset.objects.filter(
             scope_content_type=category_content_type,
-            scope_id=root.id
+            scope_id=root.id,
         )
 
     class Meta:
@@ -891,7 +917,7 @@ class ActionStatusSummaryNode(graphene.ObjectType):
     label = graphene.String(required=True)
     color = graphene.String(
         required=True,
-        deprecation_reason='This field is an internal implementation detail; most often you should use action.color'
+        deprecation_reason='This field is an internal implementation detail; most often you should use action.color',
     )
     is_active = graphene.Boolean(required=True)
     is_completed = graphene.Boolean(required=True)
@@ -928,7 +954,7 @@ class ActionDependencyRelationshipNode(DjangoNode):
         fields = ActionDependencyRelationship.public_fields
 
 
-def _get_visible_action(root, field_name, user: Optional[User]):
+def _get_visible_action(root, field_name, user: User | None):
     action_id = getattr(root, f'{field_name}_id')
     if action_id is None:
         return None
@@ -939,7 +965,7 @@ def _get_visible_action(root, field_name, user: Optional[User]):
     return retval
 
 
-def _get_visible_actions(root, field_name, user: Optional[User]):
+def _get_visible_actions(root, field_name, user: User | None):
     actions = getattr(root, field_name)
     return actions.visible_for_user(user)
 
@@ -971,7 +997,7 @@ class WorkflowInfoNode(graphene.ObjectType):
             "The internal Wagtail workflow state of the action. "
             "The current action data returned does not necessarily match this "
             "workflowstate."
-        )
+        ),
     )
     matching_version = graphene.Field(
         WorkflowStateDescription,
@@ -979,7 +1005,7 @@ class WorkflowInfoNode(graphene.ObjectType):
             "The actual version of the action returned "
             "when fulfilling this query, based on both the requested workflow directive value used when querying "
             "an action, and the available versions of the action itself."
-        )
+        ),
     )
 
     @staticmethod
@@ -999,7 +1025,7 @@ class WorkflowInfoNode(graphene.ObjectType):
         def make_result(match: WorkflowStateEnum | None) -> dict[str, str]:
             return dict(
                 id=match.name,
-                description=WorkflowStateEnum(match).description
+                description=WorkflowStateEnum(match).description,
             )
         return make_result(getattr(root, '_actual_workflow_state', WorkflowStateEnum.PUBLISHED))
 
@@ -1024,7 +1050,7 @@ class ActionNode(AdminButtonsMixin, AttributesMixin, DjangoNode):
     timeliness = graphene.Field('actions.schema.ActionTimelinessNode', required=True)
     color = graphene.String(required=False)
     all_dependency_relationships = graphene.List(
-        graphene.NonNull('actions.schema.ActionDependencyRelationshipNode'), required=True
+        graphene.NonNull('actions.schema.ActionDependencyRelationshipNode'), required=True,
     )
     workflow_status = graphene.Field('actions.schema.WorkflowInfoNode')
 
@@ -1108,9 +1134,9 @@ class ActionNode(AdminButtonsMixin, AttributesMixin, DjangoNode):
 
     @staticmethod
     @gql_optimizer.resolver_hints(
-        model_field=('plan', 'identifier')
+        model_field=('plan', 'identifier'),
     )
-    def resolve_view_url(root: Action, info, client_url: Optional[str] = None):
+    def resolve_view_url(root: Action, info, client_url: str | None = None):
         return root.get_view_url(client_url=client_url)
 
     @staticmethod
@@ -1145,7 +1171,7 @@ class ActionNode(AdminButtonsMixin, AttributesMixin, DjangoNode):
     @staticmethod
     @gql_optimizer.resolver_hints(
         model_field='contact_persons',
-        prefetch_related='contact_persons__person'
+        prefetch_related='contact_persons__person',
     )
     def resolve_contact_persons(root: Action, info: GQLInfo, show_all_contact_persons: bool):
         plan: Plan = get_plan_from_context(info)
@@ -1193,7 +1219,7 @@ class ActionNode(AdminButtonsMixin, AttributesMixin, DjangoNode):
     @gql_optimizer.resolver_hints(
         select_related=('latest_revision','plan'),
         only=('latest_revision', 'has_unpublished_changes', 'plan', 'plan__features__moderation_workflow'),
-        prefetch_related=prefetch_workflow_states
+        prefetch_related=prefetch_workflow_states,
     )
     def resolve_workflow_status(root: Action, info) -> WorkflowState | None:
         user = info.context.user
@@ -1217,7 +1243,7 @@ class ActionNode(AdminButtonsMixin, AttributesMixin, DjangoNode):
         action_content_type = ContentType.objects.get_for_model(Action)
         return Dataset.objects.filter(
             scope_content_type=action_content_type,
-            scope_id=root.id
+            scope_id=root.id,
         )
 
 class ActionScheduleNode(DjangoNode):
@@ -1278,7 +1304,7 @@ class ActionStatusUpdateNode(DjangoNode):
     class Meta:
         model = ActionStatusUpdate
         fields = [
-            'id', 'action', 'title', 'date', 'author', 'content'
+            'id', 'action', 'title', 'date', 'author', 'content',
         ]
 
 
@@ -1329,7 +1355,7 @@ def _resolve_published_action(
         obj_id: int | None,
         identifier: str | None,
         plan_identifier: str | None,
-        info
+        info,
 ) -> Action | None:
     qs = Action.objects.get_queryset().visible_for_user(info.context.user).all()
     if obj_id:
@@ -1395,16 +1421,16 @@ class Query:
         category=graphene.ID(), order_by=graphene.String(),
     )
     plan_categories = graphene.List(
-        CategoryNode, plan=graphene.ID(required=True), category_type=graphene.ID()
+        CategoryNode, plan=graphene.ID(required=True), category_type=graphene.ID(),
     )
 
     category = graphene.Field(
         CategoryNode, plan=graphene.ID(required=True), category_type=graphene.ID(required=True),
-        external_identifier=graphene.ID(required=True)
+        external_identifier=graphene.ID(required=True),
     )
 
     workflow_states = graphene.List(
-        WorkflowStateDescription, plan=graphene.ID(required=False)
+        WorkflowStateDescription, plan=graphene.ID(required=False),
     )
 
     @staticmethod
@@ -1477,7 +1503,7 @@ class Query:
             plan: Plan,
             desired_workflow_state: WorkflowStateEnum,
             action_queryset: ActionQuerySet,
-            cache: PlanSpecificCache
+            cache: PlanSpecificCache,
     ):
         ct = ContentType.objects.get_for_model(Action)
         revision_pks = []
@@ -1528,9 +1554,9 @@ class Query:
                 first,
                 order_by,
                 info.context.user,
-                restrict_to_publicly_visible=restrict_to_publicly_visible
+                restrict_to_publicly_visible=restrict_to_publicly_visible,
             ),
-            info
+            info,
         )
         user = info.context.user
         cache = info.context.watch_cache.for_plan(plan_obj)
@@ -1539,8 +1565,8 @@ class Query:
         cache.populate_organizations(
             Organization.objects.filter(
                 Q(responsible_actions__action__plan=plan_obj) |
-                Q(people__in=persons_queryset)
-            )
+                Q(people__in=persons_queryset),
+            ),
         )
         if not is_authenticated(user):
             workflow_state = WorkflowStateEnum.PUBLISHED
@@ -1581,7 +1607,7 @@ class Query:
             info: GQLInfo,
             id: int | None = None,
             identifier: str | None = None,
-            plan: str | None = None
+            plan: str | None = None,
     ) -> Action | None:
 
         workflow_state = info.context.watch_cache.query_workflow_state
@@ -1613,7 +1639,7 @@ class Query:
         if not plan_obj:
             return None
         return Category.objects.get(
-            type__plan=plan_obj, type__identifier=category_type, external_identifier=external_identifier
+            type__plan=plan_obj, type__identifier=category_type, external_identifier=external_identifier,
         )
 
 

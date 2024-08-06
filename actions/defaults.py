@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from django.utils.translation import gettext_lazy as _
 
 DEFAULT_ACTION_STATUSES = [
@@ -27,5 +29,5 @@ DEFAULT_ACTION_IMPLEMENTATION_PHASES = [
     }, {
         'identifier': 'completed',
         'name': _("Completed"),
-    }
+    },
 ]

@@ -3,32 +3,30 @@ import importlib
 import json
 import os
 from typing import Any
-from loguru import logger
-
-from django.conf import settings
-from django.utils import translation
-from django.core.cache import cache
 
 import sentry_sdk
-from sentry_sdk import tracing as sentry_tracing
-from actions.models import Plan
+from django.conf import settings
+from django.core.cache import cache
 from django.core.exceptions import ValidationError
+from django.utils import translation
 from graphene_django.views import GraphQLView
 from graphql import DirectiveNode, ExecutionResult, GraphQLResolveInfo
-from graphql.execution import ExecutionContext
 from graphql.error import GraphQLError
-from graphql.language.ast import VariableNode, StringValueNode
+from graphql.execution import ExecutionContext
+from graphql.language.ast import StringValueNode, VariableNode
+from loguru import logger
 from rich.console import Console
 from rich.syntax import Syntax
+from sentry_sdk import tracing as sentry_tracing
+
+from actions.models import Plan
 from actions.models.plan import PlanQuerySet
 from aplans.settings import LOG_SQL_QUERIES
-
 from aplans.types import WatchAPIRequest
+from users.models import User
 
 from .graphql_helpers import GraphQLAuthFailedError, GraphQLAuthRequiredError
 from .graphql_types import AuthenticatedUserNode, WorkflowStateEnum
-from users.models import User
-
 
 SUPPORTED_LANGUAGES = {x[0].lower() for x in settings.LANGUAGES}
 
@@ -213,7 +211,7 @@ class SentryGraphQLView(GraphQLView):
         return cache.set(key, result, timeout=600)
 
     def caching_execute_graphql_request(
-            self, span, request: WatchAPIRequest, data, query, variables, operation_name, *args, **kwargs
+            self, span, request: WatchAPIRequest, data, query, variables, operation_name, *args, **kwargs,
         ) -> ExecutionResult:
         key = self.get_cache_key(request, data, query, variables)
         span.set_tag('cache_key', key)
@@ -241,7 +239,7 @@ class SentryGraphQLView(GraphQLView):
         if variables:
             console.print('# Variables:')
             console.print(
-                json.dumps(variables, indent=4, ensure_ascii=False)
+                json.dumps(variables, indent=4, ensure_ascii=False),
             )
 
     def execute_graphql_request(self, request: WatchAPIRequest, data, query, variables, operation_name, *args, **kwargs):
@@ -285,7 +283,7 @@ class SentryGraphQLView(GraphQLView):
                     result = super().execute_graphql_request(request, data, query, variables, operation_name, *args, **kwargs)
                 else:
                     result = self.caching_execute_graphql_request(
-                        span, request, data, query, variables, operation_name, *args, **kwargs
+                        span, request, data, query, variables, operation_name, *args, **kwargs,
                     )
             # If 'invalid' is set, it's a bad request
             if result and result.errors:
@@ -298,7 +296,7 @@ class SentryGraphQLView(GraphQLView):
                         oe = err.original_error
                         if oe:
                             tb = Traceback.from_exception(
-                                type(oe), oe, traceback=oe.__traceback__
+                                type(oe), oe, traceback=oe.__traceback__,
                             )
                             console.print(tb)
                 else:

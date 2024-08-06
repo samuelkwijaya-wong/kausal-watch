@@ -1,12 +1,23 @@
 import json
+
 import pytest
 
 from actions.tests.factories import ActionFactory, CategoryFactory, PlanFactory
 from aplans.utils import RestrictedVisibilityModel
 from indicators.tests.factories import (
-    ActionIndicatorFactory, CommonIndicatorFactory, DimensionCategoryFactory, DimensionFactory, IndicatorFactory,
-    IndicatorDimensionFactory, IndicatorGoalFactory, IndicatorGraphFactory, IndicatorLevelFactory,
-    IndicatorValueFactory, QuantityFactory, RelatedIndicatorFactory, UnitFactory
+    ActionIndicatorFactory,
+    CommonIndicatorFactory,
+    DimensionCategoryFactory,
+    DimensionFactory,
+    IndicatorDimensionFactory,
+    IndicatorFactory,
+    IndicatorGoalFactory,
+    IndicatorGraphFactory,
+    IndicatorLevelFactory,
+    IndicatorValueFactory,
+    QuantityFactory,
+    RelatedIndicatorFactory,
+    UnitFactory,
 )
 
 pytestmark = pytest.mark.django_db
@@ -16,7 +27,7 @@ def test_unit_node(graphql_client_query_data):
     unit = UnitFactory()
     indicator = IndicatorFactory(unit=unit)
     data = graphql_client_query_data(
-        '''
+        """
         query($indicator: ID!) {
           indicator(id: $indicator) {
             unit {
@@ -29,8 +40,8 @@ def test_unit_node(graphql_client_query_data):
             }
           }
         }
-        ''',
-        variables=dict(indicator=indicator.id)
+        """,
+        variables=dict(indicator=indicator.id),
     )
     expected = {
         'indicator': {
@@ -41,8 +52,8 @@ def test_unit_node(graphql_client_query_data):
                 'shortName': unit.short_name,
                 'verboseName': unit.verbose_name,
                 'verboseNamePlural': unit.verbose_name_plural,
-            }
-        }
+            },
+        },
     }
     assert data == expected
 
@@ -51,7 +62,7 @@ def test_quantity_node(graphql_client_query_data):
     quantity = QuantityFactory()
     indicator = IndicatorFactory(quantity=quantity)
     data = graphql_client_query_data(
-        '''
+        """
         query($indicator: ID!) {
           indicator(id: $indicator) {
             quantity {
@@ -61,8 +72,8 @@ def test_quantity_node(graphql_client_query_data):
             }
           }
         }
-        ''',
-        variables=dict(indicator=indicator.id)
+        """,
+        variables=dict(indicator=indicator.id),
     )
     expected = {
         'indicator': {
@@ -70,8 +81,8 @@ def test_quantity_node(graphql_client_query_data):
                 '__typename': 'Quantity',
                 'id': str(quantity.id),
                 'name': quantity.name,
-            }
-        }
+            },
+        },
     }
     assert data == expected
 
@@ -79,7 +90,7 @@ def test_quantity_node(graphql_client_query_data):
 def test_related_indicator_node(graphql_client_query_data):
     related_indicator = RelatedIndicatorFactory()
     data = graphql_client_query_data(
-        '''
+        """
         query($indicator: ID!) {
           indicator(id: $indicator) {
             relatedEffects {
@@ -98,8 +109,8 @@ def test_related_indicator_node(graphql_client_query_data):
             }
           }
         }
-        ''',
-        variables=dict(indicator=related_indicator.causal_indicator.id)
+        """,
+        variables=dict(indicator=related_indicator.causal_indicator.id),
     )
     expected = {
         'indicator': {
@@ -116,8 +127,8 @@ def test_related_indicator_node(graphql_client_query_data):
                 },
                 'effectType': related_indicator.effect_type.upper(),
                 'confidenceLevel': related_indicator.confidence_level.upper(),
-            }]
-        }
+            }],
+        },
     }
     assert data == expected
 
@@ -126,7 +137,7 @@ def test_action_indicator_node(graphql_client_query_data):
     indicator = IndicatorFactory()
     action_indicator = ActionIndicatorFactory(indicator=indicator)
     data = graphql_client_query_data(
-        '''
+        """
         query($indicator: ID!) {
           indicator(id: $indicator) {
             relatedActions {
@@ -145,8 +156,8 @@ def test_action_indicator_node(graphql_client_query_data):
             }
           }
         }
-        ''',
-        variables=dict(indicator=indicator.id)
+        """,
+        variables=dict(indicator=indicator.id),
     )
     expected = {
         'indicator': {
@@ -163,8 +174,8 @@ def test_action_indicator_node(graphql_client_query_data):
                 },
                 'effectType': action_indicator.effect_type.upper(),
                 'indicatesActionProgress': action_indicator.indicates_action_progress,
-            }]
-        }
+            }],
+        },
     }
     assert data == expected
 
@@ -175,7 +186,7 @@ def test_indicator_graph_node(graphql_client_query_data):
     indicator.latest_graph = indicator_graph
     indicator.save(update_fields=['latest_graph'])
     data = graphql_client_query_data(
-        '''
+        """
         query($indicator: ID!) {
           indicator(id: $indicator) {
             latestGraph {
@@ -190,8 +201,8 @@ def test_indicator_graph_node(graphql_client_query_data):
             }
           }
         }
-        ''',
-        variables=dict(indicator=indicator.id)
+        """,
+        variables=dict(indicator=indicator.id),
     )
     expected = {
         'indicator': {
@@ -204,8 +215,8 @@ def test_indicator_graph_node(graphql_client_query_data):
                 },
                 'data': json.dumps(indicator_graph.data),
                 'createdAt': indicator_graph.created_at.isoformat(),
-            }
-        }
+            },
+        },
     }
     assert data == expected
 
@@ -214,7 +225,7 @@ def test_indicator_level_node(graphql_client_query_data):
     plan = PlanFactory()
     indicator_level = IndicatorLevelFactory(plan=plan)
     data = graphql_client_query_data(
-        '''
+        """
         query($plan: ID!) {
           plan(id: $plan) {
             indicatorLevels {
@@ -232,8 +243,8 @@ def test_indicator_level_node(graphql_client_query_data):
             }
           }
         }
-        ''',
-        variables=dict(plan=plan.identifier)
+        """,
+        variables=dict(plan=plan.identifier),
     )
     expected = {
         'plan': {
@@ -249,8 +260,8 @@ def test_indicator_level_node(graphql_client_query_data):
                     'id': str(plan.identifier),
                 },
                 'level': indicator_level.level.upper(),
-            }]
-        }
+            }],
+        },
     }
     assert data == expected
 
@@ -261,7 +272,7 @@ def test_dimension_node(graphql_client_query_data):
     IndicatorDimensionFactory(indicator=indicator, dimension=dimension)
     dimension_category = DimensionCategoryFactory(dimension=dimension)
     data = graphql_client_query_data(
-        '''
+        """
         query($indicator: ID!) {
           indicator(id: $indicator) {
             dimensions {
@@ -277,8 +288,8 @@ def test_dimension_node(graphql_client_query_data):
             }
           }
         }
-        ''',
-        variables=dict(indicator=indicator.id)
+        """,
+        variables=dict(indicator=indicator.id),
     )
     expected = {
         'indicator': {
@@ -291,9 +302,9 @@ def test_dimension_node(graphql_client_query_data):
                         '__typename': 'DimensionCategory',
                         'id': str(dimension_category.id),
                     }],
-                }
-            }]
-        }
+                },
+            }],
+        },
     }
     assert data == expected
 
@@ -304,7 +315,7 @@ def test_dimension_category_node(graphql_client_query_data):
     IndicatorDimensionFactory(indicator=indicator, dimension=dimension)
     dimension_category = DimensionCategoryFactory(dimension=dimension)
     data = graphql_client_query_data(
-        '''
+        """
         query($indicator: ID!) {
           indicator(id: $indicator) {
             dimensions {
@@ -324,8 +335,8 @@ def test_dimension_category_node(graphql_client_query_data):
             }
           }
         }
-        ''',
-        variables=dict(indicator=indicator.id)
+        """,
+        variables=dict(indicator=indicator.id),
     )
     expected = {
         'indicator': {
@@ -341,10 +352,10 @@ def test_dimension_category_node(graphql_client_query_data):
                         },
                         'name': dimension_category.name,
                         'order': 1,
-                    }]
-                }
-            }]
-        }
+                    }],
+                },
+            }],
+        },
     }
     assert data == expected
 
@@ -358,7 +369,7 @@ def test_common_indicator_node(graphql_client_query_data):
     common_indicator = CommonIndicatorFactory()
     indicator = IndicatorFactory(common=common_indicator)
     data = graphql_client_query_data(
-        '''
+        """
         query($indicator: ID!) {
           indicator(id: $indicator) {
             common {
@@ -378,8 +389,8 @@ def test_common_indicator_node(graphql_client_query_data):
             }
           }
         }
-        ''',
-        variables=dict(indicator=indicator.id)
+        """,
+        variables=dict(indicator=indicator.id),
     )
     expected = {
         'indicator': {
@@ -397,8 +408,8 @@ def test_common_indicator_node(graphql_client_query_data):
                     '__typename': 'Unit',
                     'id': str(common_indicator.unit.id),
                 },
-            }
-        }
+            },
+        },
     }
     assert data == expected
 
@@ -415,7 +426,7 @@ def test_indicator_value_node(graphql_client_query_data):
     indicator.latest_value = indicator_value
     indicator.save(update_fields=['latest_value'])
     data = graphql_client_query_data(
-        '''
+        """
         query($indicator: ID!) {
           indicator(id: $indicator) {
             latestValue {
@@ -430,8 +441,8 @@ def test_indicator_value_node(graphql_client_query_data):
             }
           }
         }
-        ''',
-        variables=dict(indicator=indicator.id)
+        """,
+        variables=dict(indicator=indicator.id),
     )
     expected = {
         'indicator': {
@@ -444,8 +455,8 @@ def test_indicator_value_node(graphql_client_query_data):
                 },
                 'value': indicator_value.value,
                 'date': indicator_value.date.isoformat(),
-            }
-        }
+            },
+        },
     }
     assert data == expected
 
@@ -454,7 +465,7 @@ def test_indicator_goal_node(graphql_client_query_data):
     indicator = IndicatorFactory()
     indicator_goal = IndicatorGoalFactory(indicator=indicator)
     data = graphql_client_query_data(
-        '''
+        """
         query($indicator: ID!) {
           indicator(id: $indicator) {
             goals {
@@ -473,8 +484,8 @@ def test_indicator_goal_node(graphql_client_query_data):
             }
           }
         }
-        ''',
-        variables=dict(indicator=indicator.id)
+        """,
+        variables=dict(indicator=indicator.id),
     )
     expected = {
         'indicator': {
@@ -488,8 +499,8 @@ def test_indicator_goal_node(graphql_client_query_data):
                 'scenario': None,
                 'value': indicator_goal.value,
                 'date': indicator_goal.date.isoformat(),
-            }]
-        }
+            }],
+        },
     }
     assert data == expected
 
@@ -511,7 +522,7 @@ def test_indicator_node(graphql_client_query_data):
     # Create IndicatorLevel so that `plan` appears in `indicator.plan`
     IndicatorLevelFactory(indicator=indicator, plan=plan)
     data = graphql_client_query_data(
-        '''
+        """
         query($indicator: ID!) {
           indicator(id: $indicator) {
             __typename
@@ -588,8 +599,8 @@ def test_indicator_node(graphql_client_query_data):
             }
           }
         }
-        ''',
-        variables=dict(indicator=indicator.id)
+        """,
+        variables=dict(indicator=indicator.id),
     )
     expected = {
         'indicator': {
@@ -656,7 +667,7 @@ def test_indicator_node(graphql_client_query_data):
                 '__typename': 'IndicatorDimension',
                 'id': str(indicator_dimension.id),
             }],
-        }
+        },
     }
     assert data == expected
 
@@ -666,7 +677,7 @@ def test_indicator_node_cause_effect(graphql_client_query_data):
     cause = RelatedIndicatorFactory(effect_indicator=indicator)
     effect = RelatedIndicatorFactory(causal_indicator=indicator)
     data = graphql_client_query_data(
-        '''
+        """
         query($indicator: ID!) {
           indicator(id: $indicator) {
             __typename
@@ -681,8 +692,8 @@ def test_indicator_node_cause_effect(graphql_client_query_data):
             }
           }
         }
-        ''',
-        variables=dict(indicator=indicator.id)
+        """,
+        variables=dict(indicator=indicator.id),
     )
     expected = {
         'indicator': {
@@ -696,7 +707,7 @@ def test_indicator_node_cause_effect(graphql_client_query_data):
                 '__typename': 'RelatedIndicator',
                 'id': str(effect.id),
             }],
-        }
+        },
     }
     assert data == expected
 
@@ -706,7 +717,7 @@ def test_indicator_dimension_node(graphql_client_query_data):
     dimension = DimensionFactory()
     indicator_dimension = IndicatorDimensionFactory(indicator=indicator, dimension=dimension)
     data = graphql_client_query_data(
-        '''
+        """
         query($indicator: ID!) {
           indicator(id: $indicator) {
             dimensions {
@@ -724,8 +735,8 @@ def test_indicator_dimension_node(graphql_client_query_data):
             }
           }
         }
-        ''',
-        variables=dict(indicator=indicator.id)
+        """,
+        variables=dict(indicator=indicator.id),
     )
     expected = {
         'indicator': {
@@ -741,8 +752,8 @@ def test_indicator_dimension_node(graphql_client_query_data):
                     'id': str(indicator.id),
                 },
                 'order': 1,
-            }]
-        }
+            }],
+        },
     }
     assert data == expected
 
@@ -751,27 +762,27 @@ def test_plan_indicators_has_goals_parameter(graphql_client_query_data):
     plan = PlanFactory()
     indicators = [
         (IndicatorFactory(), False),
-        (IndicatorGoalFactory().indicator, True)
+        (IndicatorGoalFactory().indicator, True),
     ]
     for indicator, has_goals in indicators:
         indicator.plans.add(plan)
     for indicator, has_goals in indicators:
         data = graphql_client_query_data(
-            '''
+            """
             query($plan: ID!, $has_goals: Boolean!) {
               planIndicators(plan: $plan, hasGoals: $has_goals) {
                 id
               }
             }
-            ''',
-            variables=dict(plan=plan.identifier, has_goals=has_goals)
+            """,
+            variables=dict(plan=plan.identifier, has_goals=has_goals),
         )
         expected = {
             'planIndicators': [
                 {
-                    'id': str(indicator.id)
-                }
-            ]
+                    'id': str(indicator.id),
+                },
+            ],
         }
         assert data == expected
 
@@ -784,14 +795,14 @@ def test_indicator_visibility(graphql_client_query_data):
     IndicatorLevelFactory(indicator=internal_indicator, plan=plan)
 
     data = graphql_client_query_data(
-        '''
+        """
         query($plan: ID!) {
           planIndicators(plan: $plan) {
             id
             name
           }
         }
-        ''', variables=dict(plan=plan.identifier,),
+        """, variables=dict(plan=plan.identifier,),
     )
 
     expected = {
@@ -799,8 +810,8 @@ def test_indicator_visibility(graphql_client_query_data):
             {
                 'id': str(public_indicator.id),
                 'name': public_indicator.name,
-            }
-        ]
+            },
+        ],
     }
     assert data == expected
 
@@ -814,39 +825,39 @@ def test_indicator_query_visibility(graphql_client_query_data):
 
 
     data = graphql_client_query_data(
-        '''
+        """
         query($id: ID!) {
           indicator(id: $id) {
             id
             name
           }
         }
-        ''',
-        variables={'id': public_indicator.id}
+        """,
+        variables={'id': public_indicator.id},
     )
 
     expected = {
         'indicator': {
             'id': str(public_indicator.id),
             'name': public_indicator.name,
-        }
+        },
     }
     assert data == expected
 
     data = graphql_client_query_data(
-        '''
+        """
         query($id: ID!) {
           indicator(id: $id) {
             id
             name
           }
         }
-        ''',
-        variables={'id': internal_indicator.id}
+        """,
+        variables={'id': internal_indicator.id},
     )
 
     expected = {
-        'indicator': None
+        'indicator': None,
     }
     assert data == expected
 
@@ -865,7 +876,7 @@ def test_related_indicators_visibility(graphql_client_query_data):
     RelatedIndicatorFactory(causal_indicator=public_indicator, effect_indicator__visibility=RestrictedVisibilityModel.VisibilityState.INTERNAL)
 
     data = graphql_client_query_data(
-        '''
+        """
         query($id: ID!) {
           indicator(id: $id) {
             id
@@ -877,15 +888,15 @@ def test_related_indicators_visibility(graphql_client_query_data):
             }
           }
         }
-        ''',
-        variables={'id': public_indicator.id}
+        """,
+        variables={'id': public_indicator.id},
     )
 
     expected = {
         'indicator': {
             'id': str(public_indicator.id),
             'relatedCauses': [{'id': str(public_cause.id)}],
-            'relatedEffects': [{'id': str(public_effect.id)}]
-        }
+            'relatedEffects': [{'id': str(public_effect.id)}],
+        },
     }
     assert data == expected

@@ -4,10 +4,11 @@ import functools
 import typing
 import uuid
 from typing import Iterable, Optional, Sequence
+
 from django.conf import settings
 from django.contrib.gis.db import models as gis_models
 from django.db import models
-from django.db.models import Q, Count
+from django.db.models import Count, Q
 from django.template.loader import render_to_string
 from django.utils.translation import gettext_lazy as _, pgettext_lazy
 from modelcluster.fields import ParentalKey
@@ -17,7 +18,7 @@ from treebeard.mp_tree import MP_Node, MP_NodeQuerySet
 from wagtail.fields import RichTextField
 from wagtail.search import index
 
-from aplans.utils import PlanDefaultsModel, PlanRelatedModel, ModelWithPrimaryLanguage, get_supported_languages
+from aplans.utils import ModelWithPrimaryLanguage, PlanDefaultsModel, PlanRelatedModel, get_supported_languages
 
 if typing.TYPE_CHECKING:
     from actions.models import Plan
@@ -50,7 +51,7 @@ class Node(MP_Node, ClusterableModel):
                 'depth_minus_1': depth - 1,
                 'is_root': self.is_root(),
                 'name': self.name,
-            }
+            },
         )
         return rendered
     get_as_listing_header.short_description = _('Name')
@@ -132,7 +133,7 @@ class OrganizationQuerySet(MP_NodeQuerySet):
             query |= Q(id__in=self._available_for_plan(pl))
         return self.filter(query)
 
-    def user_is_plan_admin_for(self, user: User, plan: Optional[Plan] = None):
+    def user_is_plan_admin_for(self, user: User, plan: Plan | None = None):
         person = user.get_corresponding_person()
         adm_objs = OrganizationPlanAdmin.objects.filter(person=person)
         if plan is not None:
@@ -150,7 +151,7 @@ class OrganizationQuerySet(MP_NodeQuerySet):
         else:
             annotate_filter = None
         qs = self.annotate(action_count=Count(
-            'responsible_actions__action', distinct=True, filter=annotate_filter
+            'responsible_actions__action', distinct=True, filter=annotate_filter,
         ))
         return qs
 
@@ -160,20 +161,21 @@ class OrganizationQuerySet(MP_NodeQuerySet):
         else:
             annotate_filter = None
         qs = self.annotate(contact_person_count=Count(
-            'people', distinct=True, filter=annotate_filter
+            'people', distinct=True, filter=annotate_filter,
         ))
         return qs
 
 
 class OrganizationManager(gis_models.Manager):
     """Duplicate MP_NodeManager but use OrganizationQuerySet instead of MP_NodeQuerySet."""
+
     def get_queryset(self):
         return OrganizationQuerySet(self.model).order_by('path')
 
     def editable_by_user(self, user):
         return self.get_queryset().editable_by_user(user)
 
-    def user_is_plan_admin_for(self, user: User, plan: Optional[Plan] = None):
+    def user_is_plan_admin_for(self, user: User, plan: Plan | None = None):
         return self.get_queryset().user_is_plan_admin_for(user, plan)
 
     def available_for_plan(self, plan: Plan):
@@ -369,18 +371,18 @@ class Organization(index.Indexed, Node, ModelWithPrimaryLanguage, gis_models.Mod
         return name
 
     def print_tree(self):
-        from rich.tree import Tree
         from rich import print
+        from rich.tree import Tree
 
         def get_label(org: Organization):
             return '%s ([green]%d actions; [blue]%d persons)' % (
-                org.name, org.action_count, org.contact_person_count
+                org.name, org.action_count, org.contact_person_count,
             )
 
         def add_children(org: Organization, tree: Tree):
             children: list[Organization] = list(
                 org.get_children().annotate_action_count()  # type: ignore
-                .annotate_contact_person_count().order_by('name')
+                .annotate_contact_person_count().order_by('name'),
             )
             if not children:
                 return
@@ -415,7 +417,7 @@ class Namespace(models.Model):
 class OrganizationIdentifier(models.Model):
     class Meta:
         constraints = [
-            models.UniqueConstraint(fields=['namespace', 'identifier'], name='unique_identifier_in_namespace')
+            models.UniqueConstraint(fields=['namespace', 'identifier'], name='unique_identifier_in_namespace'),
         ]
 
     organization = ParentalKey(Organization, on_delete=models.CASCADE, related_name='identifiers')
@@ -428,9 +430,10 @@ class OrganizationIdentifier(models.Model):
 
 class OrganizationPlanAdmin(models.Model, PlanRelatedModel):
     """Person who can administer plan-specific content that is related to the organization."""
+
     class Meta:
         constraints = [
-            models.UniqueConstraint(fields=['organization', 'plan', 'person'], name='unique_organization_plan_admin')
+            models.UniqueConstraint(fields=['organization', 'plan', 'person'], name='unique_organization_plan_admin'),
         ]
         verbose_name = _("plan admin")
         verbose_name_plural = _("plan admins")
@@ -439,10 +442,10 @@ class OrganizationPlanAdmin(models.Model, PlanRelatedModel):
         Organization, on_delete=models.CASCADE, related_name='organization_plan_admins', verbose_name=_('organization'),
     )
     plan = models.ForeignKey(
-        'actions.Plan', on_delete=models.CASCADE, related_name='organization_plan_admins', verbose_name=_('plan')
+        'actions.Plan', on_delete=models.CASCADE, related_name='organization_plan_admins', verbose_name=_('plan'),
     )
     person = models.ForeignKey(
-        'people.Person', on_delete=models.CASCADE, related_name='organization_plan_admins', verbose_name=_('person')
+        'people.Person', on_delete=models.CASCADE, related_name='organization_plan_admins', verbose_name=_('person'),
     )
 
     def __str__(self):
@@ -451,9 +454,10 @@ class OrganizationPlanAdmin(models.Model, PlanRelatedModel):
 
 class OrganizationMetadataAdmin(models.Model):
     """Person who can administer data of (descendants of) an organization but, in general, no plan-specific content."""
+
     class Meta:
         constraints = [
-            models.UniqueConstraint(fields=['organization', 'person'], name='unique_organization_metadata_admin')
+            models.UniqueConstraint(fields=['organization', 'person'], name='unique_organization_metadata_admin'),
         ]
         verbose_name = _("metadata admin")
         verbose_name_plural = _("metadata admins")

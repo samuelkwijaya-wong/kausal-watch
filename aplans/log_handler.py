@@ -1,8 +1,8 @@
 import logging
-from datetime import datetime, UTC
+import sys
+from datetime import UTC, datetime
 from logging import LogRecord, StreamHandler
 from pathlib import Path
-import sys
 from typing import TYPE_CHECKING, Any, Callable, Dict, List, Optional, Sequence, Union
 
 from logfmter.formatter import Logfmter
@@ -24,9 +24,9 @@ class LogRender:
         show_time: bool = True,
         show_level: bool = False,
         show_path: bool = True,
-        time_format: Union[str, FormatTimeCallable] = "[%x %X]",
+        time_format: str | FormatTimeCallable = "[%x %X]",
         omit_repeated_times: bool = True,
-        level_width: Optional[int] = 8,
+        level_width: int | None = 8,
     ) -> None:
         self.show_time = show_time
         self.show_level = show_level
@@ -34,19 +34,19 @@ class LogRender:
         self.time_format = time_format
         self.omit_repeated_times = omit_repeated_times
         self.level_width = level_width
-        self._last_time: Optional[Text] = None
+        self._last_time: Text | None = None
 
     def __call__(
         self,
         console: "Console",
         renderables: Sequence["ConsoleRenderable"],
         name: str,
-        log_time: Optional[datetime] = None,
-        time_format: Optional[Union[str, FormatTimeCallable]] = None,
+        log_time: datetime | None = None,
+        time_format: str | FormatTimeCallable | None = None,
         level: TextType = "",
-        path: Optional[str] = None,
-        line_no: Optional[int] = None,
-        link_path: Optional[str] = None,
+        path: str | None = None,
+        line_no: int | None = None,
+        link_path: str | None = None,
     ) -> Renderables:
         from rich.table import Table
 
@@ -59,7 +59,7 @@ class LogRender:
         output.add_column(ratio=1, style="log.message", overflow="fold")
         if self.show_path and path:
             output.add_column(style="log.path")
-        row: List["RenderableType"] = []
+        row: list["RenderableType"] = []
         if self.show_time:
             log_time = log_time or console.get_datetime()
             time_format = time_format or self.time_format
@@ -84,7 +84,7 @@ class LogRender:
         if self.show_path and path:
             path_text = Text()
             path_text.append(
-                name, style=f"link file://{link_path}#{line_no}" if link_path else ""
+                name, style=f"link file://{link_path}#{line_no}" if link_path else "",
             )
             row.append(path_text)
 
@@ -125,7 +125,7 @@ class LogHandler(RichHandler):
         self,
         *,
         record: LogRecord,
-        traceback: Optional[Traceback],
+        traceback: Traceback | None,
         message_renderable: "ConsoleRenderable",
     ) -> "ConsoleRenderable":
         """Render log for display.

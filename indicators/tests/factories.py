@@ -1,4 +1,5 @@
 import datetime
+
 from factory import SelfAttribute, Sequence, SubFactory, post_generation
 from factory.django import DjangoModelFactory
 from wagtail.rich_text import RichText

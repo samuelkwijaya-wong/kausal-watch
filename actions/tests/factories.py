@@ -1,23 +1,49 @@
 from __future__ import annotations
 
 import datetime
+
 import factory
 from django.contrib.contenttypes.models import ContentType
 from django.db.models.signals import post_save
 from django.utils.timezone import make_aware
 from factory import LazyAttribute, RelatedFactory, SelfAttribute, Sequence, SubFactory, post_generation
-from wagtail.models import Workflow, WorkflowTask, Task as WagtailTask
+from wagtail.models import Task as WagtailTask, Workflow, WorkflowTask
 from wagtail.models.i18n import Locale
 from wagtail.rich_text import RichText
 from wagtail.test.utils.wagtail_factories import StructBlockFactory
 
 from actions.blocks import ActionListBlock, CategoryListBlock
 from actions.models import (
-    Action, ActionContactPerson, ActionImpact, ActionImplementationPhase, ActionLink, ActionSchedule, ActionStatus,
-    ActionStatusUpdate, ActionTask, ActionResponsibleParty, AttributeCategoryChoice, AttributeChoice,
-    AttributeChoiceWithText, AttributeNumericValue, AttributeRichText, AttributeText, AttributeType,
-    AttributeTypeChoiceOption, Category, CategoryLevel, CategoryType, CommonCategory, CommonCategoryType, ImpactGroup,
-    ImpactGroupAction, MonitoringQualityPoint, Plan, PlanDomain, PlanFeatures, Scenario
+    Action,
+    ActionContactPerson,
+    ActionImpact,
+    ActionImplementationPhase,
+    ActionLink,
+    ActionResponsibleParty,
+    ActionSchedule,
+    ActionStatus,
+    ActionStatusUpdate,
+    ActionTask,
+    AttributeCategoryChoice,
+    AttributeChoice,
+    AttributeChoiceWithText,
+    AttributeNumericValue,
+    AttributeRichText,
+    AttributeText,
+    AttributeType,
+    AttributeTypeChoiceOption,
+    Category,
+    CategoryLevel,
+    CategoryType,
+    CommonCategory,
+    CommonCategoryType,
+    ImpactGroup,
+    ImpactGroupAction,
+    MonitoringQualityPoint,
+    Plan,
+    PlanDomain,
+    PlanFeatures,
+    Scenario,
 )
 from aplans.factories import ModelFactory
 from images.tests.factories import AplansImageFactory
@@ -40,7 +66,7 @@ class PlanFactory(ModelFactory[Plan]):
     general_content = RelatedFactory('content.tests.factories.SiteGeneralContentFactory', factory_related_name='plan')
     features = RelatedFactory('actions.tests.factories.PlanFeaturesFactory', factory_related_name='plan')
     notification_settings = RelatedFactory(
-        'notifications.tests.factories.NotificationSettingsFactory', factory_related_name='plan'
+        'notifications.tests.factories.NotificationSettingsFactory', factory_related_name='plan',
     )
 
     @classmethod

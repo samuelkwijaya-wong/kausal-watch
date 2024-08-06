@@ -1,9 +1,9 @@
 import collections
+from functools import lru_cache
+
 from django.apps import AppConfig
 from django.contrib.admin.filters import SimpleListFilter
 from django.utils.translation import gettext_lazy as _
-from functools import lru_cache
-
 
 # FIXME: Monkey patch due to wagtail-admin-list-controls using a deprecated alias in collections package
 # Wagtail uses the deprecated alias -- remove after updating to 2.16
@@ -41,6 +41,7 @@ def get_unfiltered_object_list(self):
 
 def monkeypatch_image_chooser_viewset():
     from wagtail.images.views.chooser import ImageChooserViewSet
+
     from images.permissions import permission_policy
     global _wagtail_image_chooser_viewset_permission_policy
 

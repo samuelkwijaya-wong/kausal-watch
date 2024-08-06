@@ -4,14 +4,14 @@ from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 from django.utils.translation import override
 from wagtail.admin.mail import EmailNotificationMixin, Notifier
-from wagtail_modeladmin.helpers import ModelAdminURLFinder
 from wagtail.models import TaskState
+from wagtail_modeladmin.helpers import ModelAdminURLFinder
 
-from .models import Action, ActionContactPerson
-from .action_admin import ActionAdmin
 from aplans.email_sender import EmailSender
 from users.models import User
 
+from .action_admin import ActionAdmin
+from .models import Action, ActionContactPerson
 
 logger = logging.getLogger(__name__)
 
@@ -24,6 +24,7 @@ class BaseActionModeratorApprovalTaskStateEmailNotifier(EmailNotificationMixin, 
         Only to be used in contexts where permissions checks are impossible and not needed,
         currently when rendering emails to non-logged in users.
         """
+
         class PermissionHelper:
             def user_can_edit_obj(self, user, instance):
                 return True
@@ -66,7 +67,7 @@ class BaseActionModeratorApprovalTaskStateEmailNotifier(EmailNotificationMixin, 
         plan = context.get('plan', None)
         email_sender = EmailSender(plan=plan)
         subject = render_to_string(
-            template_set["subject"], context
+            template_set["subject"], context,
         ).strip()
 
         for recipient in recipients:
@@ -75,27 +76,27 @@ class BaseActionModeratorApprovalTaskStateEmailNotifier(EmailNotificationMixin, 
 
             # Translate text to the recipient language settings
             with override(
-                recipient.wagtail_userprofile.get_preferred_language()
+                recipient.wagtail_userprofile.get_preferred_language(),
             ):
                 # Get email subject and content
                 email_subject = render_to_string(
-                    template_set["subject"], context
+                    template_set["subject"], context,
                 ).strip()
                 email_content = render_to_string(
-                    template_set["text"], context
+                    template_set["text"], context,
                 ).strip()
 
             message = EmailMessage(
                 subject=email_subject,
                 body=email_content,
-                to=[recipient.email]
+                to=[recipient.email],
             )
             email_sender.queue(message)
         try:
             num_sent = email_sender.send_all()
         except Exception:
             logger.exception(
-                f"Failed to send notification emails with subject [{subject}]."
+                f"Failed to send notification emails with subject [{subject}].",
             )
             num_sent = 0
         return num_sent == len(recipients)
@@ -103,9 +104,11 @@ class BaseActionModeratorApprovalTaskStateEmailNotifier(EmailNotificationMixin, 
 
 class ActionModeratorApprovalTaskStateSubmissionEmailNotifier(BaseActionModeratorApprovalTaskStateEmailNotifier):
     """A notifier to send updates for ActionModeratorApprovalTask submission events"""
+
     notification = 'submitted'
 
 
 class ActionModeratorCancelTaskStateSubmissionEmailNotifier(BaseActionModeratorApprovalTaskStateEmailNotifier):
     """A notifier to send updates for ActionModeratorApprovalTask submission events"""
+
     notification = 'cancelled'

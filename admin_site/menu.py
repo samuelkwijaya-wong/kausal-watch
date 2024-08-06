@@ -10,6 +10,7 @@ class PlanSpecificSingletonModelMenuItem(MenuItem):
     action plan. Since there's only one instance of the model, the user is
     directed straight to the edit view (instead of the index view).
     """
+
     def __init__(self, view_set, order):
         self.view_set = view_set
 

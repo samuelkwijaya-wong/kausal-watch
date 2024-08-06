@@ -1,7 +1,7 @@
-from wagtail import blocks
 from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
 from grapple.helpers import register_streamfield_block
+from wagtail import blocks
 
 
 class ReportTypeChooserBlock(blocks.ChooserBlock):

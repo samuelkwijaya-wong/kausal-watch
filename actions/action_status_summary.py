@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import datetime
 from enum import Enum
-from typing import Callable, NotRequired, TypedDict, TYPE_CHECKING
+from typing import TYPE_CHECKING, Callable, NotRequired, TypedDict
 
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
@@ -10,7 +10,7 @@ from django.utils.translation import gettext_lazy as _
 from aplans.utils import ConstantMetadata, MetadataEnum
 
 if TYPE_CHECKING:
-    from actions.models import Action, Plan, ActionStatus
+    from actions.models import Action, ActionStatus, Plan
     from aplans.cache import WatchObjectCache
 
 Sentiment = Enum('Sentiment', names='POSITIVE NEGATIVE NEUTRAL')
@@ -73,70 +73,70 @@ class ActionStatusSummaryIdentifier(MetadataEnum):
         color='green090',
         is_completed=True,
         is_active=False,
-        sentiment=Sentiment.POSITIVE
+        sentiment=Sentiment.POSITIVE,
     )
     ON_TIME = ActionStatusSummary(
         default_label=_('On time'),
         color='green050',
         is_completed=False,
         is_active=True,
-        sentiment=Sentiment.POSITIVE
+        sentiment=Sentiment.POSITIVE,
     )
     IN_PROGRESS = ActionStatusSummary(
         default_label=_('In progress'),
         color='green050',
         is_completed=False,
         is_active=True,
-        sentiment=Sentiment.POSITIVE
+        sentiment=Sentiment.POSITIVE,
     )
     NOT_STARTED = ActionStatusSummary(
         default_label=_('Not started'),
         color='green010',
         is_completed=False,
         is_active=True,
-        sentiment=Sentiment.NEUTRAL
+        sentiment=Sentiment.NEUTRAL,
     )
     LATE = ActionStatusSummary(
         default_label=_('Late'),
         color='yellow050',
         is_completed=False,
         is_active=True,
-        sentiment=Sentiment.NEGATIVE
+        sentiment=Sentiment.NEGATIVE,
     )
     CANCELLED = ActionStatusSummary(
         default_label=_('Cancelled'),
         color='grey030',
         is_completed=False,
         is_active=False,
-        sentiment=Sentiment.NEUTRAL
+        sentiment=Sentiment.NEUTRAL,
     )
     OUT_OF_SCOPE = ActionStatusSummary(
         default_label=_('Out of scope'),
         color='grey030',
         is_completed=False,
         is_active=False,
-        sentiment=Sentiment.NEUTRAL
+        sentiment=Sentiment.NEUTRAL,
     )
     MERGED = ActionStatusSummary(
         default_label=_('Merged'),
         color='grey030',
         is_completed=True,
         is_active=False,
-        sentiment=Sentiment.NEUTRAL
+        sentiment=Sentiment.NEUTRAL,
     )
     POSTPONED = ActionStatusSummary(
         default_label=_('Postponed'),
         color='blue030',
         is_completed=False,
         is_active=False,
-        sentiment=Sentiment.NEUTRAL
+        sentiment=Sentiment.NEUTRAL,
     )
     UNDEFINED = ActionStatusSummary(
         default_label=_('Unknown'),
         color='grey010',
         is_completed=False,
         is_active=True,
-        sentiment=Sentiment.NEUTRAL
+        sentiment=Sentiment.NEUTRAL,
     )
 
     def get_identifier(self):
@@ -224,25 +224,25 @@ class ActionTimelinessIdentifier(MetadataEnum):
         color='green070',
         sentiment=Sentiment.POSITIVE,
         boundary=(lambda plan: plan.action_update_target_interval),
-        comparison=Comparison.LTE
+        comparison=Comparison.LTE,
     )
     ACCEPTABLE = ActionTimeliness(
         color='green030',
         sentiment=Sentiment.NEUTRAL,
         boundary=(lambda plan: plan.action_update_acceptable_interval),
-        comparison=Comparison.LTE
+        comparison=Comparison.LTE,
     )
     LATE = ActionTimeliness(
         color='yellow050',
         sentiment=Sentiment.NEGATIVE,
         boundary=(lambda plan: plan.action_update_acceptable_interval),
-        comparison=Comparison.GT
+        comparison=Comparison.GT,
     )
     STALE = ActionTimeliness(
         color='red050',
         sentiment=Sentiment.NEGATIVE,
         boundary=(lambda plan: plan.get_action_days_until_considered_stale()),
-        comparison=Comparison.GT
+        comparison=Comparison.GT,
     )
 
     @classmethod

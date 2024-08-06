@@ -1,22 +1,23 @@
 from typing import Any
+
 from django.db.models import Q
 from django.templatetags.static import static
 from django.urls import reverse
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
-from wagtail.admin.panels import FieldPanel, InlinePanel
+from wagtail import hooks
 from wagtail.admin.menu import AdminOnlyMenuItem, DismissibleMenuItem, Menu, MenuItem, SubmenuMenuItem
+from wagtail.admin.panels import FieldPanel, InlinePanel
 from wagtail.admin.ui.components import Component
 from wagtail.snippets.models import register_snippet
 from wagtail.snippets.views.snippets import SnippetViewSet
-from wagtail import hooks
 
+from actions.models import CommonCategoryType
+from actions.wagtail_admin import PlanAdmin
 from aplans.types import WatchAdminRequest
 
 from .models import Client
-from actions.models import CommonCategoryType
-from actions.wagtail_admin import PlanAdmin
 
 
 # FIXME: Refactor duplicated code for categories, common categories, attribute types and reports
@@ -241,7 +242,7 @@ register_snippet(ClientViewSet)
 def global_admin_css():
     return format_html(
         '<link rel="stylesheet" href="{}">',
-        static("css/admin-styles.css")
+        static("css/admin-styles.css"),
     )
 
 
@@ -296,21 +297,22 @@ def remove_menu_items(items, item_classes_to_remove):
 
 @hooks.register('construct_settings_menu')
 def remove_settings_menu_items(request, items: list):
-    from wagtail.users.wagtail_hooks import (
-        GroupsMenuItem, UsersMenuItem
-    )
-    from wagtail.sites.wagtail_hooks import (
-        SitesMenuItem
+    from wagtail.contrib.redirects.wagtail_hooks import (
+        RedirectsMenuItem,
     )
     from wagtail.locales.wagtail_hooks import (
-        LocalesMenuItem
+        LocalesMenuItem,
     )
-    from wagtail.contrib.redirects.wagtail_hooks import (
-        RedirectsMenuItem
+    from wagtail.sites.wagtail_hooks import (
+        SitesMenuItem,
+    )
+    from wagtail.users.wagtail_hooks import (
+        GroupsMenuItem,
+        UsersMenuItem,
     )
 
     item_classes_to_remove = (
-        GroupsMenuItem, UsersMenuItem, SitesMenuItem, LocalesMenuItem, RedirectsMenuItem
+        GroupsMenuItem, UsersMenuItem, SitesMenuItem, LocalesMenuItem, RedirectsMenuItem,
     )
     remove_menu_items(items, item_classes_to_remove)
 
@@ -318,7 +320,7 @@ def remove_settings_menu_items(request, items: list):
 @hooks.register('construct_main_menu')
 def remove_main_menu_items(request, items: list):
     from wagtail.snippets.wagtail_hooks import (
-        SnippetsMenuItem
+        SnippetsMenuItem,
     )
 
     item_classes_to_remove = (

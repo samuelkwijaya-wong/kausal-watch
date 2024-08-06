@@ -1,22 +1,28 @@
 import django_filters as filters
 from django.db import transaction
 from drf_spectacular.types import OpenApiTypes
-from drf_spectacular.utils import extend_schema, OpenApiParameter
+from drf_spectacular.utils import OpenApiParameter, extend_schema
 from rest_framework import permissions, serializers, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 
-from aplans.types import AuthenticatedWatchRequest
-
-from .models import (
-    ActionIndicator, Indicator, IndicatorLevel, IndicatorGoal, IndicatorValue, Quantity, RelatedIndicator, Unit
-)
 from actions.api import plan_router
 from actions.models import Plan
 from aplans.rest_api import BulkListSerializer, BulkModelViewSet
+from aplans.types import AuthenticatedWatchRequest
 from aplans.utils import register_view_helper
 
+from .models import (
+    ActionIndicator,
+    Indicator,
+    IndicatorGoal,
+    IndicatorLevel,
+    IndicatorValue,
+    Quantity,
+    RelatedIndicator,
+    Unit,
+)
 
 all_views = []
 
@@ -74,7 +80,7 @@ class RelatedEffectIndicatorSerializer(serializers.ModelSerializer):
 class IndicatorFilter(filters.FilterSet):
     plans = filters.ModelMultipleChoiceFilter(
         field_name='plans__identifier', to_field_name='identifier',
-        queryset=Plan.objects
+        queryset=Plan.objects,
     )
 
     class Meta:
@@ -169,12 +175,12 @@ class IndicatorDataPointMixin:
         if indicator.time_resolution == 'year':
             if date.day != 31 or date.month != 12:
                 raise ValidationError(
-                    "Indicator has a yearly resolution, so '%s' must be '%d-12-31" % (date, date.year)
+                    "Indicator has a yearly resolution, so '%s' must be '%d-12-31" % (date, date.year),
                 )
         elif indicator.time_resolution == 'month':
             if date.day != 1:
                 raise ValidationError(
-                    "Indicator has a monthly resolution, so '%s' must be '%d-%02d-01" % (date, date.year, date.month)
+                    "Indicator has a monthly resolution, so '%s' must be '%d-%02d-01" % (date, date.year, date.month),
                 )
         return date
 
@@ -219,7 +225,7 @@ class IndicatorSerializer(serializers.ModelSerializer):
         list_serializer_class = BulkListSerializer
         fields = (
             'id', 'uuid', 'name', 'quantity', 'unit', 'time_resolution', 'organization', 'updated_values_due_at',
-            'latest_value', 'reference', 'internal_notes', 'visibility'
+            'latest_value', 'reference', 'internal_notes', 'visibility',
         )
 
     def create(self, validated_data: dict):
@@ -307,14 +313,14 @@ class IndicatorViewSet(BulkModelViewSet):
                 self.permission_denied(
                     request,
                     message='No permission to modify indicator',
-                    code='no_indicator_permission'
+                    code='no_indicator_permission',
                 )
         else:
             if not user.can_create_indicator(plan=None):
                 self.permission_denied(
                     request,
                     message='No permission to modify indicator',
-                    code='no_indicator_permission'
+                    code='no_indicator_permission',
                 )
 
     @action(detail=True, methods=['get'])
@@ -345,7 +351,7 @@ class IndicatorViewSet(BulkModelViewSet):
     @values.mapping.post
     def update_values(self, request, plan_pk, pk):
         indicator = Indicator.objects.prefetch_related(
-            'dimensions', 'dimensions__dimension', 'dimensions__dimension__categories'
+            'dimensions', 'dimensions__dimension', 'dimensions__dimension__categories',
         ).get(pk=pk)
         serializer = IndicatorValueSerializer(data=request.data, many=True, context={'indicator': indicator})
         if serializer.is_valid():

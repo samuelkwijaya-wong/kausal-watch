@@ -1,12 +1,13 @@
+import typing
+
 import pytest
 import reversion
-import typing
-from reversion.models import Version, Revision
+from reversion.models import Revision, Version
 
 from actions.models import Action
-from reports.models import Report, ActionSnapshot, SerializedActionVersion
-from .fixtures import *  # noqa
+from reports.models import ActionSnapshot, Report, SerializedActionVersion
 
+from .fixtures import *  # noqa
 
 pytestmark = pytest.mark.django_db
 

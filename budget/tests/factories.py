@@ -1,11 +1,22 @@
 import uuid
 from datetime import date
+
 from django.contrib.contenttypes.models import ContentType
-from factory import SubFactory, Sequence, LazyFunction, LazyAttribute
+from factory import LazyAttribute, LazyFunction, Sequence, SubFactory
 
 from actions.tests.factories import ActionFactory, PlanFactory
 from aplans.factories import ModelFactory
-from budget.models import DatasetSchemaDimensionCategory, Dimension, DimensionCategory, DimensionScope, DataPoint, Dataset, DatasetSchema, DatasetSchemaScope
+from budget.models import (
+    DataPoint,
+    Dataset,
+    DatasetSchema,
+    DatasetSchemaDimensionCategory,
+    DatasetSchemaScope,
+    Dimension,
+    DimensionCategory,
+    DimensionScope,
+)
+
 
 class DimensionFactory(ModelFactory[Dimension]):
     uuid = LazyFunction(uuid.uuid4)

@@ -1,5 +1,7 @@
 from __future__ import annotations
+
 import typing
+from typing import Any, ClassVar, Self
 
 import reversion
 from autoslug.fields import AutoSlugField
@@ -17,17 +19,23 @@ from wagtail.fields import RichTextField
 
 from aplans.types import UserOrAnon
 from aplans.utils import (
-    ChoiceArrayField, InstancesEditableByMixin, InstancesVisibleForMixin, OrderedModel, ReferenceIndexedModelMixin,
-    get_supported_languages, ModelWithPrimaryLanguage
+    ChoiceArrayField,
+    InstancesEditableByMixin,
+    InstancesVisibleForMixin,
+    ModelWithPrimaryLanguage,
+    OrderedModel,
+    ReferenceIndexedModelMixin,
+    get_supported_languages,
 )
 from indicators.models import Unit
 
-from typing import Any, ClassVar, Self
 if typing.TYPE_CHECKING:
     from django.db.models.manager import RelatedManager
-    from .plan import Plan
-    from .category import CategoryType
+
     from actions.attributes import AttributeType as AttributeTypeWrapper, DraftAttributes
+
+    from .category import CategoryType
+    from .plan import Plan
 
 
 class AttributeTypeQuerySet(models.QuerySet['AttributeType']):
@@ -50,7 +58,7 @@ class AttributeTypeQuerySet(models.QuerySet['AttributeType']):
 @reversion.register(follow=['choice_options'])
 class AttributeType(  # type: ignore[django-manager-missing]
         InstancesEditableByMixin, InstancesVisibleForMixin, ReferenceIndexedModelMixin, ClusterableModel, OrderedModel,
-        ModelWithPrimaryLanguage
+        ModelWithPrimaryLanguage,
 ):
     class AttributeFormat(models.TextChoices):
         ORDERED_CHOICE = 'ordered_choice', _('Ordered choice')
@@ -72,7 +80,7 @@ class AttributeType(  # type: ignore[django-manager-missing]
     scope_content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, related_name='+')
     scope_id = models.PositiveIntegerField()
     scope: models.ForeignKey[Plan, Plan] | models.ForeignKey[CategoryType, CategoryType] = GenericForeignKey(
-        'scope_content_type', 'scope_id'
+        'scope_content_type', 'scope_id',
     ) #type: ignore
 
     name = models.CharField(max_length=100, verbose_name=_('name'))
@@ -112,7 +120,7 @@ class AttributeType(  # type: ignore[django-manager-missing]
     primary_language = models.CharField(max_length=8, choices=get_supported_languages())
     other_languages = ChoiceArrayField(
         models.CharField(max_length=8, choices=get_supported_languages()),
-        default=list, null=True, blank=True
+        default=list, null=True, blank=True,
     )
 
     i18n = TranslationField(
@@ -245,7 +253,7 @@ class AttributeTypeChoiceOption(ClusterableModel, OrderedModel):  # type: ignore
 @reversion.register(follow=['categories'])
 class AttributeCategoryChoice(Attribute, ClusterableModel):
     type = ParentalKey(
-        AttributeType, on_delete=models.CASCADE, related_name='category_choice_attributes'
+        AttributeType, on_delete=models.CASCADE, related_name='category_choice_attributes',
     )
     categories = ParentalManyToManyField('actions.Category', related_name='+')
 
@@ -262,7 +270,7 @@ class AttributeCategoryChoice(Attribute, ClusterableModel):
 class AttributeChoice(Attribute):
     type = ParentalKey(AttributeType, on_delete=models.CASCADE, related_name='choice_attributes')
     choice = models.ForeignKey(
-        AttributeTypeChoiceOption, on_delete=models.CASCADE, related_name='choice_attributes'
+        AttributeTypeChoiceOption, on_delete=models.CASCADE, related_name='choice_attributes',
     )
 
     class Meta:
@@ -275,7 +283,7 @@ class AttributeChoice(Attribute):
 @reversion.register(follow=['choice'])
 class AttributeChoiceWithText(Attribute):
     type = ParentalKey(
-        AttributeType, on_delete=models.CASCADE, related_name='choice_with_text_attributes'
+        AttributeType, on_delete=models.CASCADE, related_name='choice_with_text_attributes',
     )
     choice = models.ForeignKey(
         AttributeTypeChoiceOption, blank=True, null=True, on_delete=models.CASCADE,
@@ -364,6 +372,7 @@ class ModelWithAttributes(models.Model):
     don't get along well with the `abc` package. (Decorating with `@abstractmethod` only has an effect if deriving from
     `ABC`, which conflicts with the metaclass of `Model`.).
     """
+
     choice_attributes = GenericRelation(to='actions.AttributeChoice')
     choice_with_text_attributes = GenericRelation(to='actions.AttributeChoiceWithText')
     text_attributes = GenericRelation(to='actions.AttributeText')
@@ -394,7 +403,7 @@ class ModelWithAttributes(models.Model):
         raise NotImplementedError("Implement in subclass")
 
     @classmethod
-    def get_attribute_types_for_plan(cls, plan: Plan, only_in_reporting_tab=False, unless_in_reporting_tab=False):
+    def get_attribute_types_for_plan(cls, plan: Plan, only_in_reporting_tab=False, unless_in_reporting_tab=False) -> typing.Never:
         raise NotImplementedError("Implement in subclass")
 
     @classmethod
@@ -414,7 +423,7 @@ class ModelWithAttributes(models.Model):
             attribute_type: AttributeTypeWrapper,
             existing_attribute: Attribute,
             value_parameters: dict[str, Any],
-            attribute_value_input: Any
+            attribute_value_input: Any,
     ):
         if existing_attribute is None:
             if self._value_is_empty(value_parameters):

@@ -1,26 +1,34 @@
 from datetime import timedelta
+from logging import getLogger
+from typing import Dict, Sequence
+
 from django.conf import settings
 from django.core.mail import EmailMessage
 from django.utils import translation
-from logging import getLogger
 from markupsafe import Markup
 from sentry_sdk import capture_exception
-from typing import Dict, Sequence
+
+from actions.models import Action, ActionContactPerson, ActionTask, Plan
+from aplans.email_sender import EmailSender
+from feedback.models import UserFeedback
+from indicators.models import Indicator, IndicatorContactPerson
 
 from .mjml import render_mjml_from_template
-from aplans.email_sender import EmailSender
-
 from .models import ManuallyScheduledNotificationTemplate
 from .notifications import (
-    NotificationType, ActionNotUpdatedNotification, ManuallyScheduledNotification, Notification, NotEnoughTasksNotification, TaskDueSoonNotification,
-    TaskLateNotification, UpdatedIndicatorValuesDueSoonNotification, UpdatedIndicatorValuesLateNotification,
+    ActionNotUpdatedNotification,
+    ManuallyScheduledNotification,
+    NotEnoughTasksNotification,
+    Notification,
+    NotificationType,
+    TaskDueSoonNotification,
+    TaskLateNotification,
+    UpdatedIndicatorValuesDueSoonNotification,
+    UpdatedIndicatorValuesLateNotification,
     UserFeedbackReceivedNotification,
 )
 from .queue import NotificationQueue
 from .recipients import NotificationRecipient, PersonRecipient
-from actions.models import Plan, ActionTask, Action, ActionContactPerson
-from feedback.models import UserFeedback
-from indicators.models import Indicator, IndicatorContactPerson
 
 logger = getLogger(__name__)
 
@@ -35,7 +43,7 @@ class InvalidStateException(Exception):
 class NotificationEngine:
     def __init__(
         self, plan: Plan, force_to=None, limit=None, only_type=None, noop=False, only_email=None,
-        ignore_actions=None, ignore_indicators=None, dump=None, now=None
+        ignore_actions=None, ignore_indicators=None, dump=None, now=None,
     ):
         if now is None:
             now = plan.now_in_local_timezone()
@@ -116,7 +124,7 @@ class NotificationEngine:
         if template:
             recipients = template.get_recipients(
                 self.action_contact_person_recipients, self.indicator_contact_person_recipients,
-                self.plan_admin_recipients, self.organization_plan_admin_recipients, action=task.action
+                self.plan_admin_recipients, self.organization_plan_admin_recipients, action=task.action,
             )
             notif.generate_notifications(self, recipients, now=self.now)
 
@@ -137,7 +145,7 @@ class NotificationEngine:
         if template:
             recipients = template.get_recipients(
                 self.action_contact_person_recipients, self.indicator_contact_person_recipients,
-                self.plan_admin_recipients, self.organization_plan_admin_recipients, indicator=indicator
+                self.plan_admin_recipients, self.organization_plan_admin_recipients, indicator=indicator,
             )
             notif.generate_notifications(self, recipients, now=self.now)
 
@@ -161,7 +169,7 @@ class NotificationEngine:
             if template:
                 recipients = template.get_recipients(
                     self.action_contact_person_recipients, self.indicator_contact_person_recipients,
-                    self.plan_admin_recipients, self.organization_plan_admin_recipients, action=action
+                    self.plan_admin_recipients, self.organization_plan_admin_recipients, action=action,
                 )
                 notif.generate_notifications(self, recipients, now=self.now)
 
@@ -171,7 +179,7 @@ class NotificationEngine:
             if template:
                 recipients = template.get_recipients(
                     self.action_contact_person_recipients, self.indicator_contact_person_recipients,
-                    self.plan_admin_recipients, self.organization_plan_admin_recipients, action=action
+                    self.plan_admin_recipients, self.organization_plan_admin_recipients, action=action,
                 )
                 notif.generate_notifications(self, recipients, now=self.now)
 
@@ -181,7 +189,7 @@ class NotificationEngine:
         if template:
             recipients = template.get_recipients(
                 self.action_contact_person_recipients, self.indicator_contact_person_recipients,
-                self.plan_admin_recipients, self.organization_plan_admin_recipients
+                self.plan_admin_recipients, self.organization_plan_admin_recipients,
             )
             notification.generate_notifications(self, recipients, now=self.now)
 
@@ -189,7 +197,7 @@ class NotificationEngine:
         notification = ManuallyScheduledNotification(self.plan, template)
         recipients = template.get_recipients(
             self.action_contact_person_recipients, self.indicator_contact_person_recipients,
-            self.plan_admin_recipients, self.organization_plan_admin_recipients
+            self.plan_admin_recipients, self.organization_plan_admin_recipients,
         )
         notification.generate_notifications(self, recipients, now=self.now)
 
@@ -204,12 +212,12 @@ class NotificationEngine:
             context = dict(
                 title=template.subject,
                 **template.base.get_notification_context(),
-                **context
+                **context,
             )
 
             rendered['html_body'] = render_mjml_from_template(
                 template.type,
-                context, dump=self.dump
+                context, dump=self.dump,
             )
             rendered['subject'] = template.subject + ' | ' + context['site']['title']
 
@@ -217,9 +225,9 @@ class NotificationEngine:
 
     def generate_notifications(self):
         self.queue = NotificationQueue()
-        self.action_contact_person_recipients: Dict[int, Sequence[NotificationRecipient]] = {}
-        self.indicator_contact_person_recipients: Dict[int, Sequence[NotificationRecipient]] = {}
-        self.organization_plan_admin_recipients: Dict[int, Sequence[NotificationRecipient]] = {}
+        self.action_contact_person_recipients: dict[int, Sequence[NotificationRecipient]] = {}
+        self.indicator_contact_person_recipients: dict[int, Sequence[NotificationRecipient]] = {}
+        self.organization_plan_admin_recipients: dict[int, Sequence[NotificationRecipient]] = {}
         self.plan_admin_recipients: Sequence[NotificationRecipient] = []
 
         self._fetch_data()
@@ -299,7 +307,7 @@ class NotificationEngine:
                     msg = EmailMessage(
                         subject=rendered['subject'],
                         body=rendered['html_body'],
-                        to=[to_email]
+                        to=[to_email],
                     )
                     msg.content_subtype = "html"  # Main content is now text/html
 

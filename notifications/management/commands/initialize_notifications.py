@@ -1,14 +1,13 @@
-from random import randrange
 import re
+from random import randrange
 
-from django.utils import translation
-from django.utils.translation import pgettext
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
+from django.utils import translation
+from django.utils.translation import pgettext
 
 from actions.models import Plan
-from notifications.models import BaseTemplate, NotificationType, AutomaticNotificationTemplate, ContentBlock
-
+from notifications.models import AutomaticNotificationTemplate, BaseTemplate, ContentBlock, NotificationType
 
 ALPHANUM = 'abcdefghijklmnopqrstuvwxyz0123456789'
 
@@ -23,7 +22,7 @@ def split_into_draftail_paragraphs(s):
 
 
 def initialize_notification_templates(
-    plan_identifier=None
+    plan_identifier=None,
 ):
     plan = Plan.objects.get(identifier=plan_identifier)
     locale = plan.primary_language
@@ -35,7 +34,7 @@ def initialize_notification_templates(
         'brand_dark_color': None,
         'logo_id': None,
         'font_family': None,
-        'font_css_url': None
+        'font_css_url': None,
     }
     base_template, created = BaseTemplate.objects.get_or_create(plan=plan, defaults=base_template_defaults)
     for notification_type in NotificationType:
@@ -50,7 +49,7 @@ def initialize_notification_templates(
             base=base_template, type=notification_type.identifier, defaults=defaults)
         ContentBlock.objects.get_or_create(
             template=template, identifier='intro', base=base_template,
-            defaults={'content': split_into_draftail_paragraphs(default_intro_text)}
+            defaults={'content': split_into_draftail_paragraphs(default_intro_text)},
         )
 
     default_shared_texts = {
@@ -71,7 +70,7 @@ def initialize_notification_templates(
     for block_type in ['motivation', 'outro']:
         ContentBlock.objects.get_or_create(
             template=None, identifier=block_type, base=base_template,
-            defaults={'content': split_into_draftail_paragraphs(default_shared_texts.get(block_type))}
+            defaults={'content': split_into_draftail_paragraphs(default_shared_texts.get(block_type))},
         )
 
 

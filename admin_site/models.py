@@ -26,10 +26,10 @@ class Client(WorkflowMixin, DraftStateMixin, LockableMixin, RevisionMixin, Clust
     name = models.CharField(
         max_length=100,
         verbose_name=_('Name'),
-        help_text=_('Name of the customer organization administering the plan')
+        help_text=_('Name of the customer organization administering the plan'),
     )
     logo = models.ForeignKey(
-        'images.AplansImage', null=True, blank=True, on_delete=models.SET_NULL, related_name='+'
+        'images.AplansImage', null=True, blank=True, on_delete=models.SET_NULL, related_name='+',
     )
     # Login method can be overridden per user: If the user has a usable password, that will be used regardless.
     auth_backend = models.CharField(
@@ -70,10 +70,10 @@ class Client(WorkflowMixin, DraftStateMixin, LockableMixin, RevisionMixin, Clust
 
 class ClientPlan(OrderedModel):
     client = ParentalKey(
-        Client, on_delete=models.CASCADE, null=False, blank=False, related_name='plans'
+        Client, on_delete=models.CASCADE, null=False, blank=False, related_name='plans',
     )
     plan = ParentalKey(
-        'actions.Plan', on_delete=models.CASCADE, null=False, blank=False, related_name='clients'
+        'actions.Plan', on_delete=models.CASCADE, null=False, blank=False, related_name='clients',
     )
 
     def get_sort_order_max(self):
@@ -90,7 +90,7 @@ class ClientPlan(OrderedModel):
 
 class EmailDomains(OrderedModel, ClusterableModel):
     client = ParentalKey(
-        Client, on_delete=models.CASCADE, null=False, blank=False, related_name='email_domains'
+        Client, on_delete=models.CASCADE, null=False, blank=False, related_name='email_domains',
     )
     domain = HostnameField(unique=True)
 
@@ -136,7 +136,7 @@ class BuiltInFieldCustomization(InstancesEditableByMixin, InstancesVisibleForMix
             models.UniqueConstraint(
                 fields=['plan', 'content_type', 'field_name'],
                 name='unique_field_customization_per_plan',
-            )
+            ),
         ]
 
     def clean(self):
@@ -149,7 +149,7 @@ class BuiltInFieldCustomization(InstancesEditableByMixin, InstancesVisibleForMix
         except FieldDoesNotExist:
             raise ValidationError({'field_name': _("%(field)s is not a valid field in the model '%(model)s'") % {
                 'field': self.field_name,
-                'model': self.content_type.model
+                'model': self.content_type.model,
             }})
         return self.field_name
 

@@ -1,62 +1,49 @@
-"""aplans URL Configuration
+from __future__ import annotations
 
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/2.1/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
 import importlib
 from urllib.parse import urlparse
+
 from django.conf import settings
 from django.conf.urls.static import static
+from django.contrib.auth.views import LogoutView
 from django.contrib.contenttypes.models import ContentType
 from django.urls import include, path, re_path
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView
-from wagtail.admin import urls as wagtailadmin_urls
-from wagtail.documents import urls as wagtaildocs_urls
-from django.contrib.auth.views import LogoutView
-from wagtailautocomplete.urls.admin import urlpatterns as autocomplete_admin_urls
 from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
+from wagtail.admin import urls as wagtailadmin_urls
 from wagtail.admin.views.pages import search
+from wagtail.documents import urls as wagtaildocs_urls
 from wagtail.models import Page
+from wagtailautocomplete.urls.admin import urlpatterns as autocomplete_admin_urls
 
-from .graphene_views import SentryGraphQLView
-from .api_router import router as api_router
-from actions.models import PlanDomain
-from actions.api import all_views as actions_api_views, all_routers as actions_api_routers
+from actions.api import all_routers as actions_api_routers, all_views as actions_api_views
 from actions.autocomplete import (
-    ActionAutocomplete, CategoryAutocomplete, CommonCategoryTypeAutocomplete,
+    ActionAutocomplete,
+    CategoryAutocomplete,
+    CommonCategoryTypeAutocomplete,
 )
+from actions.models import PlanDomain
 from admin_site.views import RootRedirectView, WadminRedirectView
 from admin_site.wagtail_hooks import restrict_chooser_pages_to_plan
-from indicators.autocomplete import (
-    QuantityAutocomplete, UnitAutocomplete, CommonIndicatorAutocomplete, IndicatorAutocomplete
-)
-from orgs.autocomplete import OrganizationAutocomplete
-from people.autocomplete import PersonAutocomplete
 from budget.api import all_routers as budget_api_routers
 from indicators.api import all_views as indicators_api_views
+from indicators.autocomplete import CommonIndicatorAutocomplete, IndicatorAutocomplete, QuantityAutocomplete, UnitAutocomplete
 from insight.api import all_views as insight_api_views
+from kausal_common.deployment.health_check_view import health_view
+from orgs.autocomplete import OrganizationAutocomplete
+from people.autocomplete import PersonAutocomplete
 from reports.autocomplete import ReportAutocomplete, ReportTypeAutocomplete, ReportTypeFieldAutocomplete
 from users.views import change_admin_plan
 
-from .views import health_view
-
+from .api_router import router as api_router
+from .graphene_views import SentryGraphQLView
 
 extensions_api_views = []
 kwe_urls = []
 if importlib.util.find_spec('kausal_watch_extensions') is not None:
-    from kausal_watch_extensions.api import all_views
     from kausal_watch_extensions import urls
+    from kausal_watch_extensions.api import all_views
     extensions_api_views = all_views
     kwe_urls = urls
 
@@ -120,7 +107,7 @@ class PageSearchFilterByPlanMixin:
 
         # Parse query and filter
         pages, self.all_pages = search.page_filter_search(
-            self.q, pages, self.all_pages, self.ordering
+            self.q, pages, self.all_pages, self.ordering,
         )
 
         # Facets
@@ -128,7 +115,7 @@ class PageSearchFilterByPlanMixin:
             self.content_types = [
                 (ContentType.objects.get(id=content_type_id), count)
                 for content_type_id, count in self.all_pages.facet(
-                    "content_type_id"
+                    "content_type_id",
                 ).items()
             ]
 
@@ -137,12 +124,14 @@ class PageSearchFilterByPlanMixin:
 
 class PageSearchView(PageSearchFilterByPlanMixin, search.SearchView):
     """Override Wagtail's SearchView in order to filter the search results by plan."""
+
     pass
 
 
 
 class PageSearchResultsView(PageSearchFilterByPlanMixin, search.SearchResultsView):
     """Override Wagtail's SearchResultsView in order to filter the search results by plan."""
+
     pass
 
 
@@ -159,7 +148,7 @@ urlpatterns = [
     *api_urlconf,
     path('v1/docs/', TemplateView.as_view(
         template_name='swagger-ui.html',
-        extra_context={'schema_url': 'openapi-schema'}
+        extra_context={'schema_url': 'openapi-schema'},
     ), name='swagger-ui'),
     path('v1/schema/', SpectacularAPIView.as_view(urlconf=api_urlconf), name='schema'),
     # Optional UI:
@@ -190,7 +179,7 @@ urlpatterns = [
     re_path(
         r'^common-indicator-autocomplete/$',
         CommonIndicatorAutocomplete.as_view(),
-        name='common-indicator-autocomplete'
+        name='common-indicator-autocomplete',
     ),
     re_path(
         r'^commoncategorytype-autocomplete/$',

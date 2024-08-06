@@ -2,7 +2,6 @@ import itertools
 
 import pytest
 
-
 pytestmark = pytest.mark.django_db
 OVERRIDE_COLOR = 'beige123'
 
@@ -24,7 +23,7 @@ def colorized_implementation_phases(request, plan, action_implementation_phase_f
 @pytest.fixture
 def plan_with_statuses_phases_and_actions(
     plan,
-    action_factory
+    action_factory,
 ):
     statuses = [None] + list(plan.action_statuses.all())
     phases = [None] + list(plan.action_implementation_phases.all())
@@ -39,21 +38,21 @@ def test_plan_action_colors(
         colorized_statuses,
         colorized_implementation_phases,
         plan_with_statuses_phases_and_actions,
-        django_assert_max_num_queries
+        django_assert_max_num_queries,
 ):
     plan = plan_with_statuses_phases_and_actions
     data = None
     with django_assert_max_num_queries(7):
         data = graphql_client_query_data(
-            '''
+            """
             query($plan: ID!) {
                 plan(id: $plan) {
                     id
                     actions { id, color }
                 }
             }
-            ''',
-            variables=dict(plan=plan.identifier)
+            """,
+            variables=dict(plan=plan.identifier),
         )
     assert data['plan']['id'] == plan.identifier
     assert plan.action_statuses.count() > 0
@@ -67,19 +66,19 @@ def test_plan_phase_colors(
         graphql_client_query_data,
         plan,
         colorized_implementation_phases,
-        django_assert_max_num_queries
+        django_assert_max_num_queries,
 ):
     data = None
     with django_assert_max_num_queries(4):
         data = graphql_client_query_data(
-            '''
+            """
             query($plan: ID!) {
                 plan(id: $plan) {
                     actionImplementationPhases { identifier, color }
                 }
             }
-            ''',
-            variables=dict(plan=plan.identifier)
+            """,
+            variables=dict(plan=plan.identifier),
         )
     assert len(data['plan']['actionImplementationPhases']) == len(colorized_implementation_phases)
     for phase in data['plan']['actionImplementationPhases']:
@@ -97,19 +96,19 @@ def test_plan_status_colors(
         graphql_client_query_data,
         plan,
         colorized_statuses,
-        django_assert_max_num_queries
+        django_assert_max_num_queries,
 ):
     data = None
     with django_assert_max_num_queries(6):
         data = graphql_client_query_data(
-            '''
+            """
             query($plan: ID!) {
                 plan(id: $plan) {
                     actionStatuses { identifier, color }
                 }
             }
-            ''',
-            variables=dict(plan=plan.identifier)
+            """,
+            variables=dict(plan=plan.identifier),
         )
     assert len(data['plan']['actionStatuses']) == len(colorized_statuses)
     for status in data['plan']['actionStatuses']:

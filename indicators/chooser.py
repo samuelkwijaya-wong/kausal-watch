@@ -1,8 +1,8 @@
-from generic_chooser.views import ModelChooserViewSet, ModelChooserMixin
-from generic_chooser.widgets import AdminChooser
 from django.utils.translation import gettext_lazy as _
-from wagtail.search.backends import get_search_backend
+from generic_chooser.views import ModelChooserMixin, ModelChooserViewSet
+from generic_chooser.widgets import AdminChooser
 from wagtail import hooks
+from wagtail.search.backends import get_search_backend
 
 from .models import Indicator
 

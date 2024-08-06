@@ -1,6 +1,6 @@
-from django.urls import include, path
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
+from django.urls import include, path
 
 from .api import check_login_method
 

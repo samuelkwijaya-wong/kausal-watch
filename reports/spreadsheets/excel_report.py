@@ -1,35 +1,33 @@
 from __future__ import annotations
+
 import inspect
 import pathlib
-import polars
-from typing import TypedDict
 import typing
-from typing import Sequence
-import xlsxwriter
 from datetime import datetime
+from io import BytesIO
+from typing import Any, Sequence, TypedDict
+
+import polars
+import xlsxwriter
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import QuerySet
-from django.utils import translation
-from django.utils import timezone
+from django.utils import timezone, translation
 from django.utils.text import slugify
 from django.utils.translation import gettext as _, pgettext
-from io import BytesIO
 from reversion.models import Version
 from xlsxwriter.format import Format
 
-from reports.utils import group_by_model
 from actions.models.action import Action, ActionImplementationPhase, ActionStatus
 from actions.models.category import Category, CategoryType
 from orgs.models import Organization
+from reports.utils import group_by_model
 
 from .action_print_layout import write_action_summaries
-from .cursor_writer import CursorWriter, Cell
+from .cursor_writer import Cell, CursorWriter
 
-
-from typing import Any
 if typing.TYPE_CHECKING:
-    from reports.models import ActionSnapshot, Report, SerializedActionVersion, SerializedVersion
     from reports.blocks.action_content import ReportFieldBlock
+    from reports.models import ActionSnapshot, Report, SerializedActionVersion, SerializedVersion
 
 
 def clean(value: Any) -> Any:
@@ -55,66 +53,66 @@ class ExcelFormats(dict):
         COLOR_PAGE_HEADER = '#3c504a'
 
         @classmethod
-        def header_row(cls, f: Format):
+        def header_row(cls, f: Format) -> None:
             f.set_font_color('#ffffff')
             f.set_bg_color(cls.BG_COLOR_HEADER)
             f.set_bold()
 
         @classmethod
-        def date(cls, f: Format):
+        def date(cls, f: Format) -> None:
             f.set_num_format('d mmmm yyyy')
             f.set_align('left')
             f.set_bg_color(cls.COLOR_WHITE)
 
         @classmethod
-        def timestamp(cls, f: Format):
+        def timestamp(cls, f: Format) -> None:
             cls.date(f)
             f.set_num_format('d mmmm yyyy hh:mm')
 
         @classmethod
-        def odd_row(cls, f: Format):
+        def odd_row(cls, f: Format) -> None:
             f.set_bg_color(cls.BG_COLOR_ODD)
 
         @classmethod
-        def even_row(cls, f: Format):
+        def even_row(cls, f: Format) -> None:
             f.set_bg_color(cls.COLOR_WHITE)
 
         @classmethod
-        def title(cls, f: Format):
+        def title(cls, f: Format) -> None:
             f.set_bold()
             f.set_font_size(24)
             cls.header_row(f)
 
         @classmethod
-        def sub_title(cls, f: Format):
+        def sub_title(cls, f: Format) -> None:
             f.set_bold()
             f.set_font_size(18)
             f.set_bg_color(cls.COLOR_WHITE)
 
         @classmethod
-        def metadata_label(cls, f: Format):
+        def metadata_label(cls, f: Format) -> None:
             f.set_bold()
             f.set_align('right')
             f.set_bg_color(cls.COLOR_WHITE)
 
         @classmethod
-        def metadata_value(cls, f: Format):
+        def metadata_value(cls, f: Format) -> None:
             f.set_align('left')
             f.set_bg_color(cls.COLOR_WHITE)
 
         @classmethod
-        def sub_sub_title(cls, f: Format):
+        def sub_sub_title(cls, f: Format) -> None:
             f.set_font_size(16)
             f.set_bg_color(cls.COLOR_WHITE)
 
         @classmethod
-        def all_rows(cls, f: Format):
+        def all_rows(cls, f: Format) -> None:
             f.set_border(0)
             f.set_align('top')
             f.set_text_wrap(True)
 
         @classmethod
-        def action_digest_value(cls, f: Format):
+        def action_digest_value(cls, f: Format) -> None:
             f.set_font_size(8)
             f.set_left()
             f.set_bottom()
@@ -123,7 +121,7 @@ class ExcelFormats(dict):
             f.set_text_wrap(True)
 
         @classmethod
-        def action_digest_label(cls, f: Format):
+        def action_digest_label(cls, f: Format) -> None:
             f.set_bg_color(cls.COLOR_LIGHT_HEADER)
             f.set_font_size(8)
             f.set_left()
@@ -133,7 +131,7 @@ class ExcelFormats(dict):
             f.set_text_wrap(True)
 
         @classmethod
-        def action_digest_page_header(cls, f: Format):
+        def action_digest_page_header(cls, f: Format) -> None:
             f.set_bg_color(cls.COLOR_PAGE_HEADER)
             f.set_color('#ffffff')
             f.set_align('top')
@@ -143,7 +141,7 @@ class ExcelFormats(dict):
             f.set_text_wrap(True)
 
         @classmethod
-        def action_digest_value_long(cls, f: Format):
+        def action_digest_value_long(cls, f: Format) -> None:
             cls.action_digest_value(f)
             f.set_bold(False)
             f.set_font_size(8)
@@ -271,7 +269,7 @@ class ExcelReport:
             worksheet,
             formats=self.formats,
             default_format=self.formats.even_row,
-            width=3
+            width=3,
         ).write_cells(cells)
         worksheet.set_row(0, 30)
         worksheet.set_row(1, 30)
@@ -315,12 +313,12 @@ class ExcelReport:
         worksheet.conditional_format(1, 0, df.height, df.width-1, {
             'type': 'formula',
             'criteria': '=MOD(ROW(),2)=0',
-            'format': self.formats.odd_row
+            'format': self.formats.odd_row,
         })
         worksheet.conditional_format(1, 0, df.height, df.width-1, {
             'type': 'formula',
             'criteria': '=NOT(MOD(ROW(),2)=0)',
-            'format': self.formats.even_row
+            'format': self.formats.even_row,
         })
         # Header row
         worksheet.set_row(0, 20)
@@ -396,7 +394,7 @@ class ExcelReport:
             for field in self.report.type.fields:
                 labels = [label for label in field.block.xlsx_column_labels(field.value, plan=self.report.type.plan)]
                 values = field.block.extract_action_values(
-                    self, field.value, action.data, related_objects, attribute_versions
+                    self, field.value, action.data, related_objects, attribute_versions,
                 )
                 field_name = field.block.name
                 if field_name == 'attribute_type':
@@ -433,7 +431,7 @@ class ExcelReport:
             values=_("Identifier"),
             index=labels[0],
             columns=labels[1],
-            aggregate_function="count"
+            aggregate_function="count",
             ).sort(labels[0])
 
     def post_process(self, action_df: polars.DataFrame):
@@ -444,15 +442,15 @@ class ExcelReport:
             # Pivot sheet: Implementation phase
             {
                 'group': (_('Implementation phase'),),
-                'type': 'pie'
+                'type': 'pie',
             },
             # Pivot sheet: Organization parent x Implementation phase
             {
                 'group': (
                     pgettext('organization', 'Parent'),
                     _('Implementation phase')),
-                'type': 'column'
-            }
+                'type': 'column',
+            },
         ]
 
         # Pivot sheet: Category (level) x Implementation phase
@@ -464,7 +462,7 @@ class ExcelReport:
                 pivot_specs.append({
                     'group': (label[0], _('Implementation phase')),
                     'type': 'column',
-                    'subtype': 'stacked'
+                    'subtype': 'stacked',
                 })
         sheet_number = 1
         for spec in pivot_specs:
@@ -482,7 +480,7 @@ class ExcelReport:
                 series = {
                     'categories': [sheet_name, 1, 0, aggregated.height, 0],
                     'values': [sheet_name, 1, 1 + i, aggregated.height, 1 + i],
-                    'name': [sheet_name, 0, 1 + i]
+                    'name': [sheet_name, 0, 1 + i],
                 }
                 chart.add_series(series)
             if chart_type == 'column':

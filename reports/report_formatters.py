@@ -1,22 +1,24 @@
 from __future__ import annotations
+
+import typing
 from abc import ABC, abstractmethod
 from collections.abc import Iterable
-from django.utils.translation import gettext_lazy as _, pgettext
-from django.utils.formats import date_format
-import graphene
-from wagtail import blocks, fields
-from grapple.models import GraphQLForeignKey
-
 from typing import Any, List, Optional, Type
+
+import graphene
+from django.utils.formats import date_format
+from django.utils.translation import gettext_lazy as _, pgettext
+from grapple.models import GraphQLForeignKey
+from wagtail import blocks, fields
 
 from actions.attributes import AttributeType
 from actions.models import Plan
 from actions.models.action import (
     Action,
-    ActionTask,
     ActionImplementationPhase,
     ActionResponsibleParty,
     ActionStatus,
+    ActionTask,
 )
 from actions.models.attributes import (
     AttributeType as AttributeTypeModel,
@@ -26,16 +28,14 @@ from actions.models.category import (
     CategoryLevel,
     CategoryType,
 )
-from orgs.models import Organization
-from reports.utils import get_attribute_for_type_from_related_objects, get_related_model_instances_for_action
-from reports.graphene_types import generate_graphene_report_value_node_class, GrapheneValueClassProperties
-
 from aplans.utils import convert_html_to_text
+from orgs.models import Organization
+from reports.graphene_types import GrapheneValueClassProperties, generate_graphene_report_value_node_class
+from reports.utils import get_attribute_for_type_from_related_objects, get_related_model_instances_for_action
 
-import typing
 if typing.TYPE_CHECKING:
-    from reports.spreadsheets import ExcelReport
     from reports.models import ActionSnapshot
+    from reports.spreadsheets import ExcelReport
     from reports.utils import AttributePath, SerializedAttributeVersion, SerializedVersion
 
 
@@ -50,8 +50,8 @@ class ReportFieldFormatter(ABC):
     def value_for_action_snapshot(
             self,
             block_value: dict[str, Any],
-            snapshot: ActionSnapshot
-    ) -> Optional[Any]:
+            snapshot: ActionSnapshot,
+    ) -> Any | None:
         raise NotImplementedError
 
     @abstractmethod
@@ -63,7 +63,7 @@ class ReportFieldFormatter(ABC):
         value_field_name = value_class_properties.value_field_name
         return self.ValueClass(
             field=field,
-            **{value_field_name: self.value_for_action_snapshot(field.value, snapshot)}
+            **{value_field_name: self.value_for_action_snapshot(field.value, snapshot)},
         )
 
     @abstractmethod
@@ -71,11 +71,11 @@ class ReportFieldFormatter(ABC):
             self, report: 'ExcelReport', block_value: dict, action: dict,
             related_objects: dict[str, list[SerializedVersion]],
             attribute_versions: dict[AttributePath, SerializedAttributeVersion],
-            ) -> Optional[Any]:
+            ) -> Any | None:
         pass
 
     @abstractmethod
-    def xlsx_column_labels(self, value, plan: Plan | None = None) -> List[str]:
+    def xlsx_column_labels(self, value, plan: Plan | None = None) -> list[str]:
         pass
 
     @abstractmethod
@@ -91,7 +91,8 @@ class ActionSimpleFieldFormatter(ReportFieldFormatter):
     """A simple field is a field whose value is trivial to convert
     to a string with str
     """
-    def value_for_action_snapshot(self, block_value, snapshot) -> Optional[Any]:
+
+    def value_for_action_snapshot(self, block_value, snapshot) -> Any | None:
         value = snapshot.action_version.field_dict[block_value.get('field_name')]
         return value
 
@@ -102,7 +103,7 @@ class ActionSimpleFieldFormatter(ReportFieldFormatter):
             action: dict,
             related_objects: dict[str, list[SerializedVersion]],
             attribute_versions: dict[AttributePath, SerializedAttributeVersion],
-            ) -> Optional[Any]:
+            ) -> Any | None:
         field_name = self.block.meta.field_name
         field = Action._meta.get_field(field_name)
         value = action.get(field_name)
@@ -110,7 +111,7 @@ class ActionSimpleFieldFormatter(ReportFieldFormatter):
             value = convert_html_to_text(value)
         return [str(value)]
 
-    def xlsx_column_labels(self, value: dict, plan: Plan | None = None) -> List[str]:
+    def xlsx_column_labels(self, value: dict, plan: Plan | None = None) -> list[str]:
         field_name = self.block.meta.field_name
         verbose_name = Action._meta.get_field(field_name).verbose_name
         return [str(verbose_name)]
@@ -122,7 +123,7 @@ class ActionSimpleFieldFormatter(ReportFieldFormatter):
         return GrapheneValueClassProperties(
             class_name='ActionSimpleFieldReportValue',
             value_field_name='value',
-            value_field_type='graphene.String'
+            value_field_type='graphene.String',
         )
 
 class ActionManyToOneFieldFormatter(ReportFieldFormatter):
@@ -130,11 +131,12 @@ class ActionManyToOneFieldFormatter(ReportFieldFormatter):
     Formats the many values related to one action by concatenating
     the values so they can be output into one spreadsheet cell
     '''
+
     def extract_action_values(
             self, report: 'ExcelReport', block_value: dict, action: dict,
             related_objects: dict[str, list[SerializedVersion]],
             attribute_versions: dict[AttributePath, SerializedAttributeVersion],
-            ) -> Optional[Any]:
+            ) -> Any | None:
         field_name = self.block.meta.field_name
         field = Action._meta.get_field(field_name)
         value = block_value
@@ -142,7 +144,7 @@ class ActionManyToOneFieldFormatter(ReportFieldFormatter):
             value = convert_html_to_text(value)
         return [str(value)]
 
-    def xlsx_column_labels(self, value, plan: Plan | None = None) -> List[str]:
+    def xlsx_column_labels(self, value, plan: Plan | None = None) -> list[str]:
         field_name = self.block.meta.field_name
         field = Action._meta.get_field(field_name)
         verbose_name = field.related_model._meta.verbose_name_plural
@@ -159,14 +161,14 @@ class ActionTasksFormatter(ActionManyToOneFieldFormatter):
             action: dict,
             related_objects: dict[str, list[SerializedVersion]],
             attribute_versions: dict[AttributePath, SerializedAttributeVersion],
-    ) -> Optional[Any]:
+    ) -> Any | None:
         field_name = self.block.meta.field_name
         field = Action._meta.get_field(field_name)
         related_model = field.related_model
         tasks = get_related_model_instances_for_action(
             int(action['id']),
             related_objects,
-            related_model
+            related_model,
         )
         formatted = []
         for t in tasks:
@@ -179,7 +181,7 @@ class ActionTasksFormatter(ActionManyToOneFieldFormatter):
                 due_date = data['due_at']
                 state += f", {_('due date')}: {date_format(due_date)}"
             formatted.append(
-                f"• {data['name']} [{state}]"
+                f"• {data['name']} [{state}]",
             )
         return ["\n".join(formatted)]
 
@@ -187,10 +189,10 @@ class ActionTasksFormatter(ActionManyToOneFieldFormatter):
         return GrapheneValueClassProperties(
             class_name='ActionTasksReportValue',
             value_field_name='tasks',
-            value_field_type='graphene.String'
+            value_field_type='graphene.String',
         )
 
-    def xlsx_column_labels(self, value, plan: Plan | None = None) -> List[str]:
+    def xlsx_column_labels(self, value, plan: Plan | None = None) -> list[str]:
         if plan is None:
             return super().xlsx_column_labels(value)
         return [str(plan.general_content.get_action_task_term_display_plural())]
@@ -198,10 +200,10 @@ class ActionTasksFormatter(ActionManyToOneFieldFormatter):
 
 class ActionAttributeTypeReportFieldFormatter(ReportFieldFormatter):
     graphql_fields = [
-        GraphQLForeignKey('attribute_type', AttributeTypeModel, required=True)
+        GraphQLForeignKey('attribute_type', AttributeTypeModel, required=True),
     ]
 
-    def value_for_action_snapshot(self, block_value, snapshot) -> Optional[Any]:
+    def value_for_action_snapshot(self, block_value, snapshot) -> Any | None:
         return snapshot.get_attribute_for_type(block_value['attribute_type'])
 
     def graphql_value_for_action_snapshot(self, field, snapshot):
@@ -219,21 +221,21 @@ class ActionAttributeTypeReportFieldFormatter(ReportFieldFormatter):
             self, report: 'ExcelReport', block_value: dict, action: dict,
             related_objects: dict[str, list[SerializedVersion]],
             attribute_versions: dict[AttributePath, SerializedAttributeVersion],
-            ) -> Optional[Any]:
+            ) -> Any | None:
         attribute_type_model_instance = block_value['attribute_type']
         wrapped_type = AttributeType.from_model_instance(attribute_type_model_instance)
         attribute_record = get_attribute_for_type_from_related_objects(
             report.plan_current_related_objects.action_content_type.id,
             int(action['id']),
             attribute_type_model_instance.pk,
-            attribute_versions
+            attribute_versions,
         )
         if attribute_record is None:
             labels = self.xlsx_column_labels(block_value)
             return [None] * len(labels)
         return wrapped_type.xlsx_values(attribute_record, related_objects)
 
-    def xlsx_column_labels(self, value, plan: Plan | None = None) -> List[str]:
+    def xlsx_column_labels(self, value, plan: Plan | None = None) -> list[str]:
         """Return the label for each of this attribute type's columns."""
         wrapped_type = AttributeType.from_model_instance(value['attribute_type'])
         return wrapped_type.xlsx_column_labels(plan=plan)
@@ -246,20 +248,20 @@ class ActionAttributeTypeReportFieldFormatter(ReportFieldFormatter):
         return GrapheneValueClassProperties(
             class_name='ActionAttributeReportValue',
             value_field_name='attribute',
-            value_field_type='actions.schema.AttributeInterface'
+            value_field_type='actions.schema.AttributeInterface',
         )
 
 
 class ActionCategoryReportFieldFormatter(ReportFieldFormatter):
     graphql_fields = [
-        GraphQLForeignKey('category_type', CategoryType, required=True)
+        GraphQLForeignKey('category_type', CategoryType, required=True),
     ]
 
     def extract_action_values(
             self, report: 'ExcelReport', block_value: dict, action: dict,
             related_objects: dict[str, list[SerializedVersion]],
             attribute_versions: dict[AttributePath, SerializedAttributeVersion],
-            ) -> Optional[Any]:
+            ) -> Any | None:
 
         category_type: CategoryType = block_value['category_type']
 
@@ -285,7 +287,7 @@ class ActionCategoryReportFieldFormatter(ReportFieldFormatter):
             return [None]
         return [category_names]
 
-    def xlsx_column_labels(self, value, plan: Plan | None = None) -> List[str]:
+    def xlsx_column_labels(self, value, plan: Plan | None = None) -> list[str]:
         return [self.get_help_label(value)]
 
     def get_xlsx_cell_format(self, block_value: dict[str, Any]) -> dict[str, str] | None:
@@ -307,12 +309,12 @@ class ActionCategoryReportFieldFormatter(ReportFieldFormatter):
         return GrapheneValueClassProperties(
             class_name='ActionCategoryReportValue',
             value_field_name='category',
-            value_field_type='actions.schema.CategoryNode'
+            value_field_type='actions.schema.CategoryNode',
         )
 
 
 class ActionImplementationPhaseReportFieldFormatter(ReportFieldFormatter):
-    def value_for_action_snapshot(self, block_value, snapshot) -> Optional[Any]:
+    def value_for_action_snapshot(self, block_value, snapshot) -> Any | None:
         implementation_phase_id = snapshot.action_version.field_dict['implementation_phase_id']
         if implementation_phase_id:
             return ActionImplementationPhase.objects.get(id=implementation_phase_id)
@@ -329,7 +331,7 @@ class ActionImplementationPhaseReportFieldFormatter(ReportFieldFormatter):
             return [None]
         return [str(report.plan_current_related_objects.implementation_phases.get(int(pk), f"[{_('empty')}]"))]
 
-    def xlsx_column_labels(self, value, plan: Plan | None = None) -> List[str]:
+    def xlsx_column_labels(self, value, plan: Plan | None = None) -> list[str]:
         return [str(self.block.label).capitalize()]
 
     def get_xlsx_cell_format(self, block_value: dict[str, Any]) -> dict[str, str] | None:
@@ -339,7 +341,7 @@ class ActionImplementationPhaseReportFieldFormatter(ReportFieldFormatter):
         return GrapheneValueClassProperties(
             class_name='ActionImplementationPhaseReportValue',
             value_field_name='implementation_phase',
-            value_field_type='actions.schema.ActionImplementationPhaseNode'
+            value_field_type='actions.schema.ActionImplementationPhaseNode',
         )
 
 
@@ -348,14 +350,14 @@ class ActionStatusReportFieldFormatter(ReportFieldFormatter):
             self, report: 'ExcelReport', block_value: dict, action: dict,
             related_objects: dict[str, list[SerializedVersion]],
             attribute_versions: dict[AttributePath, SerializedAttributeVersion],
-            ) -> Optional[Any]:
+            ) -> Any | None:
 
         pk = action.get('status_id')
         if pk is None:
             return [None]
         return [str(report.plan_current_related_objects.statuses.get(int(pk)))]
 
-    def xlsx_column_labels(self, value, plan: Plan | None = None) -> List[str]:
+    def xlsx_column_labels(self, value, plan: Plan | None = None) -> list[str]:
         return [str(self.block.label).capitalize()]
 
     def get_xlsx_cell_format(self, block_value: dict[str, Any]) -> dict[str, str] | None:
@@ -372,7 +374,7 @@ class ActionStatusReportFieldFormatter(ReportFieldFormatter):
         return GrapheneValueClassProperties(
             class_name='ActionStatusReportValue',
             value_field_name='status',
-            value_field_type='actions.schema.ActionStatusNode'
+            value_field_type='actions.schema.ActionStatusNode',
         )
 
 
@@ -402,10 +404,10 @@ class ActionResponsiblePartyReportFieldFormatter(ReportFieldFormatter):
             self, report: 'ExcelReport', block_value: dict, action: dict,
             related_objects: dict[str, list[SerializedVersion]],
             attribute_versions: dict[AttributePath, SerializedAttributeVersion],
-            ) -> Optional[Any]:
+            ) -> Any | None:
         organization_id = self._find_organization_id(
             (version.data for version in related_objects['actions.models.action.ActionResponsibleParty']),
-            action['id']
+            action['id'],
         )
         target_depth = block_value.get('target_ancestor_depth')
         value_length = 1
@@ -432,7 +434,7 @@ class ActionResponsiblePartyReportFieldFormatter(ReportFieldFormatter):
         parent_name = parent.name if parent else None
         return [organization.name, parent_name]
 
-    def xlsx_column_labels(self, value: dict, plan: Plan | None = None) -> List[str]:
+    def xlsx_column_labels(self, value: dict, plan: Plan | None = None) -> list[str]:
         labels = [str(self.block.label)]
         target_depth = value.get('target_ancestor_depth')
         if target_depth is None:
@@ -446,13 +448,13 @@ class ActionResponsiblePartyReportFieldFormatter(ReportFieldFormatter):
         return GrapheneValueClassProperties(
             class_name='ActionResponsiblePartyReportValue',
             value_field_name='responsible_party',
-            value_field_type='actions.schema.ActionResponsiblePartyNode'
+            value_field_type='actions.schema.ActionResponsiblePartyNode',
         )
 
 
 class ActionReportContentField(blocks.Block):
     report_value_formatter: ReportFieldFormatter
-    report_value_formatter_class: Type[ReportFieldFormatter]
+    report_value_formatter_class: type[ReportFieldFormatter]
 
     def __init__(self, *args, report_value_formatter_class: type[ReportFieldFormatter] | None = None, **kwargs):
         report_value_formatter_class = self.get_report_value_formatter_class()
@@ -464,7 +466,7 @@ class ActionReportContentField(blocks.Block):
             return ActionSimpleFieldFormatter
         return self.report_value_formatter_class
 
-    def value_for_action_snapshot(self, block_value, snapshot) -> Optional[Any]:
+    def value_for_action_snapshot(self, block_value, snapshot) -> Any | None:
         return self.report_value_formatter.value_for_action_snapshot(block_value, snapshot)
 
     def graphql_value_for_action_snapshot(self, field, snapshot):
@@ -474,10 +476,10 @@ class ActionReportContentField(blocks.Block):
             self, report: 'ExcelReport', block_value: dict, action: dict,
             related_objects: dict[str, list[SerializedVersion]],
             attribute_versions: dict[AttributePath, SerializedAttributeVersion],
-            ) -> Optional[Any]:
+            ) -> Any | None:
         return self.report_value_formatter.extract_action_values(report, block_value, action, related_objects, attribute_versions)
 
-    def xlsx_column_labels(self, value, plan: Plan | None = None) -> List[str]:
+    def xlsx_column_labels(self, value, plan: Plan | None = None) -> list[str]:
         return self.report_value_formatter.xlsx_column_labels(value, plan=plan)
 
     def get_xlsx_cell_format(self, block_value: dict[str, Any]) -> dict[str, str] | None:

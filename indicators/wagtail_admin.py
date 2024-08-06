@@ -5,18 +5,27 @@ from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _, ngettext_lazy
 from generic_chooser.views import ModelChooserViewSet
 from generic_chooser.widgets import AdminChooser
+from wagtail import hooks
 from wagtail.admin.panels import (
-    FieldPanel, HelpPanel, InlinePanel, ObjectList, MultiFieldPanel
+    FieldPanel,
+    HelpPanel,
+    InlinePanel,
+    MultiFieldPanel,
+    ObjectList,
 )
 from wagtail_modeladmin.helpers import PermissionHelper
 from wagtail_modeladmin.options import ModelAdminGroup
-from wagtail import hooks
 
-from .models import CommonIndicator, Dimension, Indicator, IndicatorLevel, Quantity, Unit
 from admin_site.wagtail import (
-    AplansAdminModelForm, AplansCreateView, AplansEditView,
-    AplansModelAdmin, AplansTabbedInterface, CondensedInlinePanel, CustomizableBuiltInFieldPanel,
-    InitializeFormWithPlanMixin, get_translation_tabs
+    AplansAdminModelForm,
+    AplansCreateView,
+    AplansEditView,
+    AplansModelAdmin,
+    AplansTabbedInterface,
+    CondensedInlinePanel,
+    CustomizableBuiltInFieldPanel,
+    InitializeFormWithPlanMixin,
+    get_translation_tabs,
 )
 from aplans.context_vars import ctx_instance, ctx_request
 from aplans.extensions import modeladmin_register
@@ -24,6 +33,8 @@ from aplans.wagtail_utils import _get_category_fields
 from orgs.models import Organization
 from people.chooser import PersonChooser
 from users.models import User
+
+from .models import CommonIndicator, Dimension, Indicator, IndicatorLevel, Quantity, Unit
 
 
 class DisconnectedIndicatorFilter(SimpleListFilter):
@@ -168,7 +179,7 @@ class QuantityAdmin(AplansModelAdmin):
         instance = ctx_instance.get()
         tabs = [
             ObjectList(self.panels, heading=_('General')),
-            *get_translation_tabs(instance, request, include_all_languages=True)
+            *get_translation_tabs(instance, request, include_all_languages=True),
         ]
         return AplansTabbedInterface(tabs, base_form_class=QuantityForm)
 
@@ -199,7 +210,7 @@ class UnitAdmin(AplansModelAdmin):
         instance = ctx_instance.get()
         tabs = [
             ObjectList(self.panels, heading=_('General')),
-            *get_translation_tabs(instance, request, include_all_languages=True)
+            *get_translation_tabs(instance, request, include_all_languages=True),
         ]
         return AplansTabbedInterface(tabs, base_form_class=UnitForm)
 
@@ -237,7 +248,7 @@ class IndicatorForm(AplansAdminModelForm):
         organization = self.cleaned_data['organization']
         if self.instance.pk is not None and self.instance.organization != organization:
             raise ValidationError(
-                _("Changing the organization to one with a different primary language is currently not supported")
+                _("Changing the organization to one with a different primary language is currently not supported"),
             )
         return organization
 
@@ -338,7 +349,7 @@ class IndicatorEditHandler(AplansTabbedInterface):
         self.base_form_class = type(
             'IndicatorForm',
             (IndicatorForm,),
-            {**cat_fields, }
+            {**cat_fields, },
         )
 
         form_class = super().get_form_class()
@@ -398,15 +409,15 @@ class IndicatorAdmin(AplansModelAdmin):
         is_general_admin = request.user.is_general_admin_for_plan(plan)
         if not instance or not instance.common:
             basic_panels.insert(
-                1, FieldPanel('quantity', widget=autocomplete.ModelSelect2(url='quantity-autocomplete'))
+                1, FieldPanel('quantity', widget=autocomplete.ModelSelect2(url='quantity-autocomplete')),
             )
             basic_panels.insert(
-                2, FieldPanel('unit', widget=autocomplete.ModelSelect2(url='unit-autocomplete'))
+                2, FieldPanel('unit', widget=autocomplete.ModelSelect2(url='unit-autocomplete')),
             )
             if is_general_admin:
                 basic_panels.append(CustomizableBuiltInFieldPanel('visibility'))
                 advanced_panels.append(CondensedInlinePanel('dimensions', panels=[
-                    FieldPanel('dimension')
+                    FieldPanel('dimension'),
                 ], heading=_("Dimensions")))
                 # If the indicator has values, show a warning that these would be deleted by changing dimensions
                 num_values = instance.values.count() if instance else 0
@@ -423,15 +434,15 @@ class IndicatorAdmin(AplansModelAdmin):
         else:
             info_text = _("This indicator is linked to a common indicator, so quantity, unit and dimensions cannot be "
                           "edited. Current quantity: %(quantity)s; unit: %(unit)s; dimensions: %(dimensions)s") % {
-                              'quantity': instance.quantity, 'unit': instance.unit, 'dimensions': dimensions_str
+                              'quantity': instance.quantity, 'unit': instance.unit, 'dimensions': dimensions_str,
                           }
             basic_panels.insert(0, HelpPanel(f'<p class="help-block help-info">{info_text}</p>'))
 
         advanced_panels.insert(
-            1, FieldPanel('organization', widget=autocomplete.ModelSelect2(url='organization-autocomplete'))
+            1, FieldPanel('organization', widget=autocomplete.ModelSelect2(url='organization-autocomplete')),
         )
         advanced_panels.insert(
-            2, FieldPanel('common', widget=autocomplete.ModelSelect2(url='common-indicator-autocomplete'))
+            2, FieldPanel('common', widget=autocomplete.ModelSelect2(url='common-indicator-autocomplete')),
         )
         advanced_panels.append(InlinePanel(
             'related_effects',
@@ -461,8 +472,8 @@ class IndicatorAdmin(AplansModelAdmin):
 
         basic_panels.append(
             MultiFieldPanel(
-                children=advanced_panels, heading=_('Advanced options'), classname='collapsible collapsed'
-            )
+                children=advanced_panels, heading=_('Advanced options'), classname='collapsible collapsed',
+            ),
         )
         tabs = [
             ObjectList(basic_panels, heading=_('Basic information')),
@@ -471,8 +482,8 @@ class IndicatorAdmin(AplansModelAdmin):
                     'contact_persons',
                     panels=[
                         FieldPanel('person', widget=PersonChooser),
-                    ]
-                )
+                    ],
+                ),
             ], heading=_('Contact persons')),
         ]
 
@@ -549,7 +560,7 @@ class CommonIndicatorAdmin(AplansModelAdmin):
             basic_panels.insert(1, FieldPanel('quantity'))
             basic_panels.insert(2, FieldPanel('unit'))
             basic_panels.append(CondensedInlinePanel('dimensions', panels=[
-                FieldPanel('dimension')
+                FieldPanel('dimension'),
             ], heading=_("Dimensions")))
         else:
             dimensions_str = ', '.join(instance.dimensions.values_list('dimension__name', flat=True))
@@ -557,7 +568,7 @@ class CommonIndicatorAdmin(AplansModelAdmin):
                 dimensions_str = _("none")
             info_text = _("This common indicator has indicators linked to it, so quantity, unit and dimensions cannot "
                           "be edited. Current quantity: %(quantity)s; unit: %(unit)s; dimensions: %(dimensions)s") % {
-                              'quantity': instance.quantity, 'unit': instance.unit, 'dimensions': dimensions_str
+                              'quantity': instance.quantity, 'unit': instance.unit, 'dimensions': dimensions_str,
                           }
             basic_panels.insert(0, HelpPanel(f'<p class="help-block help-info">{info_text}</p>'))
 

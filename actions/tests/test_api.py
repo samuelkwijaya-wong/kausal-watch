@@ -1,9 +1,10 @@
 from __future__ import annotations
 
-import pytest
-from django.urls import reverse
 from itertools import permutations
 from typing import Iterable, List
+
+import pytest
+from django.urls import reverse
 
 from actions.api import ActionSerializer, OrganizationSerializer
 from actions.tests.factories import ActionFactory
@@ -15,7 +16,7 @@ pytestmark = pytest.mark.django_db
 
 
 def orgs_to_trees(roots: Iterable[Organization], indent=0):
-    result: List[Tree] = []
+    result: list[Tree] = []
     for root in roots:
         tree = Tree(root.name, indent)
         for child in orgs_to_trees(root.get_children(), indent + 4):
@@ -183,7 +184,7 @@ def test_action_api_put_unauthenticated(
     response = api_client.put(action_detail_url, data={
         'id': action.pk,
         'identifier': action.identifier,
-        'name': 'renamed'
+        'name': 'renamed',
     })
     assert response.status_code == 401
 

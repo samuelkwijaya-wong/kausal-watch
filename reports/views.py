@@ -11,9 +11,9 @@ from django.utils.translation import gettext_lazy as _
 from reversion.models import Version
 from wagtail_modeladmin.views import WMABaseView
 
-from .models import ActionSnapshot, Report
 from actions.models import Action
 
+from .models import ActionSnapshot, Report
 
 
 class MarkActionAsCompleteView(WMABaseView):

@@ -1,19 +1,19 @@
 from typing import Literal
 
-from generic_chooser.views import ModelChooserViewSet, ModelChooserMixin
-from generic_chooser.widgets import AdminChooser, LinkedFieldMixin
+from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import gettext_lazy as _
-from wagtail.search.backends import get_search_backend
+from generic_chooser.views import ModelChooserMixin, ModelChooserViewSet
+from generic_chooser.widgets import AdminChooser, LinkedFieldMixin
 from wagtail import hooks
+from wagtail.search.backends import get_search_backend
+
+from aplans.types import WatchAdminRequest
+from budget.models import DatasetSchema
 
 from .models.action import Action
 from .models.attributes import AttributeType
 from .models.category import Category, CategoryLevel, CategoryType
 from .models.plan import Plan
-from aplans.types import WatchAdminRequest
-
-from budget.models import DatasetSchema
-from django.contrib.contenttypes.models import ContentType
 
 
 class WatchModelChooserBase(ModelChooserMixin):
@@ -285,13 +285,13 @@ class DatasetSchemaChooserMixin(WatchModelChooserBase):
             content_type = ContentType.objects.get_for_model(Plan)
             return DatasetSchema.objects.filter(
                 scopes__scope_content_type=content_type,
-                scopes__scope_id=plan.id
+                scopes__scope_id=plan.id,
             ).distinct()
         elif scope == 'categorytype':
             content_type = ContentType.objects.get_for_model(CategoryType)
             return DatasetSchema.objects.filter(
                 scopes__scope_content_type=content_type,
-                scopes__scope_id__in=plan.category_types.values_list('id', flat=True)
+                scopes__scope_id__in=plan.category_types.values_list('id', flat=True),
             ).distinct()
         else:
             return DatasetSchema.objects.none()

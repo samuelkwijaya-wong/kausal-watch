@@ -8,8 +8,8 @@ from wagtail.users.models import UserProfile
 
 from admin_site.msgraph import get_user_photo
 
-from .models import User
 from .base import uuid_to_username
+from .models import User
 
 logger = logging.getLogger('users.login')
 
@@ -159,7 +159,7 @@ def get_username(details, backend, response, *args, **kwargs):
         username = user.username
 
     return {
-        'username': username
+        'username': username,
     }
 
 

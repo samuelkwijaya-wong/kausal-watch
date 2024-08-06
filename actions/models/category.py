@@ -1,10 +1,11 @@
 from __future__ import annotations
 
-from functools import lru_cache
-import reversion
 import typing
-from typing import Any, Self, Tuple, Iterable, Sequence
 import uuid
+from functools import lru_cache
+from typing import Any, Iterable, Self, Sequence, Tuple
+
+import reversion
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericRelation
 from django.contrib.contenttypes.models import ContentType
@@ -12,30 +13,41 @@ from django.core.exceptions import ValidationError
 from django.db import models, transaction
 from django.db.models import Q
 from django.utils import translation
-from django.utils.translation import gettext_lazy as _, override
 from django.utils.text import format_lazy
+from django.utils.translation import gettext_lazy as _, override
 from modelcluster.fields import ParentalKey
 from modelcluster.models import ClusterableModel
 from modeltrans.fields import TranslationField
 from modeltrans.manager import MultilingualManager
 from modeltrans.translator import get_i18n_field
 from modeltrans.utils import get_available_languages
-from wagtail.models import Page, Collection
+from wagtail.models import Collection, Page
+
+from aplans.utils import (
+    IdentifierField,
+    InstancesEditableByMixin,
+    ModelWithPrimaryLanguage,
+    OrderedModel,
+    PlanRelatedModel,
+    ReferenceIndexedModelMixin,
+    UserOrAnon,
+    generate_identifier,
+    get_supported_languages,
+    validate_css_color,
+)
 
 from ..attributes import AttributeFieldPanel, AttributeType
 from .attributes import AttributeType as AttributeTypeModel, ModelWithAttributes
-from aplans.utils import (
-    IdentifierField, InstancesEditableByMixin, ModelWithPrimaryLanguage, OrderedModel, PlanRelatedModel,
-    ReferenceIndexedModelMixin, UserOrAnon, generate_identifier, validate_css_color, get_supported_languages
-)
 
 if typing.TYPE_CHECKING:
-    from django.db.models.manager import RelatedManager
     from django.db.models.expressions import Combinable
-    from .action import ActionManager
+    from django.db.models.manager import RelatedManager
+
     from actions.models.plan import Plan
     from indicators.models import Indicator
-    from pages.models import CategoryTypePageLevelLayout, CategoryPage, CategoryTypePage
+    from pages.models import CategoryPage, CategoryTypePage, CategoryTypePageLevelLayout
+
+    from .action import ActionManager
 
 
 class CategoryTypeBase(models.Model):
@@ -47,7 +59,7 @@ class CategoryTypeBase(models.Model):
     identifier = IdentifierField()
     hide_category_identifiers = models.BooleanField(
         default=False, verbose_name=_('hide category identifiers'),
-        help_text=_("Set if the categories do not have meaningful identifiers")
+        help_text=_("Set if the categories do not have meaningful identifiers"),
     )
     lead_paragraph = models.TextField(verbose_name=_('lead paragraph'), null=True, blank=True)
     help_text = models.TextField(verbose_name=_('help text'), blank=True)
@@ -77,9 +89,9 @@ class CategoryTypeBase(models.Model):
                 _('Choose "{choice_multiple}" only if more than one category can be selected at a time, '
                   'otherwise choose "{choice_single}" which is the default.'),
                 choice_multiple=SelectWidget.MULTIPLE.label,
-                choice_single=SelectWidget.SINGLE.label
+                choice_single=SelectWidget.SINGLE.label,
             )
-        )
+        ),
     )
 
     public_fields: typing.ClassVar = [
@@ -96,7 +108,7 @@ class CategoryTypeBase(models.Model):
 class CommonCategoryType(CategoryTypeBase, ModelWithPrimaryLanguage):
     has_collection = models.BooleanField(
         default=False, verbose_name=_('has a collection'),
-        help_text=_('Set if this category type should have its own collection for images')
+        help_text=_('Set if this category type should have its own collection for images'),
     )
     # collection for photos and icons
     collection = models.OneToOneField(
@@ -104,7 +116,7 @@ class CommonCategoryType(CategoryTypeBase, ModelWithPrimaryLanguage):
     )
 
     primary_language = models.CharField(
-        max_length=20, choices=get_supported_languages(), default='en', verbose_name=_('primary language')
+        max_length=20, choices=get_supported_languages(), default='en', verbose_name=_('primary language'),
     )
     i18n = TranslationField(fields=('name', 'lead_paragraph', 'help_text'), default_language_field='primary_language_lowercase')
 
@@ -114,7 +126,7 @@ class CommonCategoryType(CategoryTypeBase, ModelWithPrimaryLanguage):
     categories: RelatedManager[CommonCategory]
 
     public_fields: typing.ClassVar = CategoryTypeBase.public_fields + [
-        'categories'
+        'categories',
     ]
 
     class Meta:
@@ -166,7 +178,7 @@ class CommonCategoryType(CategoryTypeBase, ModelWithPrimaryLanguage):
 
 @reversion.register()
 class CategoryType(  # type: ignore[django-manager-missing]
-    InstancesEditableByMixin, ReferenceIndexedModelMixin, CategoryTypeBase, ClusterableModel, PlanRelatedModel
+    InstancesEditableByMixin, ReferenceIndexedModelMixin, CategoryTypeBase, ClusterableModel, PlanRelatedModel,
 ):
     """Type of the categories.
 
@@ -175,15 +187,15 @@ class CategoryType(  # type: ignore[django-manager-missing]
     """
 
     plan: models.ForeignKey[Plan | Combinable, Plan] = models.ForeignKey(
-        'actions.Plan', on_delete=models.CASCADE, related_name='category_types'
+        'actions.Plan', on_delete=models.CASCADE, related_name='category_types',
     )
     common = models.ForeignKey(
         CommonCategoryType, blank=True, null=True, on_delete=models.PROTECT,
-        verbose_name=_('common category type'), related_name='category_type_instances'
+        verbose_name=_('common category type'), related_name='category_type_instances',
     )
     synchronize_with_pages = models.BooleanField(
         default=False, verbose_name=_("synchronize with pages"),
-        help_text=_("Set if categories of this type should be synchronized with pages")
+        help_text=_("Set if categories of this type should be synchronized with pages"),
     )
     i18n = TranslationField(fields=('name', 'lead_paragraph', 'help_text'), default_language_field='plan__primary_language_lowercase')
 
@@ -198,7 +210,7 @@ class CategoryType(  # type: ignore[django-manager-missing]
     levels: models.QuerySet[CategoryLevel]
 
     public_fields: typing.ClassVar = CategoryTypeBase.public_fields + [
-        'id', 'plan', 'common', 'levels', 'categories', 'hide_category_identifiers'
+        'id', 'plan', 'common', 'levels', 'categories', 'hide_category_identifiers',
     ]
 
     class Meta:
@@ -231,7 +243,7 @@ class CategoryType(  # type: ignore[django-manager-missing]
                     ct_page = root_page.get_children().type(CategoryTypePage).get(id__in=ct_pages)
                 except Page.DoesNotExist:
                     ct_page = CategoryTypePage(
-                        category_type=self, title=self.name_i18n, show_in_menus=True, show_in_footer=True
+                        category_type=self, title=self.name_i18n, show_in_menus=True, show_in_footer=True,
                     )
                     root_page.add_child(instance=ct_page)
             for category in self.categories.filter(parent__isnull=True):
@@ -285,9 +297,10 @@ class CategoryLevel(OrderedModel):
 
     Root level has order=0, first child level order=1 and so on.
     """
+
     type: ParentalKey[CategoryType | Combinable, CategoryType] = ParentalKey(
         CategoryType, on_delete=models.CASCADE, related_name='levels',
-        verbose_name=_('type')
+        verbose_name=_('type'),
     )
     name = models.CharField(max_length=100, verbose_name=_('name'))
     name_plural = models.CharField(max_length=100, verbose_name=_('plural name'), null=True, blank=True)
@@ -320,15 +333,15 @@ class CategoryBase(OrderedModel):
     identifier = IdentifierField(max_length=70)
     name = models.CharField(max_length=200, verbose_name=_('name'))
     lead_paragraph = models.TextField(
-        max_length=300, blank=True, verbose_name=_('lead paragraph')
+        max_length=300, blank=True, verbose_name=_('lead paragraph'),
     )
     image = models.ForeignKey(
-        'images.AplansImage', null=True, blank=True, on_delete=models.SET_NULL, related_name='+'
+        'images.AplansImage', null=True, blank=True, on_delete=models.SET_NULL, related_name='+',
     )
     color = models.CharField(
         max_length=50, blank=True, null=True, verbose_name=_('theme color'),
         help_text=_('Set if the category has a theme color'),
-        validators=[validate_css_color]
+        validators=[validate_css_color],
     )
     help_text = models.TextField(verbose_name=_('help text'), blank=True)
 
@@ -344,18 +357,18 @@ class CategoryBase(OrderedModel):
 class CommonCategory(CategoryBase, ClusterableModel):
     type = models.ForeignKey(
         CommonCategoryType,  on_delete=models.CASCADE, related_name='categories',
-        verbose_name=_('type')
+        verbose_name=_('type'),
     )
 
     category_instances: RelatedManager[Category]
 
     i18n = TranslationField(
         fields=('name', 'lead_paragraph', 'help_text'),
-        default_language_field='type__primary_language_lowercase'
+        default_language_field='type__primary_language_lowercase',
     )
 
     public_fields: typing.ClassVar = CategoryBase.public_fields + [
-        'type', 'category_instances'
+        'type', 'category_instances',
     ]
 
     class Meta:
@@ -411,7 +424,7 @@ class Category(ModelWithAttributes, CategoryBase, ClusterableModel, PlanRelatedM
 
     type = models.ForeignKey(
         CategoryType, on_delete=models.CASCADE, related_name='categories',
-        verbose_name=_('type')
+        verbose_name=_('type'),
     )
     common = models.ForeignKey(
         CommonCategory, on_delete=models.PROTECT, related_name='category_instances',
@@ -420,12 +433,12 @@ class Category(ModelWithAttributes, CategoryBase, ClusterableModel, PlanRelatedM
     external_identifier = models.CharField(max_length=50, blank=True, null=True, editable=False)
     parent: Category | None = models.ForeignKey(  # type: ignore[assignment]
         'self', null=True, blank=True, on_delete=models.SET_NULL, related_name='children',
-        verbose_name=_('parent category')
+        verbose_name=_('parent category'),
     )
 
     i18n = TranslationField(
         fields=('name', 'lead_paragraph', 'help_text'),
-        default_language_field='type__plan__primary_language_lowercase'
+        default_language_field='type__plan__primary_language_lowercase',
     )
 
     # type annotations
@@ -492,7 +505,7 @@ class Category(ModelWithAttributes, CategoryBase, ClusterableModel, PlanRelatedM
             try:
                 page = self.category_pages.get(locale=parent.locale)
             except CategoryPage.DoesNotExist:
-                body: list[Tuple[str, dict[str, Any]]] = [('action_list', {'category_filter': self})]
+                body: list[tuple[str, dict[str, Any]]] = [('action_list', {'category_filter': self})]
                 if self.children.exists():
                     # TODO: Make heading customizable
                     category_list_block = ('category_list', {'heading': _("Subcategories"), 'style': 'cards'})
@@ -663,7 +676,7 @@ class Icon(models.Model):
 class CommonCategoryIcon(Icon):
     common_category = ParentalKey(
         CommonCategory, on_delete=models.CASCADE, related_name='icons',
-        verbose_name=_('common category')
+        verbose_name=_('common category'),
     )
 
     class Meta:

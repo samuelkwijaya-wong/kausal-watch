@@ -1,16 +1,16 @@
 from __future__ import annotations
+
 from collections.abc import Iterable
 
-from django.db.models import Model
 from django.apps import apps
+from django.db.models import Model
 from django.utils.translation import gettext_lazy as _
 from grapple.helpers import register_streamfield_block
-from wagtail.admin.panels import HelpPanel
 from wagtail import blocks
+from wagtail.admin.panels import HelpPanel
 
 from actions.blocks.action_content import get_action_block_for_field
-from actions.blocks.choosers import ActionAttributeTypeChooserBlock, CategoryTypeChooserBlock, CategoryLevelChooserBlock
-
+from actions.blocks.choosers import ActionAttributeTypeChooserBlock, CategoryLevelChooserBlock, CategoryTypeChooserBlock
 from reports import report_formatters as formatters
 from reports.report_formatters import ActionReportContentField
 
@@ -87,6 +87,7 @@ class ActionResponsiblePartyReportFieldBlock(blocks.StructBlock, FieldBlockWithH
     There should be a field to configure which role(s) should
     be exported and that should affect the label(s)
     '''
+
     target_ancestor_depth = blocks.IntegerBlock(
         label=_('Level of containing organization'),
         required=False,
@@ -96,8 +97,8 @@ class ActionResponsiblePartyReportFieldBlock(blocks.StructBlock, FieldBlockWithH
             'In addition to the organization itself, an organizational unit containing the organization '
             'is included in the report. Counting from the top-level root organisation at level 1, which level '
             'in the organizational hierarchy should be used to find this containing organization? '
-            'If left empty, don\'t add the containing organization to the report.'
-        )
+            'If left empty, don\'t add the containing organization to the report.',
+        ),
     )
 
     def get_report_value_formatter_class(self):
@@ -107,12 +108,12 @@ class ActionResponsiblePartyReportFieldBlock(blocks.StructBlock, FieldBlockWithH
         label = _("Primary responsible party")
 
 
-'''
+"""
 We are reusing generated action field block classes from the action app
 
 If adding reporting support for a block, the block should be explicitly added here
 and correct report generation should be verified.
-'''
+"""
 ActionDescriptionBlock = get_action_block_for_field('description')
 ActionManualStatusReasonBlock = get_action_block_for_field('manual_status_reason')
 ActionTasksBlock = get_action_block_for_field('tasks')
@@ -139,5 +140,5 @@ class ReportFieldBlock(blocks.StreamBlock):
         ActionStatusReportFieldBlock,
         ActionManualStatusReasonBlock,
         ActionDescriptionBlock,
-        ActionTasksBlock
+        ActionTasksBlock,
     ]

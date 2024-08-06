@@ -1,6 +1,6 @@
-from wagtail.documents.models import Document as WagtailDocument, AbstractDocument
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
+from wagtail.documents.models import AbstractDocument, Document as WagtailDocument
 
 
 class AplansDocument(AbstractDocument):

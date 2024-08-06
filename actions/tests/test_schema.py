@@ -1,13 +1,27 @@
-import pytest
 from datetime import date
 from decimal import Decimal
 
+import pytest
+
 from actions.models.features import OrderBy
 from actions.tests.factories import (
-    ActionFactory, ActionContactFactory, ActionImpactFactory, ActionImplementationPhaseFactory,
-    ActionResponsiblePartyFactory, ActionScheduleFactory, ActionStatusFactory, ActionStatusUpdateFactory,
-    ActionTaskFactory, CategoryFactory, CategoryTypeFactory, ImpactGroupFactory,
-    ImpactGroupActionFactory, PlanFactory, PlanDomainFactory, MonitoringQualityPointFactory, ScenarioFactory
+    ActionContactFactory,
+    ActionFactory,
+    ActionImpactFactory,
+    ActionImplementationPhaseFactory,
+    ActionResponsiblePartyFactory,
+    ActionScheduleFactory,
+    ActionStatusFactory,
+    ActionStatusUpdateFactory,
+    ActionTaskFactory,
+    CategoryFactory,
+    CategoryTypeFactory,
+    ImpactGroupActionFactory,
+    ImpactGroupFactory,
+    MonitoringQualityPointFactory,
+    PlanDomainFactory,
+    PlanFactory,
+    ScenarioFactory,
 )
 from indicators.tests.factories import ActionIndicatorFactory, IndicatorFactory, IndicatorLevelFactory
 from pages.tests.factories import CategoryPageFactory
@@ -21,7 +35,7 @@ def test_plan_domain_node(graphql_client_query_data):
     plan = PlanFactory()
     domain = PlanDomainFactory(plan=plan)
     data = graphql_client_query_data(
-        '''
+        """
         query($plan: ID!, $hostname: String!) {
           plan(id: $plan) {
             domain(hostname: $hostname) {
@@ -32,8 +46,8 @@ def test_plan_domain_node(graphql_client_query_data):
             }
           }
         }
-        ''',
-        variables=dict(plan=plan.identifier, hostname=domain.hostname)
+        """,
+        variables=dict(plan=plan.identifier, hostname=domain.hostname),
     )
     expected = {
         'plan': {
@@ -43,7 +57,7 @@ def test_plan_domain_node(graphql_client_query_data):
                 'googleSiteVerificationTag': domain.google_site_verification_tag,
                 'matomoAnalyticsUrl': domain.matomo_analytics_url,
             },
-        }
+        },
     }
     assert data == expected
 
@@ -61,7 +75,7 @@ def test_plan_node(graphql_client_query_data, plan_with_pages):
     indicator_level = IndicatorLevelFactory(plan=plan)
     scenario = ScenarioFactory(plan=plan)
     data = graphql_client_query_data(
-        '''
+        """
         query($plan: ID!, $hostname: String!) {
           plan(id: $plan) {
             __typename
@@ -140,8 +154,8 @@ def test_plan_node(graphql_client_query_data, plan_with_pages):
             }
           }
         }
-        ''',
-        variables={'plan': plan.identifier, 'hostname': domain.hostname}
+        """,
+        variables={'plan': plan.identifier, 'hostname': domain.hostname},
     )
     expected = {
         'plan': {
@@ -232,7 +246,7 @@ def test_plan_node(graphql_client_query_data, plan_with_pages):
             'additionalLinks': {
                 '__typename': 'AdditionalLinks',
             },
-        }
+        },
     }
     assert data == expected
 
@@ -241,7 +255,7 @@ def test_plan_node_superseded_by(graphql_client_query_data):
     plan1 = PlanFactory()
     plan2 = PlanFactory(superseded_by=plan1)
     data = graphql_client_query_data(
-        '''
+        """
         query($plan: ID!) {
           plan(id: $plan) {
             __typename
@@ -256,8 +270,8 @@ def test_plan_node_superseded_by(graphql_client_query_data):
             }
           }
         }
-        ''',
-        variables={'plan': plan2.identifier}
+        """,
+        variables={'plan': plan2.identifier},
     )
     expected = {
         'plan': {
@@ -268,7 +282,7 @@ def test_plan_node_superseded_by(graphql_client_query_data):
                 'id': plan1.identifier,
             },
             'supersededPlans': [],
-        }
+        },
     }
     assert data == expected
 
@@ -279,7 +293,7 @@ def test_plan_node_superseding_plans(graphql_client_query_data, recursive):
     plan2 = PlanFactory(superseded_by=plan1)
     plan3 = PlanFactory(superseded_by=plan2)
     data = graphql_client_query_data(
-        '''
+        """
         query($plan: ID!, $recursive: Boolean!) {
           plan(id: $plan) {
             __typename
@@ -290,8 +304,8 @@ def test_plan_node_superseding_plans(graphql_client_query_data, recursive):
             }
           }
         }
-        ''',
-        variables={'plan': plan3.identifier, 'recursive': recursive}
+        """,
+        variables={'plan': plan3.identifier, 'recursive': recursive},
     )
     expected_superseding_plans = [plan2]
     if recursive:
@@ -304,7 +318,7 @@ def test_plan_node_superseding_plans(graphql_client_query_data, recursive):
                 '__typename': 'Plan',
                 'id': plan.identifier,
             } for plan in expected_superseding_plans],
-        }
+        },
     }
     assert data == expected
 
@@ -315,7 +329,7 @@ def test_plan_node_superseded_plans(graphql_client_query_data, recursive):
     plan2 = PlanFactory(superseded_by=plan1)
     plan3 = PlanFactory(superseded_by=plan2)
     data = graphql_client_query_data(
-        '''
+        """
         query($plan: ID!, $recursive: Boolean!) {
           plan(id: $plan) {
             __typename
@@ -330,8 +344,8 @@ def test_plan_node_superseded_plans(graphql_client_query_data, recursive):
             }
           }
         }
-        ''',
-        variables={'plan': plan1.identifier, 'recursive': recursive}
+        """,
+        variables={'plan': plan1.identifier, 'recursive': recursive},
     )
     expected_superseded_plans = [plan2]
     if recursive:
@@ -345,7 +359,7 @@ def test_plan_node_superseded_plans(graphql_client_query_data, recursive):
                 '__typename': 'Plan',
                 'id': plan.identifier,
             } for plan in expected_superseded_plans],
-        }
+        },
     }
     assert data == expected
 
@@ -357,7 +371,7 @@ def test_plan_actions_responsible_organization(graphql_client_query_data):
     arp = ActionResponsiblePartyFactory(action=action)
     org = arp.organization
     data = graphql_client_query_data(
-        '''
+        """
         query($plan: ID!, $org: ID!) {
           plan(id: $plan) {
             actions(responsibleOrganization: $org) {
@@ -366,8 +380,8 @@ def test_plan_actions_responsible_organization(graphql_client_query_data):
             }
           }
         }
-        ''',
-        variables={'plan': plan.identifier, 'org': org.id}
+        """,
+        variables={'plan': plan.identifier, 'org': org.id},
     )
     expected = {
         'plan': {
@@ -375,17 +389,17 @@ def test_plan_actions_responsible_organization(graphql_client_query_data):
                 '__typename': 'Action',
                 'id': str(action.id),
             }],
-        }
+        },
     }
     assert data == expected
 
 
 def test_attribute_choice_node(
     graphql_client_query_data, plan, attribute_choice, attribute_type__ordered_choice,
-    attribute_type_choice_option
+    attribute_type_choice_option,
 ):
     data = graphql_client_query_data(
-        '''
+        """
         query($plan: ID!) {
           planCategories(plan: $plan) {
             attributes {
@@ -404,8 +418,8 @@ def test_attribute_choice_node(
             }
           }
         }
-        ''',
-        variables={'plan': plan.identifier}
+        """,
+        variables={'plan': plan.identifier},
     )
     expected = {
         'planCategories': [{
@@ -420,17 +434,17 @@ def test_attribute_choice_node(
                     'identifier': attribute_type_choice_option.identifier,
                     'name': attribute_type_choice_option.name,
                 },
-            }]
-        }]
+            }],
+        }],
     }
     assert data == expected
 
 
 def test_attribute_text_node(
-    graphql_client_query_data, plan, attribute_text, attribute_type__text
+    graphql_client_query_data, plan, attribute_text, attribute_type__text,
 ):
     data = graphql_client_query_data(
-        '''
+        """
         query($plan: ID!) {
           planCategories(plan: $plan) {
             attributes {
@@ -446,8 +460,8 @@ def test_attribute_text_node(
             }
           }
         }
-        ''',
-        variables={'plan': plan.identifier}
+        """,
+        variables={'plan': plan.identifier},
     )
     expected = {
         'planCategories': [{
@@ -459,17 +473,17 @@ def test_attribute_text_node(
                 'key': attribute_type__text.name,
                 'keyIdentifier': attribute_type__text.identifier,
                 'value': attribute_text.text,
-            }]
-        }]
+            }],
+        }],
     }
     assert data == expected
 
 
 def test_attribute_rich_text_node(
-    graphql_client_query_data, plan, attribute_rich_text, attribute_type__rich_text
+    graphql_client_query_data, plan, attribute_rich_text, attribute_type__rich_text,
 ):
     data = graphql_client_query_data(
-        '''
+        """
         query($plan: ID!) {
           planCategories(plan: $plan) {
             attributes {
@@ -485,8 +499,8 @@ def test_attribute_rich_text_node(
             }
           }
         }
-        ''',
-        variables={'plan': plan.identifier}
+        """,
+        variables={'plan': plan.identifier},
     )
     expected = {
         'planCategories': [{
@@ -498,8 +512,8 @@ def test_attribute_rich_text_node(
                 'key': attribute_type__rich_text.name,
                 'keyIdentifier': attribute_type__rich_text.identifier,
                 'value': attribute_rich_text.text,
-            }]
-        }]
+            }],
+        }],
     }
     assert data == expected
 
@@ -507,7 +521,7 @@ def test_attribute_rich_text_node(
 def test_category_level_node(graphql_client_query_data, plan, category_level, category):
     # We need to include the `category` fixture so we can access the CategoryLevelNode via planCategories
     data = graphql_client_query_data(
-        '''
+        """
         query($plan: ID!) {
           planCategories(plan: $plan) {
             level {
@@ -523,8 +537,8 @@ def test_category_level_node(graphql_client_query_data, plan, category_level, ca
             }
           }
         }
-        ''',
-        variables={'plan': plan.identifier}
+        """,
+        variables={'plan': plan.identifier},
     )
     expected = {
         'planCategories': [{
@@ -536,18 +550,18 @@ def test_category_level_node(graphql_client_query_data, plan, category_level, ca
                 },
                 'name': category_level.name,
                 'namePlural': category_level.name_plural,
-            }
-        }]
+            },
+        }],
     }
     assert data == expected
 
 
 def test_attribute_type_node(
     graphql_client_query_data, plan, attribute_rich_text, attribute_choice,
-    attribute_type__rich_text, attribute_type__ordered_choice
+    attribute_type__rich_text, attribute_type__ordered_choice,
 ):
     data = graphql_client_query_data(
-        '''
+        """
         query($plan: ID!) {
           planCategories(plan: $plan) {
             type {
@@ -568,8 +582,8 @@ def test_attribute_type_node(
             }
           }
         }
-        ''',
-        variables={'plan': plan.identifier}
+        """,
+        variables={'plan': plan.identifier},
     )
     expected = {
         'planCategories': [{
@@ -594,18 +608,18 @@ def test_attribute_type_node(
                     'choiceOptions': [{
                         '__typename': 'AttributeTypeChoiceOption',
                     }],
-                }]
-            }
-        }]
+                }],
+            },
+        }],
     }
     assert data == expected
 
 
 def test_attribute_type_choice_option_node(
-    graphql_client_query_data, plan, attribute_type_choice_option, attribute_choice
+    graphql_client_query_data, plan, attribute_type_choice_option, attribute_choice,
 ):
     data = graphql_client_query_data(
-        '''
+        """
         query($plan: ID!) {
           planCategories(plan: $plan) {
             type {
@@ -618,8 +632,8 @@ def test_attribute_type_choice_option_node(
             }
           }
         }
-        ''',
-        variables={'plan': plan.identifier}
+        """,
+        variables={'plan': plan.identifier},
     )
     expected = {
         'planCategories': [{
@@ -629,9 +643,9 @@ def test_attribute_type_choice_option_node(
                         'identifier': attribute_type_choice_option.identifier,
                         'name': attribute_type_choice_option.name,
                     }],
-                }]
-            }
-        }]
+                }],
+            },
+        }],
     }
     assert data == expected
 
@@ -640,10 +654,10 @@ def test_attribute_type_choice_option_node(
 
 
 def test_category_type_node(
-    graphql_client_query_data, plan, category_type, category, category_level, attribute_type__rich_text
+    graphql_client_query_data, plan, category_type, category, category_level, attribute_type__rich_text,
 ):
     data = graphql_client_query_data(
-        '''
+        """
         query($plan: ID!) {
           planCategories(plan: $plan) {
             type {
@@ -676,8 +690,8 @@ def test_category_type_node(
             }
           }
         }
-        ''',
-        variables={'plan': plan.identifier}
+        """,
+        variables={'plan': plan.identifier},
     )
     expected = {
         'planCategories': [{
@@ -696,19 +710,19 @@ def test_category_type_node(
                 'editableForActions': category_type.editable_for_actions,
                 'editableForIndicators': category_type.editable_for_indicators,
                 'common': {
-                    '__typename': 'CommonCategoryType'
+                    '__typename': 'CommonCategoryType',
                 },
                 'levels': [{
-                    '__typename': 'CategoryLevel'
+                    '__typename': 'CategoryLevel',
                 }],
                 'categories': [{
-                    '__typename': 'Category'
+                    '__typename': 'Category',
                 }],
                 'attributeTypes': [{
-                    '__typename': 'AttributeType'
+                    '__typename': 'AttributeType',
                 }],
-            }
-        }]
+            },
+        }],
     }
     assert data == expected
 
@@ -718,13 +732,13 @@ def test_category_type_node(
 
 def test_category_node(
     graphql_client_query_data, plan_with_pages, category_type, category, category_level, attribute_rich_text,
-    attribute_choice
+    attribute_choice,
 ):
     plan = plan_with_pages
     child_category = CategoryFactory(parent=category)
     CategoryPageFactory(category=category)
     data = graphql_client_query_data(
-        '''
+        """
         query($plan: ID!) {
           planCategories(plan: $plan) {
             id
@@ -762,8 +776,8 @@ def test_category_node(
             }
           }
         }
-        ''',
-        variables={'plan': plan.identifier}
+        """,
+        variables={'plan': plan.identifier},
     )
     expected = {
         'planCategories': [{
@@ -784,7 +798,7 @@ def test_category_node(
                 'parent': {
                   '__typename': 'Category',
                   'id': str(category.id),
-                }
+                },
             }],
             'categoryPage': {
                 '__typename': 'CategoryPage',
@@ -800,7 +814,7 @@ def test_category_node(
             'level': {
                 '__typename': 'CategoryLevel',
             },
-        }]
+        }],
     }
     assert data == expected
 
@@ -808,7 +822,7 @@ def test_category_node(
 def test_scenario_node(graphql_client_query_data):
     scenario = ScenarioFactory()
     data = graphql_client_query_data(
-        '''
+        """
         query($plan: ID!) {
           plan(id: $plan) {
             scenarios {
@@ -822,8 +836,8 @@ def test_scenario_node(graphql_client_query_data):
             }
           }
         }
-        ''',
-        variables={'plan': scenario.plan.identifier}
+        """,
+        variables={'plan': scenario.plan.identifier},
     )
     expected = {
         'plan': {
@@ -835,8 +849,8 @@ def test_scenario_node(graphql_client_query_data):
                 'name': scenario.name,
                 'identifier': scenario.identifier,
                 'description': scenario.description,
-            }]
-        }
+            }],
+        },
     }
     assert data == expected
 
@@ -847,7 +861,7 @@ def test_impact_group_node(graphql_client_query_data):
     impact_group_child = ImpactGroupFactory(plan=impact_group.plan, parent=impact_group)
     impact_group_action_child = ImpactGroupActionFactory(group=impact_group_child)
     data = graphql_client_query_data(
-        '''
+        """
         query($plan: ID!) {
           plan(id: $plan) {
             impactGroups {
@@ -871,8 +885,8 @@ def test_impact_group_node(graphql_client_query_data):
             }
           }
         }
-        ''',
-        variables={'plan': impact_group.plan.identifier}
+        """,
+        variables={'plan': impact_group.plan.identifier},
     )
     expected = {
         'plan': {
@@ -909,8 +923,8 @@ def test_impact_group_node(graphql_client_query_data):
                     'id': str(impact_group_action_child.id),
                 }],
                 'name': impact_group_child.name,
-            }]
-        }
+            }],
+        },
     }
     assert data == expected
 
@@ -918,7 +932,7 @@ def test_impact_group_node(graphql_client_query_data):
 def test_impact_group_action_node(graphql_client_query_data):
     impact_group_action = ImpactGroupActionFactory()
     data = graphql_client_query_data(
-        '''
+        """
         query($plan: ID!) {
           plan(id: $plan) {
             impactGroups {
@@ -940,8 +954,8 @@ def test_impact_group_action_node(graphql_client_query_data):
             }
           }
         }
-        ''',
-        variables={'plan': impact_group_action.group.plan.identifier}
+        """,
+        variables={'plan': impact_group_action.group.plan.identifier},
     )
     expected = {
         'plan': {
@@ -961,8 +975,8 @@ def test_impact_group_action_node(graphql_client_query_data):
                         'id': str(impact_group_action.impact.id),
                     },
                 }],
-            }]
-        }
+            }],
+        },
     }
     assert data == expected
 
@@ -970,7 +984,7 @@ def test_impact_group_action_node(graphql_client_query_data):
 def test_monitoring_quality_point_node(graphql_client_query_data):
     monitoring_quality_point = MonitoringQualityPointFactory()
     data = graphql_client_query_data(
-        '''
+        """
         query($plan: ID!) {
           plan(id: $plan) {
             monitoringQualityPoints {
@@ -986,8 +1000,8 @@ def test_monitoring_quality_point_node(graphql_client_query_data):
             }
           }
         }
-        ''',
-        variables={'plan': monitoring_quality_point.plan.identifier}
+        """,
+        variables={'plan': monitoring_quality_point.plan.identifier},
     )
     expected = {
         'plan': {
@@ -1001,8 +1015,8 @@ def test_monitoring_quality_point_node(graphql_client_query_data):
                   'id': str(monitoring_quality_point.plan.identifier),
                 },
                 'identifier': monitoring_quality_point.identifier,
-            }]
-        }
+            }],
+        },
     }
     assert data == expected
 
@@ -1010,7 +1024,7 @@ def test_monitoring_quality_point_node(graphql_client_query_data):
 def test_action_task_node(graphql_client_query_data):
     action_task = ActionTaskFactory()
     data = graphql_client_query_data(
-        '''
+        """
         query($plan: ID!) {
           planActions(plan: $plan) {
             tasks {
@@ -1029,8 +1043,8 @@ def test_action_task_node(graphql_client_query_data):
             }
           }
         }
-        ''',
-        variables={'plan': action_task.action.plan.identifier}
+        """,
+        variables={'plan': action_task.action.plan.identifier},
     )
     expected = {
         'planActions': [{
@@ -1049,8 +1063,8 @@ def test_action_task_node(graphql_client_query_data):
                 # 'completedBy': action_task.completed_by,
                 'createdAt': action_task.created_at.isoformat(),
                 'modifiedAt': action_task.modified_at.isoformat(),
-            }]
-        }]
+            }],
+        }],
     }
     assert data == expected
 
@@ -1072,7 +1086,7 @@ def test_action_node(graphql_client_query_data):
     action_contact = ActionContactFactory(action=action, person__organization=plan.organization)
     impact_group_action = ImpactGroupActionFactory(action=action, group__plan=action.plan, impact=action.impact)
     data = graphql_client_query_data(
-        '''
+        """
         query($action: ID!) {
           action(id: $action) {
             __typename
@@ -1164,8 +1178,8 @@ def test_action_node(graphql_client_query_data):
             }
           }
         }
-        ''',
-        variables={'action': action.id}
+        """,
+        variables={'action': action.id},
     )
     expected = {
         'action': {
@@ -1238,7 +1252,7 @@ def test_action_node(graphql_client_query_data):
                 '__typename': 'Image',
                 'id': str(action.image.id),
             },
-        }
+        },
     }
     assert data == expected
 
@@ -1248,7 +1262,7 @@ def test_action_node_merged(graphql_client_query_data):
     action1 = ActionFactory(plan=plan)
     action2 = ActionFactory(plan=plan, merged_with=action1)
     data = graphql_client_query_data(
-        '''
+        """
         query($plan: ID!) {
           planActions(plan: $plan) {
             __typename
@@ -1263,8 +1277,8 @@ def test_action_node_merged(graphql_client_query_data):
             }
           }
         }
-        ''',
-        variables={'plan': plan.identifier}
+        """,
+        variables={'plan': plan.identifier},
     )
     expected = {
         'planActions': [{
@@ -1283,7 +1297,7 @@ def test_action_node_merged(graphql_client_query_data):
                 'id': str(action1.id),
             },
             'mergedActions': [],
-        }]
+        }],
     }
     assert data == expected
 
@@ -1293,7 +1307,7 @@ def test_action_node_superseded(graphql_client_query_data):
     action1 = ActionFactory(plan=plan)
     action2 = ActionFactory(plan=plan, superseded_by=action1)
     data = graphql_client_query_data(
-        '''
+        """
         query($plan: ID!) {
           planActions(plan: $plan) {
             __typename
@@ -1308,8 +1322,8 @@ def test_action_node_superseded(graphql_client_query_data):
             }
           }
         }
-        ''',
-        variables={'plan': plan.identifier}
+        """,
+        variables={'plan': plan.identifier},
     )
     expected = {
         'planActions': [{
@@ -1328,7 +1342,7 @@ def test_action_node_superseded(graphql_client_query_data):
                 'id': str(action1.id),
             },
             'supersededActions': [],
-        }]
+        }],
     }
     assert data == expected
 
@@ -1342,7 +1356,7 @@ def test_action_node_next_previous(graphql_client_query_data):
     assert action1.get_previous_action(None) is None
     assert action2.get_previous_action(None) == action1
     data = graphql_client_query_data(
-        '''
+        """
         query($plan: ID!) {
           planActions(plan: $plan) {
             __typename
@@ -1357,8 +1371,8 @@ def test_action_node_next_previous(graphql_client_query_data):
             }
           }
         }
-        ''',
-        variables={'plan': plan.identifier}
+        """,
+        variables={'plan': plan.identifier},
     )
     expected = {
         'planActions': [{
@@ -1376,15 +1390,15 @@ def test_action_node_next_previous(graphql_client_query_data):
             'previousAction': {
                 '__typename': 'Action',
                 'id': str(action1.id),
-            }
-        }]
+            },
+        }],
     }
     assert data == expected
 
 @pytest.mark.parametrize('ordering',
   [
     OrderBy.NONE,
-    OrderBy.NAME
+    OrderBy.NAME,
   ])
 def test_action_node_related_indicators_ordering(graphql_client_query_data, ordering):
     plan = PlanFactory()
@@ -1398,7 +1412,7 @@ def test_action_node_related_indicators_ordering(graphql_client_query_data, orde
     plan.features.indicator_ordering = ordering
     plan.features.save()
     data = graphql_client_query_data(
-        '''
+        """
         query($action: ID!) {
           action(id: $action) {
             __typename
@@ -1409,14 +1423,14 @@ def test_action_node_related_indicators_ordering(graphql_client_query_data, orde
             }
           }
         }
-        ''',
-        variables={'action': action.id}
+        """,
+        variables={'action': action.id},
     )
     expected = {
         'action': {
               '__typename': 'Action',
               'id': str(action.id),
-        }
+        },
     }
     if ordering == OrderBy.NONE:
       expected["action"]["relatedIndicators"] = [{
@@ -1453,7 +1467,7 @@ def test_action_schedule_node(graphql_client_query_data):
     action_schedule = ActionScheduleFactory(plan=plan)
     action = ActionFactory(plan=plan, schedule=[action_schedule])
     data = graphql_client_query_data(
-        '''
+        """
         query($action: ID!) {
           action(id: $action) {
             schedule {
@@ -1468,8 +1482,8 @@ def test_action_schedule_node(graphql_client_query_data):
             }
           }
         }
-        ''',
-        variables={'action': action.id}
+        """,
+        variables={'action': action.id},
     )
     expected = {
         'action': {
@@ -1482,8 +1496,8 @@ def test_action_schedule_node(graphql_client_query_data):
                 },
                 'beginsAt': action_schedule.begins_at.isoformat(),
                 'endsAt': action_schedule.ends_at.isoformat(),
-            }]
-        }
+            }],
+        },
     }
     assert data == expected
 
@@ -1493,7 +1507,7 @@ def test_action_status_node(graphql_client_query_data):
     action_status = ActionStatusFactory(plan=plan)
     action = ActionFactory(plan=plan, status=action_status)
     data = graphql_client_query_data(
-        '''
+        """
         query($action: ID!) {
           action(id: $action) {
             status {
@@ -1509,8 +1523,8 @@ def test_action_status_node(graphql_client_query_data):
             }
           }
         }
-        ''',
-        variables={'action': action.id}
+        """,
+        variables={'action': action.id},
     )
     expected = {
         'action': {
@@ -1524,8 +1538,8 @@ def test_action_status_node(graphql_client_query_data):
                 'name': action_status.name,
                 'identifier': action_status.identifier,
                 'isCompleted': action_status.is_completed,
-            }
-        }
+            },
+        },
     }
     assert data == expected
 
@@ -1535,7 +1549,7 @@ def test_action_implementation_phase_node(graphql_client_query_data):
     action_implementation_phase = ActionImplementationPhaseFactory(plan=plan)
     action = ActionFactory(plan=plan, implementation_phase=action_implementation_phase)
     data = graphql_client_query_data(
-        '''
+        """
         query($action: ID!) {
           action(id: $action) {
             implementationPhase {
@@ -1551,8 +1565,8 @@ def test_action_implementation_phase_node(graphql_client_query_data):
             }
           }
         }
-        ''',
-        variables={'action': action.id}
+        """,
+        variables={'action': action.id},
     )
     expected = {
         'action': {
@@ -1566,8 +1580,8 @@ def test_action_implementation_phase_node(graphql_client_query_data):
                 'order': action_implementation_phase.order,
                 'name': action_implementation_phase.name,
                 'identifier': action_implementation_phase.identifier,
-            }
-        }
+            },
+        },
     }
     assert data == expected
 
@@ -1577,7 +1591,7 @@ def test_action_responsible_party_node(graphql_client_query_data):
     action = ActionFactory(plan=plan)
     action_responsible_party = ActionResponsiblePartyFactory(action=action, organization=plan.organization)
     data = graphql_client_query_data(
-        '''
+        """
         query($action: ID!) {
           action(id: $action) {
             responsibleParties {
@@ -1597,8 +1611,8 @@ def test_action_responsible_party_node(graphql_client_query_data):
             }
           }
         }
-        ''',
-        variables={'action': action.id}
+        """,
+        variables={'action': action.id},
     )
     expected = {
         'action': {
@@ -1616,8 +1630,8 @@ def test_action_responsible_party_node(graphql_client_query_data):
                 'role': action_responsible_party.role.upper(),
                 'specifier': action_responsible_party.specifier,
                 'order': action_responsible_party.order,
-            }]
-        }
+            }],
+        },
     }
     assert data == expected
 
@@ -1627,7 +1641,7 @@ def test_action_contact_person_node(graphql_client_query_data):
     action = ActionFactory(plan=plan)
     action_contact = ActionContactFactory(action=action, person__organization=plan.organization)
     data = graphql_client_query_data(
-        '''
+        """
         query($action: ID!) {
           action(id: $action) {
             contactPersons {
@@ -1646,8 +1660,8 @@ def test_action_contact_person_node(graphql_client_query_data):
             }
           }
         }
-        ''',
-        variables={'action': action.id}
+        """,
+        variables={'action': action.id},
     )
     expected = {
         'action': {
@@ -1664,8 +1678,8 @@ def test_action_contact_person_node(graphql_client_query_data):
                 },
                 'order': action_contact.order,
                 'primaryContact': action_contact.primary_contact,
-            }]
-        }
+            }],
+        },
     }
     assert data == expected
 
@@ -1675,7 +1689,7 @@ def test_action_impact_node(graphql_client_query_data):
     action_impact = ActionImpactFactory(plan=plan)
     action = ActionFactory(plan=plan, impact=action_impact)
     data = graphql_client_query_data(
-        '''
+        """
         query($action: ID!) {
           action(id: $action) {
             impact {
@@ -1691,8 +1705,8 @@ def test_action_impact_node(graphql_client_query_data):
             }
           }
         }
-        ''',
-        variables={'action': action.id}
+        """,
+        variables={'action': action.id},
     )
     expected = {
         'action': {
@@ -1706,8 +1720,8 @@ def test_action_impact_node(graphql_client_query_data):
                 'name': action_impact.name,
                 'identifier': action_impact.identifier,
                 'order': action_impact.order,
-            }
-        }
+            },
+        },
     }
     assert data == expected
 
@@ -1716,7 +1730,7 @@ def test_action_status_update_node(graphql_client_query_data):
     action = ActionFactory()
     action_status_update = ActionStatusUpdateFactory(action=action)
     data = graphql_client_query_data(
-        '''
+        """
         query($action: ID!) {
           action(id: $action) {
             statusUpdates {
@@ -1736,8 +1750,8 @@ def test_action_status_update_node(graphql_client_query_data):
             }
           }
         }
-        ''',
-        variables={'action': action.id}
+        """,
+        variables={'action': action.id},
     )
     expected = {
         'action': {
@@ -1755,7 +1769,7 @@ def test_action_status_update_node(graphql_client_query_data):
                     'id': str(action_status_update.author.id),
                 },
                 'content': action_status_update.content,
-            }]
-        }
+            }],
+        },
     }
     assert data == expected

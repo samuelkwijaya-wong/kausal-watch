@@ -17,7 +17,7 @@ ARG build_time_deps="libpq-dev build-essential \
     binutils libproj-dev libgdal-dev \
     libxml2-dev libxslt1-dev libffi-dev"
 
-    ARG node_install_url="https://deb.nodesource.com/setup_lts.x"
+ARG node_install_url="https://deb.nodesource.com/setup_lts.x"
 ARG app_path=/code
 ARG app_user_uid=1000
 ARG app_user_gid=1000

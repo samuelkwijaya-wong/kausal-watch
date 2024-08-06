@@ -3,22 +3,50 @@ from functools import lru_cache
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.models import ContentType
-from wagtail.models import GroupPagePermission, PAGE_PERMISSION_TYPES
+from wagtail.models import PAGE_PERMISSION_TYPES, GroupPagePermission
 
 from content.models import SiteGeneralContent
 from indicators.models import (
-    ActionIndicator, Dataset, DatasetLicense, Dimension, DimensionCategory, Indicator, IndicatorContactPerson,
-    IndicatorDimension, IndicatorGoal, IndicatorGraph, IndicatorLevel, IndicatorValue, Quantity, RelatedIndicator, Unit
+    ActionIndicator,
+    Dataset,
+    DatasetLicense,
+    Dimension,
+    DimensionCategory,
+    Indicator,
+    IndicatorContactPerson,
+    IndicatorDimension,
+    IndicatorGoal,
+    IndicatorGraph,
+    IndicatorLevel,
+    IndicatorValue,
+    Quantity,
+    RelatedIndicator,
+    Unit,
 )
-from notifications.models import BaseTemplate, ContentBlock, AutomaticNotificationTemplate
+from notifications.models import AutomaticNotificationTemplate, BaseTemplate, ContentBlock
 from orgs.models import Organization
 from people.models import Person
 from reports.models import Report, ReportType
 
 from .models import (
-    Action, AttributeRichText, AttributeType, AttributeChoice, AttributeTypeChoiceOption,
-    ActionContactPerson, ActionImpact, ActionResponsibleParty, ActionSchedule, ActionStatus, ActionStatusUpdate,
-    ActionTask, Category, CategoryType, ImpactGroup, ImpactGroupAction, MonitoringQualityPoint, Plan,
+    Action,
+    ActionContactPerson,
+    ActionImpact,
+    ActionResponsibleParty,
+    ActionSchedule,
+    ActionStatus,
+    ActionStatusUpdate,
+    ActionTask,
+    AttributeChoice,
+    AttributeRichText,
+    AttributeType,
+    AttributeTypeChoiceOption,
+    Category,
+    CategoryType,
+    ImpactGroup,
+    ImpactGroupAction,
+    MonitoringQualityPoint,
+    Plan,
 )
 
 User = get_user_model()
@@ -41,15 +69,15 @@ def get_wagtail_contact_person_perms():
     perms = []
     perms += list(Permission.objects.filter(
         content_type__app_label='wagtaildocs',
-        codename__in=('add_document', 'change_document', 'delete_document')
+        codename__in=('add_document', 'change_document', 'delete_document'),
     ))
     perms += list(Permission.objects.filter(
         content_type__app_label='wagtailimages',
-        codename__in=('add_image', 'change_image', 'delete_image')
+        codename__in=('add_image', 'change_image', 'delete_image'),
     ))
     perms += list(Permission.objects.filter(
         content_type__app_label='wagtailcore',
-        codename__in=['add_collection', 'view_collection']
+        codename__in=['add_collection', 'view_collection'],
     ))
     return perms
 
@@ -61,7 +89,7 @@ def get_wagtail_plan_admin_perms():
         content_type__app_label='wagtailcore',
         codename__in=[
             'change_collection', 'delete_collection',
-        ]
+        ],
     ))
     return perms
 
@@ -254,7 +282,7 @@ PLAN_ADMIN_PERMS = (
     (AutomaticNotificationTemplate, ALL_PERMS),
     (ContentBlock, ALL_PERMS),
 
-    (User, ('view',))
+    (User, ('view',)),
 )
 
 

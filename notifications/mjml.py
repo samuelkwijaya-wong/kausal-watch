@@ -26,8 +26,8 @@ def make_jinja_environment():
     env = SandboxedEnvironment(
         trim_blocks=True, lstrip_blocks=True, undefined=StrictUndefined, loader=loader,
         extensions=[
-            'jinja2.ext.i18n'
-        ]
+            'jinja2.ext.i18n',
+        ],
     )
     # In order to use gettext and related functions, we need to install them ourselves
     trans = DjangoTranslation(get_language(), 'notifications')

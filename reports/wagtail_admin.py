@@ -10,10 +10,11 @@ from wagtail_modeladmin.menus import ModelAdminMenuItem
 from wagtail_modeladmin.options import modeladmin_register
 from wagtail_modeladmin.views import DeleteView
 
-from .models import Report, ReportType
-from .views import MarkReportAsCompleteView
 from admin_site.wagtail import AplansCreateView, AplansEditView, AplansModelAdmin
 from aplans.utils import append_query_parameter
+
+from .models import Report, ReportType
+from .views import MarkReportAsCompleteView
 
 
 # FIXME: Duplicated code in category_admin.py and attribute_type_admin.py
@@ -228,17 +229,17 @@ class ReportAdmin(AplansModelAdmin):
         download_report_url = re_path(
             self.url_helper.get_action_url_pattern('download'),
             self.download_report_view,
-            name=self.url_helper.get_action_url_name('download')
+            name=self.url_helper.get_action_url_name('download'),
         )
         mark_as_complete_url = re_path(
             self.url_helper.get_action_url_pattern('mark_report_as_complete'),
             self.mark_report_as_complete_view,
-            name=self.url_helper.get_action_url_name('mark_report_as_complete')
+            name=self.url_helper.get_action_url_name('mark_report_as_complete'),
         )
         undo_marking_as_complete_url = re_path(
             self.url_helper.get_action_url_pattern('undo_marking_report_as_complete'),
             self.undo_marking_report_as_complete_view,
-            name=self.url_helper.get_action_url_name('undo_marking_report_as_complete')
+            name=self.url_helper.get_action_url_name('undo_marking_report_as_complete'),
         )
         return urls + (
             download_report_url,

@@ -1,5 +1,6 @@
-import pytest
 from datetime import date
+
+import pytest
 from django.urls import reverse
 
 from indicators.tests.factories import CommonIndicatorNormalizatorFactory, IndicatorFactory
@@ -28,19 +29,19 @@ VALUE_2022 = {
 }
 GOAL_2030 = {
     'date': '2030-01-01',
-    'value': 0.01
+    'value': 0.01,
 }
 GOAL_2045 = {
     'date': '2045-01-01',
-    'value': 0.001
+    'value': 0.001,
 }
 GOAL_2035 = {
     'date': '2035-01-01',
-    'value': 0.01
+    'value': 0.01,
 }
 GOAL_2040 = {
     'date': '2040-01-01',
-    'value': 0.001
+    'value': 0.001,
 }
 
 
@@ -63,7 +64,7 @@ def post(client, plan, user, path, indicator, data, expected_status_code=200):
 def assert_db_matches_set(related_field, values):
     in_db_values = set(related_field.values_list('date', 'value'))
     assert in_db_values == set(
-        ((date.fromisoformat(v['date']), v['value']) for v in values)
+        ((date.fromisoformat(v['date']), v['value']) for v in values),
     )
 
 

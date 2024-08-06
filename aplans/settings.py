@@ -110,7 +110,7 @@ CACHES = {
     'renditions': {
         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
         'LOCATION': 'watch-renditions',
-    }
+    },
 }
 
 ELASTICSEARCH_URL = env('ELASTICSEARCH_URL')
@@ -282,7 +282,7 @@ if media_storage_url.scheme:
 
 STATICFILES_FINDERS = [
     'django.contrib.staticfiles.finders.FileSystemFinder',
-    'django.contrib.staticfiles.finders.AppDirectoriesFinder'
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
 ]
 
 WSGI_APPLICATION = 'aplans.wsgi.application'
@@ -484,7 +484,7 @@ PARLER_LANGUAGES = {
     'default': {
         'fallbacks': ['en', 'fi', 'sv', 'de', 'da'],
         'hide_untranslated': False,   # the default; let .active_translations() return fallbacks too.
-    }
+    },
 }
 
 TIME_ZONE = 'Europe/Helsinki'
@@ -495,7 +495,7 @@ WAGTAIL_I18N_ENABLED = True
 USE_TZ = True
 
 LOCALE_PATHS = [
-    os.path.join(BASE_DIR, 'locale')
+    os.path.join(BASE_DIR, 'locale'),
 ]
 
 SPECTACULAR_SETTINGS = {
@@ -537,7 +537,7 @@ CKEDITOR_CONFIGS = {
     'default': {
         'skin': 'moono-lisa',
         'toolbar_Basic': [
-            ['Source', '-', 'Bold', 'Italic']
+            ['Source', '-', 'Bold', 'Italic'],
         ],
         'toolbar_Full': [
             ['Format', 'Bold', 'Italic', 'Underline', 'Strike', 'List', 'Undo', 'Redo'],
@@ -550,7 +550,7 @@ CKEDITOR_CONFIGS = {
         'extraPlugins': '',
         'toolbar': 'Full',
         'height': 300,
-        'format_tags': 'p;h3;h4;h5;h6;pre'
+        'format_tags': 'p;h3;h4;h5;h6;pre',
     },
     'lite': {
         'skin': 'moono-lisa',
@@ -563,7 +563,7 @@ CKEDITOR_CONFIGS = {
         'extraPlugins': '',
         'toolbar': 'Full',
         'height': 150,
-    }
+    },
 }
 
 WAGTAILDOCS_DOCUMENT_MODEL = 'documents.AplansDocument'
@@ -572,26 +572,26 @@ WAGTAILIMAGES_IMAGE_MODEL = 'images.AplansImage'
 WAGTAILIMAGES_EXTENSIONS = ['gif', 'jpg', 'jpeg', 'png', 'webp', 'svg']
 WAGTAILEMBEDS_FINDERS = [
     {
-        'class': 'wagtail.embeds.finders.oembed'
+        'class': 'wagtail.embeds.finders.oembed',
     },
     {
         'class': 'aplans.wagtail_embed_finders.GenericFinder',
         'provider': 'ArcGIS',
         'domain_whitelist': ('arcgis.com', 'maps.arcgis.com',),
-        'title': 'Map'
+        'title': 'Map',
     },
     {
         'class': 'aplans.wagtail_embed_finders.GenericFinder',
         'provider': 'Plotly Chart Studio',
         'domain_whitelist': ('chart-studio.plotly.com',),
-        'title': 'Chart'
+        'title': 'Chart',
     },
     {
         'class': 'aplans.wagtail_embed_finders.GenericFinder',
         'provider': 'Sharepoint',
         'domain_whitelist': ('sharepoint.com', ),
-        'title': 'Document'
-    }
+        'title': 'Document',
+    },
 ]
 WAGTAIL_SITE_NAME = 'Kausal Watch'
 WAGTAIL_ENABLE_UPDATE_CHECK = False
@@ -604,7 +604,7 @@ WAGTAILSEARCH_BACKENDS = {
     # Will be overridden below if ELASTICSEARCH_URL is specified
     'default': {
         'BACKEND': 'wagtail.search.backends.database',
-    }
+    },
 }
 
 if ELASTICSEARCH_URL:
@@ -613,60 +613,60 @@ if ELASTICSEARCH_URL:
             'analyzer': {
                 'default': {
                     'tokenizer': 'finnish',
-                    'filter': ['lowercase', 'finnish_stop', 'raudikkoFilter']
-                }
+                    'filter': ['lowercase', 'finnish_stop', 'raudikkoFilter'],
+                },
              },
             'filter': {
                 'raudikkoFilter': {
-                    'type': 'raudikko'
+                    'type': 'raudikko',
                 },
                 'finnish_stop': {
                     'type': 'stop',
                     'stopwords': '_finnish',
-                }
-            }
+                },
+            },
         },
         'sv': {
             'analyzer': {
                 'default': {
-                    'type': 'swedish'
-                }
-            }
+                    'type': 'swedish',
+                },
+            },
         },
         'da': {
             'analyzer': {
                 'default': {
-                    'type': 'danish'
-                }
-            }
+                    'type': 'danish',
+                },
+            },
         },
         'de': {
             'analyzer': {
                 'default': {
-                    'type': 'german'
-                }
-            }
+                    'type': 'german',
+                },
+            },
         },
         'en': {
             'analyzer': {
                 'default': {
-                    'type': 'english'
-                }
-            }
+                    'type': 'english',
+                },
+            },
         },
         'es': {
             'analyzer': {
                 'default': {
-                    'type': 'spanish'
-                }
-            }
+                    'type': 'spanish',
+                },
+            },
         },
         'lv': {
             'analyzer': {
                 'default': {
-                    'type': 'latvian'
-                }
-            }
+                    'type': 'latvian',
+                },
+            },
         },
     }
     for lang in ANALYSIS_CONFIG.keys():
@@ -683,9 +683,9 @@ if ELASTICSEARCH_URL:
                     },
                     'analysis': {
                         **ANALYSIS_CONFIG[lang],
-                    }
-                }
-            }
+                    },
+                },
+            },
         }
     WAGTAILSEARCH_BACKENDS['default'] = WAGTAILSEARCH_BACKENDS['default-fi']
 
@@ -816,7 +816,7 @@ if ENABLE_DEBUG_TOOLBAR:
 
 if DEBUG:
     MIDDLEWARE.insert(
-        0, 'aplans.middleware.PrintQueryCountMiddleware'
+        0, 'aplans.middleware.PrintQueryCountMiddleware',
     )
 
 
@@ -852,24 +852,24 @@ WAGTAILEMBEDS_RESPONSIVE_HTML = True
 # Workaround until https://github.com/wagtail/wagtail/pull/11075 is merged
 WAGTAILADMIN_RICH_TEXT_EDITORS = {
     'default': {
-        "WIDGET": "admin_site.draftail_rich_text_area.DraftailRichTextAreaWithFixedTranslations"
+        "WIDGET": "admin_site.draftail_rich_text_area.DraftailRichTextAreaWithFixedTranslations",
     },
     'limited': {
         "WIDGET": "admin_site.draftail_rich_text_area.DraftailRichTextAreaWithFixedTranslations",
         "OPTIONS": {
-            "features": ["bold", "italic", "ol", "ul", "link"]
+            "features": ["bold", "italic", "ol", "ul", "link"],
         },
     },
     'very-limited-with-links': {
         "WIDGET": "admin_site.draftail_rich_text_area.DraftailRichTextAreaWithFixedTranslations",
         "OPTIONS": {
-            "features": ["italic", "link"]
+            "features": ["italic", "link"],
         },
     },
     'very-limited': {
         "WIDGET": "admin_site.draftail_rich_text_area.DraftailRichTextAreaWithFixedTranslations",
         "OPTIONS": {
-            "features": ["bold", "italic"]
+            "features": ["bold", "italic"],
         },
     },
 }

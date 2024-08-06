@@ -2,11 +2,12 @@ from __future__ import annotations
 
 from typing import List
 
+
 class Tree:
     def __init__(self, name: str, indent: int):
         self.name = name
         self.indent = indent
-        self.children: List[Tree] = []
+        self.children: list[Tree] = []
         self.parent: Tree | None = None
 
     @property

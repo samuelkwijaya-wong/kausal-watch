@@ -1,11 +1,16 @@
 from factory import Factory, LazyAttribute, SelfAttribute, SubFactory
-from wagtail.test.utils.wagtail_factories import (
-    CharBlockFactory, ImageChooserBlockFactory, ListBlockFactory, PageFactory, StreamBlockFactory, StreamFieldFactory,
-    StructBlockFactory
-)
-from wagtail.test.utils.wagtail_factories.blocks import BlockFactory
 from wagtail.blocks import PageChooserBlock, RichTextBlock
 from wagtail.rich_text import RichText
+from wagtail.test.utils.wagtail_factories import (
+    CharBlockFactory,
+    ImageChooserBlockFactory,
+    ListBlockFactory,
+    PageFactory,
+    StreamBlockFactory,
+    StreamFieldFactory,
+    StructBlockFactory,
+)
+from wagtail.test.utils.wagtail_factories.blocks import BlockFactory
 
 import pages
 from images.tests.factories import AplansImageFactory

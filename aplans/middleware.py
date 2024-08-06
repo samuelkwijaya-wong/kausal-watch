@@ -1,22 +1,21 @@
 import re
+
+import sentry_sdk
 from django.conf import settings
-from django.db import transaction, connection
+from django.db import connection, transaction
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.deprecation import MiddlewareMixin
-from django.utils.translation import activate
-from django.utils.translation import gettext_lazy as _
-
+from django.utils.translation import activate, gettext_lazy as _
 from loguru import logger
-import sentry_sdk
 from social_core.exceptions import SocialAuthBaseException
 from wagtail.admin import messages
 from wagtail.users.models import UserProfile
-from aplans.cache import WatchObjectCache
 
+from actions.models import Plan
+from aplans.cache import WatchObjectCache
 from aplans.context_vars import set_request
 from aplans.types import WatchAdminRequest, WatchRequest
-from actions.models import Plan
 
 
 class SocialAuthExceptionMiddleware(MiddlewareMixin):

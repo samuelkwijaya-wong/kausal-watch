@@ -1,17 +1,22 @@
+from datetime import date, datetime, timedelta
+
 import pytest
-from datetime import datetime, timedelta, date
 from django.core import mail
 
 from actions.tests.factories import (
-    ActionContactFactory, ActionFactory, ActionTaskFactory, PlanFactory, ActionResponsiblePartyFactory
+    ActionContactFactory,
+    ActionFactory,
+    ActionResponsiblePartyFactory,
+    ActionTaskFactory,
+    PlanFactory,
 )
 from admin_site.tests.factories import ClientPlanFactory
 from feedback.tests.factories import UserFeedbackFactory
 from indicators.tests.factories import IndicatorContactFactory, IndicatorFactory, IndicatorLevelFactory
-from orgs.tests.factories import OrganizationPlanAdminFactory
-from notifications.models import AutomaticNotificationTemplate, NotificationType, SentNotification
 from notifications.management.commands.send_plan_notifications import NotificationEngine
+from notifications.models import AutomaticNotificationTemplate, NotificationType, SentNotification
 from notifications.tests.factories import AutomaticNotificationTemplateFactory, ManuallyScheduledNotificationTemplateFactory
+from orgs.tests.factories import OrganizationPlanAdminFactory
 from people.tests.factories import PersonFactory
 
 pytestmark = pytest.mark.django_db
@@ -128,7 +133,7 @@ def test_action_not_updated(action_is_stale):
 @pytest.mark.parametrize('iso_date,outbox_count', [
     ('2000-01-01', 5),
     ('2000-01-03', 0),
-    ('1999-12-31', 5)
+    ('1999-12-31', 5),
 ])
 def test_manually_scheduled_notification(
         iso_date,
@@ -139,7 +144,7 @@ def test_manually_scheduled_notification(
         indicator_contact_factory,
         action_contact_factory,
         organization_plan_admin_factory,
-        action_factory
+        action_factory,
 ):
     # To be comparable to the trigger date,
     # now is already taken to be specified as 2000-01-01 in the plan timezone
@@ -200,7 +205,7 @@ def test_manually_scheduled_notification_reschedule(
         custom_email='',
         send_to_action_contact_persons=False,
         send_to_indicator_contact_persons=False,
-        send_to_organization_admins=False
+        send_to_organization_admins=False,
     )
     ClientPlanFactory(plan=plan)
 

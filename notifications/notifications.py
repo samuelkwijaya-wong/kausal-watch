@@ -1,23 +1,25 @@
 from __future__ import annotations
-from abc import ABC, abstractmethod
+
 import datetime
-from enum import Enum
 import typing
+from abc import ABC, abstractmethod
+from enum import Enum
 
 from django.db.models import Q
-from django.utils.translation import pgettext, gettext_lazy as _
+from django.utils.translation import gettext_lazy as _, pgettext
 from markupsafe import Markup
 
-from actions.models import Plan, ActionTask, Action
+from actions.models import Action, ActionTask, Plan
 from feedback.models import UserFeedback
 from indicators.models import Indicator
 
 if typing.TYPE_CHECKING:
+    from django_stubs_ext import StrPromise
+
     from . import NotificationObject
     from .engine import NotificationEngine
-    from .recipients import NotificationRecipient
     from .models import ManuallyScheduledNotificationTemplate
-    from django_stubs_ext import StrPromise
+    from .recipients import NotificationRecipient
 
 MINIMUM_NOTIFICATION_PERIOD = 5  # days
 
@@ -119,7 +121,7 @@ class TaskLateNotification(DeadlinePassedNotification):
             "the task information of your action in the action plan. "
             "There is an action whose deadline has passed. The action "
             "is shown to be late until you mark it as done and fill in "
-            "some details."
+            "some details.",
         )
 
     @classmethod
@@ -146,7 +148,7 @@ class UpdatedIndicatorValuesLateNotification(DeadlinePassedNotification):
             "reminder about updating indicator details in the action "
             "plan.  The deadline for updating the indicator values has "
             "passed. Please go and update the indicator with the latest "
-            "values."
+            "values.",
         )
 
 class DeadlineSoonNotification(Notification):
@@ -196,7 +198,7 @@ class TaskDueSoonNotification(DeadlineSoonNotification):
             "deadline approaching. Please remember to mark the task as "
             "done as soon as it has been completed. After the deadline "
             "has gone, the action will be marked as late. You can edit "
-            "the task details from the link below."
+            "the task details from the link below.",
         )
 
 
@@ -219,7 +221,7 @@ class UpdatedIndicatorValuesDueSoonNotification(DeadlineSoonNotification):
             "reminder about updating indicator details in the action "
             "plan.  The deadline for updating the indicator values is "
             "approaching. Please go and update the indicator with the "
-            "latest values."
+            "latest values.",
         )
 
 
@@ -257,7 +259,7 @@ class NotEnoughTasksNotification(Notification):
             "the future.  This means that it would be preferrable for "
             "each action to have at least one upcoming task within the "
             "next year. Please go and add tasks for the action which "
-            "show what the next planned steps for the action are."
+            "show what the next planned steps for the action are.",
         )
 
 
@@ -295,7 +297,7 @@ class ActionNotUpdatedNotification(Notification):
             "future.  It's already six months since you last updated an "
             "action. Please go and update the action with the latest "
             "information. You can add an upcoming task to the action at "
-            "the same time."
+            "the same time.",
         )
 
 
@@ -322,7 +324,7 @@ class UserFeedbackReceivedNotification(Notification):
     def get_default_intro_text(cls):
         return pgettext(
             'user_feedback_received',
-            "A user has submitted feedback."
+            "A user has submitted feedback.",
         )
 
 
@@ -337,7 +339,7 @@ class ManuallyScheduledNotification(Notification):
         if now is None:
             now = self.plan.now_in_local_timezone()
         trigger_datetime = datetime.datetime.combine(
-            self.obj.date, datetime.datetime.min.time()
+            self.obj.date, datetime.datetime.min.time(),
         ).replace(tzinfo=self.plan.tzinfo)
 
         last_sent = self.notification_last_sent_datetime()
@@ -368,7 +370,7 @@ class ManuallyScheduledNotification(Notification):
         return _("Manually scheduled notification")
 
     @classmethod
-    def get_default_intro_text(cls):
+    def get_default_intro_text(cls) -> None:
         return None
 
     def __str__(self):

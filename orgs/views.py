@@ -6,13 +6,11 @@ from django.db import transaction
 from django.db.models import ProtectedError
 from django.shortcuts import get_object_or_404, redirect
 from django.utils.decorators import method_decorator
-from django.utils.translation import gettext as _
-from django.utils.translation import gettext_lazy, ngettext_lazy
+from django.utils.translation import gettext as _, gettext_lazy, ngettext_lazy
 from wagtail.admin import messages
 from wagtail_modeladmin.views import DeleteView, EditView, WMABaseView
 
-from admin_site.wagtail import SetInstanceModelAdminMixin
-from admin_site.wagtail import AplansCreateView
+from admin_site.wagtail import AplansCreateView, SetInstanceModelAdminMixin
 from orgs.models import Organization
 
 
@@ -30,6 +28,7 @@ class OrganizationViewMixin:
 
 class CreateChildNodeView(OrganizationViewMixin, AplansCreateView):
     """View class that can take an additional URL param for parent id."""
+
     parent_pk = None
 
     def __init__(self, model_admin, parent_pk):

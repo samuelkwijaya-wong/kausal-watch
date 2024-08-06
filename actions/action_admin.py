@@ -1,8 +1,10 @@
 from __future__ import annotations
-import typing
 
 import json
 import logging
+import typing
+from typing import Iterable, Type
+
 from dal import autocomplete, forward as dal_forward
 from django.contrib.admin.utils import quote
 from django.contrib.contenttypes.models import ContentType
@@ -13,39 +15,55 @@ from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from django.views.generic.detail import SingleObjectMixin
 from modelcluster.forms import childformset_factory
-from typing import Iterable, Type
-from wagtail.admin.panels import (
-    FieldPanel, InlinePanel, MultiFieldPanel, ObjectList, Panel
-)
 from wagtail.admin.forms.models import WagtailAdminModelForm, formfield_for_dbfield
+from wagtail.admin.panels import (
+    FieldPanel,
+    InlinePanel,
+    MultiFieldPanel,
+    ObjectList,
+    Panel,
+)
 from wagtail.admin.widgets import AdminAutoHeightTextInput
 from wagtail.permissions import ModelPermissionPolicy
 from wagtail.snippets.action_menu import SnippetActionMenu
 from wagtail.snippets.views.snippets import (
-    CollectWorkflowActionDataView, ConfirmWorkflowCancellationView, UnpublishView, UsageView,
+    CollectWorkflowActionDataView,
+    ConfirmWorkflowCancellationView,
+    UnpublishView,
+    UsageView,
 )
 from wagtail_modeladmin.options import ModelAdminMenuItem
 from wagtail_modeladmin.views import IndexView
 
-from admin_site.wagtail import (
-    AplansEditView, AdminOnlyPanel, AplansButtonHelper, AplansCreateView, AplansModelAdmin, AplansTabbedInterface,
-    CondensedInlinePanel, CustomizableBuiltInFieldPanel, CustomizableBuiltInPlanFilteredFieldPanel,
-    PlanFilteredFieldPanel, PlanRelatedModelAdminPermissionHelper, insert_model_translation_panels, get_translation_tabs
-)
 from actions.chooser import ActionChooser
 from admin_site.utils import FieldLabelRenderer
-from aplans.extensions import modeladmin_register
+from admin_site.wagtail import (
+    AdminOnlyPanel,
+    AplansButtonHelper,
+    AplansCreateView,
+    AplansEditView,
+    AplansModelAdmin,
+    AplansTabbedInterface,
+    CondensedInlinePanel,
+    CustomizableBuiltInFieldPanel,
+    CustomizableBuiltInPlanFilteredFieldPanel,
+    PlanFilteredFieldPanel,
+    PlanRelatedModelAdminPermissionHelper,
+    get_translation_tabs,
+    insert_model_translation_panels,
+)
 from aplans.context_vars import ctx_instance, ctx_request
+from aplans.extensions import modeladmin_register
 from aplans.types import WatchAdminRequest
 from aplans.utils import naturaltime
 from aplans.wagtail_utils import _get_category_fields
 from orgs.models import Organization
 from people.chooser import PersonChooser
 from people.models import Person
+from reports.views import MarkActionAsCompleteView
 
 from .action_admin_mixins import SnippetsEditViewCompatibilityMixin
 from .models.action import Action, ActionContactPerson, ActionResponsibleParty, ActionTask, ModelWithRole
-from reports.views import MarkActionAsCompleteView
 
 if typing.TYPE_CHECKING:
     from actions.attributes import DraftAttributes
@@ -56,6 +74,7 @@ logger = logging.getLogger(__name__)
 
 class ReadOnlyInlinePanel(Panel):
     """Variant of InlinePanel where no form inputs are output."""
+
     def __init__(self, relation_name=None, *args, **kwargs):
         self.relation_name = relation_name
         super().__init__(*args, **kwargs)
@@ -77,7 +96,7 @@ class ReadOnlyInlinePanel(Panel):
             context['items'] = [
                 {
                     'label': el.get_label() if hasattr(el, 'get_label') else '',
-                    'value': el.get_value() if hasattr(el, 'get_value') else str(el)
+                    'value': el.get_value() if hasattr(el, 'get_value') else str(el),
                 }
                 for el in getattr(self.instance, relation_name).all()
             ]
@@ -114,11 +133,11 @@ class ActionPermissionHelper(PlanRelatedModelAdminPermissionHelper):
         return user.can_create_action(plan)
 
 
-MODELS_WITH_ROLES: list[tuple[Type[ModelWithRole], str, Type[Model], str]] = [
+MODELS_WITH_ROLES: list[tuple[type[ModelWithRole], str, type[Model], str]] = [
     (ActionContactPerson, 'contact_persons',
      Person, 'person'),
     (ActionResponsibleParty, 'responsible_parties',
-     Organization, 'organization')
+     Organization, 'organization'),
 ]
 
 
@@ -144,8 +163,8 @@ class ActionAdminForm(WagtailAdminModelForm):
         return identifier
 
     def get_related_objects_with_role(
-            self, _cls: Type[ModelWithRole], role: str,
-            relation_name: str, wrapped_cls: Type[Model], wrapped_object_attr: str
+            self, _cls: type[ModelWithRole], role: str,
+            relation_name: str, wrapped_cls: type[Model], wrapped_object_attr: str,
     ) -> typing.Iterable[Model]:
         formset = self.formsets.get(f'{relation_name}_{role}')
         # There is a corresponding formset for a role if and only if we can edit the relations of that role.
@@ -157,18 +176,18 @@ class ActionAdminForm(WagtailAdminModelForm):
         return wrapped_cls.objects.filter(id__in=obj_ids)
 
     def _validate_unique_relations_with_roles(
-            self, _cls: Type[ModelWithRole], relation_name: str, wrapped_object_cls: Type[Model], wrapped_object_attr: str
+            self, _cls: type[ModelWithRole], relation_name: str, wrapped_object_cls: type[Model], wrapped_object_attr: str,
     ):
         seen_related_objects = set()
         for role in _cls.get_roles():
             if role is None:
                 role = 'None'
             for obj in self.get_related_objects_with_role(
-                _cls, role, relation_name, wrapped_object_cls, wrapped_object_attr
+                _cls, role, relation_name, wrapped_object_cls, wrapped_object_attr,
             ):
                 if obj.pk in seen_related_objects:
                     raise ValidationError(
-                        _("%s is listed multiple times in the action.") % obj
+                        _("%s is listed multiple times in the action.") % obj,
                     )
                 seen_related_objects.add(obj.pk)
 
@@ -268,7 +287,7 @@ class ActionAdminForm(WagtailAdminModelForm):
 
 class ModelWithRoleInlinePanel(InlinePanel):
     @staticmethod
-    def create_for_model_class(_cls: Type[ModelWithRole], *args, **kwargs):
+    def create_for_model_class(_cls: type[ModelWithRole], *args, **kwargs):
         if _cls == ActionResponsibleParty:
             return ResponsiblePartiesInlinePanel(*args, **kwargs)
         if _cls == ActionContactPerson:
@@ -335,7 +354,7 @@ class ModelWithRoleReadOnlyInlinePanel(Panel):
             relation_name: str | None = None,
             filter_by_role: bool = False,
             role: ModelWithRole.Role | None = None,
-            *args, **kwargs
+            *args, **kwargs,
         ):
         self.filter_by_role = filter_by_role
         self.role = role
@@ -362,7 +381,7 @@ class ModelWithRoleReadOnlyInlinePanel(Panel):
             context['items'] = [
                 {
                     'label': el.get_label() if hasattr(el, 'get_label') else '',
-                    'value': el.get_value() if hasattr(el, 'get_value') else str(el)
+                    'value': el.get_value() if hasattr(el, 'get_value') else str(el),
                 }
                 for el in qs
             ]
@@ -396,7 +415,7 @@ class ContactPersonsInlinePanel(ModelWithRoleInlinePanel):
     def get_panels(self):
         return [
             FieldPanel('person', widget=PersonChooser),
-            FieldPanel('primary_contact')
+            FieldPanel('primary_contact'),
         ]
 
 
@@ -405,9 +424,9 @@ class RelatedModelWithRolePanel(MultiFieldPanel):
         self,
         action: Action,
         relation_name: str,
-        _cls: Type[ModelWithRole],
+        _cls: type[ModelWithRole],
         editable_roles: Iterable[ModelWithRole.Role | None] | None = None,
-        *args, **kwargs
+        *args, **kwargs,
     ):
         """Display inline panels for contact persons, optionally separated by roles.
 
@@ -477,7 +496,7 @@ class ActionEditHandler(AplansTabbedInterface):
             attribute_fields = {field.name: field.django_field
                                 for attribute_type in attribute_types
                                 for field in attribute_type.get_form_fields(
-                                    user, plan, instance, draft_attributes=self.draft_attributes
+                                    user, plan, instance, draft_attributes=self.draft_attributes,
                                 )}
         else:
             attribute_fields = {}
@@ -485,7 +504,7 @@ class ActionEditHandler(AplansTabbedInterface):
         self.base_form_class = type(
             'ActionAdminForm',
             (ActionAdminForm,),
-            {**cat_fields, **attribute_fields, '_user': user}
+            {**cat_fields, **attribute_fields, '_user': user},
         )
 
         form_class = super().get_form_class()
@@ -719,7 +738,7 @@ class ActionAdmin(AplansModelAdmin):
         CustomizableBuiltInFieldPanel('description'),
     ]
     basic_related_panels = [
-        CustomizableBuiltInFieldPanel('image')
+        CustomizableBuiltInFieldPanel('image'),
     ]
     basic_related_panels_general_admin = [
         CustomizableBuiltInFieldPanel(
@@ -728,8 +747,8 @@ class ActionAdmin(AplansModelAdmin):
                 url='action-autocomplete',
                 forward=(
                     dal_forward.Const(True, 'related_plans'),
-                )
-            )
+                ),
+            ),
         ),
         CustomizableBuiltInFieldPanel('merged_with', widget=ActionChooser),
         CustomizableBuiltInFieldPanel('visibility'),
@@ -755,7 +774,7 @@ class ActionAdmin(AplansModelAdmin):
         FieldPanel('comment'),
     ]
 
-    task_header_from_js = '''
+    task_header_from_js = """
         function getHeader(task) {
             var f = task.fields;
             var out = '';
@@ -776,7 +795,7 @@ class ActionAdmin(AplansModelAdmin):
             return out;
         }
         getHeader(form);
-    '''
+    """
 
     def register_with_wagtail(self):
         super().register_with_wagtail()
@@ -909,7 +928,7 @@ class ActionAdmin(AplansModelAdmin):
                 'links',
                 panels=[
                     FieldPanel('url'),
-                    FieldPanel('title')
+                    FieldPanel('title'),
                 ],
                 heading=render_field_label(_('External links'), public=True),
             ),
@@ -923,7 +942,7 @@ class ActionAdmin(AplansModelAdmin):
                     url='action-autocomplete',
                     forward=(
                         dal_forward.Const(plan.superseded_by.id, 'plan'),
-                    )
+                    ),
                 )))
 
         all_tabs.append(ObjectList(panels, heading=_('Basic information')))
@@ -943,7 +962,7 @@ class ActionAdmin(AplansModelAdmin):
         contact_persons_panels = self.get_contact_persons_panels(request, instance)
         all_tabs.append(ObjectList(
             contact_persons_panels,
-            help_text=render_field_label('', public=plan.features.public_contact_persons), heading=_('Contact persons')
+            help_text=render_field_label('', public=plan.features.public_contact_persons), heading=_('Contact persons'),
         ))
 
         responsible_parties_panels = self.get_responsible_parties_panels(request, instance)
@@ -955,7 +974,7 @@ class ActionAdmin(AplansModelAdmin):
                 CondensedInlinePanel(
                     'tasks',
                     panels=task_panels,
-                )
+                ),
             ], heading=plan.general_content.get_action_task_term_display_plural(),
                help_text=render_field_label('', public=True)),
         ]
@@ -975,8 +994,8 @@ class ActionAdmin(AplansModelAdmin):
             FieldPanel(
                 'internal_notes',
                 heading=render_field_label(_('Internal notes'), public=False),
-                widget=AdminAutoHeightTextInput(attrs=dict(rows=5))
-            )
+                widget=AdminAutoHeightTextInput(attrs=dict(rows=5)),
+            ),
         )
 
         if is_general_admin:
@@ -984,8 +1003,8 @@ class ActionAdmin(AplansModelAdmin):
                 FieldPanel(
                     'internal_admin_notes',
                     heading=render_field_label(_('Internal notes for plan administrators'), public=False),
-                    widget=AdminAutoHeightTextInput(attrs=dict(rows=5))
-                )
+                    widget=AdminAutoHeightTextInput(attrs=dict(rows=5)),
+                ),
             )
             if plan.action_impacts.exists():
                 reporting_panels.append(PlanFilteredFieldPanel('impact'))
@@ -1100,7 +1119,7 @@ class ActionAdmin(AplansModelAdmin):
                 'mark_action_as_complete',
             ),
             self.mark_action_as_complete_view,
-            name=self.url_helper.get_action_url_name('mark_action_as_complete')
+            name=self.url_helper.get_action_url_name('mark_action_as_complete'),
         )
         undo_marking_as_complete_url = re_path(
             # self.url_helper.get_action_url_pattern('undo_marking_action_as_complete'),
@@ -1110,7 +1129,7 @@ class ActionAdmin(AplansModelAdmin):
                 'undo_marking_action_as_complete',
             ),
             self.undo_marking_action_as_complete_view,
-            name=self.url_helper.get_action_url_name('undo_marking_action_as_complete')
+            name=self.url_helper.get_action_url_name('undo_marking_action_as_complete'),
         )
         snippet_view_routes = {
             'usage': '<str:pk>',
@@ -1122,7 +1141,7 @@ class ActionAdmin(AplansModelAdmin):
             path(
                 f'{self.opts.app_label}/{self.opts.model_name}/{view_name}/{route}/',
                 getattr(self, f'{view_name}_view'),
-                name=self.url_helper.get_action_url_name(view_name)
+                name=self.url_helper.get_action_url_name(view_name),
             ) for view_name, route in snippet_view_routes.items()
         ]
         return urls + (
@@ -1138,7 +1157,7 @@ class ActionAdmin(AplansModelAdmin):
             return [
                 RelatedModelWithRolePanel(
                     action=instance, relation_name='contact_persons', _cls=ActionContactPerson,
-                    editable_roles=editable_contact_person_roles
+                    editable_roles=editable_contact_person_roles,
                 )]
         return [RelatedModelWithRolePanel(action=instance, relation_name='contact_persons', _cls=ActionContactPerson)]
 
@@ -1149,8 +1168,8 @@ class ActionAdmin(AplansModelAdmin):
             return [
                 RelatedModelWithRolePanel(
                     action=instance, relation_name='responsible_parties', _cls=ActionResponsibleParty,
-                    editable_roles=editable_responsible_party_roles
+                    editable_roles=editable_responsible_party_roles,
             )]
         return [
-            RelatedModelWithRolePanel(action=instance, relation_name='responsible_parties', _cls=ActionResponsibleParty)
+            RelatedModelWithRolePanel(action=instance, relation_name='responsible_parties', _cls=ActionResponsibleParty),
         ]

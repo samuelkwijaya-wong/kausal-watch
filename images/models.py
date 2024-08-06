@@ -1,14 +1,13 @@
 import datetime
 import os
-from django.db import models
-from django.utils.translation import gettext_lazy as _
 from typing import List
 
-from wagtail.images.models import AbstractImage, AbstractRendition
-from wagtail.images.models import Image as WagtailImage
+from django.db import models
+from django.utils.translation import gettext_lazy as _
+from wagtail.images.models import AbstractImage, AbstractRendition, Image as WagtailImage
 
 
-def truncate_filename(directories: List[str], filename: str) -> str:
+def truncate_filename(directories: list[str], filename: str) -> str:
     """Joins all elements of the list `directories` and the string `filename` with a path separator and makes sure the
     result fits into a Django file field.
     """

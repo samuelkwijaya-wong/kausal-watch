@@ -1,15 +1,15 @@
 from __future__ import annotations
 
-from functools import lru_cache
 import logging
-import reversion
 import typing
-from typing import TYPE_CHECKING, ClassVar, Iterable, Literal, Optional, Protocol, Self, TypedDict
 import uuid
+from functools import lru_cache
+from typing import TYPE_CHECKING, ClassVar, Iterable, Literal, Optional, Protocol, Self, TypedDict
 
+import reversion
+from django.contrib.admin import display
 from django.contrib.contenttypes.fields import GenericRelation
 from django.contrib.contenttypes.models import ContentType
-from django.contrib.admin import display
 from django.core.exceptions import FieldDoesNotExist, ValidationError
 from django.core.validators import URLValidator
 from django.db import models
@@ -17,11 +17,10 @@ from django.db.models import Count, IntegerField, Max, Q
 from django.db.models.functions import Cast
 from django.urls import reverse
 from django.utils import timezone, translation
-from django.utils.translation import gettext_lazy as _
-from django.utils.translation import pgettext_lazy
+from django.utils.translation import gettext_lazy as _, pgettext_lazy
 from modelcluster.fields import ParentalKey
 from modelcluster.models import ClusterableModel, model_from_serializable_data
-from modeltrans.fields import TranslationField, TranslatedVirtualField
+from modeltrans.fields import TranslatedVirtualField, TranslationField
 from modeltrans.translator import get_i18n_field
 from reversion.models import Version
 from wagtail.fields import RichTextField
@@ -29,16 +28,21 @@ from wagtail.models import DraftStateMixin, LockableMixin, RevisionMixin, Task, 
 from wagtail.search import index
 from wagtail.search.queryset import SearchableQuerySetMixin
 
-
 from aplans.types import UserOrAnon
 from aplans.utils import (
-    IdentifierField, OrderedModel, PlanRelatedModel, generate_identifier, get_available_variants_for_language,
-    ConstantMetadata, DateFormatField, RestrictedVisibilityModel
+    ConstantMetadata,
+    DateFormatField,
+    IdentifierField,
+    OrderedModel,
+    PlanRelatedModel,
+    RestrictedVisibilityModel,
+    generate_identifier,
+    get_available_variants_for_language,
 )
 from indicators.models import Indicator
 from orgs.models import Organization
+from search.backends import TranslatedAutocompleteField, TranslatedSearchField
 from users.models import User
-from search.backends import TranslatedSearchField, TranslatedAutocompleteField
 
 from ..action_status_summary import ActionStatusSummaryIdentifier, ActionTimelinessIdentifier, SummaryContext
 from ..attributes import AttributeFieldPanel, AttributeType
@@ -46,14 +50,16 @@ from ..monitoring_quality import determine_monitoring_quality
 from .attributes import AttributeType as AttributeTypeModel, ModelWithAttributes
 
 if typing.TYPE_CHECKING:
-    from django.db.models.manager import RelatedManager
     from django.db.models.expressions import Combinable
+    from django.db.models.manager import RelatedManager
+
     from actions.attributes import DraftAttributes
     from aplans.cache import WatchObjectCache
-    from people.models import Person
-    from .plan import Plan
-    from .action_deps import ActionDependencyRelationshipQuerySet
     from aplans.graphql_types import WorkflowStateEnum
+    from people.models import Person
+
+    from .action_deps import ActionDependencyRelationshipQuerySet
+    from .plan import Plan
 
 
 logger = logging.getLogger(__name__)
@@ -77,12 +83,12 @@ class ActionQuerySet(SearchableQuerySetMixin, models.QuerySet):
         qs = self.filter(Q(contact_persons__person=person)).distinct()
         return qs
 
-    def user_is_org_admin_for(self, user: User, plan: Optional[Plan] = None):
+    def user_is_org_admin_for(self, user: User, plan: Plan | None = None):
         plan_admin_orgs = Organization.objects.user_is_plan_admin_for(user, plan)
         query = Q(responsible_parties__organization__in=plan_admin_orgs) | Q(primary_org__in=plan_admin_orgs)
         return self.filter(query).distinct()
 
-    def user_has_staff_role_for(self, user: User, plan: Optional[Plan] = None):
+    def user_has_staff_role_for(self, user: User, plan: Plan | None = None):
         qs = self.user_is_contact_for(user) | self.user_is_org_admin_for(user, plan)
         return qs
 
@@ -160,7 +166,7 @@ else:
 @reversion.register(follow=ModelWithAttributes.REVERSION_FOLLOW + ['responsible_parties', 'tasks'])
 class Action(  # type: ignore[django-manager-missing]
     WorkflowMixin, DraftStateMixin, LockableMixin, RevisionMixin,
-    ModelWithAttributes, PlanRelatedModel, OrderedModel, ClusterableModel, RestrictedVisibilityModel, index.Indexed
+    ModelWithAttributes, PlanRelatedModel, OrderedModel, ClusterableModel, RestrictedVisibilityModel, index.Indexed,
 ):
     """One action/measure tracked in an action plan."""
 
@@ -228,9 +234,9 @@ class Action(  # type: ignore[django-manager-missing]
     _actual_workflow_state: WorkflowStateEnum | None
 
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
-    plan: ParentalKey[Plan | Combinable, Plan] = ParentalKey(
+    plan: ParentalKey[Plan, Plan] = ParentalKey( # pyright: ignore
         'actions.Plan', on_delete=models.CASCADE, related_name='actions',
-        verbose_name=_('plan')
+        verbose_name=_('plan'),
     )
     primary_org = models.ForeignKey(
         'orgs.Organization', verbose_name=_('primary organization'),
@@ -239,14 +245,14 @@ class Action(  # type: ignore[django-manager-missing]
     name = models.CharField(max_length=1000, verbose_name=_('name'))
     official_name = models.TextField(
         null=True, blank=True, verbose_name=_('official name'),
-        help_text=_('The name as approved by an official party')
+        help_text=_('The name as approved by an official party'),
     )
     identifier = IdentifierField(
-        help_text=_('The identifier for this action (e.g. number)')
+        help_text=_('The identifier for this action (e.g. number)'),
     )
     image = models.ForeignKey(
         'images.AplansImage', null=True, blank=True, on_delete=models.SET_NULL, related_name='+',
-        verbose_name=_('Image')
+        verbose_name=_('Image'),
     )
     lead_paragraph = models.TextField(blank=True, verbose_name=_('Lead paragraph'))
     description = RichTextField(
@@ -258,13 +264,13 @@ class Action(  # type: ignore[django-manager-missing]
         verbose_name=_('impact'), help_text=_('The impact of this action'),
     )
     internal_priority = models.PositiveIntegerField(
-        blank=True, null=True, verbose_name=_('internal priority')
+        blank=True, null=True, verbose_name=_('internal priority'),
     )
     internal_admin_notes = models.TextField(
-        blank=True, null=True, verbose_name=_('internal notes for plan administrators')
+        blank=True, null=True, verbose_name=_('internal notes for plan administrators'),
     )
     internal_notes = models.TextField(
-        blank=True, null=True, verbose_name=_('internal notes')
+        blank=True, null=True, verbose_name=_('internal notes'),
     )
     status = models.ForeignKey(
         'ActionStatus', blank=True, null=True, on_delete=models.SET_NULL,
@@ -276,50 +282,50 @@ class Action(  # type: ignore[django-manager-missing]
     )
     manual_status = models.BooleanField(
         default=False, verbose_name=_('override status manually'),
-        help_text=_('Set if you want to prevent the action status from being determined automatically')
+        help_text=_('Set if you want to prevent the action status from being determined automatically'),
     )
     manual_status_reason = models.TextField(
         blank=True, null=True, verbose_name=_('specifier for status'),
-        help_text=_('Describe the reason why this action has has this status')
+        help_text=_('Describe the reason why this action has has this status'),
     )
 
     merged_with = models.ForeignKey(
         'Action', blank=True, null=True, on_delete=models.SET_NULL,
         verbose_name=_('merged with action'), help_text=_('Set if this action is merged with another action'),
-        related_name='merged_actions'
+        related_name='merged_actions',
     )
     completion = models.PositiveIntegerField(
         null=True, blank=True, verbose_name=_('completion'), editable=False,
-        help_text=_('The completion percentage for this action')
+        help_text=_('The completion percentage for this action'),
     )
     schedule = models.ManyToManyField(
-        'ActionSchedule', blank=True, verbose_name=_('schedule')
+        'ActionSchedule', blank=True, verbose_name=_('schedule'),
     )
     schedule_continuous = models.BooleanField(
         default=False, verbose_name=_('continuous action'),
-        help_text=_('Set if the action does not have a start or an end date')
+        help_text=_('Set if the action does not have a start or an end date'),
     )
     decision_level = models.ForeignKey(
         'ActionDecisionLevel', blank=True, null=True, related_name='actions', on_delete=models.SET_NULL,
-        verbose_name=_('decision-making level')
+        verbose_name=_('decision-making level'),
     )
     categories = models.ManyToManyField(
         'Category', blank=True, verbose_name=_('categories'), related_name='actions',
     )
     indicators = models.ManyToManyField(
         'indicators.Indicator', blank=True, verbose_name=_('indicators'),
-        through='indicators.ActionIndicator', related_name='actions'
+        through='indicators.ActionIndicator', related_name='actions',
     )
     related_actions = models.ManyToManyField('self', blank=True, verbose_name=_('related actions'))
 
     responsible_organizations = models.ManyToManyField(
         Organization, through='ActionResponsibleParty', blank=True,
-        related_name='responsible_for_actions', verbose_name=_('responsible organizations')
+        related_name='responsible_for_actions', verbose_name=_('responsible organizations'),
     )
 
     contact_persons_unordered = models.ManyToManyField(
         'people.Person', through='ActionContactPerson', blank=True,
-        related_name='contact_for_actions', verbose_name=_('contact persons')
+        related_name='contact_for_actions', verbose_name=_('contact persons'),
     )
 
     monitoring_quality_points = models.ManyToManyField(
@@ -328,7 +334,7 @@ class Action(  # type: ignore[django-manager-missing]
     )
 
     updated_at = models.DateTimeField(
-        editable=False, verbose_name=_('updated at'), default=timezone.now
+        editable=False, verbose_name=_('updated at'), default=timezone.now,
     )
     start_date = models.DateField(
         verbose_name=_('start date'),
@@ -346,15 +352,15 @@ class Action(  # type: ignore[django-manager-missing]
         verbose_name=_('Date format'),
         help_text=_(
             'Format of action start and end dates shown in the public UI. \
-            The default for all actions can be specified on the actions page.'
+            The default for all actions can be specified on the actions page.',
         ),
         blank=True,
         null=True,
-        default=None
+        default=None,
     )
     superseded_by = models.ForeignKey(
         'self', verbose_name=pgettext_lazy('action', 'superseded by'), blank=True, null=True, on_delete=models.SET_NULL,
-        related_name='superseded_actions', help_text=_('Set if this action is superseded by another action')
+        related_name='superseded_actions', help_text=_('Set if this action is superseded by another action'),
     )
     dependency_role = models.ForeignKey(
         'ActionDependencyRole', on_delete=models.SET_NULL, null=True, blank=True, related_name='actions',
@@ -408,7 +414,7 @@ class Action(  # type: ignore[django-manager-missing]
         'related_actions', 'related_indicators', 'impact', 'status_updates', 'merged_with', 'merged_actions',
         'impact_groups', 'monitoring_quality_points', 'implementation_phase', 'manual_status_reason', 'links',
         'primary_org', 'order', 'superseded_by', 'superseded_actions', 'dependent_relationships', 'dependency_role',
-        'visibility'
+        'visibility',
     ]
 
     # type annotations for related objects
@@ -576,7 +582,7 @@ class Action(  # type: ignore[django-manager-missing]
         if not KNOWN_IDS.issubset(set(by_id.keys())):
             logger.warning(
                 'Unable to determine action statuses for plan %s: '
-                'right statuses missing' % self.plan.identifier
+                'right statuses missing' % self.plan.identifier,
             )
             return None
 
@@ -630,7 +636,7 @@ class Action(  # type: ignore[django-manager-missing]
             self.status = status
             self.save(update_fields=['status'])
 
-    def handle_admin_save(self, context: Optional[dict] = None):
+    def handle_admin_save(self, context: dict | None = None):
         self.recalculate_status(force_update=True)
 
     def set_categories(self, type, categories):
@@ -654,7 +660,7 @@ class Action(  # type: ignore[django-manager-missing]
         existing_orgs = set((p.organization for p in self.responsible_parties.all()))
         new_orgs = set(d['organization'] for d in data)
         ActionResponsibleParty.objects.filter(
-            action=self, organization__in=(existing_orgs - new_orgs)
+            action=self, organization__in=(existing_orgs - new_orgs),
         ).delete()
         for d in data:
             ActionResponsibleParty.objects.update_or_create(
@@ -667,7 +673,7 @@ class Action(  # type: ignore[django-manager-missing]
         existing_persons = set((p.person for p in self.contact_persons.all()))
         new_persons = set(d['person'] for d in data)
         ActionContactPerson.objects.filter(
-            action=self, person__in=(existing_persons - new_persons)
+            action=self, person__in=(existing_persons - new_persons),
         ).delete()
         for d in data:
             ActionContactPerson.objects.update_or_create(
@@ -700,7 +706,7 @@ class Action(  # type: ignore[django-manager-missing]
         active_tasks = [task for task in self.tasks.all() if task_active(task)]
         return len(active_tasks)
 
-    def get_view_url(self, plan: Optional[Plan] = None, client_url: Optional[str] = None) -> str:
+    def get_view_url(self, plan: Plan | None = None, client_url: str | None = None) -> str:
         if plan is None:
             plan = self.plan
         return '%s/actions/%s' % (plan.get_view_url(client_url=client_url, active_locale=translation.get_language()), self.identifier)
@@ -721,22 +727,22 @@ class Action(  # type: ignore[django-manager-missing]
         return qs
 
     def get_editable_attribute_types(
-        self, user: UserOrAnon, only_in_reporting_tab: bool = False, unless_in_reporting_tab: bool = False
+        self, user: UserOrAnon, only_in_reporting_tab: bool = False, unless_in_reporting_tab: bool = False,
     ) -> list[AttributeType]:
         attribute_types = self.__class__.get_attribute_types_for_plan(
             self.plan,
             only_in_reporting_tab=only_in_reporting_tab,
-            unless_in_reporting_tab=unless_in_reporting_tab
+            unless_in_reporting_tab=unless_in_reporting_tab,
         )
         return [at for at in attribute_types if at.instance.is_instance_editable_by(user, self.plan, self)]
 
     def get_visible_attribute_types(
-        self, user: UserOrAnon, only_in_reporting_tab: bool = False, unless_in_reporting_tab: bool = False
+        self, user: UserOrAnon, only_in_reporting_tab: bool = False, unless_in_reporting_tab: bool = False,
     ) -> list[AttributeType]:
         attribute_types = self.__class__.get_attribute_types_for_plan(
             self.plan,
             only_in_reporting_tab=only_in_reporting_tab,
-            unless_in_reporting_tab=unless_in_reporting_tab
+            unless_in_reporting_tab=unless_in_reporting_tab,
         )
         return [at for at in attribute_types if at.instance.is_instance_visible_for(user, self.plan, self)]
 
@@ -848,7 +854,7 @@ class Action(  # type: ignore[django-manager-missing]
         snapshots.delete()
 
     def get_status_summary(
-            self, cache: WatchObjectCache | None = None
+            self, cache: WatchObjectCache | None = None,
     ) -> ConstantMetadata['ActionStatusSummaryIdentifier', SummaryContext]:
         return ActionStatusSummaryIdentifier.for_action(self).get_data({'plan_id': self.plan_id, 'cache': cache})
 
@@ -924,7 +930,7 @@ class ActionResponsibleParty(OrderedModel, ModelWithRole):
 
     action = ParentalKey(
         Action, on_delete=models.CASCADE, related_name='responsible_parties',
-        verbose_name=_('action')
+        verbose_name=_('action'),
     )
     organization = models.ForeignKey(
         Organization, on_delete=models.CASCADE, related_name='responsible_actions', verbose_name=_('organization'),
@@ -982,6 +988,7 @@ class ActionResponsibleParty(OrderedModel, ModelWithRole):
 
 class ActionContactPerson(OrderedModel, ModelWithRole):
     """A Person acting as a contact for an action"""
+
     class Role(ModelWithRole.Role):
         EDITOR = 'editor', _('Editor')
         MODERATOR = 'moderator', _('Moderator')
@@ -989,10 +996,10 @@ class ActionContactPerson(OrderedModel, ModelWithRole):
     role = models.CharField(max_length=40, choices=Role.choices, default='moderator', blank=False, null=False, verbose_name=_('role'))
 
     action = ParentalKey(
-        Action, on_delete=models.CASCADE, verbose_name=_('action'), related_name='contact_persons'
+        Action, on_delete=models.CASCADE, verbose_name=_('action'), related_name='contact_persons',
     )
     person: models.ForeignKey[Person | Combinable, Person] = models.ForeignKey(
-        'people.Person', on_delete=models.CASCADE, verbose_name=_('person')
+        'people.Person', on_delete=models.CASCADE, verbose_name=_('person'),
     )
     primary_contact = models.BooleanField(
         default=False,
@@ -1049,7 +1056,7 @@ class ActionSchedule(models.Model, PlanRelatedModel):  # type: ignore[django-man
     i18n = TranslationField(fields=('name',), default_language_field='plan__primary_language_lowercase')
 
     public_fields: ClassVar = [
-        'id', 'plan', 'name', 'begins_at', 'ends_at'
+        'id', 'plan', 'name', 'begins_at', 'ends_at',
     ]
 
     class Meta:
@@ -1064,9 +1071,10 @@ class ActionSchedule(models.Model, PlanRelatedModel):  # type: ignore[django-man
 @reversion.register()
 class ActionStatus(models.Model, PlanRelatedModel):  # type: ignore[django-manager-missing]
     """The current status for the action ("on time", "late", "completed", etc.)."""
+
     plan = ParentalKey(
         'actions.Plan', on_delete=models.CASCADE, related_name='action_statuses',
-        verbose_name=_('plan')
+        verbose_name=_('plan'),
     )
     name = models.CharField(max_length=50, verbose_name=_('name'))
     identifier = IdentifierField(max_length=20)
@@ -1076,7 +1084,7 @@ class ActionStatus(models.Model, PlanRelatedModel):  # type: ignore[django-manag
     i18n = TranslationField(fields=('name',), default_language_field='plan__primary_language_lowercase')
 
     public_fields: ClassVar = [
-        'id', 'plan', 'name', 'identifier', 'is_completed'
+        'id', 'plan', 'name', 'identifier', 'is_completed',
     ]
 
     class Meta:
@@ -1098,7 +1106,7 @@ class ActionStatus(models.Model, PlanRelatedModel):  # type: ignore[django-manag
 class ActionImplementationPhase(PlanRelatedModel, OrderedModel):  # type: ignore[django-manager-missing]
     plan = ParentalKey(
         'actions.Plan', on_delete=models.CASCADE, related_name='action_implementation_phases',
-        verbose_name=_('plan')
+        verbose_name=_('plan'),
     )
     name = models.CharField(max_length=50, verbose_name=_('name'))
     identifier = IdentifierField(max_length=20)
@@ -1107,7 +1115,7 @@ class ActionImplementationPhase(PlanRelatedModel, OrderedModel):  # type: ignore
     i18n = TranslationField(fields=('name',), default_language_field='plan__primary_language_lowercase')
 
     public_fields: ClassVar = [
-        'id', 'plan', 'order', 'name', 'identifier', 'color'
+        'id', 'plan', 'order', 'name', 'identifier', 'color',
     ]
 
     class Meta:
@@ -1123,7 +1131,7 @@ class ActionImplementationPhase(PlanRelatedModel, OrderedModel):  # type: ignore
 class ActionDecisionLevel(models.Model, PlanRelatedModel):  # type: ignore[django-manager-missing]
     plan = models.ForeignKey(
         'actions.Plan', on_delete=models.CASCADE, related_name='action_decision_levels',
-        verbose_name=_('plan')
+        verbose_name=_('plan'),
     )
     name = models.CharField(max_length=200, verbose_name=_('name'))
     identifier = IdentifierField()
@@ -1188,33 +1196,33 @@ class ActionTask(ActionRelatedModelTransModelMixin, models.Model):
 
     action = ParentalKey(
         Action, on_delete=models.CASCADE, related_name='tasks',
-        verbose_name=_('action')
+        verbose_name=_('action'),
     )
     name = models.CharField(max_length=250, verbose_name=_('name'))
     state = models.CharField(max_length=20, choices=STATES, default=NOT_STARTED, verbose_name=_('state'))
     comment = RichTextField(null=True, blank=True, verbose_name=_('comment'))
     due_at = models.DateField(
         verbose_name=_('due date'),
-        help_text=_('The date by which the task should be completed (deadline)')
+        help_text=_('The date by which the task should be completed (deadline)'),
     )
     date_format = DateFormatField(
         verbose_name=_('Due date format'),
         help_text=_(
             'Format of action task due dates shown in the public UI. \
-            The default for all actions can be specified on the actions page.'
+            The default for all actions can be specified on the actions page.',
         ),
         blank=True,
         null=True,
-        default=None
+        default=None,
     )
     completed_at = models.DateField(
         null=True, blank=True, verbose_name=_('completion date'),
-        help_text=_('The date when the task was completed')
+        help_text=_('The date when the task was completed'),
     )
 
     completed_by = models.ForeignKey(
         User, null=True, blank=True, on_delete=models.SET_NULL,
-        verbose_name=_('completed by'), editable=False
+        verbose_name=_('completed by'), editable=False,
     )
     created_at = models.DateTimeField(auto_now_add=True, editable=False, verbose_name=_('created at'))
     modified_at = models.DateTimeField(auto_now=True, editable=False, verbose_name=_('modified at'))
@@ -1265,7 +1273,7 @@ class ActionTask(ActionRelatedModelTransModelMixin, models.Model):
             'action': self.action.get_notification_context(plan),
             'name': self.name,
             'due_at': self.due_at,
-            'state': self.state
+            'state': self.state,
         }
 
 
@@ -1274,7 +1282,7 @@ class ActionImpact(PlanRelatedModel, OrderedModel):  # type: ignore[django-manag
 
     plan = ParentalKey(
         'actions.Plan', on_delete=models.CASCADE, related_name='action_impacts',
-        verbose_name=_('plan')
+        verbose_name=_('plan'),
     )
     name = models.CharField(max_length=200, verbose_name=_('name'))
     identifier = IdentifierField()
@@ -1305,7 +1313,7 @@ class ActionLink(ActionRelatedModelTransModelMixin, OrderedModel):
     i18n = TranslationField(fields=('url', 'title'), default_language_field='action__plan__primary_language_lowercase')
 
     public_fields: ClassVar = [
-        'id', 'action', 'url', 'title', 'order'
+        'id', 'action', 'url', 'title', 'order',
     ]
 
     class Meta:
@@ -1325,13 +1333,13 @@ class ActionLink(ActionRelatedModelTransModelMixin, OrderedModel):
 class ActionStatusUpdate(models.Model):
     action = models.ForeignKey(
         Action, on_delete=models.CASCADE, related_name='status_updates',
-        verbose_name=_('action')
+        verbose_name=_('action'),
     )
     title = models.CharField(max_length=200, verbose_name=_('title'))
     date = models.DateField(verbose_name=_('date'), blank=True)
     author = models.ForeignKey(
         'people.Person', on_delete=models.SET_NULL, related_name='status_updates',
-        null=True, blank=True, verbose_name=_('author')
+        null=True, blank=True, verbose_name=_('author'),
     )
     content = models.TextField(verbose_name=_('content'))
 

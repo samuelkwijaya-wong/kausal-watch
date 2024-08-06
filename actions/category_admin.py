@@ -1,27 +1,39 @@
-from django.core.exceptions import ValidationError
 from django.contrib.admin import SimpleListFilter
+from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
-from wagtail.admin.panels import (
-    FieldPanel, FieldRowPanel, InlinePanel, MultiFieldPanel, ObjectList,
-)
 from wagtail.admin.forms.models import WagtailAdminModelForm
+from wagtail.admin.panels import (
+    FieldPanel,
+    FieldRowPanel,
+    InlinePanel,
+    MultiFieldPanel,
+    ObjectList,
+)
 from wagtail_modeladmin.helpers import ButtonHelper, PermissionHelper
 from wagtail_modeladmin.menus import ModelAdminMenuItem
 from wagtail_modeladmin.options import modeladmin_register
 from wagtail_modeladmin.views import DeleteView
 from wagtailorderable.modeladmin.mixins import OrderableMixin
 
-from .models import Category, CategoryType, CommonCategory, CommonCategoryType
 from admin_site.wagtail import (
-    ActionListPageBlockFormMixin, AplansAdminModelForm, AplansCreateView, AplansEditView, AplansModelAdmin,
-    CondensedInlinePanel, InitializeFormWithPlanMixin,  PlanFilteredFieldPanel, AplansTabbedInterface,
-    get_translation_tabs
+    ActionListPageBlockFormMixin,
+    AplansAdminModelForm,
+    AplansCreateView,
+    AplansEditView,
+    AplansModelAdmin,
+    AplansTabbedInterface,
+    CondensedInlinePanel,
+    DatasetButtonMixin,
+    InitializeFormWithPlanMixin,
+    PlanFilteredFieldPanel,
+    get_translation_tabs,
 )
 from aplans.context_vars import ctx_instance, ctx_request
 from aplans.utils import append_query_parameter
-from admin_site.wagtail import DatasetButtonMixin
+
+from .models import Category, CategoryType, CommonCategory, CommonCategoryType
 
 
 class CategoryTypeFilter(SimpleListFilter):
@@ -210,7 +222,7 @@ class CategoryEditHandler(AplansTabbedInterface):
         self.base_form_class = type(
             'CategoryAdminForm',
             (CategoryAdminForm,),
-            {**attribute_fields, '_user': user}
+            {**attribute_fields, '_user': user},
         )
         form_class = super().get_form_class()
         if instance and instance.common:
@@ -378,7 +390,7 @@ class CategoryAdmin(OrderableMixin, AplansModelAdmin):
             '<svg class="icon icon-grip default" style="padding: 0px;" aria-hidden="true">'
             '<use href="#icon-grip"></use>'
             '</svg>'
-            '</div>'
+            '</div>',
         )
     index_order.admin_order_field = 'order'
     index_order.short_description = _('Order')
@@ -610,7 +622,7 @@ class CommonCategoryAdmin(OrderableMixin, AplansModelAdmin):
             '<svg class="icon icon-grip default" style="padding: 0px;" aria-hidden="true">'
             '<use href="#icon-grip"></use>'
             '</svg>'
-            '</div>'
+            '</div>',
         )
     index_order.admin_order_field = 'order'
     index_order.short_description = _('Order')

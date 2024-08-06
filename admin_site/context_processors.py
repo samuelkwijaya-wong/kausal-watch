@@ -1,4 +1,5 @@
 import json
+
 from django.conf import settings
 from django.utils.safestring import mark_safe
 from sentry_sdk import Hub

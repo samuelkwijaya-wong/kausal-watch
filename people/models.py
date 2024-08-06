@@ -1,49 +1,48 @@
 from __future__ import annotations
 
+import hashlib
+import io
+import logging
 import os
 import re
-import io
-import hashlib
 import typing
 import uuid
-import requests
-import reversion
-import logging
-
 from datetime import timedelta
 
-from django.db import models
-from django.utils.translation import pgettext_lazy, gettext_lazy as _
+import requests
+import reversion
+import willow
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
-from django.utils import timezone
+from django.db import models
 from django.db.models import Q
-
+from django.utils import timezone
+from django.utils.translation import gettext_lazy as _, pgettext_lazy
 from easy_thumbnails.files import get_thumbnailer  # type: ignore
 from image_cropping import ImageRatioField  # type: ignore
 from modelcluster.models import ClusterableModel
 from modeltrans.fields import TranslationField
 from sentry_sdk import capture_exception
-from wagtail.search import index
-from wagtail.images.rect import Rect
 from wagtail.admin.templatetags.wagtailadmin_tags import avatar_url as wagtail_avatar_url
-import willow
-from aplans.types import UserOrAnon, WatchRequest
+from wagtail.images.rect import Rect
+from wagtail.search import index
 
 from actions.models import ActionContactPerson
+from admin_site.models import Client
+from aplans.types import UserOrAnon, WatchRequest
 from orgs.models import Organization
 
-from admin_site.models import Client
 if typing.TYPE_CHECKING:
-    from users.models import User as UserModel
     from django.db.models.manager import RelatedManager
+
     from actions.models import Action, Plan
     from indicators.models import Indicator
     from orgs.models import OrganizationPlanAdmin
+    from users.models import User as UserModel
 
 
 logger = logging.getLogger(__name__)
-User: typing.Type[UserModel] = get_user_model()  # type: ignore
+User: type[UserModel] = get_user_model()  # type: ignore
 
 DEFAULT_AVATAR_SIZE = 360
 
@@ -110,7 +109,7 @@ class Person(index.Indexed, ClusterableModel):
     email = models.EmailField(verbose_name=_('email address'))
     title = models.CharField(
         max_length=100, null=True, blank=True,
-        verbose_name=pgettext_lazy("person's role", 'title')
+        verbose_name=pgettext_lazy("person's role", 'title'),
     )
     postal_address = models.TextField(max_length=100, verbose_name=_('postal address'), null=True, blank=True)
     organization = models.ForeignKey(
@@ -120,17 +119,17 @@ class Person(index.Indexed, ClusterableModel):
     user = models.OneToOneField(
         User, null=True, blank=True, related_name='person', on_delete=models.SET_NULL,
         editable=False, verbose_name=_('user'),
-        help_text=_('Set if the person has an user account')
+        help_text=_('Set if the person has an user account'),
     )
 
     participated_in_training = models.BooleanField(
         null=True, default=False, verbose_name=_('participated in training'),
-        help_text=_('Set to keep track who have attended training sessions')
+        help_text=_('Set to keep track who have attended training sessions'),
     )
 
     image = models.ImageField(
         blank=True, upload_to=image_upload_path, verbose_name=_('image'),
-        height_field='image_height', width_field='image_width'
+        height_field='image_height', width_field='image_width',
     )
     image_cropping = ImageRatioField('image', '1280x720', verbose_name=_('image cropping'))  # pyright: ignore
     image_height = models.PositiveIntegerField(null=True, editable=False)
@@ -141,7 +140,7 @@ class Person(index.Indexed, ClusterableModel):
         'actions.Action',
         through='actions.ActionContactPerson',
         blank=True,
-        verbose_name=_('contact for actions')
+        verbose_name=_('contact for actions'),
     )
     created_by = models.ForeignKey(
         User, related_name='created_persons', blank=True, null=True, on_delete=models.SET_NULL,
@@ -195,7 +194,7 @@ class Person(index.Indexed, ClusterableModel):
             qs = qs.exclude(pk=self.pk)
         if qs.exists():
             raise ValidationError({
-                'email': _('Person with this email already exists')
+                'email': _('Person with this email already exists'),
             })
 
     def set_avatar(self, photo):
@@ -355,7 +354,7 @@ class Person(index.Indexed, ClusterableModel):
                 client = clients[0]
             else:
                 logger.warning('Invalid number of clients found for %s [Person-%d]: %d' % (
-                    self.email, self.id, len(clients)  # pyright: ignore
+                    self.email, self.id, len(clients),  # pyright: ignore
                 ))
         if not client:
             client = self.get_client_for_email_domain()

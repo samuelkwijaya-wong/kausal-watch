@@ -1,11 +1,11 @@
-from django.dispatch import receiver
 from django.contrib import messages
-from hijack.signals import hijack_started, hijack_ended # type: ignore[import-untyped]
+from django.dispatch import receiver
 from django.utils.translation import gettext as _
+from hijack.signals import hijack_ended, hijack_started  # type: ignore[import-untyped]
 from loguru import logger
 
-from users.models import User
 from aplans.types import WatchAdminRequest
+from users.models import User
 
 hijack_log = logger.bind(impersonation=True)
 

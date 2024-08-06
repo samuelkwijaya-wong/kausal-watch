@@ -67,7 +67,7 @@ class CategoryAutocomplete(autocomplete.Select2QuerySetView):
             q = self.q.strip()
             categories = categories.filter(
                 Q(identifier__istartswith=q) |
-                Q(name__icontains=q)
+                Q(name__icontains=q),
             )
         return categories
 

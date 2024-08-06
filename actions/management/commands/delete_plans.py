@@ -1,6 +1,6 @@
+from django.conf import settings
 from django.core.management import CommandError
 from django.core.management.base import BaseCommand
-from django.conf import settings
 from django.db import transaction
 
 from actions.models.plan import Plan
@@ -27,7 +27,7 @@ class Command(BaseCommand):
         if not settings.DEBUG or settings.DEPLOYMENT_TYPE != 'production':
             raise CommandError(
                 "Sorry, for preventing accidents, this management command only works if DEBUG is true and "
-                "DEPLOYMENT_TYPE is 'production'."
+                "DEPLOYMENT_TYPE is 'production'.",
             )
         all_identifiers = Plan.objects.values_list('identifier', flat=True)
         if not options.get('exclude'):

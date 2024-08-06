@@ -1,7 +1,9 @@
 import os
+
 from django.core.management.base import BaseCommand
 
 from images.models import AplansImage
+
 
 class Command(BaseCommand):
     help = "Move existing images to the new directory structure"

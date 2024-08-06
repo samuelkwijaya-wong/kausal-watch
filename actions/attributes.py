@@ -1,13 +1,15 @@
 from __future__ import annotations
+
 import typing
 from abc import ABC, abstractmethod
-from dal import autocomplete, forward as dal_forward
 from dataclasses import dataclass
-from django import forms
-from django.db.models import ForeignKey, QuerySet
-from django.contrib.contenttypes.models import ContentType
-from django.utils.translation import gettext_lazy as _
 from typing import Any, Generic, TypeVar
+
+from dal import autocomplete, forward as dal_forward
+from django import forms
+from django.contrib.contenttypes.models import ContentType
+from django.db.models import ForeignKey, QuerySet
+from django.utils.translation import gettext_lazy as _
 from wagtail.admin.panels import FieldPanel
 from wagtail.fields import RichTextField
 from wagtail.rich_text import RichText as WagtailRichText
@@ -18,9 +20,9 @@ from aplans.utils import convert_html_to_text
 
 if typing.TYPE_CHECKING:
     from actions.models import Category, Plan
+    from aplans.cache import PlanSpecificCache
     from reports.utils import SerializedAttributeVersion, SerializedVersion
     from users.models import User
-    from aplans.cache import PlanSpecificCache
 
 
 class AttributeFieldPanel(FieldPanel):
@@ -56,6 +58,7 @@ class AttributeValue(ABC):
     but for some attribute types we need to assemble multiple values from `cleaned_data` to construct the respective
     attribute, so data stored in AttributeValue is not the same as a single value in `cleaned_data`.
     """
+
     @classmethod
     @abstractmethod
     def from_serialized_value(cls, value: Any, cache: PlanSpecificCache | None = None) -> AttributeValue:
@@ -246,7 +249,7 @@ class AttributeType(ABC, Generic[T]):
 
     @abstractmethod
     def xlsx_values(
-        self, attribute: SerializedAttributeVersion | None, related_data_objects: dict[str, list[SerializedVersion]]
+        self, attribute: SerializedAttributeVersion | None, related_data_objects: dict[str, list[SerializedVersion]],
     ) -> list[Any]:
         """Return the value for each of this attribute type's columns for the given attribute (can be None)."""
         pass
@@ -389,7 +392,7 @@ class OrderedChoice(AttributeType[models.AttributeChoice]):
 
         choice_options = self.instance.choice_options.all()
         field = forms.ModelChoiceField(
-            choice_options, initial=initial_choice, required=False, help_text=self.instance.help_text_i18n
+            choice_options, initial=initial_choice, required=False, help_text=self.instance.help_text_i18n,
         )
         if not self.is_editable(user, plan, obj):
             field.disabled = True
@@ -461,7 +464,7 @@ class CategoryChoice(AttributeType[models.AttributeCategoryChoice]):
                 url='category-autocomplete',
                 forward=(
                     dal_forward.Const(self.instance.attribute_category_type.id, 'type'),  # type: ignore[union-attr]
-                )
+                ),
             ),
         )
         if not self.is_editable(user, plan, obj):
@@ -541,7 +544,7 @@ class OptionalChoiceWithText(AttributeType[models.AttributeChoiceWithText]):
             initial_choice = committed_attribute.choice
         choice_options = self.instance.choice_options.all()
         choice_field = forms.ModelChoiceField(
-            choice_options, initial=initial_choice, required=False, help_text=self.instance.help_text_i18n
+            choice_options, initial=initial_choice, required=False, help_text=self.instance.help_text_i18n,
         )
         if not editable:
             choice_field.disabled = True
@@ -781,6 +784,7 @@ class DraftAttributes:
 
     "Draft attribute" means attributes that are not necessarily commited to the model's database table yet.
     """
+
     # map attribute type format to a mapping from attribute type ID to attribute value
     _values: dict[str, dict[int, AttributeValue]]
 

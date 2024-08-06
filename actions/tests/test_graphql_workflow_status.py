@@ -8,7 +8,7 @@ pytestmark = pytest.mark.django_db
 
 @pytest.fixture
 def query_action_workflow_status():
-    return '''
+    return """
       query ($id: ID!) {
         action(id: $id) {
           workflowStatus {
@@ -23,14 +23,14 @@ def query_action_workflow_status():
           }
         }
       }
-    '''
+    """
 
 def test_workflow_status_exposed_for_action(
         graphql_client_query_data,
         query_action_workflow_status,
         plan_with_single_task_moderation,
         person,
-        client
+        client,
 ):
     plan = plan_with_single_task_moderation
     action = plan.actions.first()
@@ -46,7 +46,7 @@ def test_workflow_status_exposed_for_action(
 
     data = graphql_client_query_data(
         query_action_workflow_status,
-        variables={'id': action.id}
+        variables={'id': action.id},
     )
     workflow_status_data = data['action']['workflowStatus']
     assert workflow_status_data['hasUnpublishedChanges'] is True
@@ -61,7 +61,7 @@ def test_workflow_status_not_exposed_with_no_plan_access(
         plan_with_single_task_moderation,
         person,
         plan,
-        client
+        client,
 ):
     action = plan_with_single_task_moderation.actions.first()
     action.draft_attributes = DraftAttributes()

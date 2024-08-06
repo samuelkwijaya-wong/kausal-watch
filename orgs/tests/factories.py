@@ -3,7 +3,7 @@ from factory.django import DjangoModelFactory
 from wagtail.rich_text import RichText
 
 from aplans.factories import ModelFactory
-from orgs.models import Namespace, Organization, OrganizationPlanAdmin, OrganizationClass, OrganizationIdentifier
+from orgs.models import Namespace, Organization, OrganizationClass, OrganizationIdentifier, OrganizationPlanAdmin
 from people.tests.factories import PersonFactory
 
 

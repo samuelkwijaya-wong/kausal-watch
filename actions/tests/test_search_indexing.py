@@ -1,8 +1,8 @@
 import itertools
+
 import pytest
 
 from actions.models import Action
-
 
 pytestmark = pytest.mark.django_db
 

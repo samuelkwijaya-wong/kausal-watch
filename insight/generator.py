@@ -3,7 +3,7 @@ from django.urls import reverse
 
 from actions.models import Action
 from aplans.utils import RestrictedVisibilityModel
-from indicators.models import Indicator, RelatedIndicator, ActionIndicator
+from indicators.models import ActionIndicator, Indicator, RelatedIndicator
 
 
 class GraphGenerator:
@@ -35,7 +35,7 @@ class ActionGraphGenerator(GraphGenerator):
                 act._indicators = []
             act._indicators.append(ai)
         indicator_levels = self.plan.indicator_levels.visible_for_public().select_related(
-            'indicator', 'indicator__latest_value', 'indicator__unit'
+            'indicator', 'indicator__latest_value', 'indicator__unit',
         )
 
         indicators = {}
@@ -161,7 +161,7 @@ class ActionGraphGenerator(GraphGenerator):
                     else:
                         target = ri.indicator
                     self.add_edge(
-                        obj, target, ri.effect_type, RelatedIndicator.HIGH_CONFIDENCE
+                        obj, target, ri.effect_type, RelatedIndicator.HIGH_CONFIDENCE,
                     )
                     self.add_node(target)
         elif isinstance(obj, Indicator):

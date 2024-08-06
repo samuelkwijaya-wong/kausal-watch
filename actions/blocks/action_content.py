@@ -1,11 +1,12 @@
+from typing import Tuple, Type
+
+import graphene
 from django.apps import apps
 from django.db import models
 from django.utils.functional import lazy
 from django.utils.translation import gettext_lazy as _
-import graphene
 from grapple.helpers import register_streamfield_block
 from grapple.models import GraphQLForeignKey, GraphQLStreamfield, GraphQLString
-from typing import Tuple, Type
 from wagtail import blocks
 
 from actions.blocks.choosers import ActionAttributeTypeChooserBlock, CategoryTypeChooserBlock, PlanDatasetSchemaChooserBlock
@@ -18,7 +19,6 @@ from aplans.utils import underscore_to_camelcase
 from budget.models import DatasetSchema
 from reports.blocks.report_comparison_block import ReportComparisonBlock
 from reports.report_formatters import ActionReportContentField, ActionTasksFormatter
-
 
 # Attention: Defines several block classes via metaprogramming.
 # See `action_attribute_blocks` which should currently contain:
@@ -44,7 +44,7 @@ class StaticBlockToStructBlockWorkaroundMixin:
         return super().bulk_to_python(values)
 
 
-def get_field_label(model: Type[models.Model], field_name: str) -> str | None:
+def get_field_label(model: type[models.Model], field_name: str) -> str | None:
     if not apps.ready:
         return 'label'
     field = model._meta.get_field(field_name)
@@ -62,7 +62,7 @@ lazy_field_label = lazy(get_field_label, str)
 
 
 
-def generate_block_for_field(model: Type[models.Model], field_name: str, params: dict = {}):
+def generate_block_for_field(model: type[models.Model], field_name: str, params: dict = {}):
     camel_field = underscore_to_camelcase(field_name)
     class_name = '%s%sBlock' % (model._meta.object_name, camel_field)
 
@@ -77,12 +77,12 @@ def generate_block_for_field(model: Type[models.Model], field_name: str, params:
 
     superclasses = (
         ActionListContentBlock,
-        ActionReportContentField
+        ActionReportContentField,
     )
     attrs = {
         'Meta': Meta,
         '__module__': __name__,
-        'graphql_interfaces': (FieldBlockMetaInterface, )
+        'graphql_interfaces': (FieldBlockMetaInterface, ),
     }
     if 'report_value_formatter_class' in params:
         attrs['report_value_formatter_class'] = params['report_value_formatter_class']
@@ -92,7 +92,7 @@ def generate_block_for_field(model: Type[models.Model], field_name: str, params:
     return klass
 
 
-def generate_blocks_for_fields(model: Type[models.Model], fields: list[str | Tuple[str, dict]]):
+def generate_blocks_for_fields(model: type[models.Model], fields: list[str | tuple[str, dict]]):
     out = {}
     for field_name in fields:
         if isinstance(field_name, tuple):
@@ -133,7 +133,7 @@ class FieldBlockMetaInterface(graphene.Interface):
             restricted = attribute_type.VisibleFor.PUBLIC != attribute_type.instances_visible_for
         return {
             'restricted': restricted,
-            'hidden': hidden
+            'hidden': hidden,
         }
 
 
@@ -142,8 +142,8 @@ class FieldBlockMetaField:
 
 
 def generate_stream_block(
-    name: str, all_blocks: dict[str, Type[blocks.Block]], fields: list[str | Tuple[str, blocks.Block]],
-    mixins=None, extra_args=None
+    name: str, all_blocks: dict[str, type[blocks.Block]], fields: list[str | tuple[str, blocks.Block]],
+    mixins=None, extra_args=None,
 ):
     if mixins is None:
         mixins = ()
@@ -168,7 +168,7 @@ def generate_stream_block(
         '__module__': __name__,
         **field_blocks,
         **extra_args,
-        'graphql_types': graphql_types
+        'graphql_types': graphql_types,
     })
 
     register_streamfield_block(block_class)
@@ -188,7 +188,7 @@ class ActionContentAttributeTypeBlock(blocks.StructBlock):
     }
 
     graphql_fields = [
-        GraphQLForeignKey('attribute_type', AttributeType, required=True)
+        GraphQLForeignKey('attribute_type', AttributeType, required=True),
     ]
 
 
@@ -205,7 +205,7 @@ class ActionContentCategoryTypeBlock(blocks.StructBlock):
     }
 
     graphql_fields = [
-        GraphQLForeignKey('category_type', CategoryType, required=True)
+        GraphQLForeignKey('category_type', CategoryType, required=True),
     ]
 
 
@@ -221,7 +221,7 @@ class ActionResponsiblePartiesBlock(StaticBlockToStructBlockWorkaroundMixin, blo
     )
 
     graphql_fields = [
-        GraphQLString('heading')
+        GraphQLString('heading'),
     ]
 
 
@@ -358,7 +358,7 @@ ActionContentSectionElementBlock = generate_stream_block(
     fields = [
         ('attribute', ActionContentAttributeTypeBlock()),
         ('categories', ActionContentCategoryTypeBlock()),
-    ]
+    ],
 )
 
 

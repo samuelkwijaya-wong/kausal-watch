@@ -1,23 +1,24 @@
 import graphene
 import graphene_django_optimizer as gql_optimizer
-
 from django.db.models import Count, Q
-from graphql.error import GraphQLError
 from graphql import DirectiveLocation
+from graphql.error import GraphQLError
 from graphql.type import (
-    GraphQLArgument, GraphQLDirective, GraphQLNonNull, GraphQLString, specified_directives
+    GraphQLArgument,
+    GraphQLDirective,
+    GraphQLNonNull,
+    GraphQLString,
+    specified_directives,
 )
 from grapple.registry import registry as grapple_registry
 
-from actions.models.action import Action
-
-from . import graphql_gis  # noqa
-
 from actions import schema as actions_schema
 from actions.models import Plan
+from actions.models.action import Action
 from aplans.cache import OrganizationActionCountCache
-from aplans.utils import public_fields
 from aplans.graphql_types import WorkflowStateGrapheneEnum
+from aplans.utils import public_fields
+from budget import schema as budget_schema
 from content.models import SiteGeneralContent
 from feedback import schema as feedback_schema
 from indicators import schema as indicators_schema
@@ -27,11 +28,11 @@ from pages import schema as pages_schema
 from people import schema as people_schema
 from people.models import Person
 from reports import schema as reports_schema
-from budget import schema as budget_schema
 from search import schema as search_schema
 
+from . import graphql_gis  # noqa
 from .graphql_helpers import get_fields
-from .graphql_types import DjangoNode, GQLInfo, get_plan_from_context, graphene_registry, WorkflowStateEnum
+from .graphql_types import DjangoNode, GQLInfo, WorkflowStateEnum, get_plan_from_context, graphene_registry
 
 
 def mp_node_get_ancestors(qs, include_self=False):
@@ -60,7 +61,7 @@ class Query(
     reports_schema.Query,
     budget_schema.Query,
     search_schema.Query,
-    graphene.ObjectType
+    graphene.ObjectType,
 ):
     plan_organizations = graphene.List(
         graphene.NonNull(orgs_schema.OrganizationNode),
@@ -74,7 +75,7 @@ class Query(
 
     def resolve_plan_organizations(
         self, info: GQLInfo, plan: str | None, with_ancestors: bool, for_responsible_parties: bool, for_contact_persons: bool,
-        include_related_plans: bool, **kwargs
+        include_related_plans: bool, **kwargs,
     ):
         plan_obj: Plan | None = get_plan_from_context(info, plan)
         if plan_obj is None:
@@ -127,14 +128,14 @@ class Query(
             if not consider_responsible_parties_within_action_revisions:
                 annotate_filter = Q(responsible_actions__action__in=visible_actions)
                 qs = qs.annotate(action_count=Count(
-                    'responsible_actions__action', distinct=True, filter=annotate_filter
+                    'responsible_actions__action', distinct=True, filter=annotate_filter,
                 ))
 
         if 'contactPersonCount' in selections and plan_obj.features.public_contact_persons:
             # FIXME: Check visibility of related plans, too
             annotate_filter = Q(people__contact_for_actions__in=visible_actions)
             qs = qs.annotate(contact_person_count=Count(
-                'people', distinct=True, filter=annotate_filter
+                'people', distinct=True, filter=annotate_filter,
             ))
 
         qs = gql_optimizer.query(qs, info)
@@ -172,7 +173,7 @@ class Mutation(
     indicators_schema.Mutation,
     orgs_schema.Mutation,
     people_schema.Mutation,
-    graphene.ObjectType
+    graphene.ObjectType,
 ):
     create_user_feedback = feedback_schema.UserFeedbackMutation.Field()
 
@@ -185,10 +186,10 @@ class LocaleDirective(GraphQLDirective):
             args={
                 'lang': GraphQLArgument(
                     type_=GraphQLNonNull(GraphQLString),
-                    description="Language code of the locale to use"
+                    description="Language code of the locale to use",
                 ),
             },
-            locations=[DirectiveLocation.QUERY]
+            locations=[DirectiveLocation.QUERY],
         )
 
 
@@ -200,14 +201,14 @@ class AuthDirective(GraphQLDirective):
             args={
                 'uuid': GraphQLArgument(
                     type_=GraphQLNonNull(GraphQLString),
-                    description="User UUID"
+                    description="User UUID",
                 ),
                 'token': GraphQLArgument(
                     type_=GraphQLNonNull(GraphQLString),
-                    description="Authentication token"
+                    description="Authentication token",
                 ),
             },
-            locations=[DirectiveLocation.MUTATION]
+            locations=[DirectiveLocation.MUTATION],
         )
 
 graphene_enum_type = graphene.types.schema.TypeMap.create_enum(WorkflowStateGrapheneEnum)
@@ -230,9 +231,9 @@ class WorkflowStateDirective(GraphQLDirective):
                     type_= graphene_enum_type,
                     description="State of content to show",
                     default_value=WorkflowStateEnum.PUBLISHED,
-                )
+                ),
             },
-            locations=[DirectiveLocation.QUERY]
+            locations=[DirectiveLocation.QUERY],
         )
 
 

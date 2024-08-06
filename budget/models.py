@@ -1,15 +1,14 @@
 from __future__ import annotations
 
+import uuid
 from functools import lru_cache
 
-import reversion
-import uuid
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
-from modelcluster.fields import ParentalKey
-from modelcluster.models import ClusterableModel
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from modelcluster.fields import ParentalKey
+from modelcluster.models import ClusterableModel
 from modeltrans.fields import TranslationField
 
 from actions.models.action import Action
@@ -18,7 +17,6 @@ from actions.models.plan import Plan
 from aplans.utils import OrderedModel
 
 
-@reversion.register()
 class Dimension(ClusterableModel):
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     name = models.CharField(max_length=100, verbose_name=_('name'))
@@ -26,10 +24,10 @@ class Dimension(ClusterableModel):
     i18n = TranslationField(fields=['name'])
     name_i18n: str
 
-    class Meta:  # pyright:ignore
+    class Meta:
         verbose_name = _('dimension')
         verbose_name_plural = _('dimensions')
-        ordering = ['name']
+        ordering = ('name',)
 
     def __str__(self):
         return self.name_i18n
@@ -43,7 +41,7 @@ class DimensionCategory(OrderedModel):
     i18n = TranslationField(fields=['label'])
     label_i18n: str
 
-    class Meta:  # pyright:ignore
+    class Meta:
         verbose_name = _('dimension category')
         verbose_name_plural = _('dimension categories')
 
@@ -59,8 +57,8 @@ class DimensionScope(OrderedModel):
     dimension = models.ForeignKey(Dimension, on_delete=models.CASCADE, related_name='scopes')
     scope_content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, related_name='+')
     scope_id = models.PositiveIntegerField()
-    scope: models.ForeignKey[Plan, Plan] | models.ForeignKey[CategoryType, CategoryType] = GenericForeignKey(
-        'scope_content_type', 'scope_id'
+    scope: models.ForeignKey[Plan, Plan] | models.ForeignKey[CategoryType, CategoryType] = GenericForeignKey(  # pyright: ignore
+        'scope_content_type', 'scope_id',
     ) # type: ignore[assignment]
 
 
@@ -71,8 +69,9 @@ class DatasetSchema(models.Model):
         If a dataset has, e.g., monthly time resolution, then each data point applies to the entire month in which
         the data point's time is.
         """
+
         # TBD: Could also be separate model. (Some customers might be very creative in their granularities.)
-        YEARLY = 'yearly', _('Yearly')  # pyright:ignore
+        YEARLY = 'yearly', _('Yearly')
         # QUARTERLY = 'quarterly', _('Quarterly')
         # MONTHLY = 'monthly', _('Monthly')
         # WEEKLY = 'weekly', _('Weekly')
@@ -97,13 +96,17 @@ class DatasetSchema(models.Model):
             return f'{self.name_i18n} ({self.uuid})'
         return str(self.uuid)
 
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        DatasetSchema.get_for_scope.cache_clear()
+
     @staticmethod
     @lru_cache
     def get_for_scope(scope_id: int, scope_content_type_id: int) -> list[DatasetSchema]:
         return list(
             DatasetSchema.objects.filter(
-                scopes__scope_id=scope_id, scopes__scope_content_type__id=scope_content_type_id
-            )
+                scopes__scope_id=scope_id, scopes__scope_content_type__id=scope_content_type_id,
+            ),
         )
 
     @staticmethod
@@ -120,10 +123,6 @@ class DatasetSchema(models.Model):
             return DatasetSchema.get_for_scope(scope_id, scope_content_type_id)
         return []
 
-    def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
-        DatasetSchema.get_for_scope.cache_clear()
-
     def delete(self, *args, **kwargs):
         retval = super().delete(*args, **kwargs)
         DatasetSchema.get_for_scope.cache_clear()
@@ -139,9 +138,7 @@ class DatasetSchemaDimensionCategory(OrderedModel):
 
 
 def schema_default():
-    '''
-    By default, new datasets will have their own unique schema.
-    '''
+    """By default, new datasets will have their own unique schema."""
     schema = DatasetSchema.objects.create()
     return schema.pk
 
@@ -151,38 +148,39 @@ class Dataset(models.Model):
     schema = models.ForeignKey(
         DatasetSchema, null=False, blank=False, related_name='datasets',
         verbose_name=_('schema'), on_delete=models.PROTECT,
-        default=schema_default
+        default=schema_default,
     )
     # The "scope" generic foreign key links this dataset to an action or category
     scope_content_type = models.ForeignKey(
         ContentType, on_delete=models.CASCADE, related_name='+',
-        null=True, blank=True
+        null=True, blank=True,
     )
     scope_id = models.PositiveIntegerField(null=True, blank=True)
-    scope: models.ForeignKey[Action, Action] | models.ForeignKey[Category, Category] = GenericForeignKey(
-        'scope_content_type', 'scope_id'
+    scope: models.ForeignKey[Action, Action] | models.ForeignKey[Category, Category] = GenericForeignKey(  # pyright: ignore
+        'scope_content_type', 'scope_id',
     ) # type: ignore[assignment]
 
     class Meta:  # pyright:ignore
         verbose_name = _('dataset')
         verbose_name_plural = _('datasets')
-        ordering = ['id']
-        constraints = [
+        ordering = ('id',)
+        constraints = (
             models.UniqueConstraint(
                 fields=['schema', 'scope_content_type', 'scope_id'],
-                name='unique_dataset_per_instance_per_schema'
-            )
-        ]
+                name='unique_dataset_per_instance_per_schema',
+            ),
+        )
 
 
 class DatasetSchemaScope(models.Model):
     """Link a dataset schema to a context in which it can be used, such as a plan."""
+
     schema = models.ForeignKey(DatasetSchema, on_delete=models.CASCADE, related_name='scopes')
     scope_content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, related_name='+')
     scope_id = models.PositiveIntegerField()
     # If scope is a Plan, this schema can be used for Actions in that plan
-    scope: models.ForeignKey[Plan, Plan] | models.ForeignKey[CategoryType, CategoryType] = GenericForeignKey(
-        'scope_content_type', 'scope_id'
+    scope: models.ForeignKey[Plan, Plan] | models.ForeignKey[CategoryType, CategoryType] = GenericForeignKey(  # pyright: ignore
+        'scope_content_type', 'scope_id',
     ) # type: ignore[assignment]
 
     def save(self, *args, **kwargs):
@@ -198,10 +196,10 @@ class DatasetSchemaScope(models.Model):
 class DataPoint(models.Model):
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     dataset = models.ForeignKey(
-        Dataset, related_name='data_points', on_delete=models.CASCADE, verbose_name=_('dataset')
+        Dataset, related_name='data_points', on_delete=models.CASCADE, verbose_name=_('dataset'),
     )
     dimension_categories = models.ManyToManyField(
-        DimensionCategory, related_name='data_points', blank=True, verbose_name=_('dimension categories')
+        DimensionCategory, related_name='data_points', blank=True, verbose_name=_('dimension categories'),
     )
     date = models.DateField(
         verbose_name=_('date'),
@@ -212,7 +210,7 @@ class DataPoint(models.Model):
     class Meta:  # pyright:ignore
         verbose_name = _('data point')
         verbose_name_plural = _('data points')
-        ordering = ['date']
+        ordering = ('date',)
         # TODO: Enforce uniqueness constraint.
         # This doesn't work because dimension_categories is a many-to-many field.
         # constraints = [

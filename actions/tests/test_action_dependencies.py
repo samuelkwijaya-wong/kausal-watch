@@ -1,7 +1,7 @@
 import pytest
 from django.core.exceptions import ValidationError
-from actions.models import ActionDependencyRelationship, ActionDependencyRole
 
+from actions.models import ActionDependencyRelationship, ActionDependencyRole
 
 pytestmark = pytest.mark.django_db
 

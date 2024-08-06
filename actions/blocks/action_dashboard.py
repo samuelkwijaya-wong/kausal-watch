@@ -1,11 +1,11 @@
+import graphene
 from django.utils.translation import gettext_lazy as _
 from grapple.helpers import register_streamfield_block
 from grapple.models import GraphQLForeignKey, GraphQLString
 from wagtail import blocks
-import graphene
-from actions.models.attributes import AttributeType
 
 from actions.blocks.choosers import ActionAttributeTypeChooserBlock
+from actions.models.attributes import AttributeType
 
 
 class DashboardColumnInterface(graphene.Interface):
@@ -14,7 +14,7 @@ class DashboardColumnInterface(graphene.Interface):
 
 class ColumnBlockBase(blocks.StructBlock):
     column_label = blocks.CharBlock(
-        required=False, label=_("Label"), help_text=_("Label for the column to be used instead of the default")
+        required=False, label=_("Label"), help_text=_("Label for the column to be used instead of the default"),
     )
 
     graphql_fields = [
@@ -90,7 +90,7 @@ class FieldColumnBlock(ColumnBlockBase):
         label = _("Field")
 
     graphql_fields = ColumnBlockBase.graphql_fields + [
-        GraphQLForeignKey('attribute_type', AttributeType)
+        GraphQLForeignKey('attribute_type', AttributeType),
     ]
 
 
@@ -111,5 +111,5 @@ class ActionDashboardColumnBlock(blocks.StreamBlock):
     graphql_types = [
         IdentifierColumnBlock, NameColumnBlock, ImplementationPhaseColumnBlock, StatusColumnBlock, TasksColumnBlock,
         ResponsiblePartiesColumnBlock, IndicatorsColumnBlock, UpdatedAtColumnBlock, OrganizationColumnBlock,
-        ImpactColumnBlock, FieldColumnBlock
+        ImpactColumnBlock, FieldColumnBlock,
     ]

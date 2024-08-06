@@ -3,7 +3,6 @@ from django.urls import reverse
 
 from users.tests.factories import UserFactory
 
-
 pytestmark = pytest.mark.django_db
 
 def test_superuser_can_impersonate_and_release(client):

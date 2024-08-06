@@ -1,38 +1,44 @@
 import logging
 import typing
+from datetime import timedelta
 
 from dal import autocomplete
-from datetime import timedelta
 from django.contrib.admin import SimpleListFilter
 from django.contrib.admin.utils import display_for_value, quote
 from django.contrib.admin.widgets import AdminFileWidget
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
-from django.db import transaction, models
-from django.db.models import F, Q, ManyToManyField, OneToOneRel, Prefetch
-from django.forms import BooleanField, ModelMultipleChoiceField, ChoiceField
+from django.db import models, transaction
+from django.db.models import F, ManyToManyField, OneToOneRel, Prefetch, Q
+from django.forms import BooleanField, ChoiceField, ModelMultipleChoiceField
 from django.urls import re_path
 from django.utils import timezone
 from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
 from wagtail.admin.panels import FieldPanel, ObjectList, TabbedInterface
-from wagtail_modeladmin.options import modeladmin_register
 from wagtail_modeladmin.helpers import ButtonHelper
+from wagtail_modeladmin.options import modeladmin_register
 from wagtail_modeladmin.views import DeleteView
 
 from actions.models import ActionContactPerson, Plan, PlanPublicSiteViewer
 from admin_site.wagtail import (
-    AplansIndexView, AplansModelAdmin, AplansAdminModelForm, AplansCreateView, AplansEditView,
-    InitializeFormWithPlanMixin, InitializeFormWithUserMixin, PlanContextModelAdminPermissionHelper,
     ActivatePermissionHelperPlanContextModelAdminMixin,
-    get_translation_tabs
+    AplansAdminModelForm,
+    AplansCreateView,
+    AplansEditView,
+    AplansIndexView,
+    AplansModelAdmin,
+    InitializeFormWithPlanMixin,
+    InitializeFormWithUserMixin,
+    PlanContextModelAdminPermissionHelper,
+    get_translation_tabs,
 )
 from aplans.context_vars import ctx_instance, ctx_request
 from aplans.types import WatchAdminRequest
 from aplans.utils import naturaltime
+from orgs.models import Organization, OrganizationPlanAdmin
 
 from .models import Person
 from .views import ImpersonateUserView, ResetPasswordView
-from orgs.models import Organization, OrganizationPlanAdmin
 
 if typing.TYPE_CHECKING:
     from users.models import User
@@ -68,10 +74,10 @@ class IsContactPersonFilter(SimpleListFilter):
         user = request.user
         plan = user.get_active_admin_plan()
         queryset = queryset.prefetch_related(
-            Prefetch('contact_for_actions', queryset=plan.actions.all(), to_attr='plan_contact_for_actions')
+            Prefetch('contact_for_actions', queryset=plan.actions.all(), to_attr='plan_contact_for_actions'),
         )
         queryset = queryset.prefetch_related(
-            Prefetch('contact_for_indicators', queryset=plan.indicators.all(), to_attr='plan_contact_for_indicators')
+            Prefetch('contact_for_indicators', queryset=plan.indicators.all(), to_attr='plan_contact_for_indicators'),
         )
         if self.value() is None:
             return queryset
@@ -88,7 +94,7 @@ class IsContactPersonFilter(SimpleListFilter):
             my_indicators = plan.indicators.filter(contact_persons__person=person)
             queryset = queryset.filter(
                 Q(contact_for_actions__pk__in=my_actions) |
-                Q(contact_for_indicators__pk__in=my_indicators)
+                Q(contact_for_indicators__pk__in=my_indicators),
             )
         else:
             queryset = queryset.exclude(contact_for_actions__in=plan.actions.all())\
@@ -176,7 +182,7 @@ class PersonFormForGeneralAdmin(PersonForm):
         if access_level == self.AccessLevel.PUBLIC_SITE_ONLY:
             if is_plan_admin or organization_plan_admin_orgs or contact_for_actions:
                 raise ValidationError(
-                    'Person cannot have admin responsibilities while also being restricted to only public site access.'
+                    'Person cannot have admin responsibilities while also being restricted to only public site access.',
                 )
         return cleaned_data
 
@@ -203,7 +209,7 @@ class PersonFormForGeneralAdmin(PersonForm):
 
 
 class PersonCreateView(
-        ActivatePermissionHelperPlanContextModelAdminMixin, InitializeFormWithPlanMixin, InitializeFormWithUserMixin, AplansCreateView
+        ActivatePermissionHelperPlanContextModelAdminMixin, InitializeFormWithPlanMixin, InitializeFormWithUserMixin, AplansCreateView,
 ):
     def form_valid(self, form, *args, **kwargs):
         # Make sure form only contains is_admin_for_active_plan
@@ -269,14 +275,14 @@ class PersonPermissionHelper(PlanContextModelAdminPermissionHelper):
         if obj.user == user:
             return True
         return user.can_edit_or_delete_person_within_plan(
-            obj, plan=self.plan, orgs=self._org_map
+            obj, plan=self.plan, orgs=self._org_map,
         )
 
     def user_can_delete_obj(self, user, obj: Person):
         if not super().user_can_delete_obj(user, obj):
             return False
         return user.can_edit_or_delete_person_within_plan(
-            obj, plan=self.plan, orgs=self._org_map
+            obj, plan=self.plan, orgs=self._org_map,
         )
 
     def user_can_create(self, user: 'User'):
@@ -326,13 +332,13 @@ class PersonButtonHelper(ButtonHelper):
         if user.is_general_admin_for_plan(plan) and target_has_password and not target_is_admin_of_any_plan:
             reset_password_button = self.reset_password_button(
                 pk=getattr(obj, self.opts.pk.attname),
-                **kwargs
+                **kwargs,
             )
             buttons.append(reset_password_button)
         if user.is_superuser and obj.user != user and obj.user.can_access_admin():
             impersonation_button = self.impersonation_button(
                 pk=getattr(obj, self.opts.pk.attname),
-                **kwargs
+                **kwargs,
                 )
             buttons.append(impersonation_button)
         return buttons
@@ -340,7 +346,7 @@ class PersonButtonHelper(ButtonHelper):
 
 class PersonDeleteView(ActivatePermissionHelperPlanContextModelAdminMixin, DeleteView):
     instance: Person
-    model: typing.Type[Person]
+    model: type[Person]
 
     def get(self, request, *args, **kwargs):
         linked_objects = []
@@ -367,7 +373,7 @@ class PersonDeleteView(ActivatePermissionHelperPlanContextModelAdminMixin, Delet
                         linked_objects.append(obj)
         context = self.get_context_data(
             protected_error=True,
-            linked_objects=linked_objects
+            linked_objects=linked_objects,
         )
         return self.render_to_response(context)
 
@@ -446,7 +452,7 @@ class PersonAdmin(AplansModelAdmin):
             if obj.user and not obj.user.can_access_admin():
                 tooltip = _(
                     "This person has no access to the admin interface. This is commonly because no actions or "
-                    "indicators are assigned to them."
+                    "indicators are assigned to them.",
                 )
                 return format_html(
                     '<div class="tooltip-wrapper">'
@@ -459,7 +465,7 @@ class PersonAdmin(AplansModelAdmin):
                     '{}'
                     '</div>'
                     '</div>',
-                    tooltip
+                    tooltip,
                 )
             return ''
         cannot_access_admin_warning.short_description = ''
@@ -608,12 +614,12 @@ class PersonAdmin(AplansModelAdmin):
         reset_password_url = re_path(
             self.url_helper.get_action_url_pattern('reset_password'),
             self.reset_password_view,
-            name=self.url_helper.get_action_url_name('reset_password')
+            name=self.url_helper.get_action_url_name('reset_password'),
         )
         impersonation_url = re_path(
             self.url_helper.get_action_url_pattern('view_as_user'),
             self.impersonation_view,
-            name=self.url_helper.get_action_url_name('view_as_user')
+            name=self.url_helper.get_action_url_name('view_as_user'),
         )
         return urls + (
             reset_password_url,

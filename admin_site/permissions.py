@@ -4,7 +4,7 @@ from typing import Optional
 from django.conf import settings
 from wagtail.permission_policies.base import ModelPermissionPolicy
 from wagtail.permission_policies.collections import (
-    CollectionOwnershipPermissionPolicy
+    CollectionOwnershipPermissionPolicy,
 )
 
 from actions.models.plan import Plan
@@ -14,7 +14,7 @@ from users.models import User
 
 
 class PlanRelatedCollectionOwnershipPermissionPolicy(CollectionOwnershipPermissionPolicy):
-    def collections_user_has_any_permission_for(self, user, actions, request: Optional[WatchAdminRequest] = None):
+    def collections_user_has_any_permission_for(self, user, actions, request: WatchAdminRequest | None = None):
         qs = super().collections_user_has_any_permission_for(user, actions)
         if request is not None:
             plan = request.get_active_admin_plan()

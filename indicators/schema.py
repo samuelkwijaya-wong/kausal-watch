@@ -4,16 +4,29 @@ from django.forms import ModelForm
 from graphql.error import GraphQLError
 from wagtail.rich_text import RichText
 
+from actions.models import Action
+from actions.schema import ScenarioNode
 from aplans.graphql_helpers import UpdateModelInstanceMutation
 from aplans.graphql_types import DjangoNode, get_plan_from_context, order_queryset, register_django_node
 from aplans.utils import RestrictedVisibilityModel, public_fields
-from actions.schema import ScenarioNode
 from indicators.models import (
-    ActionIndicator, CommonIndicator, Dimension, DimensionCategory, Framework, FrameworkIndicator, Indicator,
-    IndicatorDimension, IndicatorGoal, IndicatorGraph, IndicatorLevel, IndicatorValue, Quantity, RelatedCommonIndicator,
-    RelatedIndicator, Unit
+    ActionIndicator,
+    CommonIndicator,
+    Dimension,
+    DimensionCategory,
+    Framework,
+    FrameworkIndicator,
+    Indicator,
+    IndicatorDimension,
+    IndicatorGoal,
+    IndicatorGraph,
+    IndicatorLevel,
+    IndicatorValue,
+    Quantity,
+    RelatedCommonIndicator,
+    RelatedIndicator,
+    Unit,
 )
-from actions.models import Action
 
 
 class UnitNode(DjangoNode):
@@ -25,7 +38,7 @@ class UnitNode(DjangoNode):
 
     @gql_optimizer.resolver_hints(
         model_field='name',
-        only=('name', 'i18n')
+        only=('name', 'i18n'),
     )
     def resolve_name(self, info):
         name = self.name_i18n
@@ -35,7 +48,7 @@ class UnitNode(DjangoNode):
 
     @gql_optimizer.resolver_hints(
         model_field='short_name',
-        only=('short_name', 'i18n')
+        only=('short_name', 'i18n'),
     )
     def resolve_short_name(self, info):
         short_name = self.short_name_i18n
@@ -45,7 +58,7 @@ class UnitNode(DjangoNode):
 
     @gql_optimizer.resolver_hints(
         model_field='verbose_name',
-        only=('verbose_name', 'i18n')
+        only=('verbose_name', 'i18n'),
     )
     def resolve_verbose_name(self, info):
         verbose_name = self.verbose_name_i18n
@@ -55,7 +68,7 @@ class UnitNode(DjangoNode):
 
     @gql_optimizer.resolver_hints(
         model_field='verbose_name_plural',
-        only=('verbose_name_plural', 'i18n')
+        only=('verbose_name_plural', 'i18n'),
     )
     def resolve_verbose_name_plural(self, info):
         verbose_name_plural = self.verbose_name_plural_i18n
@@ -131,7 +144,7 @@ class CommonIndicatorNode(DjangoNode):
         fields = public_fields(CommonIndicator)
 
     @gql_optimizer.resolver_hints(
-        model_field='normalizations'
+        model_field='normalizations',
     )
     def resolve_normalizations(root: CommonIndicator, info):
         return root.normalizations.all()
@@ -201,7 +214,7 @@ class IndicatorNode(DjangoNode):
         default_value=None,
         description=('[Deprecated] Has no effect. '
                      'The same indicator cannot have different goals '
-                     'for the same organization for different plans.')
+                     'for the same organization for different plans.'),
     ))
     values = graphene.List(IndicatorValueNode, include_dimensions=graphene.Boolean())
     level = graphene.String(plan=graphene.ID())
@@ -298,7 +311,7 @@ class Query:
 
     def resolve_plan_indicators(
         self, info, plan, first=None, order_by=None, has_data=None,
-        has_goals=None, **kwargs
+        has_goals=None, **kwargs,
     ):
         plan_obj = get_plan_from_context(info, plan)
         if plan_obj is None:

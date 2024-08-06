@@ -1,27 +1,29 @@
 from __future__ import annotations
+
+import typing
 from enum import StrEnum, auto
 from typing import ClassVar, Self
-import typing
 
 from django.apps import apps
 from django.core.exceptions import PermissionDenied
 from django.db import models
 from django.db.models import Q
-from django.utils.translation import gettext_lazy as _
 from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
 from wagtail.users.models import UserProfile
 
-from users.managers import UserManager
 from orgs.models import Organization, OrganizationMetadataAdmin
+from users.managers import UserManager
 
 from .base import AbstractUser
 
 if typing.TYPE_CHECKING:
-    from actions.models import Action, ActionContactPerson, Plan, ActionResponsibleParty, ModelWithRole
-    from people.models import Person
-    from aplans.utils import InstancesVisibleForMixin, InstancesEditableByMixin
-    from rest_framework.authtoken.models import Token
     from django.db.models.fields.related import ReverseOneToOneDescriptor
+    from rest_framework.authtoken.models import Token
+
+    from actions.models import Action, ActionContactPerson, ActionResponsibleParty, ModelWithRole, Plan
+    from aplans.utils import InstancesEditableByMixin, InstancesVisibleForMixin
+    from people.models import Person
 
 
 class ModerationAction(StrEnum):
@@ -37,16 +39,16 @@ class User(AbstractUser):  # type: ignore[django-manager-missing]
 
     email = models.EmailField(_('email address'), unique=True)
     selected_admin_plan = models.ForeignKey(
-        'actions.Plan', null=True, blank=True, on_delete=models.SET_NULL
+        'actions.Plan', null=True, blank=True, on_delete=models.SET_NULL,
     )
     deactivated_at = models.DateTimeField(
         null=True,
-        blank=True
+        blank=True,
     )
     deactivated_by = models.ForeignKey(
         'self',
         on_delete=models.PROTECT,
-        null=True
+        null=True,
     )
 
     auth_token: Token
@@ -70,7 +72,7 @@ class User(AbstractUser):  # type: ignore[django-manager-missing]
     def autocomplete_label(self):
         return self.email
 
-    def get_corresponding_person(self) -> typing.Optional[Person]:
+    def get_corresponding_person(self) -> Person | None:
         if hasattr(self, '_corresponding_person'):
             return self._corresponding_person
 
@@ -513,12 +515,12 @@ class User(AbstractUser):  # type: ignore[django-manager-missing]
         for user_plan in user.get_adminable_plans():
             if not self.is_general_admin_for_plan(user_plan):
                 raise PermissionDenied(
-                    _('No permission to remove the user belonging to plans you are not managing.')
+                    _('No permission to remove the user belonging to plans you are not managing.'),
                 )
         return True
 
     def can_edit_or_delete_person_within_plan(
-        self, person: Person, plan: Plan | None = None, orgs: dict | None = None
+        self, person: Person, plan: Plan | None = None, orgs: dict | None = None,
     ) -> bool:
         # orgs is a performance optimization, a pre-populated
         # dict for cases where this function is called from within a loop

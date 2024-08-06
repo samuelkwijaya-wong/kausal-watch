@@ -8,15 +8,14 @@ from django.urls import reverse, reverse_lazy
 from django.utils.decorators import method_decorator
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
-from django.utils.translation import gettext as _
-from django.utils.translation import gettext_lazy
+from django.utils.translation import gettext as _, gettext_lazy
 from wagtail.admin import messages
 from wagtail.admin.forms.auth import PasswordResetForm
 from wagtail_modeladmin.views import WMABaseView
 
 from people.models import Person
-
 from users.models import User
+
 
 class ResetPasswordView(WMABaseView):
     page_title = gettext_lazy("Reset password")
@@ -85,7 +84,7 @@ class ResetPasswordView(WMABaseView):
         info_msg = _("If the email does not arrive, you can send them the following link: %(url)s")
         warning_msg = _(
             "Please take great care that nobody except %(person)s gets access to the link. For additional security, "
-            "the link will expire in %(days_until_expiration)s days."
+            "the link will expire in %(days_until_expiration)s days.",
         )
         messages.success(request, success_msg % {'person': self.target_person})
         messages.info(request, info_msg % {'url': self.make_reset_url()})

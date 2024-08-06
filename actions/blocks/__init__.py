@@ -4,38 +4,55 @@ from django.utils.translation import gettext_lazy as _
 from grapple.helpers import register_streamfield_block
 from wagtail import blocks
 
-from actions.blocks.choosers import CategoryAttributeTypeChooserBlock, CategoryChooserBlock, CategoryTypeChooserBlock
 from actions.blocks.action_content import (
     ActionAsideContentBlock,
     ActionContactFormBlock,
-    ActionMainContentBlock,
-    ActionOfficialNameBlock,
-    ActionResponsiblePartiesBlock,
     # If you're wondering about unknown import symbol errors:
     # The types below are defined by metaprogramming
-    ActionContactPersonsBlock, # type: ignore
-    ActionDependenciesBlock, # type: ignore
-    ActionDescriptionBlock, # type: ignore
-    ActionLeadParagraphBlock, # type: ignore
-    ActionLinksBlock, # type: ignore
-    ActionMergedActionsBlock, # type: ignore
-    ActionRelatedActionsBlock, # type: ignore
-    ActionRelatedIndicatorsBlock, # type: ignore
-    ActionScheduleBlock, # type: ignore
-    ActionTasksBlock, # type: ignore
+    ActionContactPersonsBlock,  # type: ignore
+    ActionDependenciesBlock,  # type: ignore
+    ActionDescriptionBlock,  # type: ignore
+    ActionLeadParagraphBlock,  # type: ignore
+    ActionLinksBlock,  # type: ignore
+    ActionMainContentBlock,
+    ActionMergedActionsBlock,  # type: ignore
+    ActionOfficialNameBlock,
+    ActionRelatedActionsBlock,  # type: ignore
+    ActionRelatedIndicatorsBlock,  # type: ignore
+    ActionResponsiblePartiesBlock,
+    ActionScheduleBlock,  # type: ignore
+    ActionTasksBlock,  # type: ignore
 )
 from actions.blocks.action_dashboard import (
-    IdentifierColumnBlock, NameColumnBlock, ImplementationPhaseColumnBlock, StatusColumnBlock, TasksColumnBlock,
-    ResponsiblePartiesColumnBlock, IndicatorsColumnBlock, UpdatedAtColumnBlock, OrganizationColumnBlock,
-    ImpactColumnBlock, ActionDashboardColumnBlock, FieldColumnBlock
+    ActionDashboardColumnBlock,
+    FieldColumnBlock,
+    IdentifierColumnBlock,
+    ImpactColumnBlock,
+    ImplementationPhaseColumnBlock,
+    IndicatorsColumnBlock,
+    NameColumnBlock,
+    OrganizationColumnBlock,
+    ResponsiblePartiesColumnBlock,
+    StatusColumnBlock,
+    TasksColumnBlock,
+    UpdatedAtColumnBlock,
 )
 from actions.blocks.action_list import ActionHighlightsBlock, ActionListBlock
 from actions.blocks.category_list import CategoryListBlock, CategoryTreeMapBlock
-from actions.blocks.choosers import ActionAttributeTypeChooserBlock, AttributeTypeChooserBlock
+from actions.blocks.choosers import (
+    ActionAttributeTypeChooserBlock,
+    AttributeTypeChooserBlock,
+    CategoryAttributeTypeChooserBlock,
+    CategoryChooserBlock,
+    CategoryTypeChooserBlock,
+)
 from actions.blocks.filters import (
-    ActionImplementationPhaseFilterBlock, ActionListFilterBlock,
-    ActionScheduleFilterBlock, PrimaryOrganizationFilterBlock, ResponsiblePartyFilterBlock,
+    ActionImplementationPhaseFilterBlock,
+    ActionListFilterBlock,
+    ActionScheduleFilterBlock,
     ContinuousActionFilterBlock,
+    PrimaryOrganizationFilterBlock,
+    ResponsiblePartyFilterBlock,
 )
 from actions.models.attributes import AttributeType, AttributeTypeQuerySet
 from actions.models.category import CategoryType
@@ -138,5 +155,5 @@ __all__ = [
     'ResponsiblePartyFilterBlock', 'ContinuousActionFilterBlock',
     'IdentifierColumnBlock', 'NameColumnBlock', 'ImplementationPhaseColumnBlock', 'StatusColumnBlock',
     'TasksColumnBlock', 'ResponsiblePartiesColumnBlock', 'IndicatorsColumnBlock', 'UpdatedAtColumnBlock',
-    'OrganizationColumnBlock', 'ImpactColumnBlock', 'ActionDashboardColumnBlock', FieldColumnBlock
+    'OrganizationColumnBlock', 'ImpactColumnBlock', 'ActionDashboardColumnBlock', FieldColumnBlock,
 ]

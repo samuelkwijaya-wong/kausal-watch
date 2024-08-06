@@ -14,22 +14,25 @@ the rough estimations happening here.
 
 """
 from __future__ import annotations
+
+import re
+import typing
 from dataclasses import dataclass
 from functools import reduce
-from loguru import logger
-import re
 from typing import Any, cast
-import typing
 
-from django.utils.translation import gettext as _
 from django.db import models
+from django.utils.translation import gettext as _
+from loguru import logger
 
-from .cursor_writer import CursorWriter, CellBase, Cell
+from .cursor_writer import Cell, CellBase, CursorWriter
 
 if typing.TYPE_CHECKING:
     import polars
-    from .excel_report import ExcelReport
+
     from actions.models import Plan
+
+    from .excel_report import ExcelReport
 
 
 class ReportActionPrintLayoutCustomization(models.Model):
@@ -188,7 +191,7 @@ def write_action_summaries(excel_report: ExcelReport, action_df: polars.DataFram
             grid_layout: list[list[str]],
             action: dict[str, Any],
             approximate_chars_per_line: int,
-            approximate_lines_per_page: int
+            approximate_lines_per_page: int,
     ) -> list[tuple[CellBase, ...]]:
 
         result: list[tuple[CellBase, ...]] = []
@@ -288,7 +291,7 @@ def write_action_summaries(excel_report: ExcelReport, action_df: polars.DataFram
                 data_row,
                 APPROXIMATE_CHARS_PER_LINE,
                 APPROXIMATE_LINES_PER_PAGE,
-            )
+            ),
         )
 
     page_break_row_indexes = []
@@ -323,7 +326,7 @@ def write_action_summaries(excel_report: ExcelReport, action_df: polars.DataFram
             page_specifier = f' [{_("Page")} {page}/{page_count}]'
         processed.append((
             Cell(value=(action_identifier + page_specifier), format='action_digest_page_header'),
-            Cell(value=action_name, format='action_digest_page_header')
+            Cell(value=action_name, format='action_digest_page_header'),
         ))
         row_index += 1
 
@@ -338,14 +341,14 @@ def write_action_summaries(excel_report: ExcelReport, action_df: polars.DataFram
         'macro':   'ThisWorkbook.ProcessMergedCells',
         'caption': _('Prepare for printing'),
         'width':   320,
-        'height':  60
+        'height':  60,
     })
 
     cursor_writer = CursorWriter(
         worksheet,
         formats=excel_report.formats,
         width=MAX_COLUMNS,
-        merge=True
+        merge=True,
     )
     cursor_writer.write_cells(processed)
     worksheet.set_h_pagebreaks(page_break_row_indexes)

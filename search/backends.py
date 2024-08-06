@@ -1,17 +1,18 @@
-from copy import deepcopy
 import logging
+from copy import deepcopy
 from typing import Optional
+
+import elasticsearch_dsl as es_dsl
 from django.utils import translation
 from modeltrans.fields import TranslatedVirtualField
-import elasticsearch_dsl as es_dsl
 from wagtail.search import index
 from wagtail.search.backends.elasticsearch7 import (
-    Elasticsearch7SearchBackend, Elasticsearch7SearchResults,
-    Elasticsearch7SearchQueryCompiler, Elasticsearch7AutocompleteQueryCompiler,
-    Elasticsearch7Index
-)
-from wagtail.search.backends.elasticsearch7 import (
-    ElasticsearchIndexRebuilder
+    Elasticsearch7AutocompleteQueryCompiler,
+    Elasticsearch7Index,
+    Elasticsearch7SearchBackend,
+    Elasticsearch7SearchQueryCompiler,
+    Elasticsearch7SearchResults,
+    ElasticsearchIndexRebuilder,
 )
 
 logger = logging.getLogger(__name__)
@@ -123,10 +124,10 @@ class WatchSearchBackend(Elasticsearch7SearchBackend):
 SearchBackend = WatchSearchBackend
 
 
-def get_search_backend(language=None) -> Optional[WatchSearchBackend]:
+def get_search_backend(language=None) -> WatchSearchBackend | None:
     from wagtail.search.backends import (
         get_search_backend as wagtail_get_search_backend,
-        get_search_backend_config
+        get_search_backend_config,
     )
 
     if language is None:

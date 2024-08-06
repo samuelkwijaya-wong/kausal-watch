@@ -1,8 +1,8 @@
 import re
-from typing import Optional, Any
+from typing import Any, Optional
 
-from django.views.generic.base import RedirectView
 from django.urls import reverse
+from django.views.generic.base import RedirectView
 
 
 class RootRedirectView(RedirectView):
@@ -20,6 +20,6 @@ class RootRedirectView(RedirectView):
 class WadminRedirectView(RedirectView):
     permanent = True
 
-    def get_redirect_url(self, *args: Any, **kwargs: Any) -> Optional[str]:
+    def get_redirect_url(self, *args: Any, **kwargs: Any) -> str | None:
         new_path = re.sub('^/wadmin', '/admin', self.request.get_full_path())
         return new_path

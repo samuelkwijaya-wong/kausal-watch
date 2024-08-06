@@ -8,7 +8,7 @@ from django.utils import autoreload
 
 
 class DjangoPythonFilter(watchfiles.PythonFilter):
-    def __init__(self, *, ignore_paths: Optional[Sequence[Union[str, Path]]] = None, extra_extensions: Sequence[str] = ()) -> None:
+    def __init__(self, *, ignore_paths: Sequence[str | Path] | None = None, extra_extensions: Sequence[str] = ()) -> None:
         if 'site-packages' in self.ignore_dirs:
             # We want to watch site-packages, too
             d = list(self.ignore_dirs)

@@ -12,19 +12,26 @@ from wagtail.admin.panels import FieldPanel, ObjectList
 from wagtail_modeladmin.helpers import ButtonHelper
 from wagtail_modeladmin.menus import ModelAdminMenuItem
 from wagtail_modeladmin.options import modeladmin_register
-from wagtail_modeladmin.views import IndexView, DeleteView
+from wagtail_modeladmin.views import DeleteView, IndexView
 from wagtailorderable.modeladmin.mixins import OrderableMixin
 
+from actions.chooser import CategoryTypeChooser
+from admin_site.wagtail import (
+    ActionListPageBlockFormMixin,
+    AplansAdminModelForm,
+    AplansCreateView,
+    AplansEditView,
+    AplansModelAdmin,
+    AplansTabbedInterface,
+    CondensedInlinePanel,
+    InitializeFormWithPlanMixin,
+    insert_model_translation_panels,
+)
+from aplans.context_vars import ctx_instance, ctx_request
 from aplans.utils import OrderedModelChildFormSet
 
 from .attributes import AttributeType as AttributeTypeWrapper
 from .models import Action, AttributeType, AttributeTypeChoiceOption, Category
-from actions.chooser import CategoryTypeChooser
-from admin_site.wagtail import (
-    ActionListPageBlockFormMixin, AplansAdminModelForm, AplansCreateView, AplansEditView, AplansModelAdmin,
-    AplansTabbedInterface, CondensedInlinePanel, InitializeFormWithPlanMixin, insert_model_translation_panels
-)
-from aplans.context_vars import ctx_instance, ctx_request
 
 
 class AttributeTypeFilter(SimpleListFilter):
@@ -241,7 +248,7 @@ class AttributeTypeAdmin(OrderableMixin, AplansModelAdmin):
             '<svg class="icon icon-grip default" style="padding: 0px;" aria-hidden="true">'
             '<use href="#icon-grip"></use>'
             '</svg>'
-            '</div>'
+            '</div>',
         )
     index_order.admin_order_field = 'order'
     index_order.short_description = _('Order')
@@ -250,7 +257,7 @@ class AttributeTypeAdmin(OrderableMixin, AplansModelAdmin):
         request = ctx_request.get()
         instance = ctx_instance.get()
         choice_option_panels = insert_model_translation_panels(
-            AttributeTypeChoiceOption, self.choice_option_panels, request, instance
+            AttributeTypeChoiceOption, self.choice_option_panels, request, instance,
         )
 
         creating = instance.pk is None
@@ -260,8 +267,8 @@ class AttributeTypeAdmin(OrderableMixin, AplansModelAdmin):
                 read_only=True,
                 help_text=_(
                     "This field already has values. If you want to change the format, you need to delete the existing "
-                    "values first."
-                )
+                    "values first.",
+                ),
             )
         else:
             format_field_panel = FieldPanel('format')
@@ -321,5 +328,5 @@ class AttributeTypeAdmin(OrderableMixin, AplansModelAdmin):
             (Q(object_content_type=action_ct) & Q(scope_content_type=plan_ct) & Q(scope_id=plan.id))
             # Attribute types for categories whose category type is the active plan
             | (Q(object_content_type=category_ct) & Q(scope_content_type=category_type_ct)
-               & Q(scope_id__in=category_types_in_plan))
+               & Q(scope_id__in=category_types_in_plan)),
         )

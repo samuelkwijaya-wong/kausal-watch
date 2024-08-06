@@ -46,7 +46,7 @@ class TranslatedFieldMixin:
             field_name=field_name,
             language=lang[0],
             widget=widget,
-            **kwargs
+            **kwargs,
         ) for lang in settings.LANGUAGES]
         super().__init__(children=[primary_panel, *lang_panels], **kwargs)  # type: ignore
 
@@ -63,6 +63,7 @@ class TranslatedFieldRowPanel(TranslatedFieldMixin, FieldRowPanel):
     string according to the languages of the action plan. The panels are added
     side by side.
     """
+
     pass
 
 
@@ -71,4 +72,5 @@ class TranslatedFieldPanel(TranslatedFieldMixin, MultiFieldPanel):
     string according to the languages of the action plan. The panels are added
     on top of each other.
     """
+
     pass

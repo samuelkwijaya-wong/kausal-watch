@@ -1,7 +1,8 @@
 from __future__ import annotations
-from contextlib import contextmanager
+
 import importlib
-from typing import Callable, List, TYPE_CHECKING, Protocol
+from contextlib import contextmanager
+from typing import TYPE_CHECKING, Callable, List, Protocol
 from urllib.parse import urljoin
 
 from django import forms
@@ -19,36 +20,41 @@ from django.utils.decorators import method_decorator
 from django.utils.text import capfirst
 from django.utils.translation import gettext as _
 from modeltrans.translator import get_i18n_field
+from reversion.revisions import (
+    add_to_revision,
+    create_revision,
+    set_comment,
+    set_user,
+)
 from wagtail.admin import messages
 from wagtail.admin.forms.models import WagtailAdminModelForm
 from wagtail.admin.panels import (
-    FieldPanel, InlinePanel, ObjectList, TabbedInterface
+    FieldPanel,
+    InlinePanel,
+    ObjectList,
+    TabbedInterface,
 )
 from wagtail_modeladmin.helpers import ButtonHelper, PermissionHelper
 from wagtail_modeladmin.options import ModelAdmin
 from wagtail_modeladmin.views import CreateView, EditView, IndexView
-
-from reversion.revisions import (
-    add_to_revision, create_revision, set_comment, set_user
-)
-from wagtailautocomplete.edit_handlers import \
-    AutocompletePanel as WagtailAutocompletePanel
+from wagtailautocomplete.edit_handlers import AutocompletePanel as WagtailAutocompletePanel
 
 from actions.models.plan import Plan
 from aplans.context_vars import set_instance
 from aplans.types import WatchAdminRequest
-from aplans.utils import PlanDefaultsModel, PlanRelatedModel, InstancesVisibleForMixin, get_language_from_default_language_field
-from pages.models import ActionListPage
+from aplans.utils import InstancesVisibleForMixin, PlanDefaultsModel, PlanRelatedModel, get_language_from_default_language_field
 from budget.models import DatasetSchema
+from pages.models import ActionListPage
 
 from .utils import FieldLabelRenderer
 
 if TYPE_CHECKING:
-    from users.models import User
     from django.db.models import Model
 
+    from users.models import User
 
-def insert_model_translation_panels(model, panels, request, plan=None) -> List:
+
+def insert_model_translation_panels(model, panels, request, plan=None) -> list:
     """Return a list of panels containing all of `panels` and language-specific panels for fields with i18n."""
     i18n_field = get_i18n_field(model)
     if not i18n_field:
@@ -191,6 +197,7 @@ class AplansAdminModelForm(WagtailAdminModelForm):
 
 class BoundPlanFilteredFieldPanelMixin:
     """Mixin for bound panels to filter the related model queryset based on the active plan."""
+
     request: WatchAdminRequest
 
     def __init__(self, **kwargs):
@@ -209,6 +216,7 @@ class PlanFilteredFieldPanel(FieldPanel):
 
 class BoundCustomizableBuiltInFieldPanelMixin:
     """Mixin for bound panels for built-in fields to enable customizations by BuiltInFieldCustomization."""
+
     request: WatchAdminRequest
 
     def __init__(self, **kwargs):
@@ -268,15 +276,15 @@ class DatasetButtonMixin:
         for schema in DatasetSchema.get_for_model(obj):
             dataset_cache = self.request.admin_cache.datasets_by_scope_by_schema
             matching_dataset = dataset_cache.get(
-                self.model._meta.label, {}
+                self.model._meta.label, {},
             ).get(
-                obj.pk, {}
+                obj.pk, {},
             ).get(
-                str(schema.uuid), None
+                str(schema.uuid), None,
             )
             classname = self.finalise_classname(
                 classnames_add=classnames_add,
-                classnames_exclude=classnames_exclude
+                classnames_exclude=classnames_exclude,
             )
             if matching_dataset:
                 edit_url = reverse(DatasetViewSet().get_url_name('edit'), args=[matching_dataset.pk])
@@ -332,7 +340,7 @@ class AplansButtonHelper(DatasetButtonMixin, ButtonHelper):
             'label': _('View live'),
             'classname': self.finalise_classname(
                 classnames_add=classnames_add,
-                classnames_exclude=classnames_exclude
+                classnames_exclude=classnames_exclude,
             ),
             'title': _('View %s live') % self.verbose_name,
             'icon': 'view',
@@ -342,7 +350,7 @@ class AplansButtonHelper(DatasetButtonMixin, ButtonHelper):
     def get_buttons_for_obj(self, obj, exclude=None, classnames_add=None, classnames_exclude=None):
         buttons = super().get_buttons_for_obj(obj, exclude, classnames_add, classnames_exclude)
         view_live_button = self.view_live_button(
-            obj, classnames_add=classnames_add, classnames_exclude=classnames_exclude
+            obj, classnames_add=classnames_add, classnames_exclude=classnames_exclude,
         )
         if view_live_button:
             buttons.append(view_live_button)
@@ -416,7 +424,7 @@ class ContinueEditingModelAdminMixin():
 
         button_url = self.url_helper.get_action_url('edit', quote(instance.pk))
         return [
-            messages.button(button_url, _('Edit'))
+            messages.button(button_url, _('Edit')),
         ]
 
 
@@ -496,7 +504,7 @@ def execute_admin_post_save_tasks(instance: Model, user: User):
     if handle_admin_save:
         handle_admin_save(context={
             'user': user,
-            'operation': 'edit'
+            'operation': 'edit',
         })
     success_message = _("%(model_name)s '%(object)s' updated.") % {
         "model_name": capfirst(instance._meta.verbose_name),
@@ -513,7 +521,7 @@ def execute_admin_post_save_tasks(instance: Model, user: User):
 # when ModelAdmin migration is finished.
 class AplansEditView(
     PersistFiltersEditingModelAdminMixin, ContinueEditingModelAdminMixin, PlanRelatedViewModelAdminMixin, ActivatePermissionHelperPlanContextModelAdminMixin,
-    SetInstanceModelAdminMixin, EditView
+    SetInstanceModelAdminMixin, EditView,
 ):
     def form_valid(self, form, *args, **kwargs):
         try:
@@ -544,6 +552,7 @@ class AplansEditView(
 # ModelAdmin. Remove this class when ModelAdmin migration is finished.
 class SuccessUrlEditPageModelAdminMixin:
     """After editing a model instance, redirect to the edit page again instead of the index page."""
+
     def get_success_url(self):
         return self.url_helper.get_action_url('edit', self.instance.pk)
 
@@ -573,7 +582,7 @@ class ActivePlanEditView(SuccessUrlEditPageModelAdminMixin, AplansEditView):
 
 
 class AplansCreateView(
-    PersistFiltersEditingModelAdminMixin, ContinueEditingModelAdminMixin, PlanRelatedViewModelAdminMixin, SetInstanceModelAdminMixin, CreateView
+    PersistFiltersEditingModelAdminMixin, ContinueEditingModelAdminMixin, PlanRelatedViewModelAdminMixin, SetInstanceModelAdminMixin, CreateView,
 ):
     request: WatchAdminRequest
 
@@ -593,7 +602,7 @@ class AplansCreateView(
         if hasattr(form.instance, 'handle_admin_save'):
             form.instance.handle_admin_save(context={
                 'user': self.request.user,
-                'operation': 'create'
+                'operation': 'create',
             })
 
         return ret
@@ -655,7 +664,7 @@ class AutocompletePanel(WagtailAutocompletePanel):
             ret = old_render_js_init(self, id)
             if self.placeholder_text:
                 ret += "\nsetTimeout(function() { $('#%s').attr('placeholder', '%s'); }, 5000);" % (
-                    id, quote(self.placeholder_text)
+                    id, quote(self.placeholder_text),
                 )
             return ret
 

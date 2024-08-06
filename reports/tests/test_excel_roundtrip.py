@@ -1,10 +1,10 @@
 from io import BytesIO
 
-from django.utils import translation
-from django.utils.translation import gettext as _
-import pytest
 import polars
 import polars.selectors as cs
+import pytest
+from django.utils import translation
+from django.utils.translation import gettext as _
 
 from .fixtures import *  # noqa
 
@@ -51,7 +51,7 @@ def test_excel_export(
         report_with_all_attributes,
         excel_file_from_report_factory,
         user,
-        django_assert_max_num_queries
+        django_assert_max_num_queries,
 ):
     with django_assert_max_num_queries(272):
         # report.get_live_action_versions hack still causes some extra queries
@@ -80,7 +80,7 @@ def test_partly_completed_report_excel_export(
         user):
     actions_having_attributes[0].mark_as_complete_for_report(
         report_with_all_attributes,
-        user
+        user,
     )
     excel = excel_file_from_report_factory()
     assert_report_dimensions(excel, report_with_all_attributes, actions_having_attributes)

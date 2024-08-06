@@ -1,15 +1,16 @@
 import datetime
 
+from factory import Sequence, SubFactory
 from factory.django import DjangoModelFactory
-from factory import SubFactory, Sequence
 from wagtail.test.utils.wagtail_factories import (
-    StreamBlockFactory, StructBlockFactory, StreamFieldFactory
+    StreamBlockFactory,
+    StreamFieldFactory,
+    StructBlockFactory,
 )
 
-from actions.tests.factories import PlanFactory
 import reports
+from actions.tests.factories import AttributeTypeFactory, PlanFactory
 from reports.blocks import action_content
-from actions.tests.factories import AttributeTypeFactory
 
 
 class ActionAttributeTypeReportFieldBlockFactory(StructBlockFactory):
@@ -66,7 +67,7 @@ class ReportFactory(DjangoModelFactory):
     fields = StreamFieldFactory({
         'implementation_phase': SubFactory(ActionImplementationPhaseReportFieldBlockFactory),
         'attribute_type': SubFactory(ActionAttributeTypeReportFieldBlockFactory),
-        'responsible_party': SubFactory(ActionResponsiblePartyReportFieldBlockFactory)
+        'responsible_party': SubFactory(ActionResponsiblePartyReportFieldBlockFactory),
     })
     is_complete = False
     is_public = False

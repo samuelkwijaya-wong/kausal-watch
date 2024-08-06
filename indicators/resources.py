@@ -7,7 +7,7 @@ from django.utils.translation import gettext_lazy as _
 from import_export import fields, widgets
 from import_export.resources import ModelResource
 
-from .models import Indicator, IndicatorValue, IndicatorLevel, Unit
+from .models import Indicator, IndicatorLevel, IndicatorValue, Unit
 
 
 class YearField(fields.Field):

@@ -1,19 +1,27 @@
 from __future__ import annotations
-from functools import cached_property
 
-from django.db.models import Q
+import typing
+from functools import cached_property
+from typing import TypeVar
+
 from django.contrib.contenttypes.models import ContentType
+from django.db.models import Q
 from wagtail.models import Revision
 
-from aplans.graphql_types import WorkflowStateEnum
 from actions.models import (
-    ActionStatus, ActionImplementationPhase, Plan, AttributeTypeChoiceOption, AttributeType, Action, CategoryType
+    Action,
+    ActionImplementationPhase,
+    ActionStatus,
+    AttributeType,
+    AttributeTypeChoiceOption,
+    CategoryType,
+    Plan,
 )
 from actions.models.action import ActionQuerySet
-from reports.models import Report
+from aplans.graphql_types import WorkflowStateEnum
 from budget.models import Dataset
-from typing import TypeVar
-import typing
+from reports.models import Report
+
 if typing.TYPE_CHECKING:
     from orgs.models import Organization, OrganizationQuerySet
     from people.models import Person, PersonQuerySet
@@ -47,11 +55,11 @@ class PlanSpecificCache:
         plan_content_type = ContentType.objects.get_for_model(Plan)
         category_type_content_type = ContentType.objects.get_for_model(CategoryType)
         action_datasets = Dataset.objects.filter(
-            schema__scopes__scope_content_type=plan_content_type, schema__scopes__scope_id=self.plan.pk
+            schema__scopes__scope_content_type=plan_content_type, schema__scopes__scope_id=self.plan.pk,
         )
         category_type_ids = self.plan.category_types.values_list('id', flat=True)
         category_datasets = Dataset.objects.filter(
-            schema__scopes__scope_content_type=category_type_content_type, schema__scopes__scope_id__in=category_type_ids
+            schema__scopes__scope_content_type=category_type_content_type, schema__scopes__scope_id__in=category_type_ids,
         )
         for ds in action_datasets:
             if ds.scope_id is not None:
@@ -108,15 +116,15 @@ class PlanSpecificCache:
         choice_formats = (
             AttributeType.AttributeFormat.ORDERED_CHOICE,
             AttributeType.AttributeFormat.OPTIONAL_CHOICE_WITH_TEXT,
-            AttributeType.AttributeFormat.UNORDERED_CHOICE
+            AttributeType.AttributeFormat.UNORDERED_CHOICE,
         )
         for attribute_type in (
             AttributeType.objects.filter(
-                scope_content_type=plan_content_type
+                scope_content_type=plan_content_type,
             ).filter(
-                scope_id=self.plan.pk
+                scope_id=self.plan.pk,
             ).filter(
-                format__in=choice_formats
+                format__in=choice_formats,
             )
         ).prefetch_related('choice_options'):
             for choice_option in attribute_type.choice_options.all():
@@ -182,9 +190,9 @@ class OrganizationActionCountCache:
 
     def _construct_cache_data(self) -> dict[int, int]:
         actions_without_revisions = self.action_qs.filter(
-            latest_revision__isnull=True
+            latest_revision__isnull=True,
         ).prefetch_related(
-            'responsible_parties__organization'
+            'responsible_parties__organization',
         )
         actions_with_revisions = self.action_qs.filter(latest_revision__isnull=False)
         organization_pks_from_revisions = set()
@@ -202,7 +210,7 @@ class OrganizationActionCountCache:
                 result[arp.organization_id] = result.get(arp.organization_id, 0) + 1
         self.organization_responsible_party_queryset_filter = Q(
             Q(responsible_actions__action__in=self.action_qs) |
-            Q(id__in=organization_pks_from_revisions)
+            Q(id__in=organization_pks_from_revisions),
         )
         return result
 

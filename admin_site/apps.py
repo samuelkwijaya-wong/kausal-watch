@@ -7,7 +7,6 @@ from django.db.models.fields import BLANK_CHOICE_DASH
 from django.utils.translation import get_language_info, gettext as _
 from wagtail.admin.localization import get_available_admin_languages
 
-
 _wagtail_collection_save_instance = None
 
 

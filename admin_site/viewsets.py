@@ -9,8 +9,11 @@ from wagtail.snippets.views.snippets import CreateView, EditView, SnippetViewSet
 
 from admin_site.forms import WatchAdminModelForm
 from admin_site.mixins import (
-    ActivatePermissionHelperPlanContextMixin, ContinueEditingMixin,
-    PersistFiltersEditingMixin, PlanRelatedViewMixin, SetInstanceMixin
+    ActivatePermissionHelperPlanContextMixin,
+    ContinueEditingMixin,
+    PersistFiltersEditingMixin,
+    PlanRelatedViewMixin,
+    SetInstanceMixin,
 )
 from admin_site.permissions import PlanRelatedPermissionPolicy
 from admin_site.wagtail import execute_admin_post_save_tasks
@@ -27,15 +30,15 @@ class WatchEditView(
     ActivatePermissionHelperPlanContextMixin,
     EditView,
     SetInstanceMixin,
-    Generic[M]
+    Generic[M],
 ):
     request: WatchAdminRequest
-    model: Type[M]
+    model: type[M]
 
     def get_form_kwargs(self):
         return {
             **super().get_form_kwargs(),
-            'plan': self.request.user.get_active_admin_plan()
+            'plan': self.request.user.get_active_admin_plan(),
         }
 
     def form_valid(self, form, *args, **kwargs):
@@ -64,17 +67,17 @@ class WatchEditView(
 
 class WatchCreateView(CreateView, Generic[M]):
     request: WatchAdminRequest
-    model: Type[M]
+    model: type[M]
 
     def get_form_kwargs(self):
         return {
             **super().get_form_kwargs(),
-            'plan': self.request.user.get_active_admin_plan()
+            'plan': self.request.user.get_active_admin_plan(),
         }
 
 
 class WatchViewSet(SnippetViewSet, Generic[M]):
-    model: Type[M]
+    model: type[M]
     add_view_class = WatchCreateView
     edit_view_class = WatchEditView
 

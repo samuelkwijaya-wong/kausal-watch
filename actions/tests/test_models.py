@@ -1,5 +1,6 @@
-import pytest
 from datetime import date, datetime, timedelta
+
+import pytest
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
@@ -10,7 +11,13 @@ from wagtail.models import Locale
 from actions.attributes import AttributeType
 from actions.models import Action, ActionContactPerson
 from actions.tests.factories import (
-    ActionFactory, ActionContactFactory, AttributeTextFactory, AttributeTypeFactory, CategoryFactory, CategoryTypeFactory, PlanFactory
+    ActionContactFactory,
+    ActionFactory,
+    AttributeTextFactory,
+    AttributeTypeFactory,
+    CategoryFactory,
+    CategoryTypeFactory,
+    PlanFactory,
 )
 from aplans.utils import InstancesEditableByMixin, InstancesVisibleForMixin
 from pages.models import CategoryPage, CategoryTypePage
@@ -422,7 +429,7 @@ def test_action_i18n_when_saving(plan, action_factory, primary_language, active_
         action.save()
         active_lang_translation_without_fallback = getattr(
             action,
-            f"name_{active_language.replace('-', '_').lower()}"
+            f"name_{active_language.replace('-', '_').lower()}",
         )
         if active_language == primary_language:
             assert action.name == 'action.name_i18n'
@@ -436,7 +443,7 @@ def test_action_i18n_when_saving(plan, action_factory, primary_language, active_
 def test_action_on_form_save_no_commit(
     actions_having_attributes, action_attribute_type__text, action_attribute_type__rich_text,
     action_attribute_type__ordered_choice, action_attribute_type__unordered_choice,
-    action_attribute_type__optional_choice, action_attribute_type__numeric
+    action_attribute_type__optional_choice, action_attribute_type__numeric,
 ):
     action = actions_having_attributes[0]
     attribute_types = [
@@ -466,7 +473,7 @@ def test_action_on_form_save_no_commit(
     expected_result_attributes_cleared = {
         'numeric': {str(action_attribute_type__numeric.id): None},
         'optional_choice': {
-            str(action_attribute_type__optional_choice.id): {'choice': None, 'text': {'text': '', 'text_fi': None}}
+            str(action_attribute_type__optional_choice.id): {'choice': None, 'text': {'text': '', 'text_fi': None}},
         },
         'ordered_choice': {str(action_attribute_type__ordered_choice.id): None},
         'rich_text': {str(action_attribute_type__rich_text.id): {'text': '', 'text_fi': None}},
@@ -491,8 +498,8 @@ def test_action_on_form_save_no_commit(
         'optional_choice': {
             str(action_attribute_type__optional_choice.id): {
                 'choice': action_attribute_type__optional_choice.choice_options.first().id,
-                'text': {'text': 'foo', 'text_fi': None}
-            }
+                'text': {'text': 'foo', 'text_fi': None},
+            },
         },
         'ordered_choice': {
             str(action_attribute_type__ordered_choice.id):

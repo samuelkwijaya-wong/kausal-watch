@@ -1,10 +1,11 @@
 from __future__ import annotations
 
 import datetime
-import reversion
 import typing
 import uuid
+from typing import Optional, Self
 
+import reversion
 from dateutil.relativedelta import relativedelta
 from django.apps import apps
 from django.contrib.admin import display
@@ -16,32 +17,35 @@ from django.db.models import Q
 from django.db.models.functions import Collate
 from django.urls import reverse
 from django.utils import timezone, translation
-from django.utils.translation import pgettext_lazy, gettext_lazy as _
+from django.utils.translation import gettext_lazy as _, pgettext_lazy
 from modelcluster.fields import ParentalKey
 from modelcluster.models import ClusterableModel
 from modeltrans.fields import TranslationField
 from modeltrans.manager import MultilingualManager
-
-from typing import Optional, Self
-
 from wagtail.fields import RichTextField
 from wagtail.search import index
 from wagtail.search.queryset import SearchableQuerySetMixin
 
 from actions.models.features import OrderBy
 from aplans import utils
-from aplans.utils import (
-    IdentifierField, OrderedModel, TranslatedModelMixin, ModificationTracking, PlanDefaultsModel, get_available_variants_for_language,
-    RestrictedVisibilityModel
-)
 from aplans.types import UserOrAnon
+from aplans.utils import (
+    IdentifierField,
+    ModificationTracking,
+    OrderedModel,
+    PlanDefaultsModel,
+    RestrictedVisibilityModel,
+    TranslatedModelMixin,
+    get_available_variants_for_language,
+)
 from orgs.models import Organization
-from search.backends import TranslatedSearchField, TranslatedAutocompleteField
+from search.backends import TranslatedAutocompleteField, TranslatedSearchField
 
 if typing.TYPE_CHECKING:
-    from actions.models.category import CategoryType
     from django.db.models.manager import RelatedManager
+
     from actions.models import Action, Plan
+    from actions.models.category import CategoryType
 
 
 User = get_user_model()
@@ -88,19 +92,19 @@ class Unit(ClusterableModel, ModificationTracking):
     name = models.CharField(max_length=40, verbose_name=_('name'), unique=True)
     short_name = models.CharField(
         max_length=40, null=True, blank=True,
-        verbose_name=_('short name')
+        verbose_name=_('short name'),
     )
     verbose_name = models.CharField(
         max_length=100, null=True, blank=True,
-        verbose_name=_('verbose name')
+        verbose_name=_('verbose name'),
     )
     verbose_name_plural = models.CharField(
         max_length=100, null=True, blank=True,
-        verbose_name=_('verbose name plural')
+        verbose_name=_('verbose name plural'),
     )
 
     i18n = TranslationField(
-        fields=['name', 'short_name', 'verbose_name', 'verbose_name_plural']
+        fields=['name', 'short_name', 'verbose_name', 'verbose_name_plural'],
     )
 
     autocomplete_search_field = 'name'
@@ -137,14 +141,14 @@ class Dataset(ClusterableModel):
     description = models.TextField(blank=True, verbose_name=_('description'))
     url = models.URLField(null=True, blank=True, verbose_name=_('URL'))
     last_retrieved_at = models.DateField(
-        null=True, blank=True, verbose_name=_('last retrieved at')
+        null=True, blank=True, verbose_name=_('last retrieved at'),
     )
     owner = models.ForeignKey(
         Organization, null=True, blank=True, verbose_name=_('owner'), on_delete=models.SET_NULL,
     )
     owner_name = models.CharField(
         max_length=100, null=True, blank=True, verbose_name=_('owner name'),
-        help_text=_('Set if owner organization is not available')
+        help_text=_('Set if owner organization is not available'),
     )
     license = models.ForeignKey(
         DatasetLicense, null=True, blank=True, verbose_name=_('license'),
@@ -210,17 +214,17 @@ class CommonIndicator(ClusterableModel):
     )
     unit = ParentalKey(
         Unit, related_name='common_indicators', on_delete=models.PROTECT,
-        verbose_name=_('unit')
+        verbose_name=_('unit'),
     )
     plans = models.ManyToManyField(
-        'actions.Plan', blank=True, related_name='common_indicators', through='PlanCommonIndicator'
+        'actions.Plan', blank=True, related_name='common_indicators', through='PlanCommonIndicator',
     )
     normalization_indicators = models.ManyToManyField(
         'self', blank=True, related_name='normalizable_indicators', symmetrical=False,
-        through='CommonIndicatorNormalizator', through_fields=('normalizable', 'normalizer')
+        through='CommonIndicatorNormalizator', through_fields=('normalizable', 'normalizer'),
     )
     normalize_by_label = models.CharField(
-        max_length=200, verbose_name=_('normalize by label'), null=True, blank=True
+        max_length=200, verbose_name=_('normalize by label'), null=True, blank=True,
     )
 
     i18n = TranslationField(fields=['name', 'description', 'normalize_by_label'])
@@ -263,11 +267,11 @@ class PlanCommonIndicator(models.Model):
 class RelatedCommonIndicator(IndicatorRelationship):
     causal_indicator = models.ForeignKey(
         CommonIndicator, related_name='related_effects', on_delete=models.CASCADE,
-        verbose_name=_('causal indicator')
+        verbose_name=_('causal indicator'),
     )
     effect_indicator = models.ForeignKey(
         CommonIndicator, related_name='related_causes', on_delete=models.CASCADE,
-        verbose_name=_('effect indicator')
+        verbose_name=_('effect indicator'),
     )
 
     public_fields: typing.ClassVar = ['id', 'causal_indicator', 'effect_indicator', 'effect_type']
@@ -282,11 +286,11 @@ class FrameworkIndicator(models.Model):
     identifier = IdentifierField(null=True, blank=True, max_length=70)
     common_indicator = ParentalKey(
         CommonIndicator, related_name='frameworks', on_delete=models.CASCADE,
-        verbose_name=_('common indicator')
+        verbose_name=_('common indicator'),
     )
     framework = ParentalKey(
         Framework, related_name='common_indicators', on_delete=models.CASCADE,
-        verbose_name=_('framework')
+        verbose_name=_('framework'),
     )
 
     public_fields = ['id', 'identifier', 'common_indicator', 'framework']
@@ -322,7 +326,7 @@ class Indicator(ClusterableModel, index.Indexed, ModificationTracking, PlanDefau
     TIME_RESOLUTIONS = (
         ('year', _('year')),
         ('month', _('month')),
-        ('day', _('day'))
+        ('day', _('day')),
     )
     LEVELS = (
         ('strategic', _('strategic')),
@@ -333,7 +337,7 @@ class Indicator(ClusterableModel, index.Indexed, ModificationTracking, PlanDefau
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     common = models.ForeignKey(
         CommonIndicator, null=True, blank=True, related_name='indicators',
-        on_delete=models.PROTECT, verbose_name=_('common indicator')
+        on_delete=models.PROTECT, verbose_name=_('common indicator'),
     )
     organization = models.ForeignKey(
         Organization, related_name='indicators', on_delete=models.CASCADE,
@@ -347,39 +351,39 @@ class Indicator(ClusterableModel, index.Indexed, ModificationTracking, PlanDefau
     name = models.CharField(max_length=200, verbose_name=_('name'))
     quantity = ParentalKey(
         Quantity, related_name='indicators', on_delete=models.PROTECT,
-        verbose_name=pgettext_lazy('physical', 'quantity'), null=True, blank=True
+        verbose_name=pgettext_lazy('physical', 'quantity'), null=True, blank=True,
     )
     unit = ParentalKey(
         Unit, related_name='indicators', on_delete=models.PROTECT,
-        verbose_name=_('unit')
+        verbose_name=_('unit'),
     )
     min_value = models.FloatField(
         null=True, blank=True, verbose_name=_('minimum value'),
         help_text=_('What is the minimum value this indicator can reach? '
-                    'It is used in visualizations as the Y axis minimum.')
+                    'It is used in visualizations as the Y axis minimum.'),
     )
     max_value = models.FloatField(
         null=True, blank=True, verbose_name=_('maximum value'),
         help_text=_('What is the maximum value this indicator can reach? '
-                    'It is used in visualizations as the Y axis maximum.')
+                    'It is used in visualizations as the Y axis maximum.'),
     )
     description = RichTextField(null=True, blank=True, verbose_name=_('description'))
     categories = models.ManyToManyField('actions.Category', blank=True, related_name='indicators')
     time_resolution = models.CharField(
         max_length=50, choices=TIME_RESOLUTIONS, default=TIME_RESOLUTIONS[0][0],
-        verbose_name=_('time resolution')
+        verbose_name=_('time resolution'),
     )
     updated_values_due_at = models.DateField(null=True, blank=True, verbose_name=_('updated values due at'))
     latest_graph = models.ForeignKey(
         'IndicatorGraph', null=True, blank=True, related_name='+',
-        on_delete=models.SET_NULL, editable=False
+        on_delete=models.SET_NULL, editable=False,
     )
     latest_value = models.ForeignKey(
         'IndicatorValue', null=True, blank=True, related_name='+',
-        on_delete=models.SET_NULL, editable=False
+        on_delete=models.SET_NULL, editable=False,
     )
     datasets = models.ManyToManyField(
-        Dataset, blank=True, verbose_name=_('datasets')
+        Dataset, blank=True, verbose_name=_('datasets'),
     )
 
     # summaries = models.JSONField(null=True)
@@ -391,11 +395,11 @@ class Indicator(ClusterableModel, index.Indexed, ModificationTracking, PlanDefau
 
     contact_persons_unordered = models.ManyToManyField(
         'people.Person', through='IndicatorContactPerson', blank=True,
-        related_name='contact_for_indicators', verbose_name=_('contact persons')
+        related_name='contact_for_indicators', verbose_name=_('contact persons'),
     )
 
     internal_notes = models.TextField(
-        blank=True, null=True, verbose_name=_('internal notes')
+        blank=True, null=True, verbose_name=_('internal notes'),
     )
 
     reference = RichTextField(
@@ -438,7 +442,7 @@ class Indicator(ClusterableModel, index.Indexed, ModificationTracking, PlanDefau
         unique_together = (('common', 'organization'),)
         ordering = ('-updated_at',)
 
-    def handle_admin_save(self, context: Optional[dict] = None):
+    def handle_admin_save(self, context: dict | None = None):
         for rel_action in self.related_actions.all():
             rel_action.action.recalculate_status()
 
@@ -534,7 +538,7 @@ class Indicator(ClusterableModel, index.Indexed, ModificationTracking, PlanDefau
             'view_url': self.get_view_url(plan),
         }
 
-    def get_view_url(self, plan: Optional[Plan] = None, client_url: Optional[str] = None) -> str:
+    def get_view_url(self, plan: Plan | None = None, client_url: str | None = None) -> str:
         if plan is None:
             plan = self.plans.first()
         assert plan is not None
@@ -769,7 +773,7 @@ class IndicatorLevel(ClusterableModel):
     """
 
     indicator = models.ForeignKey(
-        Indicator, related_name='levels', verbose_name=_('indicator'), on_delete=models.CASCADE
+        Indicator, related_name='levels', verbose_name=_('indicator'), on_delete=models.CASCADE,
     )
     plan = models.ForeignKey(
         'actions.Plan', related_name='indicator_levels', verbose_name=_('plan'), on_delete=models.CASCADE,
@@ -809,10 +813,10 @@ class IndicatorValue(ClusterableModel):
 
     indicator = ParentalKey(
         Indicator, related_name='values', on_delete=models.CASCADE,
-        verbose_name=_('indicator')
+        verbose_name=_('indicator'),
     )
     categories = models.ManyToManyField(
-        DimensionCategory, related_name='values', blank=True, verbose_name=_('categories')
+        DimensionCategory, related_name='values', blank=True, verbose_name=_('categories'),
     )
     value = models.FloatField(verbose_name=_('value'))
     date = models.DateField(verbose_name=_('date'))
@@ -847,7 +851,7 @@ class IndicatorGoal(models.Model):
 
     indicator = models.ForeignKey(
         Indicator, related_name='goals', on_delete=models.CASCADE,
-        verbose_name=_('indicator')
+        verbose_name=_('indicator'),
     )
     value = models.FloatField()
     date = models.DateField(verbose_name=_('date'))
@@ -873,26 +877,27 @@ class IndicatorGoal(models.Model):
 
 class RelatedIndicator(IndicatorRelationship):
     """A causal relationship between two indicators."""
+
     HIGH_CONFIDENCE = 'high'
     MEDIUM_CONFIDENCE = 'medium'
     LOW_CONFIDENCE = 'low'
     CONFIDENCE_LEVELS = (
         (HIGH_CONFIDENCE, _('high')),
         (MEDIUM_CONFIDENCE, _('medium')),
-        (LOW_CONFIDENCE, _('low'))
+        (LOW_CONFIDENCE, _('low')),
     )
 
     causal_indicator = ParentalKey(
         Indicator, related_name='related_effects', on_delete=models.CASCADE,
-        verbose_name=_('causal indicator')
+        verbose_name=_('causal indicator'),
     )
     effect_indicator = ParentalKey(
         Indicator, related_name='related_causes', on_delete=models.CASCADE,
-        verbose_name=_('effect indicator')
+        verbose_name=_('effect indicator'),
     )
     confidence_level = models.CharField(
         max_length=20, choices=CONFIDENCE_LEVELS,
-        verbose_name=_('confidence level'), help_text=_('How confident we are that the causal effect is present')
+        verbose_name=_('confidence level'), help_text=_('How confident we are that the causal effect is present'),
     )
 
     public_fields: typing.ClassVar = ['id', 'effect_type', 'causal_indicator', 'effect_indicator', 'confidence_level']
@@ -933,19 +938,19 @@ class ActionIndicator(models.Model):
 
     action = ParentalKey(
         'actions.Action', related_name='related_indicators', on_delete=models.CASCADE,
-        verbose_name=_('action')
+        verbose_name=_('action'),
     )
     indicator = ParentalKey(
         Indicator, related_name='related_actions', on_delete=models.CASCADE,
-        verbose_name=_('indicator')
+        verbose_name=_('indicator'),
     )
     effect_type = models.CharField(
         max_length=40, choices=[(val, name) for val, name in IndicatorRelationship.EFFECT_TYPES if val != 'part_of'],
-        verbose_name=_('effect type'), help_text=_('What type of effect should the action cause?')
+        verbose_name=_('effect type'), help_text=_('What type of effect should the action cause?'),
     )
     indicates_action_progress = models.BooleanField(
         default=False, verbose_name=_('indicates action progress'),
-        help_text=_('Set if the indicator should be used to determine action progress')
+        help_text=_('Set if the indicator should be used to determine action progress'),
     )
 
     public_fields: typing.ClassVar = ['id', 'action', 'indicator', 'effect_type', 'indicates_action_progress']
@@ -966,7 +971,7 @@ class IndicatorContactPerson(OrderedModel):
     """Contact person for an indicator."""
 
     indicator = ParentalKey(
-        Indicator, on_delete=models.CASCADE, verbose_name=_('indicator'), related_name='contact_persons'
+        Indicator, on_delete=models.CASCADE, verbose_name=_('indicator'), related_name='contact_persons',
     )
     person = ParentalKey(
         'people.Person', on_delete=models.CASCADE, verbose_name=_('person'),

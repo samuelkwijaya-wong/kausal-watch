@@ -1,6 +1,6 @@
 from django.utils.functional import Promise
-from django.utils.translation import gettext_lazy as _
 from django.utils.safestring import mark_safe
+from django.utils.translation import gettext_lazy as _
 
 
 def render_html_label_for_visibility(text_content: str | Promise, public: bool):
@@ -9,7 +9,7 @@ def render_html_label_for_visibility(text_content: str | Promise, public: bool):
     return mark_safe(
         f'{text_content}'
         f'<span class="w-status w-status--{class_specifier} field-visibility-label">'
-        f'{label}</span>'
+        f'{label}</span>',
     )
 
 
@@ -19,6 +19,7 @@ class FieldLabelRenderer:
     is switched on with a flag in PlanFeatures; if it's not enabled this doesn't modify the passed field label.
 
     """
+
     def __init__(self, plan):
         self.plan_features = plan.features
 

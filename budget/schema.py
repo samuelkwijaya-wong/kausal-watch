@@ -1,9 +1,18 @@
 import graphene
-from actions.schema import ActionNode, PlanNode, CategoryNode, CategoryTypeNode
+
+from actions.schema import ActionNode, CategoryNode, CategoryTypeNode, PlanNode
 from aplans.graphql_types import DjangoNode, register_django_node
 from budget.models import (
-    DataPoint, Dataset, DatasetSchema, DatasetSchemaScope, Dimension, DimensionCategory, DimensionScope, DatasetSchemaDimensionCategory
+    DataPoint,
+    Dataset,
+    DatasetSchema,
+    DatasetSchemaDimensionCategory,
+    DatasetSchemaScope,
+    Dimension,
+    DimensionCategory,
+    DimensionScope,
 )
+
 
 class DimensionNode(DjangoNode):
     class Meta:

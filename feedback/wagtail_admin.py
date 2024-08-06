@@ -6,7 +6,10 @@ from wagtail.permission_policies.base import ModelPermissionPolicy
 from wagtail.snippets import widgets as wagtailsnippets_widgets
 from wagtail.snippets.models import register_snippet
 from wagtail.snippets.views.snippets import (
-    DeleteView, IndexView, InspectView, SnippetViewSet
+    DeleteView,
+    IndexView,
+    InspectView,
+    SnippetViewSet,
 )
 
 from .models import UserFeedback
@@ -69,7 +72,7 @@ class UserFeedbackIndexView(IndexView):
             url=self.get_user_feedback_processed_url(instance),
             label=_("Mark as processed"),
             icon_name='check',
-            attrs={'aria-label': _("Mark this user feedback as processed")}
+            attrs={'aria-label': _("Mark this user feedback as processed")},
         )
 
     def set_unprocessed_button(self, instance: UserFeedback):
@@ -77,7 +80,7 @@ class UserFeedbackIndexView(IndexView):
             url=self.get_user_feedback_unprocessed_url(instance),
             label=_("Mark as unprocessed"),
             icon_name='cross',
-            attrs={'aria-label': _("Mark this user feedback as unprocessed")}
+            attrs={'aria-label': _("Mark this user feedback as unprocessed")},
         )
 
     def get_list_more_buttons(self, instance: UserFeedback):
@@ -142,7 +145,7 @@ class UserFeedbackViewSet(SnippetViewSet):
         return super().get_common_view_kwargs(
             set_user_feedback_processed_url_name=self.get_url_name(self.set_user_feedback_processed_url_name),
             set_user_feedback_unprocessed_url_name=self.get_url_name(self.set_user_feedback_unprocessed_url_name),
-            **kwargs
+            **kwargs,
         )
 
     def get_queryset(self, request):
@@ -156,12 +159,12 @@ class UserFeedbackViewSet(SnippetViewSet):
         set_user_feedback_processed_url = path(
             f'{self.set_user_feedback_processed_url_name}/<str:pk>/',
             view=self.set_user_feedback_processed_view,
-            name=self.set_user_feedback_processed_url_name
+            name=self.set_user_feedback_processed_url_name,
         )
         set_user_feedback_unprocessed_url = path(
             f'{self.set_user_feedback_unprocessed_url_name}/<str:pk>/',
             view=self.set_user_feedback_unprocessed_view,
-            name=self.set_user_feedback_unprocessed_url_name
+            name=self.set_user_feedback_unprocessed_url_name,
         )
         return urls + [
             set_user_feedback_processed_url,

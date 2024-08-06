@@ -55,8 +55,8 @@ class CategoryLevelChooserBlock(blocks.ChooserBlock):
         linked_fields = {
             'type': {
                 'match': r'^fields-\d+-value-',
-                'append': 'category_type'
-            }
+                'append': 'category_type',
+            },
         }
         return CategoryLevelChooser(linked_fields=linked_fields)
 

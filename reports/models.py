@@ -1,10 +1,12 @@
 from __future__ import annotations
 
-import reversion
-from autoslug.fields import AutoSlugField
 from contextlib import contextmanager
 from dataclasses import asdict, dataclass, field
 from datetime import datetime
+from typing import TYPE_CHECKING
+
+import reversion
+from autoslug.fields import AutoSlugField
 from django.contrib.contenttypes.models import ContentType
 from django.db import models, transaction
 from django.db.models import Q
@@ -13,22 +15,22 @@ from modelcluster.fields import ParentalManyToManyDescriptor
 from reversion.models import Version
 from reversion.revisions import _current_frame, add_to_revision, create_revision
 from sentry_sdk import capture_message
-from typing import TYPE_CHECKING
-from wagtail.fields import StreamField
 from wagtail.blocks.stream_block import StreamValue
+from wagtail.fields import StreamField
 
-from .spreadsheets import ExcelReport
-from aplans.utils import PlanRelatedModel
 from actions.models.action import Action
 from actions.models.attributes import Attribute
+from aplans.utils import PlanRelatedModel
 from reports.blocks.action_content import ReportFieldBlock
 
 # The following model is for very specialized use and is only imported here so that Django finds it
 from reports.spreadsheets.action_print_layout import ReportActionPrintLayoutCustomization  # noqa: F401
 
+from .spreadsheets import ExcelReport
 
 if TYPE_CHECKING:
     from django.db.models.manager import RelatedManager
+
     from actions.models import AttributeType
     from users.models import User
 
@@ -71,7 +73,7 @@ class SerializedAttributeVersion(SerializedVersion):
         attribute_path = (
             version.field_dict['content_type_id'],
             version.field_dict['object_id'],
-            version.field_dict['type_id']
+            version.field_dict['type_id'],
         )
         return cls(
             **asdict(base),
@@ -209,13 +211,13 @@ class Report(models.Model, PlanRelatedModel):
         version_qs = Version.objects.filter(
                 content_type=ct,
                 object_id__in=[a.pk for a in actions_to_snapshot],
-                action_snapshots__report_id=self.pk
+                action_snapshots__report_id=self.pk,
             ).prefetch_related(
-                'action_snapshots'
+                'action_snapshots',
             ).select_related(
-                'revision'
+                'revision',
             ).order_by(
-                '-revision__date_created'
+                '-revision__date_created',
             )
 
         action_snapshots_by_action_pk: dict[int, ActionSnapshot] = dict()
@@ -334,7 +336,7 @@ class ActionSnapshot(models.Model):
         return revision.version_set.select_related('content_type')
 
     def get_attribute_for_type_from_versions(
-        self, attribute_type: AttributeType, versions: models.QuerySet[Version], ct: ContentType
+        self, attribute_type: AttributeType, versions: models.QuerySet[Version], ct: ContentType,
     ) -> models.Model | None:
         # FIXME: This relies on `serialized_data` to contain strings exactly in a certain syntax, which is an
         # implementation detail. Unfortunately, `serialized_data` is not a JSON field, so we can't use Django's
@@ -349,7 +351,7 @@ class ActionSnapshot(models.Model):
         for k, v in pattern.items():
             str_pattern = f'"{k}": {v}'
             versions = versions.filter(
-                Q(serialized_data__contains=str_pattern + ',') | Q(serialized_data__contains=str_pattern + '}')
+                Q(serialized_data__contains=str_pattern + ',') | Q(serialized_data__contains=str_pattern + '}'),
             )
         for version in versions:
             model = version.content_type.model_class()
@@ -380,7 +382,7 @@ class ActionSnapshot(models.Model):
         """
         ct = ContentType.objects.get_for_model(Action)
         return self.get_attribute_for_type_from_versions(
-            attribute_type, self.get_related_versions(), ct
+            attribute_type, self.get_related_versions(), ct,
         )
 
     def get_serialized_data(self) -> SerializedActionVersion:

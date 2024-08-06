@@ -1,14 +1,16 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, Type, TypeVar, TypeGuard
-import typing
 
-from django.http import HttpRequest
+import typing
+from typing import TYPE_CHECKING, Type, TypeGuard, TypeVar
+
 from django.contrib.auth.models import AnonymousUser
+from django.http import HttpRequest
 
 if typing.TYPE_CHECKING:
     from actions.models import Plan
     from users.models import User
-    from .cache import WatchObjectCache, PlanSpecificCache
+
+    from .cache import PlanSpecificCache, WatchObjectCache
 
 
 UserOrAnon: typing.TypeAlias = 'User | AnonymousUser'
@@ -40,7 +42,7 @@ class WatchAPIRequest(WatchRequest):
 T = TypeVar('T')
 
 
-def mixin_for_base(baseclass: Type[T]) -> Type[T]:
+def mixin_for_base(baseclass: type[T]) -> type[T]:
     """
     Useful function to make mixins with baseclass typehint
 

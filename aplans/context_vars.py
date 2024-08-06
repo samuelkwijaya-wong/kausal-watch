@@ -4,10 +4,10 @@ import typing
 from contextlib import contextmanager
 from contextvars import ContextVar
 
-
 if typing.TYPE_CHECKING:
-    from aplans.types import WatchAdminRequest
     from django.db.models import Model
+
+    from aplans.types import WatchAdminRequest
 
 
 ctx_request: ContextVar[WatchAdminRequest] = ContextVar('request')

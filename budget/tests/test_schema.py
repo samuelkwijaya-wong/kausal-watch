@@ -1,9 +1,16 @@
-import pytest
 from datetime import date
 
+import pytest
+
 from budget.tests.factories import (
-    DataPointFactory, DatasetFactory, DatasetSchemaFactory, DatasetSchemaScopeFactory, DimensionFactory,
-    DimensionCategoryFactory, DimensionScopeFactory, DatasetSchemaDimensionCategoryFactory
+    DataPointFactory,
+    DatasetFactory,
+    DatasetSchemaDimensionCategoryFactory,
+    DatasetSchemaFactory,
+    DatasetSchemaScopeFactory,
+    DimensionCategoryFactory,
+    DimensionFactory,
+    DimensionScopeFactory,
 )
 
 pytestmark = pytest.mark.django_db
@@ -16,7 +23,7 @@ def test_dimension_node(graphql_client_query_data, plan, category):
     DatasetSchemaDimensionCategoryFactory(schema=schema, category=dimension_category)
     dimension = dimension_category.dimension
     data = graphql_client_query_data(
-        '''
+        """
         query($plan: ID!) {
           planCategories(plan: $plan) {
             datasets {
@@ -34,8 +41,8 @@ def test_dimension_node(graphql_client_query_data, plan, category):
             }
           }
         }
-        ''',
-        variables={'plan': plan.identifier}
+        """,
+        variables={'plan': plan.identifier},
     )
     expected = {
         'planCategories': [{
@@ -47,7 +54,7 @@ def test_dimension_node(graphql_client_query_data, plan, category):
                                 '__typename': 'BudgetDimension',
                                 'uuid': str(dimension.uuid),
                                 'name': dimension.name,
-                            }
+                            },
                         },
                     }],
                 },
@@ -63,7 +70,7 @@ def test_dimension_category_node(graphql_client_query_data, plan, category):
     dimension_category = DimensionCategoryFactory()
     DatasetSchemaDimensionCategoryFactory(schema=schema, category=dimension_category)
     data = graphql_client_query_data(
-        '''
+        """
         query($plan: ID!) {
           planCategories(plan: $plan) {
             datasets {
@@ -82,8 +89,8 @@ def test_dimension_category_node(graphql_client_query_data, plan, category):
             }
           }
         }
-        ''',
-        variables={'plan': plan.identifier}
+        """,
+        variables={'plan': plan.identifier},
     )
     expected = {
         'planCategories': [{
@@ -97,7 +104,7 @@ def test_dimension_category_node(graphql_client_query_data, plan, category):
                                 '__typename': 'BudgetDimension',
                             },
                             'label': dimension_category.label,
-                        }
+                        },
                     }],
                 },
             }],
@@ -113,7 +120,7 @@ def test_dimension_scope_node(graphql_client_query_data, plan, category):
     dataset = DatasetFactory(scope=category)
     DatasetSchemaDimensionCategoryFactory(schema=dataset.schema, category=dimension_category)
     data = graphql_client_query_data(
-        '''
+        """
         query($plan: ID!) {
           planCategories(plan: $plan) {
             datasets {
@@ -134,8 +141,8 @@ def test_dimension_scope_node(graphql_client_query_data, plan, category):
             }
           }
         }
-        ''',
-        variables={'plan': plan.identifier}
+        """,
+        variables={'plan': plan.identifier},
     )
     expected = {
         'planCategories': [{
@@ -151,7 +158,7 @@ def test_dimension_scope_node(graphql_client_query_data, plan, category):
                                     },
                                 }],
                             },
-                        }
+                        },
                     }],
                 },
             }],
@@ -164,7 +171,7 @@ def test_data_point_node(graphql_client_query_data, plan, category):
     dataset = DatasetFactory(scope=category)
     data_point = DataPointFactory(dataset=dataset, date=date(2024, 1, 1), value=10.51)
     data = graphql_client_query_data(
-        '''
+        """
         query($plan: ID!) {
           planCategories(plan: $plan) {
             datasets {
@@ -180,8 +187,8 @@ def test_data_point_node(graphql_client_query_data, plan, category):
             }
           }
         }
-        ''',
-        variables={'plan': plan.identifier}
+        """,
+        variables={'plan': plan.identifier},
     )
     expected = {
         'planCategories': [{
@@ -207,7 +214,7 @@ def test_dataset_schema_scope_node(graphql_client_query_data, plan, category):
     dataset = DatasetFactory(scope=category, schema=schema)
     assert schema == dataset.schema
     data = graphql_client_query_data(
-        '''
+        """
         query($plan: ID!) {
           planCategories(plan: $plan) {
             datasets {
@@ -222,8 +229,8 @@ def test_dataset_schema_scope_node(graphql_client_query_data, plan, category):
             }
           }
         }
-        ''',
-        variables={'plan': plan.identifier}
+        """,
+        variables={'plan': plan.identifier},
     )
     expected = {
         'planCategories': [{
@@ -246,7 +253,7 @@ def test_dataset_schema_node(graphql_client_query_data, plan, category):
     dataset = DatasetFactory(scope=category)
     schema = dataset.schema
     data = graphql_client_query_data(
-        '''
+        """
         query($plan: ID!) {
           planCategories(plan: $plan) {
             datasets {
@@ -266,8 +273,8 @@ def test_dataset_schema_node(graphql_client_query_data, plan, category):
             }
           }
         }
-        ''',
-        variables={'plan': plan.identifier}
+        """,
+        variables={'plan': plan.identifier},
     )
     expected = {
         'planCategories': [{
@@ -290,7 +297,7 @@ def test_dataset_schema_node(graphql_client_query_data, plan, category):
 def test_dataset_node(graphql_client_query_data, plan, category):
     dataset = DatasetFactory(scope=category)
     data = graphql_client_query_data(
-        '''
+        """
         query($plan: ID!) {
           planCategories(plan: $plan) {
             datasets {
@@ -305,8 +312,8 @@ def test_dataset_node(graphql_client_query_data, plan, category):
             }
           }
         }
-        ''',
-        variables={'plan': plan.identifier}
+        """,
+        variables={'plan': plan.identifier},
     )
     expected = {
         'planCategories': [{
@@ -341,7 +348,7 @@ def test_integration_for_category(graphql_client_query_data, plan, category):
     data_point3.dimension_categories.set([dim_category1, dim_category2])
 
     data = graphql_client_query_data(
-        '''
+        """
         query($plan: ID!) {
           planCategories(plan: $plan) {
             datasets {
@@ -374,8 +381,8 @@ def test_integration_for_category(graphql_client_query_data, plan, category):
             }
           }
         }
-        ''',
-        variables={'plan': plan.identifier}
+        """,
+        variables={'plan': plan.identifier},
     )
 
     expected = {
@@ -460,9 +467,9 @@ def test_integration_for_category(graphql_client_query_data, plan, category):
                             'id': str(category.id),
                         },
                     },
-                ]
-            }
-        ]
+                ],
+            },
+        ],
     }
     assert data == expected
 
@@ -485,7 +492,7 @@ def test_integration_for_action(graphql_client_query_data, action):
     data_point3.dimension_categories.set([dim_category1, dim_category2])
 
     data = graphql_client_query_data(
-        '''
+        """
         query($actionId: ID!) {
           action(id: $actionId) {
             datasets {
@@ -518,8 +525,8 @@ def test_integration_for_action(graphql_client_query_data, action):
             }
           }
         }
-        ''',
-        variables={'actionId': action.id}
+        """,
+        variables={'actionId': action.id},
     )
 
     expected = {
@@ -603,8 +610,8 @@ def test_integration_for_action(graphql_client_query_data, action):
                         'id': str(action.id),
                     },
                 },
-            ]
-        }
+            ],
+        },
     }
 
     assert data == expected

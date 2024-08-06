@@ -1,43 +1,52 @@
 from __future__ import annotations
+
 import re
+import typing
 
 from dal import autocomplete
 from django.core.exceptions import ValidationError
-from django.utils.translation import gettext_lazy as _
 from django.urls import reverse
+from django.utils.translation import gettext_lazy as _
 from wagtail.admin.panels import (
-    FieldPanel, InlinePanel, ObjectList, TabbedInterface
+    FieldPanel,
+    InlinePanel,
+    ObjectList,
+    TabbedInterface,
 )
 from wagtail.snippets.models import register_snippet
 from wagtail_modeladmin.helpers import PermissionHelper
-from wagtail_modeladmin.options import modeladmin_register, ModelAdminMenuItem
+from wagtail_modeladmin.options import ModelAdminMenuItem, modeladmin_register
 
-from aplans.types import WatchAdminRequest
-
-from . import action_admin  # noqa
-from . import attribute_type_admin  # noqa
-from . import category_admin  # noqa
-from .models import ActionImpact, ActionStatus, Plan, PlanFeatures
 from actions.chooser import CategoryTypeChooser, PlanChooser
 from actions.models.action import ActionSchedule
-from admin_site.wagtail import (
-    ActivePlanEditView, AplansAdminModelForm, AplansModelAdmin,
-    CondensedInlinePanel, insert_model_translation_panels
-)
-from aplans.context_vars import ctx_instance, ctx_request
-from notifications.models import NotificationSettings
-from orgs.models import Organization
-from orgs.chooser import OrganizationChooser
-from pages.models import PlanLink
-from people.chooser import PersonChooser
-from admin_site.wagtail import AplansCreateView
 from admin_site.chooser import ClientChooser
-from admin_site.viewsets import WatchEditView, WatchViewSet
 from admin_site.menu import PlanSpecificSingletonModelMenuItem
 from admin_site.mixins import SuccessUrlEditPageMixin
 from admin_site.permissions import PlanSpecificSingletonModelSuperuserPermissionPolicy
+from admin_site.viewsets import WatchEditView, WatchViewSet
+from admin_site.wagtail import (
+    ActivePlanEditView,
+    AplansAdminModelForm,
+    AplansCreateView,
+    AplansModelAdmin,
+    CondensedInlinePanel,
+    insert_model_translation_panels,
+)
+from aplans.context_vars import ctx_instance, ctx_request
+from aplans.types import WatchAdminRequest
+from notifications.models import NotificationSettings
+from orgs.chooser import OrganizationChooser
+from orgs.models import Organization
+from pages.models import PlanLink
+from people.chooser import PersonChooser
 
-import typing
+from . import (
+    action_admin,  # noqa
+    attribute_type_admin,  # noqa
+    category_admin,  # noqa
+)
+from .models import ActionImpact, ActionStatus, Plan, PlanFeatures
+
 if typing.TYPE_CHECKING:
     from users.models import User
 
@@ -59,7 +68,7 @@ class PlanForm(AplansAdminModelForm):
         if not re.fullmatch('[a-z]+(-[a-z]+)*(-?[0-9]+)?', identifier):
             raise ValidationError(
                 _('For identifiers, use only lowercase letters from the English alphabet with dashes separating words. '
-                  'Numbers are allowed only in the end.')
+                  'Numbers are allowed only in the end.'),
             )
         return identifier
 
@@ -81,7 +90,7 @@ class PlanForm(AplansAdminModelForm):
         if cleaned_data.get('primary_language') in cleaned_data.get('other_languages', []):
             raise ValidationError(_(
                 'A plan\'s other language cannot be the same as its primary language'),
-                                  code='plan-language-duplicate'
+                                  code='plan-language-duplicate',
             )
         return cleaned_data
 
@@ -145,7 +154,7 @@ class PlanAdmin(AplansModelAdmin):
     ]
 
     COLOR_HELP_TEXT = _(
-        'Only set if explicitly required by customer. Use a color key from the UI theme\'s graphColors, for example red070 or grey030.'
+        'Only set if explicitly required by customer. Use a color key from the UI theme\'s graphColors, for example red070 or grey030.',
     )
 
     def get_action_status_panels(self, user: User):
@@ -177,7 +186,7 @@ class PlanAdmin(AplansModelAdmin):
             'identifier',
             'primary_language',
             'short_name',
-            'other_languages'
+            'other_languages',
         }
 
         panels = list(self.panels)
@@ -194,24 +203,24 @@ class PlanAdmin(AplansModelAdmin):
             ]
 
         action_status_panels = insert_model_translation_panels(
-            ActionStatus, self.get_action_status_panels(request.user), request, instance
+            ActionStatus, self.get_action_status_panels(request.user), request, instance,
         )
         action_implementation_phase_panels = insert_model_translation_panels(
-            ActionStatus, self.get_action_implementation_phase_panels(request.user), request, instance
+            ActionStatus, self.get_action_implementation_phase_panels(request.user), request, instance,
         )
         action_impact_panels = insert_model_translation_panels(
-            ActionImpact, self.action_impact_panels, request, instance
+            ActionImpact, self.action_impact_panels, request, instance,
         )
         action_schedule_panels = insert_model_translation_panels(
-            ActionSchedule, self.action_schedule_panels, request, instance
+            ActionSchedule, self.action_schedule_panels, request, instance,
         )
 
         panels = insert_model_translation_panels(
-            Plan, panels, request, instance
+            Plan, panels, request, instance,
         )
         if request.user.is_superuser:
             panels.append(InlinePanel('clients', min_num=1, panels=[
-                FieldPanel('client', widget=ClientChooser)
+                FieldPanel('client', widget=ClientChooser),
                 ], heading=_('Clients')))
             panels.append(FieldPanel('usage_status'))
         if not creating and request.user.is_superuser:
@@ -229,9 +238,9 @@ class PlanAdmin(AplansModelAdmin):
             'links',
             panels=[
                 FieldPanel('url'),
-                FieldPanel('title')
+                FieldPanel('title'),
             ],
-            heading=_('External links')
+            heading=_('External links'),
         )
         links_panel.panels = insert_model_translation_panels(PlanLink, links_panel.panels, request, instance)
         if not creating:
@@ -247,7 +256,7 @@ class PlanAdmin(AplansModelAdmin):
                     CondensedInlinePanel(
                         'action_implementation_phases',
                         panels=action_implementation_phase_panels,
-                        heading=_('Action implementation phases')
+                        heading=_('Action implementation phases'),
                     ),
                     CondensedInlinePanel('action_impacts', panels=action_impact_panels, heading=_('Action impacts')),
                     CondensedInlinePanel('action_schedules', panels=action_schedule_panels, heading=_('Action schedules')),

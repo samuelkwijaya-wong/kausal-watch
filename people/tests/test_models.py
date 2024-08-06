@@ -1,8 +1,10 @@
-import pytest
 from datetime import datetime
+
+import pytest
+
+from orgs.tests.factories import OrganizationFactory
 from people.models import Person
 from people.tests.factories import PersonFactory
-from orgs.tests.factories import OrganizationFactory
 from users.tests.factories import UserFactory
 
 pytestmark = pytest.mark.django_db

@@ -21,7 +21,7 @@ class CategoryPageAttributeTypeBlock(blocks.StructBlock):
     }
 
     graphql_fields = [
-        GraphQLForeignKey('attribute_type', AttributeType, required=True)
+        GraphQLForeignKey('attribute_type', AttributeType, required=True),
     ]
 
 

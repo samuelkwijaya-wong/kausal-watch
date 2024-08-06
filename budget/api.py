@@ -1,13 +1,13 @@
 from modeltrans.conf import get_available_languages
 from modeltrans.translator import get_i18n_field
 from modeltrans.utils import build_localized_fieldname
-from rest_framework import serializers, viewsets, permissions
+from rest_framework import permissions, serializers, viewsets
 from rest_framework.fields import Field
 from rest_framework_nested import routers
 
 from aplans.api_router import router
-from .models import DataPoint, Dataset, DatasetSchema, Dimension, DimensionCategory, DatasetSchemaDimensionCategory
 
+from .models import DataPoint, Dataset, DatasetSchema, DatasetSchemaDimensionCategory, Dimension, DimensionCategory
 
 all_routers = []
 
@@ -24,14 +24,14 @@ class I18nFieldSerializerMixin:
                 # When reading, serialize the field using `<x>_i18n` to display the value in currently active language.
                 current_language_field = build_localized_fieldname(source_field, 'i18n')
                 self.fields[source_field] = serializers.CharField(  # type: ignore[attr-defined]
-                    source=current_language_field, read_only=True
+                    source=current_language_field, read_only=True,
                 )
                 # Require language to be explicit when writing to a translatable field. That is, when writing, we expect
                 # that `<x>_en` is present, for example; `<x>` should not work.
                 for lang in get_available_languages():
                     translated_field = build_localized_fieldname(source_field, lang)
                     self.fields[translated_field] = serializers.CharField(  # type: ignore[attr-defined]
-                        write_only=True, required=False
+                        write_only=True, required=False,
                     )
 
 
@@ -95,7 +95,7 @@ class DataPointViewSet(viewsets.ModelViewSet):
 
 class DatasetSchemaSerializer(I18nFieldSerializerMixin, serializers.ModelSerializer):
     dimension_categories = DatasetSchemaDimensionCategorySerializer(
-        many=True, required=False
+        many=True, required=False,
     )
 
     class Meta:
