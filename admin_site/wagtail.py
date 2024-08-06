@@ -220,7 +220,6 @@ class BoundCustomizableBuiltInFieldPanelMixin:
     request: WatchAdminRequest
 
     def __init__(self, **kwargs):
-        from actions.models.action import Action
         from admin_site.models import BuiltInFieldCustomization
         super().__init__(**kwargs)
         plan = self.request.get_active_admin_plan()
@@ -228,7 +227,7 @@ class BoundCustomizableBuiltInFieldPanelMixin:
         try:
             customization: BuiltInFieldCustomization = BuiltInFieldCustomization.objects.get(
                 plan=plan,
-                content_type=ContentType.objects.get_for_model(Action),
+                content_type=ContentType.objects.get_for_model(self.panel.model),
                 field_name=self.field_name,
             )
         except BuiltInFieldCustomization.DoesNotExist:
