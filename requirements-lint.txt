@@ -15,6 +15,10 @@ charset-normalizer==3.3.2
     # via
     #   -c requirements.txt
     #   requests
+click==8.1.7
+    # via
+    #   -c requirements.txt
+    #   ondivi
 django==5.0.6
     # via
     #   -c requirements.txt
@@ -28,6 +32,10 @@ django-stubs-ext==5.0.4
     # via django-stubs
 djangorestframework-stubs==3.15.0
     # via -r requirements-lint.in
+gitdb==4.0.11
+    # via gitpython
+gitpython==3.1.43
+    # via ondivi
 graphene-stubs==0.16
     # via -r requirements-lint.in
 idna==3.7
@@ -41,14 +49,22 @@ mypy==1.11.1
     #   -r requirements-lint.in
     #   celery-stubs
     #   graphene-stubs
+mypy-baseline==0.7.1
+    # via -r requirements-lint.in
 mypy-extensions==1.0.0
     # via mypy
+ondivi==0.5.0
+    # via -r requirements-lint.in
+parse==1.20.2
+    # via ondivi
 requests==2.31.0
     # via
     #   -c requirements.txt
     #   djangorestframework-stubs
 ruff==0.5.6
     # via -r requirements-lint.in
+smmap==5.0.1
+    # via gitdb
 sqlparse==0.5.0
     # via
     #   -c requirements.txt

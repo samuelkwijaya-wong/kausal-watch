@@ -75,8 +75,8 @@ exclude = [
     '^kausal_common/typings/',
 ]
 check_untyped_defs = true
-sqlite_cache = true
 enable_incomplete_feature = ['NewGenericSyntax']
+cache_fine_grained = true
 
 
 [[tool.mypy.overrides]]
@@ -88,6 +88,11 @@ module = [
     "storages.*",
 ]
 ignore_missing_imports = true
+
+[tool.mypy-baseline]
+baseline_path = ".mypy-baseline.txt"
+preserve_position = true
+
 
 [tool.django-stubs]
 django_settings_module = "aplans.settings"

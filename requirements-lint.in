@@ -7,3 +7,5 @@ graphene-stubs
 djangorestframework-stubs
 celery-stubs
 types-python-dateutil
+ondivi
+mypy-baseline
