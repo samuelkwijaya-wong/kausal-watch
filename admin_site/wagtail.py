@@ -258,41 +258,36 @@ class BuiltInFieldCustomizationAwareEditHandlerMixin:
     It will delete all fields from the edit handler's form that are not visible to the current user.
     """
     def get_form_class(self):
-        form_class = super().get_form_class()
-
-        assert not hasattr(self, 'request') # just to be sure we don't accidentally override something...
-        self.request = ctx_request.get()
-        assert not hasattr(self, 'instance')
-        self.instance = ctx_instance.get()
-        assert not hasattr(self, 'user')
-        self.user = self.request.user
-        assert not hasattr(self, 'plan')
-        self.plan = self.request.get_active_admin_plan()
-
-        # Disable / remove built-in fields that are not editable / visible due to customization
-        self._change_base_fields(form_class, self.model)
-        for formset in form_class.formsets.values():
-            self._change_base_fields(formset.form, formset.model)
-
-        return form_class
-
-    def _change_base_fields(self, form_class: WagtailAdminModelForm, model: type[Model]):
         from admin_site.models import BuiltInFieldCustomization
 
-        customizations_qs = BuiltInFieldCustomization.objects.filter(
-            plan=self.plan,
-            content_type=ContentType.objects.get_for_model(model),
-        )
-        customizations: dict[str, BuiltInFieldCustomization] = {c.field_name: c for c in customizations_qs}
-        for field_name in list(form_class.base_fields.keys()):
-            customization = customizations.get(field_name)
-            if customization:
-                if not customization.is_instance_visible_for(self.user, self.plan, self.instance):
-                    del form_class.base_fields[field_name]
-                    continue
-                if not customization.is_instance_editable_by(self.user, self.plan, self.instance):
-                    form_class.base_fields[field_name].disabled = True
-                    form_class.base_fields[field_name].required = False
+        form_class = super().get_form_class()
+        request = ctx_request.get()
+        instance = ctx_instance.get()
+        user = request.user
+        plan = request.get_active_admin_plan()
+
+        def change_base_fields(form_class: WagtailAdminModelForm, model: type[Model]):
+            customizations_qs = BuiltInFieldCustomization.objects.filter(
+                plan=plan,
+                content_type=ContentType.objects.get_for_model(model),
+            )
+            customizations: dict[str, BuiltInFieldCustomization] = {c.field_name: c for c in customizations_qs}
+            for field_name in list(form_class.base_fields.keys()):
+                customization = customizations.get(field_name)
+                if customization:
+                    if not customization.is_instance_visible_for(user, plan, instance):
+                        del form_class.base_fields[field_name]
+                        continue
+                    if not customization.is_instance_editable_by(user, plan, instance):
+                        form_class.base_fields[field_name].disabled = True
+                        form_class.base_fields[field_name].required = False
+
+        # Disable / remove built-in fields that are not editable / visible due to customization
+        change_base_fields(form_class, self.model)
+        for formset in form_class.formsets.values():
+            change_base_fields(formset.form, formset.model)
+
+        return form_class
 
 
 class ButtonHelperProtocol(Protocol):
