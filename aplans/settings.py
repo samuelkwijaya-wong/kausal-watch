@@ -738,12 +738,6 @@ GOOGLE_MAPS_V3_APIKEY = env('GOOGLE_MAPS_V3_APIKEY')
 COMMON_CATEGORIES_COLLECTION = 'Common Categories'
 
 
-if importlib.util.find_spec('kausal_watch_extensions') is not None:
-    INSTALLED_APPS.append('kausal_watch_extensions')
-    from kausal_watch_extensions import register_settings
-    register_settings(locals())
-
-
 # local_settings.py can be used to override environment-specific settings
 # like database and email that differ between development and production.
 f = os.path.join(BASE_DIR, "local_settings.py")
@@ -876,3 +870,8 @@ WAGTAILADMIN_RICH_TEXT_EDITORS = {
 
 HIJACK_PERMISSION_CHECK = "admin_site.permissions.superusers_only_hijack"
 HIJACK_INSERT_BEFORE = None
+
+if importlib.util.find_spec('kausal_watch_extensions') is not None:
+    INSTALLED_APPS.append('kausal_watch_extensions')
+    from kausal_watch_extensions import register_settings
+    register_settings(locals())
