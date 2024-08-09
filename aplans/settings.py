@@ -76,7 +76,6 @@ env = environ.FileAwareEnv(
     REQUEST_LOG_METHODS=(list, ['POST', 'PUT', 'PATCH', 'DELETE']),
     REQUEST_LOG_IGNORE_PATHS=(list, ['/v1/graphql/']),
     GITHUB_APP_ID=(str, ''),
-    GITHUB_APP_PRIVATE_KEY_FILE=(str, ''),
     GITHUB_APP_PRIVATE_KEY=(str, ''),
     DEPLOY_ALLOWED_CNAMES=(list, []),
     DEPLOY_TASK_GITOPS_REPO=(str, ''),
