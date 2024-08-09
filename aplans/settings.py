@@ -14,6 +14,7 @@ from corsheaders.defaults import default_headers as default_cors_headers
 from django.utils.translation import gettext_lazy as _
 from environ.environ import ImproperlyConfigured
 
+from kausal_common.deployment import set_secret_file_vars
 from kausal_common.sentry.init import init_sentry
 from kausal_common.storage import storage_settings_from_s3_url
 
@@ -79,6 +80,7 @@ env = environ.FileAwareEnv(
     GITHUB_APP_PRIVATE_KEY=(str, ''),
     DEPLOY_ALLOWED_CNAMES=(list, []),
     DEPLOY_TASK_GITOPS_REPO=(str, ''),
+    MOUNTED_SECRET_PATHS=(list, []),
 )
 
 BASE_DIR = root()
@@ -89,6 +91,11 @@ else:
     dotenv_path = Path(BASE_DIR) / Path('.env')
     if dotenv_path.exists():
         environ.Env.read_env(dotenv_path)
+
+# Read all files in the directories given in MOUNTED_SECRET_PATHS whose names look like environment variables and use
+# the contents of the files for the corresponding variables
+for directory in env('MOUNTED_SECRET_PATHS'):
+    set_secret_file_vars(env, directory)
 
 DEBUG = env('DEBUG')
 DEPLOYMENT_TYPE = env('DEPLOYMENT_TYPE')
