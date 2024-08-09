@@ -131,14 +131,7 @@ WAGTAILADMIN_COMMENTS_ENABLED = True
 
 # Information needed to authentiacte as a GitHub App
 GITHUB_APP_ID = env('GITHUB_APP_ID')
-
-github_private_key_file_path = env('GITHUB_APP_PRIVATE_KEY_FILE')
-if github_private_key_file_path:
-    with open(github_private_key_file_path, 'r') as key_file:
-        GITHUB_APP_PRIVATE_KEY = key_file.read()
-else:
-    GITHUB_APP_PRIVATE_KEY = env('GITHUB_APP_PRIVATE_KEY')
-
+GITHUB_APP_PRIVATE_KEY = env('GITHUB_APP_PRIVATE_KEY')
 
 DEPLOY_ALLOWED_CNAMES = env('DEPLOY_ALLOWED_CNAMES')
 DEPLOY_TASK_GITOPS_REPO = env('DEPLOY_TASK_GITOPS_REPO')
