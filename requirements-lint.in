@@ -9,3 +9,4 @@ celery-stubs
 types-python-dateutil
 ondivi
 mypy-baseline
+types-psutil

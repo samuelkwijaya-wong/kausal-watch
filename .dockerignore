@@ -2,7 +2,7 @@
 **/.mypy_cache/
 /static/
 /.direnv/
-/.env*
+/.*env*
 /.git/
 /.github/
 /.pytest_cache/
