@@ -1,14 +1,16 @@
 import graphene
-import graphene_django_optimizer as gql_optimizer
 from django.forms import ModelForm
 from graphql.error import GraphQLError
 from wagtail.rich_text import RichText
 
-from actions.models import Action
-from actions.schema import ScenarioNode
+import graphene_django_optimizer as gql_optimizer
+
 from aplans.graphql_helpers import UpdateModelInstanceMutation
 from aplans.graphql_types import DjangoNode, get_plan_from_context, order_queryset, register_django_node
 from aplans.utils import RestrictedVisibilityModel, public_fields
+
+from actions.models import Action
+from actions.schema import ScenarioNode
 from indicators.models import (
     ActionIndicator,
     CommonIndicator,
@@ -317,7 +319,7 @@ class Query:
         if plan_obj is None:
             return None
 
-        qs = Indicator.objects.visible_for_public()
+        qs = Indicator.objects.get_queryset().visible_for_public()
         qs = qs.filter(levels__plan=plan_obj).distinct()
 
         if has_data is not None:
@@ -340,7 +342,7 @@ class Query:
         if not identifier and not obj_id:
             raise GraphQLError("You must supply either 'id' or 'identifier'")
         user = info.context.user
-        qs = Indicator.objects.all()
+        qs = Indicator.objects.get_queryset()
 
         if obj_id:
             try:

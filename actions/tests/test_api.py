@@ -3,12 +3,14 @@ from __future__ import annotations
 from itertools import permutations
 from typing import Iterable, List
 
-import pytest
 from django.urls import reverse
+
+import pytest
+
+from aplans.tests.tree import Tree, parse_tree_string
 
 from actions.api import ActionSerializer, OrganizationSerializer
 from actions.tests.factories import ActionFactory
-from aplans.tests.tree import Tree, parse_tree_string
 from orgs.models import Organization
 from orgs.tests.factories import OrganizationFactory
 

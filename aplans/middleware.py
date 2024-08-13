@@ -1,21 +1,23 @@
 import re
 
-import sentry_sdk
 from django.conf import settings
 from django.db import connection, transaction
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.deprecation import MiddlewareMixin
 from django.utils.translation import activate, gettext_lazy as _
-from loguru import logger
-from social_core.exceptions import SocialAuthBaseException
 from wagtail.admin import messages
 from wagtail.users.models import UserProfile
 
-from actions.models import Plan
+import sentry_sdk
+from loguru import logger
+from social_core.exceptions import SocialAuthBaseException
+
 from aplans.cache import WatchObjectCache
 from aplans.context_vars import set_request
 from aplans.types import WatchAdminRequest, WatchRequest
+
+from actions.models import Plan
 
 
 class SocialAuthExceptionMiddleware(MiddlewareMixin):
@@ -104,7 +106,7 @@ class PrintQueryCountMiddleware:
     def __call__(self, request):
         response = self.get_response(request)
 
-        sqltime = 0
+        sqltime = 0.0
         for query in connection.queries:
             sqltime += float(query["time"])
         sqltime = round(1000 * sqltime)

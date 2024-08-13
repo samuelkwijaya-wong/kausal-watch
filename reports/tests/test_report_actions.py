@@ -1,8 +1,9 @@
 import typing
 
-import pytest
 import reversion
 from reversion.models import Revision, Version
+
+import pytest
 
 from actions.models import Action
 from reports.models import ActionSnapshot, Report, SerializedActionVersion

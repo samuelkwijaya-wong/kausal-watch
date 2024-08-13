@@ -8,10 +8,11 @@ import sys
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
+from django.utils.translation import gettext_lazy as _
+
 import environ
 from celery.schedules import crontab
 from corsheaders.defaults import default_headers as default_cors_headers
-from django.utils.translation import gettext_lazy as _
 from environ.environ import ImproperlyConfigured
 
 from kausal_common.deployment import set_secret_file_vars
@@ -148,6 +149,7 @@ SITE_ID = 1
 # Application definition
 
 INSTALLED_APPS = [
+    'kausal_common',
     'admin_site.apps.AdminSiteConfig',
     'admin_site.apps.AdminSiteStatic',
     'dal',
@@ -273,11 +275,16 @@ STORAGES: dict[str, dict[str, Any]] = {
     },
 }
 
-media_storage_url: ParseResult = env.url('S3_MEDIA_STORAGE_URL')
-if media_storage_url.scheme:
-    if media_storage_url.scheme != 's3':
-        raise ImproperlyConfigured('S3_MEDIA_STORAGE_URL only supports s3 scheme')
-    STORAGES['default'] = storage_settings_from_s3_url(media_storage_url, DEPLOYMENT_TYPE)
+# If we're running under pytest, use InMemoryStorage. Otherwise, we check
+# if the S3 backend is configured and use that instead.
+if 'pytest' in sys.modules:
+    STORAGES['default']['BACKEND'] = 'django.core.files.storage.InMemoryStorage'
+else:
+    media_storage_url: ParseResult = env.url('S3_MEDIA_STORAGE_URL')
+    if media_storage_url.scheme:
+        if media_storage_url.scheme != 's3':
+            raise ImproperlyConfigured('S3_MEDIA_STORAGE_URL only supports s3 scheme')
+        STORAGES['default'] = storage_settings_from_s3_url(media_storage_url, DEPLOYMENT_TYPE)
 
 STATICFILES_FINDERS = [
     'django.contrib.staticfiles.finders.FileSystemFinder',
@@ -753,7 +760,7 @@ if not locals().get('SECRET_KEY', ''):
     try:
         with open(secret_file) as f:
             SECRET_KEY = f.read().strip()
-    except IOError:
+    except OSError:
         import random
         system_random = random.SystemRandom()
         try:
@@ -763,11 +770,11 @@ if not locals().get('SECRET_KEY', ''):
             os.chmod(secret_file, 0o0600)
             secret.write(SECRET_KEY)
             secret.close()
-        except IOError:
+        except OSError:
             Exception('Please create a %s file with random characters to generate your secret key!' % secret_file)
 
 
-if DEBUG:
+if DEBUG:  # noqa: SIM102
     if len(sys.argv) > 1 and 'runserver' in sys.argv[1]:
         try:
             from aplans.watchfiles_reloader import replace_reloader
@@ -775,8 +782,6 @@ if DEBUG:
         except ImportError:
             pass
 
-    from rich.traceback import install
-    install()
 
 LOG_SQL_QUERIES = env('LOG_SQL_QUERIES') and DEBUG
 LOG_GRAPHQL_QUERIES = env('LOG_GRAPHQL_QUERIES') and DEBUG

@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 import functools
-from typing import ClassVar, Optional, Sequence, Type
+from typing import TYPE_CHECKING, ClassVar, Sequence
 
 import graphene
 from django.contrib.contenttypes.models import ContentType
@@ -9,6 +11,15 @@ from django.db import models
 from django.utils import translation
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
+from modelcluster.fields import ParentalKey
+from modelcluster.models import ClusterableModel
+from modeltrans.fields import TranslationField
+from wagtail import blocks
+from wagtail.admin.panels import FieldPanel, InlinePanel, MultiFieldPanel, Panel
+from wagtail.fields import RichTextField, StreamField
+from wagtail.models import Page, PagePermissionTester, Site
+from wagtail.search import index
+
 from grapple.models import (
     GraphQLBoolean,
     GraphQLField,
@@ -18,14 +29,9 @@ from grapple.models import (
     GraphQLStreamfield,
     GraphQLString,
 )
-from modelcluster.fields import ParentalKey
-from modelcluster.models import ClusterableModel
-from modeltrans.fields import TranslationField
-from wagtail import blocks
-from wagtail.admin.panels import FieldPanel, InlinePanel, MultiFieldPanel, Panel
-from wagtail.fields import RichTextField, StreamField
-from wagtail.models import Page, PagePermissionTester, Site
-from wagtail.search import index
+
+from aplans.extensions import get_body_blocks
+from aplans.utils import DateFormatField, DateFormatOptions, OrderedModel
 
 from actions.blocks import (
     ActionAsideContentBlock,
@@ -48,8 +54,6 @@ from actions.blocks.category_page_layout import (
 from actions.chooser import CategoryChooser, CategoryLevelChooser, CategoryTypeChooser
 from actions.models.category import Category, CategoryType
 from actions.models.plan import Plan
-from aplans.extensions import get_body_blocks
-from aplans.utils import DateFormatField, DateFormatOptions, OrderedModel
 from indicators.blocks import (
     IndicatorGroupBlock,
     IndicatorHighlightsBlock,
@@ -74,16 +78,29 @@ from .blocks import (
 PAGE_TRANSLATED_FIELDS = ['title', 'slug', 'url_path']
 
 
+if TYPE_CHECKING:
+    from kausal_common.models.types import FK
+
+    from images.models import AplansImage
+
+
 class AplansPage(Page):
     i18n = models.JSONField(blank=True, null=True)
-    show_in_footer = models.BooleanField(default=False, verbose_name=_('show in footer'),
-                                         help_text=_('Should the page be shown in the footer?'))
-    show_in_additional_links = models.BooleanField(default=False, verbose_name=_('show in additional links'),
-                                                   help_text=_('Should the page be shown in the additional links?'))
-    link_in_all_child_plans = models.BooleanField(default=False, verbose_name=_('show link in child plans'),
-                                                help_text=_("Should this additional link be displayed in child plans?"))
+    show_in_footer: models.BooleanField = models.BooleanField(
+        default=False, verbose_name=_('show in footer'), help_text=_('Should the page be shown in the footer?'),
+    )
+    show_in_additional_links: models.BooleanField = models.BooleanField(
+        default=False,
+        verbose_name=_('show in additional links'),
+        help_text=_('Should the page be shown in the additional links?'),
+    )
+    link_in_all_child_plans: models.BooleanField = models.BooleanField(
+        default=False,
+        verbose_name=_('show link in child plans'),
+        help_text=_('Should this additional link be displayed in child plans?'),
+    )
 
-    children_use_secondary_navigation = models.BooleanField(
+    children_use_secondary_navigation: models.BooleanField = models.BooleanField(
         default=False, verbose_name=_('children use secondary navigation'),
         help_text=_('Should subpages of this page use secondary navigation?'),
     )
@@ -215,15 +232,17 @@ class EmptyPage(AplansPage):
 
 
 class StaticPage(AplansPage):
-    header_image = models.ForeignKey(
+    header_image: FK[AplansImage | None] = models.ForeignKey(  # pyright: ignore
         'images.AplansImage', null=True, blank=True, on_delete=models.SET_NULL, related_name='+',
         verbose_name=_('Header image'), help_text=_('Image to use in the header for this page'),
     )
-    lead_paragraph = models.TextField(
-        null=True, blank=True,
+    lead_paragraph = models.TextField[str | None, str | None](  # pyright: ignore
+        null=True,
+        blank=True,
         verbose_name=_('Lead paragraph'),
         help_text=_('Lead paragraph right under the heading'),
     )
+
     body = StreamField([
         ('paragraph', blocks.RichTextBlock(label=_('Paragraph'))),
         ('qa_section', QuestionAnswerBlock(icon='help')),
@@ -301,7 +320,7 @@ class CategoryPagePermissionTester(CategoryTypeRelatedPagePermissionTester):
 
 
 class CategoryTypePage(StaticPage):
-    category_type = models.ForeignKey(
+    category_type: FK[CategoryType] = models.ForeignKey(  # pyright: ignore
         CategoryType, on_delete=models.CASCADE, null=False, verbose_name=_('Category type'),
         related_name='category_type_pages',
     )
@@ -477,7 +496,7 @@ class CategoryPage(AplansPage):
 
 class FixedSlugPage(AplansPage):
     """
-    Page with fixed slug
+    Page with fixed slug.
 
     Define `force_slug` in the body of subclasses. You may also want to set is_creatable to False there to allow only
     programmatic creation.

@@ -5,9 +5,11 @@ from django.template.loader import render_to_string
 from django.utils.translation import override
 from wagtail.admin.mail import EmailNotificationMixin, Notifier
 from wagtail.models import TaskState
+
 from wagtail_modeladmin.helpers import ModelAdminURLFinder
 
 from aplans.email_sender import EmailSender
+
 from users.models import User
 
 from .action_admin import ActionAdmin
@@ -63,7 +65,7 @@ class BaseActionModeratorApprovalTaskStateEmailNotifier(EmailNotificationMixin, 
         return User.objects.filter(id__in=moderator_ids)
 
     def send_emails(self, template_set, context, recipients, **kwargs):
-        """ Overridden just to modify the From: and Reply-To: headers """
+        """Overridden just to modify the From: and Reply-To: headers."""
         plan = context.get('plan', None)
         email_sender = EmailSender(plan=plan)
         subject = render_to_string(

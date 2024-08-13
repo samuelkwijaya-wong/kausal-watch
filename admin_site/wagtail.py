@@ -34,14 +34,16 @@ from wagtail.admin.panels import (
     ObjectList,
     TabbedInterface,
 )
+
 from wagtail_modeladmin.helpers import ButtonHelper, PermissionHelper
 from wagtail_modeladmin.options import ModelAdmin
 from wagtail_modeladmin.views import CreateView, EditView, IndexView
 from wagtailautocomplete.edit_handlers import AutocompletePanel as WagtailAutocompletePanel
 
-from actions.models.plan import Plan
 from aplans.context_vars import ctx_instance, ctx_request, set_instance
 from aplans.utils import InstancesVisibleForMixin, PlanDefaultsModel, PlanRelatedModel, get_language_from_default_language_field
+
+from actions.models.plan import Plan
 from budget.models import DatasetSchema
 from pages.models import ActionListPage
 
@@ -51,6 +53,7 @@ if TYPE_CHECKING:
     from django.db.models import Model
 
     from aplans.types import WatchAdminRequest
+
     from users.models import User
 
 
@@ -419,7 +422,7 @@ class PersistFiltersEditingModelAdminMixin:
     def get_success_url(self):
         if hasattr(super(), 'continue_editing_active') and super().continue_editing_active():
             return super().get_success_url()
-        model = getattr(self, 'model_name')
+        model = self.model_name
         url = super().get_success_url()
         if model is None:
             return url
@@ -435,7 +438,7 @@ class PersistFiltersEditingModelAdminMixin:
 # TODO: Reimplemented in admin_site/mixins.py to make this work without
 # ModelAdmin. Use that when implementing new classes or migrating away from
 # ModelAdmin. Remove this class when ModelAdmin migration is finished.
-class ContinueEditingModelAdminMixin():
+class ContinueEditingModelAdminMixin:
     def continue_editing_active(self):
         return '_continue' in self.request.POST
 

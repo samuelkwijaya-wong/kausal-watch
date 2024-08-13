@@ -1,10 +1,9 @@
 from __future__ import annotations
 
 import typing
-from typing import Any, ClassVar, Self
+from typing import TYPE_CHECKING, Any, ClassVar, Self
 
 import reversion
-from autoslug.fields import AutoSlugField
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
@@ -12,10 +11,15 @@ from django.db import models
 from django.db.models import Q
 from django.db.models.constraints import Deferrable
 from django.utils.translation import gettext_lazy as _
-from modelcluster.models import ClusterableModel, ParentalKey, ParentalManyToManyField
+from modelcluster.fields import ParentalKey, ParentalManyToManyField
+from modelcluster.models import ClusterableModel
 from modeltrans.fields import TranslationField
-from modeltrans.manager import MultilingualManager
+from modeltrans.manager import MultilingualManager, MultilingualQuerySet
 from wagtail.fields import RichTextField
+
+from autoslug.fields import AutoSlugField
+
+from kausal_common.models.types import MLModelManager
 
 from aplans.utils import (
     ChoiceArrayField,
@@ -26,19 +30,23 @@ from aplans.utils import (
     ReferenceIndexedModelMixin,
     get_supported_languages,
 )
+
 from indicators.models import Unit
 
 if typing.TYPE_CHECKING:
-    from django.db.models.manager import RelatedManager
+    from modelcluster.fields import PK
+
+    from kausal_common.models.types import FK, RevMany
+
+    from aplans.types import UserOrAnon
 
     from actions.attributes import AttributeType as AttributeTypeWrapper, DraftAttributes
-    from aplans.types import UserOrAnon
 
     from .category import CategoryType
     from .plan import Plan
 
 
-class AttributeTypeQuerySet(models.QuerySet['AttributeType']):
+class AttributeTypeQuerySet(MultilingualQuerySet['AttributeType']):
     def for_categories(self, plan: Plan):
         from .category import CategoryType
 
@@ -55,10 +63,20 @@ class AttributeTypeQuerySet(models.QuerySet['AttributeType']):
         return self.filter(f)
 
 
+if TYPE_CHECKING:
+    class AttributeTypeManager(MLModelManager['AttributeType', AttributeTypeQuerySet]): ...
+else:
+    AttributeTypeManager = MLModelManager.from_queryset(AttributeTypeQuerySet)
+
+
 @reversion.register(follow=['choice_options'])
-class AttributeType(  # type: ignore[django-manager-missing]
-        InstancesEditableByMixin, InstancesVisibleForMixin, ReferenceIndexedModelMixin, ClusterableModel, OrderedModel,
-        ModelWithPrimaryLanguage,
+class AttributeType(
+    InstancesEditableByMixin,
+    InstancesVisibleForMixin,
+    ReferenceIndexedModelMixin,
+    ClusterableModel,
+    OrderedModel,
+    ModelWithPrimaryLanguage,
 ):
     class AttributeFormat(models.TextChoices):
         ORDERED_CHOICE = 'ordered_choice', _('Ordered choice')
@@ -79,9 +97,9 @@ class AttributeType(  # type: ignore[django-manager-missing]
     # TODO: Enforce Plan or CategoryType
     scope_content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, related_name='+')
     scope_id = models.PositiveIntegerField()
-    scope: models.ForeignKey[Plan, Plan] | models.ForeignKey[CategoryType, CategoryType] = GenericForeignKey(
+    scope: FK[Plan] | FK[CategoryType] = GenericForeignKey(
         'scope_content_type', 'scope_id',
-    ) #type: ignore
+    )  # type: ignore
 
     name = models.CharField(max_length=100, verbose_name=_('name'))
     name_i18n: str
@@ -113,14 +131,13 @@ class AttributeType(  # type: ignore[django-manager-missing]
     )
     max_length = models.PositiveIntegerField(blank=True, null=True, verbose_name=_('character limit for text fields'))
     show_in_reporting_tab = models.BooleanField(default=False, verbose_name=_('show in reporting tab'))
-    choice_attributes: models.manager.RelatedManager[AttributeChoice]
 
     # Intentionally overrides ModelWithPrimaryLanguage.primary_language
     # leaving out the default keyword argument
     primary_language = models.CharField(max_length=8, choices=get_supported_languages())
-    other_languages = ChoiceArrayField(
-        models.CharField(max_length=8, choices=get_supported_languages()),
-        default=list, null=True, blank=True,
+    other_languages = ChoiceArrayField[list[str]](
+        models.CharField[str, str](max_length=8, choices=get_supported_languages()),
+        default=list, null=False, blank=True,
     )
 
     i18n = TranslationField(
@@ -130,7 +147,6 @@ class AttributeType(  # type: ignore[django-manager-missing]
         # it isn't at the moment because we hopefully will never change the primary language of a plan.
         default_language_field='primary_language_lowercase',
     )
-    name_i18n: str
     help_text_i18n: str
 
     public_fields: ClassVar = [
@@ -138,10 +154,11 @@ class AttributeType(  # type: ignore[django-manager-missing]
         'has_zero_option', 'choice_options',
     ]
 
-    objects: models.Manager[AttributeType] = models.Manager.from_queryset(AttributeTypeQuerySet)()
+    objects: AttributeTypeManager = AttributeTypeManager()
 
     id: int
-    choice_options: RelatedManager[AttributeTypeChoiceOption]
+    choice_options: RevMany[AttributeTypeChoiceOption]
+    choice_attributes: RevMany[AttributeChoice]
 
     class Meta:
         unique_together = (('object_content_type', 'scope_content_type', 'scope_id', 'identifier'),)
@@ -185,17 +202,18 @@ class AttributeType(  # type: ignore[django-manager-missing]
         return self.name_i18n
 
 
-class Attribute(models.Model):
-    class Meta:
-        abstract = True
-
+class Attribute[ATType: ParentalKey[AttributeType, AttributeType]](models.Model):
     # Must define a ParentalKey `type` in subclasses
-    type: AttributeType
+    type: ATType
     # `content_object` must fit `type`
     # TODO: Enforce this
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, related_name='+')
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey()
+    content_type_id: int
+
+    class Meta:
+        abstract = True
 
     def is_visible_for_user(self, user: UserOrAnon, plan: Plan) -> bool:
         from actions.models.action import Action
@@ -204,12 +222,12 @@ class Attribute(models.Model):
             action = self.content_object
         else:
             action = None
-        return self.type.is_instance_visible_for(user, plan, action)
+        return self.type.is_instance_visible_for(user, plan, action)  # type: ignore[attr-defined]
 
 
 @reversion.register()
-class AttributeTypeChoiceOption(ClusterableModel, OrderedModel):  # type: ignore[django-manager-missing]
-    type = ParentalKey(AttributeType, on_delete=models.CASCADE, related_name='choice_options')
+class AttributeTypeChoiceOption(ClusterableModel, OrderedModel):
+    type: PK[AttributeType] = ParentalKey(AttributeType, on_delete=models.CASCADE, related_name='choice_options')
     name = models.CharField(max_length=100, verbose_name=_('name'))
     identifier = AutoSlugField(
         always_update=True,
@@ -235,7 +253,7 @@ class AttributeTypeChoiceOption(ClusterableModel, OrderedModel):  # type: ignore
             models.UniqueConstraint(
                 fields=['type', 'order'],
                 name='unique_order_per_type',
-                deferrable=Deferrable.DEFERRED,
+                deferrable=Deferrable.DEFERRED,  # pyright: ignore
             ),
         ]
         ordering = ('type', 'order')
@@ -252,7 +270,7 @@ class AttributeTypeChoiceOption(ClusterableModel, OrderedModel):  # type: ignore
 
 @reversion.register(follow=['categories'])
 class AttributeCategoryChoice(Attribute, ClusterableModel):
-    type = ParentalKey(
+    type: PK[AttributeType] = ParentalKey(
         AttributeType, on_delete=models.CASCADE, related_name='category_choice_attributes',
     )
     categories = ParentalManyToManyField('actions.Category', related_name='+')
@@ -268,7 +286,7 @@ class AttributeCategoryChoice(Attribute, ClusterableModel):
 
 @reversion.register(follow=['choice'])
 class AttributeChoice(Attribute):
-    type = ParentalKey(AttributeType, on_delete=models.CASCADE, related_name='choice_attributes')
+    type: PK[AttributeType] = ParentalKey(AttributeType, on_delete=models.CASCADE, related_name='choice_attributes')
     choice = models.ForeignKey(
         AttributeTypeChoiceOption, on_delete=models.CASCADE, related_name='choice_attributes',
     )
@@ -282,7 +300,7 @@ class AttributeChoice(Attribute):
 
 @reversion.register(follow=['choice'])
 class AttributeChoiceWithText(Attribute):
-    type = ParentalKey(
+    type: PK[AttributeType] = ParentalKey(
         AttributeType, on_delete=models.CASCADE, related_name='choice_with_text_attributes',
     )
     choice = models.ForeignKey(
@@ -305,7 +323,7 @@ class AttributeChoiceWithText(Attribute):
 
 @reversion.register()
 class AttributeText(Attribute):
-    type = ParentalKey(
+    type: PK[AttributeType] = ParentalKey(
         AttributeType,
         on_delete=models.CASCADE,
         related_name='text_attributes',
@@ -329,7 +347,7 @@ class AttributeText(Attribute):
 
 @reversion.register()
 class AttributeRichText(Attribute):
-    type = ParentalKey(
+    type: PK[AttributeType] = ParentalKey(
         AttributeType,
         on_delete=models.CASCADE,
         related_name='rich_text_attributes',
@@ -353,7 +371,7 @@ class AttributeRichText(Attribute):
 
 @reversion.register()
 class AttributeNumericValue(Attribute):
-    type = ParentalKey(AttributeType, on_delete=models.CASCADE, related_name='numeric_value_attributes')
+    type: PK[AttributeType] = ParentalKey(AttributeType, on_delete=models.CASCADE, related_name='numeric_value_attributes')
     value = models.FloatField()
 
     public_fields: ClassVar = ['id', 'type', 'value']
@@ -365,7 +383,7 @@ class AttributeNumericValue(Attribute):
         return str(self.value)
 
 
-class ModelWithAttributes(models.Model):
+class ModelWithAttributes(ClusterableModel):
     """
     Fields for models with attributes.
 
@@ -373,6 +391,9 @@ class ModelWithAttributes(models.Model):
     don't get along well with the `abc` package. (Decorating with `@abstractmethod` only has an effect if deriving from
     `ABC`, which conflicts with the metaclass of `Model`.).
     """
+
+    class Meta:
+        abstract = True
 
     choice_attributes = GenericRelation(to='actions.AttributeChoice')
     choice_with_text_attributes = GenericRelation(to='actions.AttributeChoiceWithText')
@@ -408,7 +429,7 @@ class ModelWithAttributes(models.Model):
         raise NotImplementedError("Implement in subclass")
 
     @classmethod
-    def from_serializable_data(cls, data, check_fks=True, strict_fks=False):
+    def from_serializable_data(cls, data, check_fks=True, strict_fks=False) -> Self:
         """Called by Wagtail when editing a draft, and by the GraphQL implementation when resolving attributes."""
         from actions.attributes import DraftAttributes
         serialized_attributes = data.pop('attributes', {})
@@ -416,15 +437,15 @@ class ModelWithAttributes(models.Model):
         result.draft_attributes = DraftAttributes.from_revision_content(serialized_attributes, cache=getattr(data, 'cache', None))
         return result
 
-    def _value_is_empty(self, value: dict[str, Any]):
-        return len([v for v in value.values() if v is not None or v == '' or v == []]) == 0
+    def _value_is_empty(self, value: dict[str, Any]) -> bool:
+        return len([v for v in value.values() if v is not None or v in ('', [])]) == 0
 
     def set_attribute(
-            self,
-            attribute_type: AttributeTypeWrapper,
-            existing_attribute: Attribute,
-            value_parameters: dict[str, Any],
-            attribute_value_input: Any,
+        self,
+        attribute_type: AttributeTypeWrapper,
+        existing_attribute: Attribute,
+        value_parameters: dict[str, Any],
+        attribute_value_input: Any,  # noqa: ANN401
     ):
         if existing_attribute is None:
             if self._value_is_empty(value_parameters):
@@ -451,6 +472,3 @@ class ModelWithAttributes(models.Model):
         if category_ids == []:
             return ('delete', existing_attribute)
         return ('set_related', existing_attribute, 'categories', category_ids)
-
-    class Meta:
-        abstract = True

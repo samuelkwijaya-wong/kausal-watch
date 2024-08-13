@@ -1,5 +1,6 @@
 from django.utils.translation import gettext_lazy as _
 from wagtail.admin.panels import FieldPanel, InlinePanel
+
 from wagtail_modeladmin.options import modeladmin_register
 
 from admin_site.wagtail import AplansModelAdmin

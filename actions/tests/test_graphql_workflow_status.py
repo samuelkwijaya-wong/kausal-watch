@@ -1,7 +1,8 @@
 import pytest
 
-from actions.attributes import DraftAttributes
 from aplans.graphql_errors import ErrorCode
+
+from actions.attributes import DraftAttributes
 
 pytestmark = pytest.mark.django_db
 

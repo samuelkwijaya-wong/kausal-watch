@@ -8,6 +8,8 @@ from django.contrib.contenttypes.models import ContentType
 from django.db.models import Q
 from wagtail.models import Revision
 
+from aplans.graphql_types import WorkflowStateEnum
+
 from actions.models import (
     Action,
     ActionImplementationPhase,
@@ -17,12 +19,11 @@ from actions.models import (
     CategoryType,
     Plan,
 )
-from aplans.graphql_types import WorkflowStateEnum
+from actions.models.action import ActionQuerySet
 from budget.models import Dataset
 from reports.models import Report
 
 if typing.TYPE_CHECKING:
-    from actions.models.action import ActionQuerySet
     from orgs.models import Organization, OrganizationQuerySet
     from people.models import Person, PersonQuerySet
 
@@ -180,7 +181,7 @@ class WatchObjectCache:
 class OrganizationActionCountCache:
     plans: list[Plan]
     data: dict[int, int]
-    action_qs: ActionQuerySet
+    action_qs: 'ActionQuerySet'
     organization_responsible_party_queryset_filter: Q
 
     def __init__(self, action_qs: ActionQuerySet) -> None:

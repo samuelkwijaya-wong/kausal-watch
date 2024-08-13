@@ -355,11 +355,9 @@ class CreateEditViewOptionalFeaturesMixin:
     def restart_workflow_action(self):
         self.workflow_state.cancel(user=self.request.user)
         self.workflow.start(self.object, self.request.user)
-        return None
 
     def cancel_workflow_action(self):
         self.workflow_state.cancel(user=self.request.user)
-        return None
 
     def workflow_action_action(self):
         extra_workflow_data_json = self.request.POST.get(
@@ -372,7 +370,6 @@ class CreateEditViewOptionalFeaturesMixin:
             self.workflow_action,
             **extra_workflow_data,
         )
-        return None
 
     def run_action_method(self):
         action_method = getattr(self, self.action.replace("-", "_") + "_action", None)
@@ -570,7 +567,7 @@ class BeforeAfterHookMixin(HookResponseMixin):
         hook response will be returned as the view response, skipping the default
         response.
         """
-        return None
+        return
 
     def run_after_hook(self):
         """
@@ -582,7 +579,7 @@ class BeforeAfterHookMixin(HookResponseMixin):
         response immediately after the operation finishes, skipping the default
         response.
         """
-        return None
+        return
 
     def dispatch(self, *args, **kwargs):
         hooks_result = self.run_before_hook()

@@ -1,9 +1,10 @@
 from django import forms
 from graphene_django.forms.mutation import DjangoModelFormMutation
 
-from actions.models import Plan
 from aplans.graphql_types import DjangoObjectType
 from aplans.utils import public_fields
+
+from actions.models import Plan
 
 from .models import UserFeedback
 

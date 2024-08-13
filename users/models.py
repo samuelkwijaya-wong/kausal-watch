@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import typing
 from enum import StrEnum, auto
-from typing import ClassVar, Self
 
 from django.apps import apps
 from django.core.exceptions import PermissionDenied
@@ -18,11 +17,11 @@ from users.managers import UserManager
 from .base import AbstractUser
 
 if typing.TYPE_CHECKING:
-    from django.db.models.fields.related import ReverseOneToOneDescriptor
     from rest_framework.authtoken.models import Token
 
-    from actions.models import Action, ActionContactPerson, ActionResponsibleParty, ModelWithRole, Plan
     from aplans.utils import InstancesEditableByMixin, InstancesVisibleForMixin
+
+    from actions.models import Action, ActionContactPerson, ActionResponsibleParty, ModelWithRole, Plan
     from people.models import Person
 
 
@@ -31,9 +30,7 @@ class ModerationAction(StrEnum):
     APPROVE = auto()
 
 
-class User(AbstractUser):  # type: ignore[django-manager-missing]
-    objects: ClassVar[UserManager] = UserManager()  # type: ignore[assignment]
-
+class User(AbstractUser):
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
 
@@ -51,14 +48,17 @@ class User(AbstractUser):  # type: ignore[django-manager-missing]
         null=True,
     )
 
+    objects = UserManager()  # type: ignore
+
     auth_token: Token
     person: Person
-    _corresponding_person: Person
+    _corresponding_person: Person | None
     _active_admin_plan: Plan
     _adminable_plans: models.QuerySet[Plan]
     _instance_visibility_perms: set[InstancesVisibleForMixin.VisibleFor]
     _instance_editable_perms: set[InstancesEditableByMixin.EditableBy]
     _org_admin_for_actions: models.QuerySet[Action]
+    _contact_for_actions: set[int]
 
     autocomplete_search_field = 'email'
 
@@ -84,11 +84,8 @@ class User(AbstractUser):  # type: ignore[django-manager-missing]
             person = None
 
         if person is None:
-            try:
-                person = Person.objects.get(email__iexact=self.email)
-            except Person.DoesNotExist:
-                pass
-        setattr(self, '_corresponding_person', person)
+            person = Person.objects.filter(email__iexact=self.email).first()
+        self._corresponding_person = person
         return person
 
     def is_contact_person_for_action(self, action=None):

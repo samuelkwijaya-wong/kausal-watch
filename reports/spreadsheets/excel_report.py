@@ -7,13 +7,14 @@ from datetime import datetime
 from io import BytesIO
 from typing import Any, Sequence, TypedDict
 
-import polars
-import xlsxwriter
 from django.contrib.contenttypes.models import ContentType
 from django.utils import timezone, translation
 from django.utils.text import slugify
 from django.utils.translation import gettext as _, pgettext
 from reversion.models import Version
+
+import polars
+import xlsxwriter
 
 from actions.models.action import Action, ActionImplementationPhase, ActionStatus
 from orgs.models import Organization
@@ -24,6 +25,7 @@ from .cursor_writer import Cell, CursorWriter
 
 if typing.TYPE_CHECKING:
     from django.db.models import QuerySet
+
     from xlsxwriter.format import Format
 
     from actions.models.category import Category, CategoryType

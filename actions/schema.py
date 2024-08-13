@@ -4,12 +4,10 @@ import logging
 import typing
 import uuid
 from itertools import chain
-from typing import Generic, Iterable, Optional, Protocol, TypeVar
+from typing import Generic, Iterable, Optional, Protocol, TypeVar, cast
 from urllib.parse import urlparse
 
 import graphene
-import graphene_django_optimizer as gql_optimizer
-import sentry_sdk
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Prefetch, Q, prefetch_related_objects
 from django.forms import ModelForm
@@ -17,10 +15,30 @@ from django.utils.translation import get_language
 from graphene_django import DjangoObjectType
 from graphene_django.converter import convert_django_field_with_choices
 from graphql.error import GraphQLError
-from grapple.registry import registry as grapple_registry
-from grapple.types.pages import PageInterface
 from wagtail.models import Revision, WorkflowState
 from wagtail.rich_text import RichText
+
+import graphene_django_optimizer as gql_optimizer
+import sentry_sdk
+from grapple.registry import registry as grapple_registry
+from grapple.types.pages import PageInterface
+
+from kausal_common.users import is_authenticated
+
+from aplans.cache import SerializedDictWithRelatedObjectCache
+from aplans.graphql_helpers import AdminButtonsMixin, UpdateModelInstanceMutation
+from aplans.graphql_types import (
+    DjangoNode,
+    GQLInfo,
+    WorkflowStateDescription,
+    WorkflowStateEnum,
+    get_plan_from_context,
+    order_queryset,
+    register_django_node,
+    register_graphene_node,
+    set_active_plan,
+)
+from aplans.utils import hyphenate_fi, public_fields
 
 from actions.action_admin import ActionAdmin
 from actions.action_status_summary import (
@@ -62,23 +80,9 @@ from actions.models import (
     PublicationStatus,
     Scenario,
 )
+from actions.models.action import ActionQuerySet
 from actions.models.action_deps import ActionDependencyRelationship, ActionDependencyRole
 from actions.models.attributes import ModelWithAttributes
-from aplans.cache import SerializedDictWithRelatedObjectCache
-from aplans.graphql_helpers import AdminButtonsMixin, UpdateModelInstanceMutation
-from aplans.graphql_types import (
-    DjangoNode,
-    GQLInfo,
-    WorkflowStateDescription,
-    WorkflowStateEnum,
-    get_plan_from_context,
-    order_queryset,
-    register_django_node,
-    register_graphene_node,
-    set_active_plan,
-)
-from aplans.types import is_authenticated
-from aplans.utils import hyphenate_fi, public_fields
 from budget.models import Dataset
 from orgs.models import Organization
 from pages import schema as pages_schema
@@ -87,9 +91,9 @@ from people.models import Person
 from search.backends import get_search_backend
 
 if typing.TYPE_CHECKING:
-    from actions.models.action import ActionQuerySet
-    from actions.models.attributes import Attribute
     from aplans.cache import PlanSpecificCache
+
+    from actions.models.attributes import Attribute
     from users.models import User
 
 
@@ -347,7 +351,7 @@ class PlanNode(DjangoNode):
             first: int | None = None,
     ):
         user = info.context.user
-        qs = root.actions.get_queryset()
+        qs = cast(ActionQuerySet, root.actions.get_queryset())
         if restrict_to_publicly_visible:
             qs = qs.visible_for_public()
         else:
@@ -458,10 +462,10 @@ class PlanNode(DjangoNode):
         fields = public_fields(Plan)
 
 
-type AttributeObject = typing.Union[
-    AttributeCategoryChoice, AttributeChoiceModel, AttributeChoiceWithText,
-    AttributeText, AttributeRichText, AttributeNumericValue,
-]
+type AttributeObject = (
+    AttributeCategoryChoice | AttributeChoiceModel | AttributeChoiceWithText | AttributeText |
+    AttributeRichText | AttributeNumericValue
+)
 
 
 class AttributeInterface(graphene.Interface):
@@ -854,7 +858,7 @@ class CommonCategoryNode(ResolveShortDescriptionFromLeadParagraphShim, DjangoNod
 
     @staticmethod
     def resolve_category_instances(root: CommonCategory, info: GQLInfo):
-        return root.category_instances.filter(type__plan=Plan.objects.available_for_request(info.context))
+        return root.category_instances.filter(type__plan=Plan.objects.get_queryset().available_for_request(info.context))
 
     class Meta:
         model = CommonCategory
@@ -1467,7 +1471,7 @@ class Query:
         if not id and not domain:
             raise GraphQLError("You must supply either id or domain as arguments to 'plan'")
 
-        qs = Plan.objects.all()
+        qs = Plan.objects.get_queryset()
         if id:
             qs = qs.filter(identifier=id.lower())
         if domain:
@@ -1496,7 +1500,7 @@ class Query:
         user = info.context.user
         if user is None:
             return []
-        plans = Plan.objects.user_has_staff_role_for(info.context.user)
+        plans = Plan.objects.get_queryset().user_has_staff_role_for(info.context.user)
         return gql_optimizer.query(plans, info)
 
     @staticmethod

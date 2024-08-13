@@ -7,6 +7,9 @@ from django.utils.translation import gettext as _
 from wagtail.admin import messages
 from wagtail.snippets.views.snippets import CreateView, EditView, SnippetViewSet
 
+from aplans.types import WatchAdminRequest
+from aplans.utils import PlanRelatedModel
+
 from admin_site.forms import WatchAdminModelForm
 from admin_site.mixins import (
     ActivatePermissionHelperPlanContextMixin,
@@ -17,8 +20,6 @@ from admin_site.mixins import (
 )
 from admin_site.permissions import PlanRelatedPermissionPolicy
 from admin_site.wagtail import execute_admin_post_save_tasks
-from aplans.types import WatchAdminRequest
-from aplans.utils import PlanRelatedModel
 
 M = TypeVar('M', bound=models.Model)
 

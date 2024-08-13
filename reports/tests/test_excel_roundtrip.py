@@ -1,10 +1,11 @@
 from io import BytesIO
 
+from django.utils import translation
+from django.utils.translation import gettext as _
+
 import polars
 import polars.selectors as cs
 import pytest
-from django.utils import translation
-from django.utils.translation import gettext as _
 
 from .fixtures import *  # noqa
 

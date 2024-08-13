@@ -2,8 +2,9 @@ import pytest
 from factory import SubFactory
 from pytest_factoryboy import register
 
-from actions.tests.factories import PlanFactory
 from aplans.factories import ModelFactory
+
+from actions.tests.factories import PlanFactory
 from reports.spreadsheets.action_print_layout import ReportActionPrintLayoutCustomization
 
 pytestmark = pytest.mark.django_db

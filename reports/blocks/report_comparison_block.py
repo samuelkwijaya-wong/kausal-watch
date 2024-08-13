@@ -1,9 +1,10 @@
 from django.apps import apps
 from django.utils.translation import gettext_lazy as _
+from wagtail import blocks
+
 from grapple.helpers import register_streamfield_block
 from grapple.models import GraphQLField, GraphQLForeignKey, GraphQLString
 from grapple.registry import registry as grapple_registry
-from wagtail import blocks
 
 from reports.blocks.choosers import ReportTypeChooserBlock, ReportTypeFieldChooserBlock
 

@@ -1,9 +1,10 @@
 import logging
 
-from anymail.signals import post_send, pre_send
 from django.db.models.signals import post_delete, post_save
 from django.dispatch import receiver
 from wagtail.signals import task_cancelled, task_submitted
+
+from anymail.signals import post_send, pre_send
 
 from notifications.models import NotificationSettings
 

@@ -1,6 +1,7 @@
+from aplans.types import WatchAdminRequest
+
 from actions.models.plan import Plan
 from admin_site.models import Client
-from aplans.types import WatchAdminRequest
 
 
 class AdminContextRequest(WatchAdminRequest):

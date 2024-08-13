@@ -10,10 +10,11 @@ from django.urls import reverse
 from django.utils.decorators import method_decorator
 from wagtail.permission_policies.base import ModelPermissionPolicy
 
-from admin_site.permissions import PlanContextPermissionPolicy
 from aplans.context_vars import set_instance
 from aplans.types import WatchAdminRequest
 from aplans.utils import PlanRelatedModel
+
+from admin_site.permissions import PlanContextPermissionPolicy
 
 
 class SuccessUrlEditPageMixin:
@@ -53,7 +54,7 @@ class PersistFiltersEditingMixin:
     def get_success_url(self):
         if hasattr(super(), 'continue_editing_active') and super().continue_editing_active():  # type: ignore[misc]
             return super().get_success_url()  # type: ignore[misc]
-        model = getattr(self, 'model_name')
+        model = self.model_name
         url = super().get_success_url()  # type: ignore[misc]
         if model is None:
             return url

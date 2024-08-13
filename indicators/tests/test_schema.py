@@ -2,8 +2,9 @@ import json
 
 import pytest
 
-from actions.tests.factories import ActionFactory, CategoryFactory, PlanFactory
 from aplans.utils import RestrictedVisibilityModel
+
+from actions.tests.factories import ActionFactory, CategoryFactory, PlanFactory
 from indicators.tests.factories import (
     ActionIndicatorFactory,
     CommonIndicatorFactory,

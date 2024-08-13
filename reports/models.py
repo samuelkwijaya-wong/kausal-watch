@@ -5,20 +5,22 @@ from dataclasses import asdict, dataclass, field
 from typing import TYPE_CHECKING
 
 import reversion
-from autoslug.fields import AutoSlugField
 from django.contrib.contenttypes.models import ContentType
 from django.db import models, transaction
 from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
 from modelcluster.fields import ParentalManyToManyDescriptor
 from reversion.models import Version
-from reversion.revisions import _current_frame, add_to_revision, create_revision
-from sentry_sdk import capture_message
+from reversion.revisions import _current_frame, add_to_revision, create_revision  # type: ignore
 from wagtail.fields import StreamField
+
+from autoslug.fields import AutoSlugField
+from sentry_sdk import capture_message
+
+from aplans.utils import PlanRelatedModel
 
 from actions.models.action import Action
 from actions.models.attributes import Attribute
-from aplans.utils import PlanRelatedModel
 from reports.blocks.action_content import ReportFieldBlock
 
 # The following model is for very specialized use and is only imported here so that Django finds it
@@ -29,10 +31,11 @@ from .spreadsheets import ExcelReport
 if TYPE_CHECKING:
     from datetime import datetime
 
-    from django.db.models.manager import RelatedManager
     from wagtail.blocks.stream_block import StreamValue
 
-    from actions.models import AttributeType
+    from kausal_common.models.types import FK
+
+    from actions.models import AttributeType, Plan
     from users.models import User
 
 
@@ -115,7 +118,7 @@ class NoRevisionSave(Exception):
 
 @reversion.register()
 class ReportType(models.Model, PlanRelatedModel):
-    plan = models.ForeignKey('actions.Plan', on_delete=models.CASCADE, related_name='report_types')
+    plan: models.ForeignKey[Plan, Plan] = models.ForeignKey('actions.Plan', on_delete=models.CASCADE, related_name='report_types')  # pyright: ignore
     name = models.CharField(max_length=100, verbose_name=_('name'))
     fields = StreamField(block_types=ReportFieldBlock(), null=True, blank=True)
 
@@ -141,7 +144,7 @@ class ReportType(models.Model, PlanRelatedModel):
 
 @reversion.register()
 class Report(models.Model, PlanRelatedModel):
-    type = models.ForeignKey(ReportType, on_delete=models.CASCADE, related_name='reports')
+    type: FK[ReportType] = models.ForeignKey(ReportType, on_delete=models.CASCADE, related_name='reports')
     name = models.CharField(max_length=100, verbose_name=_('name'))
     identifier = AutoSlugField(
         always_update=True,
@@ -166,8 +169,6 @@ class Report(models.Model, PlanRelatedModel):
     public_fields = [
         'type', 'name', 'identifier', 'start_date', 'end_date', 'fields',
     ]
-
-    type: RelatedManager[ReportType]
 
     class Meta:
         verbose_name = _('report')
@@ -197,9 +198,8 @@ class Report(models.Model, PlanRelatedModel):
         """
         if self.is_complete:
             self._raise_complete()
-
         actions_to_snapshot = (
-            self.type.plan.actions.visible_for_user(None)
+            self.type.plan.actions.get_queryset().visible_for_user(None)
             .prefetch_related(
                 'responsible_parties__organization', 'categories__type', 'choice_attributes__choice', 'choice_with_text_attributes__choice',
                 'text_attributes__type', 'rich_text_attributes__type', 'numeric_value_attributes__type', 'category_choice_attributes__type',
@@ -227,7 +227,7 @@ class Report(models.Model, PlanRelatedModel):
             action_pk = version.object_id
             if action_pk in action_snapshots_by_action_pk:
                 continue
-            qs = version.action_snapshots.filter(report_id=self.pk)
+            qs = version.action_snapshots.filter(report_id=self.pk)  # pyright: ignore
             if qs.count() > 1:
                 capture_message("Database consistency error: snapshot has multiple versions")
             snapshot = qs.first()

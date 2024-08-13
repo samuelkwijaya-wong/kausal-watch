@@ -11,10 +11,11 @@ from modelcluster.fields import ParentalKey
 from modelcluster.models import ClusterableModel
 from modeltrans.fields import TranslationField
 
+from aplans.utils import OrderedModel
+
 from actions.models.action import Action
 from actions.models.category import Category, CategoryType
 from actions.models.plan import Plan
-from aplans.utils import OrderedModel
 
 
 class Dimension(ClusterableModel):

@@ -1,3 +1,4 @@
+# pyright: reportMissingTypeStubs=true
 from typing import TYPE_CHECKING, Any
 
 from django.db.models import Q

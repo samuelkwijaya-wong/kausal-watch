@@ -1,48 +1,56 @@
 from __future__ import annotations
 
+import contextlib
 import hashlib
 import io
 import logging
 import os
 import re
-import typing
 import uuid
 from datetime import timedelta
+from typing import TYPE_CHECKING, ClassVar
 
-import requests
 import reversion
-import willow
-from django.contrib.auth import get_user_model
+from django.contrib.auth.models import AnonymousUser
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Q
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _, pgettext_lazy
-from easy_thumbnails.files import get_thumbnailer  # type: ignore
-from image_cropping import ImageRatioField  # type: ignore
 from modelcluster.models import ClusterableModel
 from modeltrans.fields import TranslationField
-from sentry_sdk import capture_exception
+from modeltrans.manager import MultilingualQuerySet
 from wagtail.admin.templatetags.wagtailadmin_tags import avatar_url as wagtail_avatar_url
 from wagtail.images.rect import Rect
 from wagtail.search import index
 
+import requests
+import willow
+from easy_thumbnails.files import get_thumbnailer  # type: ignore
+from image_cropping import ImageRatioField  # type: ignore
+from sentry_sdk import capture_exception
+
+from kausal_common.models.types import MLModelManager
+
 from actions.models import ActionContactPerson
 from admin_site.models import Client
 from orgs.models import Organization
+from users.models import User
 
-if typing.TYPE_CHECKING:
-    from django.db.models.manager import RelatedManager
+if TYPE_CHECKING:
+    from kausal_common.models.types import FK, M2M, OneToOne, RevMany
+
+    from aplans.types import UserOrAnon, WatchRequest
 
     from actions.models import Action, Plan
-    from aplans.types import UserOrAnon, WatchRequest
+    from actions.models.plan import PlanPublicSiteViewer
     from indicators.models import Indicator
     from orgs.models import OrganizationPlanAdmin
     from users.models import User as UserModel
 
 
 logger = logging.getLogger(__name__)
-User: type[UserModel] = get_user_model()  # type: ignore
+#User: type[UserModel] = get_user_model()  # type: ignore
 
 DEFAULT_AVATAR_SIZE = 360
 
@@ -80,7 +88,7 @@ def image_upload_path(instance, filename):
     return 'images/%s/%s%s' % (instance._meta.model_name, instance.id, file_extension)
 
 
-class PersonQuerySet(models.QuerySet['Person']):
+class PersonQuerySet(MultilingualQuerySet['Person']):
     def available_for_plan(self, plan: Plan, include_contact_persons=False):
         """Return persons from an organization related to the plan."""
         related = Organization.objects.filter(id=plan.organization_id) | plan.related_organizations.all()
@@ -101,6 +109,12 @@ class PersonQuerySet(models.QuerySet['Person']):
         return self
 
 
+if TYPE_CHECKING:
+    class PersonManager(MLModelManager['Person', PersonQuerySet]): ...
+else:
+    PersonManager = MLModelManager.from_queryset(PersonQuerySet)
+
+
 @reversion.register()
 class Person(index.Indexed, ClusterableModel):
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
@@ -112,11 +126,11 @@ class Person(index.Indexed, ClusterableModel):
         verbose_name=pgettext_lazy("person's role", 'title'),
     )
     postal_address = models.TextField(max_length=100, verbose_name=_('postal address'), null=True, blank=True)
-    organization = models.ForeignKey(
+    organization: FK[Organization] = models.ForeignKey(
         Organization, related_name='people', on_delete=models.CASCADE, verbose_name=_('organization'),
         help_text=_("What is this person's organization"),
     )
-    user = models.OneToOneField(
+    user: OneToOne[User | None] = models.OneToOneField(
         User, null=True, blank=True, related_name='person', on_delete=models.SET_NULL,
         editable=False, verbose_name=_('user'),
         help_text=_('Set if the person has an user account'),
@@ -136,19 +150,19 @@ class Person(index.Indexed, ClusterableModel):
     image_width = models.PositiveIntegerField(null=True, editable=False)
     avatar_updated_at = models.DateTimeField(null=True, editable=False)
 
-    contact_for_actions_unordered = models.ManyToManyField(
+    contact_for_actions_unordered: M2M[Action, ActionContactPerson] = models.ManyToManyField(
         'actions.Action',
         through='actions.ActionContactPerson',
         blank=True,
         verbose_name=_('contact for actions'),
     )
-    created_by = models.ForeignKey(
+    created_by: FK[UserModel | None] = models.ForeignKey(
         User, related_name='created_persons', blank=True, null=True, on_delete=models.SET_NULL,
         verbose_name=_('created by'),
     )
     i18n = TranslationField(fields=('title',), default_language_field='organization__primary_language_lowercase')
 
-    objects = PersonQuerySet.as_manager()
+    objects: ClassVar[PersonManager] = PersonManager()
 
     search_fields = [
         index.FilterField('id'),
@@ -166,10 +180,11 @@ class Person(index.Indexed, ClusterableModel):
     ]
 
     # Type annotations for related models etc.
-    contact_for_actions: RelatedManager[Action]
-    contact_for_indicators: RelatedManager[Indicator]
-    organization_plan_admins: RelatedManager[OrganizationPlanAdmin]
-    general_admin_plans: RelatedManager[Plan]
+    contact_for_actions: RevMany[Action]
+    contact_for_indicators: RevMany[Indicator]
+    organization_plan_admins: RevMany[OrganizationPlanAdmin]
+    general_admin_plans: RevMany[Plan]
+    plans_with_public_site_access: RevMany[PlanPublicSiteViewer]
     organization_id: int
     created_by_id: int
 
@@ -392,10 +407,8 @@ class Person(index.Indexed, ClusterableModel):
                 # If we change the email address to that of an existing deactivated user, we need to deactivate the
                 # user with the old email address (done after this returns because it returns a user different from
                 # `self.user`) and re-activate the user with the new email address (done further down in this method).
-                try:
+                with contextlib.suppress(User.DoesNotExist):
                     user = User.objects.get(email__iexact=email, is_active=False)
-                except User.DoesNotExist:
-                    pass
         else:
             user = User(
                 email=email,
@@ -433,6 +446,8 @@ class Person(index.Indexed, ClusterableModel):
 
     def visible_for_user(self, user: UserOrAnon, plan: Plan) -> bool:
         if not plan.features.public_contact_persons:
+            if isinstance(user, AnonymousUser):
+                return False
             if user is None or not user.is_authenticated or not user.can_access_public_site(plan):
                 return False
         return True

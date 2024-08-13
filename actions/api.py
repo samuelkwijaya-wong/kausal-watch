@@ -12,13 +12,12 @@ from django.core.exceptions import FieldDoesNotExist
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
+from rest_framework import exceptions, permissions, serializers, viewsets
+
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import OpenApiParameter, extend_schema, extend_schema_field
-from rest_framework import exceptions, permissions, serializers, viewsets
 from rest_framework_nested import routers
 
-from actions.models.action import ActionContactPerson, ActionImplementationPhase
-from actions.models.attributes import AttributeType, ModelWithAttributes
 from aplans.api_router import router
 from aplans.model_images import (
     ModelWithImageSerializerMixin,
@@ -32,6 +31,9 @@ from aplans.rest_api import (
     PlanRelatedModelSerializer,
 )
 from aplans.utils import generate_identifier, public_fields, register_view_helper
+
+from actions.models.action import ActionContactPerson, ActionImplementationPhase
+from actions.models.attributes import AttributeType, ModelWithAttributes
 from orgs.models import Organization
 from people.models import Person
 from users.models import User
@@ -59,8 +61,9 @@ if typing.TYPE_CHECKING:
         QuerySet,  # noqa
     )
 
-    from actions.models.plan import PlanQuerySet
     from aplans.types import AuthenticatedWatchRequest, WatchAdminRequest, WatchAPIRequest
+
+    from actions.models.plan import PlanQuerySet
 
 all_views = []
 all_routers = []
@@ -242,7 +245,7 @@ class ActionPermission(permissions.DjangoObjectPermissions):
             if plan is None:
                 raise exceptions.NotFound(detail='Plan not found')
         else:
-            plan = Plan.objects.live().first()
+            plan = Plan.objects.get_queryset().live().first()
         perms = self.get_required_permissions(request.method, Action)
         for perm in perms:
             if not self.check_permission(request.user, perm, plan):
@@ -439,7 +442,7 @@ class ActionContactPersonSerializer(ActionResponsibleWithRoleSerializer):
     def get_available_instances(self, plan) -> set[int]:
         cache = self.context.get('_cache')
         if cache is None or 'available_person_ids' not in cache:
-            return Person.objects.available_for_plan(plan, include_contact_persons=True)
+            return Person.objects.get_queryset().available_for_plan(plan, include_contact_persons=True)
         return cache['available_person_ids']
 
     def get_allowed_roles(self):

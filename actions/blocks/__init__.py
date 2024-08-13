@@ -1,8 +1,9 @@
 from typing import Any
 
 from django.utils.translation import gettext_lazy as _
-from grapple.helpers import register_streamfield_block
 from wagtail import blocks
+
+from grapple.helpers import register_streamfield_block
 
 from actions.blocks.action_content import (
     ActionAsideContentBlock,

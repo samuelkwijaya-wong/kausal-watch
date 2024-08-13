@@ -1,12 +1,15 @@
 from datetime import date, datetime, timedelta
 
-import pytest
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.db.utils import IntegrityError
 from django.utils import translation
 from wagtail.models import Locale
+
+import pytest
+
+from aplans.utils import InstancesEditableByMixin, InstancesVisibleForMixin
 
 from actions.attributes import AttributeType
 from actions.models import Action, ActionContactPerson
@@ -19,7 +22,6 @@ from actions.tests.factories import (
     CategoryTypeFactory,
     PlanFactory,
 )
-from aplans.utils import InstancesEditableByMixin, InstancesVisibleForMixin
 from pages.models import CategoryPage, CategoryTypePage
 
 pytestmark = pytest.mark.django_db
@@ -30,31 +32,31 @@ def test_plan_can_be_saved(plan):
 
 
 def test_action_query_set_modifiable_by_not_modifiable(action, user):
-    assert action not in Action.objects.modifiable_by(user)
+    assert action not in Action.objects.qs.modifiable_by(user)
 
 
 def test_action_query_set_modifiable_by_superuser(action, superuser):
-    assert action in Action.objects.modifiable_by(superuser)
+    assert action in Action.objects.qs.modifiable_by(superuser)
 
 
 def test_action_query_set_modifiable_by_plan_admin(action, plan_admin_user):
-    assert action in Action.objects.modifiable_by(plan_admin_user)
+    assert action in Action.objects.qs.modifiable_by(plan_admin_user)
 
 
 def test_action_query_set_modifiable_by_contact_person(action, action_contact):
-    assert action in Action.objects.modifiable_by(action_contact.person.user)
+    assert action in Action.objects.qs.modifiable_by(action_contact.person.user)
 
 
 def test_action_query_set_modifiable_by_distinct(action, user, person, action_contact):
     assert person.user == user
     assert person == action_contact.person
-    assert list(Action.objects.modifiable_by(user)) == [action]
+    assert list(Action.objects.qs.modifiable_by(user)) == [action]
     # Make user a plan admin as well
     person.general_admin_plans.add(action.plan)
-    assert list(Action.objects.modifiable_by(user)) == [action]
+    assert list(Action.objects.qs.modifiable_by(user)) == [action]
     # When we remove the user from the action contacts, it should still be able to modify
     action_contact.delete()
-    assert list(Action.objects.modifiable_by(user)) == [action]
+    assert list(Action.objects.qs.modifiable_by(user)) == [action]
 
 
 def test_action_can_be_saved():

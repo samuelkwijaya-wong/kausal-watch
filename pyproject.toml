@@ -21,34 +21,52 @@ target-version = "py312"
 select = ["ALL"]
 ignore = [
     "D203", "D212",
-
-    "D1", "CPY", "Q000", "ANN204", "ERA", "ANN201", "ANN0", "PGH003", "TD0", "FIX002", "DJ001", "S101", "F401",
+    "D1", "CPY", "Q000", "ANN204", "ERA", "ANN201", "ANN0", "PGH003", "TD0", "FIX002", "DJ001", "S101",
     "ARG001", "UP031", "G002", "BLE001", "SIM108", "SIM103", "SLF001", "C408", "RET504",
     "TRY003", "EM101", "FIX001", "UP035", "ARG002", "ARG004", "RUF012", "FBT002", "PLR2004",
     "FBT001", "TID252", "RSE102", "PIE790", "D202", "PLR1722", "SIM118", "SIM114",
-    "T201", "C401",
+    "T201", "C401", "PD011", "RUF005",
 ]
-unfixable = ["F401", ]  # for now
 
 [tool.ruff.lint.isort]
 split-on-trailing-comma = true
 combine-as-imports = true
+required-imports = ["from __future__ import annotations"]
+section-order = ["future", "standard-library", "django", "third-party", "kausal-common", "django-project", "first-party", "local-folder"]
+#section-order = ['FUTURE', 'STDLIB', 'DJANGO', 'THIRDPARTY', 'FIRSTPARTY', 'LOCALFOLDER']
+
+
+[tool.ruff.lint.isort.sections]
+# sections = ['FUTURE', 'STDLIB', 'DJANGO', 'THIRDPARTY', 'FIRSTPARTY', 'LOCALFOLDER']
+django = [
+    'django', 'rest_framework', 'graphene', 'graphql', 'graphene_django', 'modelcluster', 'modeltrans', 'wagtail', 'reversion'
+]
+kausal-common = [
+    'kausal_common'
+]
+django-project = [
+    'aplans'
+]
+
 
 [tool.ruff.format]
 quote-style = "single"
 
-[tool.isort]
-atomic = true
-combine_as_imports = true
-indent = 4
-sections = ['FUTURE', 'STDLIB', 'DJANGO', 'THIRDPARTY', 'FIRSTPARTY', 'LOCALFOLDER']
-known_django = [
-    'django', 'rest_framework', 'graphene', 'graphql', 'graphene_django', 'modelcluster', 'modeltrans', 'wagtail'
-]
-line_length = 80
-multi_line_output = 5
-skip = "migrations"
-wrap_length = 80
+# [tool.isort]
+# atomic = true
+# combine_as_imports = true
+# indent = 4
+# sections = ['FUTURE', 'STDLIB', 'DJANGO', 'THIRDPARTY', 'FIRSTPARTY', 'LOCALFOLDER']
+# known_django = [
+#     'django', 'rest_framework', 'graphene', 'graphql', 'graphene_django', 'modelcluster', 'modeltrans', 'wagtail'
+# ]
+# known_firstparty = [
+#     'kausal_common'
+# ]
+# line_length = 80
+# multi_line_output = 5
+# skip = "migrations"
+# wrap_length = 80
 
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "aplans.settings"
@@ -73,10 +91,13 @@ exclude = [
     '^typings/',
     '^local_settings\.py',
     '^kausal_common/typings/',
+    '/migrations/'
 ]
 check_untyped_defs = true
 enable_incomplete_feature = ['NewGenericSyntax']
 cache_fine_grained = true
+explicit_package_bases = true
+strict_optional = true
 
 
 [[tool.mypy.overrides]]

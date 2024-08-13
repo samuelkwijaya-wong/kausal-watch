@@ -1,7 +1,8 @@
 from datetime import date
 
-import pytest
 from django.urls import reverse
+
+import pytest
 
 from indicators.tests.factories import CommonIndicatorNormalizatorFactory, IndicatorFactory
 

@@ -5,17 +5,19 @@ from django.apps import apps
 from django.db import models
 from django.utils.functional import lazy
 from django.utils.translation import gettext_lazy as _
+from wagtail import blocks
+
 from grapple.helpers import register_streamfield_block
 from grapple.models import GraphQLForeignKey, GraphQLStreamfield, GraphQLString
-from wagtail import blocks
+
+from aplans.graphql_types import register_graphene_interface
+from aplans.utils import underscore_to_camelcase
 
 from actions.blocks.choosers import ActionAttributeTypeChooserBlock, CategoryTypeChooserBlock, PlanDatasetSchemaChooserBlock
 from actions.blocks.mixins import ActionListPageBlockPresenceMixin
 from actions.models.action import Action
 from actions.models.attributes import AttributeType
 from actions.models.category import CategoryType
-from aplans.graphql_types import register_graphene_interface
-from aplans.utils import underscore_to_camelcase
 from budget.models import DatasetSchema
 from reports.blocks.report_comparison_block import ReportComparisonBlock
 from reports.report_formatters import ActionReportContentField, ActionTasksFormatter
@@ -130,7 +132,7 @@ class FieldBlockMetaInterface(graphene.Interface):
         if attribute_type:
             # TODO: implement for builtin fields as well
             hidden = not attribute_type.is_instance_visible_for(user, plan, None)
-            restricted = attribute_type.VisibleFor.PUBLIC != attribute_type.instances_visible_for
+            restricted = attribute_type.instances_visible_for != attribute_type.VisibleFor.PUBLIC
         return {
             'restricted': restricted,
             'hidden': hidden,

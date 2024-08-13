@@ -9,11 +9,15 @@ from django.utils.translation import gettext_lazy as _
 from wagtail import hooks
 from wagtail.admin.menu import MenuItem
 from wagtail.admin.panels import FieldPanel, ObjectList
+
 from wagtail_modeladmin.helpers import ButtonHelper
 from wagtail_modeladmin.menus import ModelAdminMenuItem
 from wagtail_modeladmin.options import modeladmin_register
 from wagtail_modeladmin.views import DeleteView, IndexView
 from wagtailorderable.modeladmin.mixins import OrderableMixin
+
+from aplans.context_vars import ctx_instance, ctx_request
+from aplans.utils import OrderedModelChildFormSet
 
 from actions.chooser import CategoryTypeChooser
 from admin_site.wagtail import (
@@ -27,8 +31,6 @@ from admin_site.wagtail import (
     InitializeFormWithPlanMixin,
     insert_model_translation_panels,
 )
-from aplans.context_vars import ctx_instance, ctx_request
-from aplans.utils import OrderedModelChildFormSet
 
 from .attributes import AttributeType as AttributeTypeWrapper
 from .models import Action, AttributeType, AttributeTypeChoiceOption, Category

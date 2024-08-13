@@ -53,7 +53,7 @@ class Command(BaseCommand):
             for org, n in num_delete_suborgs.items():
                 string = org.name
                 if n == 1:
-                    string += f' (and 1 suborganization)'
+                    string += ' (and 1 suborganization)'
                 elif n > 1:
                     string += f' (and {n} suborganizations)'
                 strings.append(string)

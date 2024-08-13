@@ -1,5 +1,6 @@
-import pytest
 from django.contrib.contenttypes.models import ContentType
+
+import pytest
 from factory import LazyAttribute, SubFactory
 from pytest_factoryboy import register
 

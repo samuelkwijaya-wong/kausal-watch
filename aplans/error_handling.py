@@ -1,10 +1,11 @@
-import sentry_sdk
 from django.conf import settings
 from django.http import HttpResponseServerError
 from django.template import loader
 from django.views.decorators.csrf import requires_csrf_token
 from django.views.defaults import ERROR_500_TEMPLATE_NAME
 from rest_framework.exceptions import server_error as json_server_error
+
+import sentry_sdk
 
 from actions.context_processors import current_plan
 from admin_site.context_processors import sentry

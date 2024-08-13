@@ -1,10 +1,10 @@
 from typing import TYPE_CHECKING
 
 import graphene
-import graphene_django_optimizer as gql_optimizer
 from graphene_django.forms.mutation import DjangoModelFormMutation
 
-from actions.models import Plan
+import graphene_django_optimizer as gql_optimizer
+
 from aplans import graphql_gis  # noqa
 from aplans.graphql_helpers import (
     AdminButtonsMixin,
@@ -14,6 +14,8 @@ from aplans.graphql_helpers import (
 )
 from aplans.graphql_types import AuthenticatedUserNode, DjangoNode, GQLInfo, register_django_node
 from aplans.utils import public_fields
+
+from actions.models import Plan
 from orgs.forms import NodeForm
 from orgs.models import Organization, OrganizationClass
 

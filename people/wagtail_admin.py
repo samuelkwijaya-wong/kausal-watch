@@ -2,7 +2,6 @@ import logging
 import typing
 from datetime import timedelta
 
-from dal import autocomplete
 from django.contrib.admin import SimpleListFilter
 from django.contrib.admin.utils import display_for_value, quote
 from django.contrib.admin.widgets import AdminFileWidget
@@ -15,9 +14,15 @@ from django.utils import timezone
 from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
 from wagtail.admin.panels import FieldPanel, ObjectList, TabbedInterface
+
+from dal import autocomplete
 from wagtail_modeladmin.helpers import ButtonHelper
 from wagtail_modeladmin.options import modeladmin_register
 from wagtail_modeladmin.views import DeleteView
+
+from aplans.context_vars import ctx_instance, ctx_request
+from aplans.types import WatchAdminRequest
+from aplans.utils import naturaltime
 
 from actions.models import ActionContactPerson, Plan, PlanPublicSiteViewer
 from admin_site.wagtail import (
@@ -32,9 +37,6 @@ from admin_site.wagtail import (
     PlanContextModelAdminPermissionHelper,
     get_translation_tabs,
 )
-from aplans.context_vars import ctx_instance, ctx_request
-from aplans.types import WatchAdminRequest
-from aplans.utils import naturaltime
 from orgs.models import Organization, OrganizationPlanAdmin
 
 from .models import Person

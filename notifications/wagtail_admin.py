@@ -12,7 +12,10 @@ from wagtail.admin.panels import (
     ObjectList,
 )
 from wagtail.admin.views.account import BaseSettingsPanel, notifications_tab
+
 from wagtail_modeladmin.options import ModelAdminMenuItem, modeladmin_register
+
+from aplans.context_vars import ctx_request
 
 from admin_site.wagtail import (
     AplansAdminModelForm,
@@ -24,7 +27,6 @@ from admin_site.wagtail import (
     PlanFilteredFieldPanel,
     SuccessUrlEditPageModelAdminMixin,
 )
-from aplans.context_vars import ctx_request
 
 from .forms import NotificationPreferencesForm
 from .models import BaseTemplate

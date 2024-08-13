@@ -1,7 +1,8 @@
 import json
 
-import pytest
 from django.conf import settings
+
+import pytest
 
 from actions.models import AttributeType
 from admin_site.tests.factories import ClientPlanFactory

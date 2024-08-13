@@ -1,12 +1,13 @@
 import datetime
 
-from factory import Sequence, SubFactory
-from factory.django import DjangoModelFactory
 from wagtail.test.utils.wagtail_factories import (
     StreamBlockFactory,
     StreamFieldFactory,
     StructBlockFactory,
 )
+
+from factory import Sequence, SubFactory
+from factory.django import DjangoModelFactory
 
 import reports
 from actions.tests.factories import AttributeTypeFactory, PlanFactory

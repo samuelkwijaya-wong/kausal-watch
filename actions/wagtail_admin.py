@@ -3,7 +3,6 @@ from __future__ import annotations
 import re
 import typing
 
-from dal import autocomplete
 from django.core.exceptions import ValidationError
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
@@ -14,8 +13,12 @@ from wagtail.admin.panels import (
     TabbedInterface,
 )
 from wagtail.snippets.models import register_snippet
+
+from dal import autocomplete
 from wagtail_modeladmin.helpers import PermissionHelper
 from wagtail_modeladmin.options import ModelAdminMenuItem, modeladmin_register
+
+from aplans.context_vars import ctx_instance, ctx_request
 
 from actions.chooser import CategoryTypeChooser, PlanChooser
 from actions.models.action import ActionSchedule
@@ -32,7 +35,6 @@ from admin_site.wagtail import (
     CondensedInlinePanel,
     insert_model_translation_panels,
 )
-from aplans.context_vars import ctx_instance, ctx_request
 from notifications.models import NotificationSettings
 from orgs.chooser import OrganizationChooser
 from orgs.models import Organization
@@ -48,6 +50,7 @@ from .models import ActionImpact, ActionStatus, Plan, PlanFeatures
 
 if typing.TYPE_CHECKING:
     from aplans.types import WatchAdminRequest
+
     from users.models import User
 
 

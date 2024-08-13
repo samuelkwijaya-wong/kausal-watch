@@ -3,11 +3,9 @@ from __future__ import annotations
 import json
 import logging
 import typing
-from typing import Iterable, Type
+from typing import Iterable
 
-from dal import autocomplete, forward as dal_forward
 from django.contrib.admin.utils import quote
-from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.urls import path, re_path
 from django.utils import timezone
@@ -31,8 +29,15 @@ from wagtail.snippets.views.snippets import (
     UnpublishView,
     UsageView,
 )
+
+from dal import autocomplete, forward as dal_forward
 from wagtail_modeladmin.options import ModelAdminMenuItem
 from wagtail_modeladmin.views import IndexView
+
+from aplans.context_vars import ctx_instance, ctx_request
+from aplans.extensions import modeladmin_register
+from aplans.utils import naturaltime
+from aplans.wagtail_utils import _get_category_fields
 
 from actions.chooser import ActionChooser
 from admin_site.utils import FieldLabelRenderer
@@ -52,10 +57,6 @@ from admin_site.wagtail import (
     get_translation_tabs,
     insert_model_translation_panels,
 )
-from aplans.context_vars import ctx_instance, ctx_request
-from aplans.extensions import modeladmin_register
-from aplans.utils import naturaltime
-from aplans.wagtail_utils import _get_category_fields
 from orgs.models import Organization
 from people.chooser import PersonChooser
 from people.models import Person
@@ -67,9 +68,11 @@ from .models.action import Action, ActionContactPerson, ActionResponsibleParty, 
 if typing.TYPE_CHECKING:
     from django.db.models import Model
 
-    from actions.attributes import DraftAttributes
     from aplans.types import WatchAdminRequest
+
+    from actions.attributes import DraftAttributes
     from users.models import User
+
 
 logger = logging.getLogger(__name__)
 

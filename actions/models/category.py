@@ -3,7 +3,7 @@ from __future__ import annotations
 import typing
 import uuid
 from functools import lru_cache
-from typing import Any, Iterable, Self, Sequence, Tuple
+from typing import Any, ClassVar, Iterable, Self, Sequence
 
 import reversion
 from django.conf import settings
@@ -38,12 +38,13 @@ from ..attributes import AttributeFieldPanel, AttributeType
 from .attributes import AttributeType as AttributeTypeModel, ModelWithAttributes
 
 if typing.TYPE_CHECKING:
-    from django.db.models.expressions import Combinable
-    from django.db.models.manager import RelatedManager
     from modeltrans.manager import MultilingualManager
 
-    from actions.models.plan import Plan
+    from kausal_common.models.types import RevMany
+
     from aplans.utils import UserOrAnon
+
+    from actions.models.plan import Plan
     from indicators.models import Indicator
     from pages.models import CategoryPage, CategoryTypePage, CategoryTypePageLevelLayout
 
@@ -122,8 +123,8 @@ class CommonCategoryType(CategoryTypeBase, ModelWithPrimaryLanguage):
 
     # type annotations
     objects: MultilingualManager[Self]
-    plans: RelatedManager[Plan]
-    categories: RelatedManager[CommonCategory]
+    plans: RevMany[Plan]
+    categories: RevMany[CommonCategory]
 
     public_fields: typing.ClassVar = CategoryTypeBase.public_fields + [
         'categories',
@@ -137,6 +138,18 @@ class CommonCategoryType(CategoryTypeBase, ModelWithPrimaryLanguage):
 
     def __str__(self):
         return f"{self.name}: {self.identifier}"
+
+    def save(self, *args, **kwargs):
+        ret = super().save(*args, **kwargs)
+        if self.has_collection and self.collection is None:
+            with transaction.atomic():
+                ct_coll = Collection.objects.filter(name=settings.COMMON_CATEGORIES_COLLECTION).first()
+                if ct_coll is None:
+                    ct_coll = Collection.get_first_root_node().add_child(name=settings.COMMON_CATEGORIES_COLLECTION)
+                obj = ct_coll.add_child(name=self.name)
+                self.collection = obj
+                self.save(update_fields=['collection'])
+        return ret
 
     def instantiate_for_plan(self, plan: Plan) -> CategoryType:
         """Create category type corresponding to this one and link it to the given plan."""
@@ -163,21 +176,9 @@ class CommonCategoryType(CategoryTypeBase, ModelWithPrimaryLanguage):
         inherited_values = {field: getattr(self, field) for field in inherited_fields}
         return plan.category_types.create(common=self, **inherited_values, **translated_values)
 
-    def save(self, *args, **kwargs):
-        ret = super().save(*args, **kwargs)
-        if self.has_collection and self.collection is None:
-            with transaction.atomic():
-                ct_coll = Collection.objects.filter(name=settings.COMMON_CATEGORIES_COLLECTION).first()
-                if ct_coll is None:
-                    ct_coll = Collection.get_first_root_node().add_child(name=settings.COMMON_CATEGORIES_COLLECTION)
-                obj = ct_coll.add_child(name=self.name)
-                self.collection = obj
-                self.save(update_fields=['collection'])
-        return ret
-
 
 @reversion.register()
-class CategoryType(  # type: ignore[django-manager-missing]
+class CategoryType(
     InstancesEditableByMixin, ReferenceIndexedModelMixin, CategoryTypeBase, ClusterableModel, PlanRelatedModel,
 ):
     """
@@ -187,7 +188,7 @@ class CategoryType(  # type: ignore[django-manager-missing]
     category types.
     """
 
-    plan: models.ForeignKey[Plan | Combinable, Plan] = models.ForeignKey(
+    plan: models.ForeignKey[Plan, Plan] = models.ForeignKey(  # pyright: ignore
         'actions.Plan', on_delete=models.CASCADE, related_name='category_types',
     )
     common = models.ForeignKey(
@@ -207,11 +208,18 @@ class CategoryType(  # type: ignore[django-manager-missing]
         object_id_field='scope_id',
     )
 
-    categories: models.QuerySet[Category]
-    levels: models.QuerySet[CategoryLevel]
+    categories: RevMany[Category]
+    levels: RevMany[CategoryLevel]
+    category_type_pages: RevMany[CategoryTypePage]
 
-    public_fields: typing.ClassVar = CategoryTypeBase.public_fields + [
-        'id', 'plan', 'common', 'levels', 'categories', 'hide_category_identifiers',
+    public_fields: typing.ClassVar = [
+        *CategoryTypeBase.public_fields,
+        'id',
+        'plan',
+        'common',
+        'levels',
+        'categories',
+        'hide_category_identifiers',
     ]
 
     class Meta:
@@ -223,20 +231,19 @@ class CategoryType(  # type: ignore[django-manager-missing]
     def __str__(self):
         return "%s (%s:%s)" % (self.name, self.plan.identifier, self.identifier)
 
-    def clean(self):
-        super().clean()
-        if self.instance_editability_is_action_specific:
-            raise ValidationError({'instances_editable_by': _("This value is not allowed for category types")})
-
     @transaction.atomic
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
         if self.synchronize_with_pages:
             self.synchronize_pages()
 
+    def clean(self):
+        super().clean()
+        if self.instance_editability_is_action_specific:
+            raise ValidationError({'instances_editable_by': _("This value is not allowed for category types")})
+
     def synchronize_pages(self):
         from pages.models import CategoryTypePage
-
         for root_page in self.plan.root_page.get_translations(inclusive=True):
             with override(root_page.locale.language_code):
                 try:
@@ -252,11 +259,11 @@ class CategoryType(  # type: ignore[django-manager-missing]
 
     def _expand_category_paths(self) -> Iterable[Sequence[Category]]:
         qs = self.categories.all()
-        category_paths = []
-        categories_by_id = {c.pk: c for c in qs}
+        category_paths: list[list[Category]] = []
+        categories_by_id: dict[int, Category] = {c.pk: c for c in qs}
         for category in qs:
-            path = []
-            c = category
+            path: list[Category] = []
+            c: Category | None = category
             while c is not None:
                 path.append(c)
                 parent_id = c.parent_id
@@ -300,7 +307,7 @@ class CategoryLevel(OrderedModel):
     Root level has order=0, first child level order=1 and so on.
     """
 
-    type: ParentalKey[CategoryType | Combinable, CategoryType] = ParentalKey(
+    type: ParentalKey[CategoryType] = ParentalKey(  # pyright: ignore
         CategoryType, on_delete=models.CASCADE, related_name='levels',
         verbose_name=_('type'),
     )
@@ -314,7 +321,7 @@ class CategoryLevel(OrderedModel):
     ]
 
     # type annotations
-    level_layouts: RelatedManager[CategoryTypePageLevelLayout]
+    level_layouts: RevMany[CategoryTypePageLevelLayout]
 
     class Meta:
         unique_together = (('type', 'order'),)
@@ -362,7 +369,7 @@ class CommonCategory(CategoryBase, ClusterableModel):
         verbose_name=_('type'),
     )
 
-    category_instances: RelatedManager[Category]
+    category_instances: RevMany[Category]
 
     i18n = TranslationField(
         fields=('name', 'lead_paragraph', 'help_text'),
@@ -372,6 +379,8 @@ class CommonCategory(CategoryBase, ClusterableModel):
     public_fields: typing.ClassVar = CategoryBase.public_fields + [
         'type', 'category_instances',
     ]
+
+    icons: RevMany[CommonCategoryIcon]
 
     class Meta:
         unique_together = (('type', 'identifier'),)
@@ -387,7 +396,7 @@ class CommonCategory(CategoryBase, ClusterableModel):
         if category_type.categories.filter(common=self).exists():
             raise Exception(f"Instantiation of common category '{self}' for category type '{category_type}' exists "
                             "already")
-        translated_fields = get_i18n_field(Category).fields
+        translated_fields = list(get_i18n_field(Category).fields)
         other_languages = [lang.replace('-', '_')
                            for lang in get_available_languages()
                            if lang != category_type.plan.primary_language]
@@ -402,11 +411,12 @@ class CommonCategory(CategoryBase, ClusterableModel):
                 value = getattr(self, f'{field}_{lang}')
                 if value:
                     translated_values[f'{field}_{lang}'] = value
-        inherited_fields = [f.name for f in CategoryBase._meta.fields if f.name not in translated_fields + ('uuid',)]
+
+        inherited_fields = [f.name for f in CategoryBase._meta.fields if f.name not in [*translated_fields, 'uuid']]
         inherited_values = {field: getattr(self, field) for field in inherited_fields}
         return category_type.categories.create(common=self, **inherited_values, **translated_values)
 
-    def get_icon(self, language=None):
+    def get_icon(self, language: str | None = None):
         """Get CommonCategoryIcon in the given language, falling back to an icon without a language."""
         if language is None:
             try:
@@ -445,14 +455,15 @@ class Category(ModelWithAttributes, CategoryBase, ClusterableModel, PlanRelatedM
 
     # type annotations
     actions: ActionManager  # pyright: ignore
-    indicators: RelatedManager[Indicator]
-    category_pages: RelatedManager[CategoryPage]
+    indicators: RevMany[Indicator]
+    category_pages: RevMany[CategoryPage]
     parent_id: int | None
-    children: RelatedManager[Self]
+    children: RevMany[Self]
+    icons: RevMany[CategoryIcon]
     name_i18n: str
     id: int
 
-    public_fields = CategoryBase.public_fields + [
+    public_fields: ClassVar[list[str]] = CategoryBase.public_fields + [
         'type', 'common', 'external_identifier', 'parent', 'children', 'category_pages', 'indicators',
     ]
 
@@ -466,7 +477,7 @@ class Category(ModelWithAttributes, CategoryBase, ClusterableModel, PlanRelatedM
         if self.parent_id is not None:
             assert self.parent is not None
             seen_categories = {self.id}
-            obj: typing.Self | None = self.parent
+            obj: Category | None = self.parent
             while obj is not None:
                 if obj.id in seen_categories:
                     raise ValidationError({'parent': _('Parent forms a loop. Leave empty if top-level category.')})
@@ -480,7 +491,7 @@ class Category(ModelWithAttributes, CategoryBase, ClusterableModel, PlanRelatedM
         return [self.type.plan]
 
     @classmethod
-    def filter_by_plan(cls, plan, qs):
+    def filter_by_plan(cls, plan: Plan, qs: models.QuerySet[Self]) -> models.QuerySet[Self]:  # type: ignore[override]
         return qs.filter(type__plan=plan)
 
     def set_plan(self, plan):
@@ -559,7 +570,7 @@ class Category(ModelWithAttributes, CategoryBase, ClusterableModel, PlanRelatedM
         else:
             return self.name
 
-    def _get_icon_without_fallback_to_common_category(self, language=None):
+    def _get_icon_without_fallback_to_common_category(self, language: str | None = None):
         if language is None:
             try:
                 return self.icons.get(language__isnull=True)
@@ -591,7 +602,7 @@ class Category(ModelWithAttributes, CategoryBase, ClusterableModel, PlanRelatedM
         at_qs = AttributeTypeModel.objects.filter(
             object_content_type=category_ct,
             scope_content_type=category_type_ct,
-            scope_id=self.type.id,
+            scope_id=self.type.pk,
         )
         attribute_types = (at for at in at_qs if at.is_instance_editable_by(user, self.type.plan, None))
         # Convert to wrapper objects
@@ -603,7 +614,7 @@ class Category(ModelWithAttributes, CategoryBase, ClusterableModel, PlanRelatedM
         at_qs = AttributeTypeModel.objects.filter(
             object_content_type=category_ct,
             scope_content_type=category_type_ct,
-            scope_id=self.type.id,
+            scope_id=self.type.pk,
         )
         attribute_types = (at for at in at_qs if at.is_instance_visible_for(user, self.type.plan, None))
         # Convert to wrapper objects

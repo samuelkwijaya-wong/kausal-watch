@@ -1,32 +1,38 @@
 from __future__ import annotations
 
+import contextlib
 import logging
 import typing
 import uuid
 from functools import lru_cache
-from typing import TYPE_CHECKING, ClassVar, Iterable, Literal, Optional, Protocol, Self, TypedDict
+from typing import TYPE_CHECKING, Any, ClassVar, Literal, Self, TypedDict, cast
 
 import reversion
 from django.contrib.admin import display
+from django.contrib.auth.models import AnonymousUser
 from django.contrib.contenttypes.fields import GenericRelation
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import FieldDoesNotExist, ValidationError
 from django.core.validators import URLValidator
 from django.db import models
-from django.db.models import Count, IntegerField, Max, Q
+from django.db.models import Count, IntegerField, Max, Q, QuerySet
 from django.db.models.functions import Cast
+from django.db.models.options import Options
 from django.urls import reverse
 from django.utils import timezone, translation
 from django.utils.translation import gettext_lazy as _, pgettext_lazy
 from modelcluster.fields import ParentalKey
 from modelcluster.models import ClusterableModel, model_from_serializable_data
 from modeltrans.fields import TranslatedVirtualField, TranslationField
+from modeltrans.manager import MultilingualQuerySet
 from modeltrans.translator import get_i18n_field
 from reversion.models import Version
 from wagtail.fields import RichTextField
 from wagtail.models import DraftStateMixin, LockableMixin, RevisionMixin, Task, WorkflowMixin
 from wagtail.search import index
 from wagtail.search.queryset import SearchableQuerySetMixin
+
+from kausal_common.models.types import MLModelManager
 
 from aplans.utils import (
     ConstantMetadata,
@@ -38,7 +44,8 @@ from aplans.utils import (
     generate_identifier,
     get_available_variants_for_language,
 )
-from indicators.models import Indicator
+
+from indicators.models import ActionIndicator, Indicator
 from orgs.models import Organization
 from search.backends import TranslatedAutocompleteField, TranslatedSearchField
 from users.models import User
@@ -50,22 +57,26 @@ from .attributes import AttributeType as AttributeTypeModel, ModelWithAttributes
 
 if typing.TYPE_CHECKING:
     from django.db.models.expressions import Combinable
-    from django.db.models.manager import RelatedManager
 
-    from actions.attributes import DraftAttributes
+    from kausal_common.models.types import FK, M2M, RevMany
+
     from aplans.cache import WatchObjectCache
     from aplans.graphql_types import WorkflowStateEnum
     from aplans.types import UserOrAnon
+
+    from actions.attributes import DraftAttributes
+    from actions.models.action_deps import ActionDependencyRelationship
+    from actions.models.category import Category
     from people.models import Person
 
-    from .action_deps import ActionDependencyRelationshipQuerySet
-    from .plan import Plan
+    from .action_deps import ActionDependencyRelationshipQuerySet, ActionDependencyRole
+    from .plan import MonitoringQualityPoint, Plan
 
 
 logger = logging.getLogger(__name__)
 
 
-class ActionQuerySet(SearchableQuerySetMixin, models.QuerySet):
+class ActionQuerySet(SearchableQuerySetMixin, MultilingualQuerySet['Action']):
     def modifiable_by(self, user: User) -> Self:
         if user.is_superuser:
             return self
@@ -84,11 +95,13 @@ class ActionQuerySet(SearchableQuerySetMixin, models.QuerySet):
         return qs
 
     def user_is_org_admin_for(self, user: User, plan: Plan | None = None):
-        plan_admin_orgs = Organization.objects.user_is_plan_admin_for(user, plan)
+        plan_admin_orgs = Organization.objects.get_queryset().user_is_plan_admin_for(user, plan)
         query = Q(responsible_parties__organization__in=plan_admin_orgs) | Q(primary_org__in=plan_admin_orgs)
         return self.filter(query).distinct()
 
-    def user_has_staff_role_for(self, user: User, plan: Plan | None = None):
+    def user_has_staff_role_for(self, user: UserOrAnon, plan: Plan | None = None):
+        if isinstance(user, AnonymousUser):
+            return self.none()
         qs = self.user_is_contact_for(user) | self.user_is_org_admin_for(user, plan)
         return qs
 
@@ -99,7 +112,11 @@ class ActionQuerySet(SearchableQuerySetMixin, models.QuerySet):
         return self.unmerged().exclude(status__is_completed=True)
 
     def visible_for_user(self, user: UserOrAnon | None, plan: Plan | None = None) -> Self:
-        """ A None value is interpreted identically a non-authenticated user"""
+        """
+        Filter by visibility for the current user in a plan context.
+
+        A None value is interpreted identically a non-authenticated user.
+        """
         if user is None or not user.is_authenticated:
             return self.filter(visibility=RestrictedVisibilityModel.VisibilityState.PUBLIC)
         return self
@@ -120,19 +137,19 @@ class ActionQuerySet(SearchableQuerySetMixin, models.QuerySet):
         return self.annotate(
             indicator_count=Count(
                 'related_indicators',filter=Q(
-                    related_indicators__indicator__in=Indicator.objects.available_for_plan(plan).visible_for_public())),
+                    related_indicators__indicator__in=Indicator.objects.qs.available_for_plan(plan).visible_for_public())),
             indicators_with_goals_count=Count(
                 'related_indicators', filter=Q(
-                    related_indicators__indicator__in=Indicator.objects.available_for_plan(plan).visible_for_public().filter(
+                    related_indicators__indicator__in=Indicator.objects.qs.available_for_plan(plan).visible_for_public().filter(
                         goals__isnull=False))),
                 )
 
+if TYPE_CHECKING:
+    class ActionManager(MLModelManager['Action', ActionQuerySet]): ...
+else:
+    ActionManager = MLModelManager.from_queryset(ActionQuerySet)
 
-class HasGetValue(Protocol):
-    def get_value(self, obj: Action): ...
-
-
-class ActionIdentifierSearchMixin(HasGetValue):
+class ActionIdentifierSearchMixin(index.BaseField):
     def get_value(self, obj: Action):
         # If the plan doesn't have meaningful action identifiers,
         # do not index them.
@@ -156,90 +173,19 @@ class ResponsiblePartyDict(TypedDict):
     role: Literal['primary', 'collaborator', None]
 
 
-if TYPE_CHECKING:
-    class ActionManager(models.Manager['Action']):
-        def get_queryset(self) -> ActionQuerySet: ...
-else:
-    ActionManager = models.Manager.from_queryset(ActionQuerySet)
-
-
 @reversion.register(follow=ModelWithAttributes.REVERSION_FOLLOW + ['responsible_parties', 'tasks'])
-class Action(  # type: ignore[django-manager-missing]
-    WorkflowMixin, DraftStateMixin, LockableMixin, RevisionMixin,
-    ModelWithAttributes, PlanRelatedModel, OrderedModel, ClusterableModel, RestrictedVisibilityModel, index.Indexed,
+class Action(
+    PlanRelatedModel, WorkflowMixin, DraftStateMixin, LockableMixin, RevisionMixin,
+    ModelWithAttributes, OrderedModel, ClusterableModel, RestrictedVisibilityModel, index.Indexed,
 ):
     """One action/measure tracked in an action plan."""
 
-    def revision_enabled(self):
-        return self.plan.features.enable_moderation_workflow
-
-    def save_revision(self, *args, **kwargs):
-        # This method has been overridden temporarily.
-        #
-        # The reason is that for plans without the moderation workflow enabled, RevisionMixin.save_revision is still called for all
-        # subclasses of RevisionMixin.
-        #
-        # This results in newly created actions to have has_unpublished_changes == True and a revision to be created for them. This in turn
-        # results in the action edit form not showing the actual saved action data but the data of a "draft" revision (which itself cannot
-        # be edited in a plan with workflows disabled currently).
-        #
-        # In the future we will probably want to have drafting enabled by default for all plans and we can remove this.
-        if not self.revision_enabled():
-            return None
-        return super().save_revision(*args, **kwargs)
-
-    def commit_attributes(self, attributes: dict[str, typing.Any], user):
-        """
-        Called when the serialized draft contents of attribute values must be persisted to the actual Attribute models
-        when publishing an action from a draft"""
-        from actions.attributes import DraftAttributes
-        draft_attributes = DraftAttributes.from_revision_content(attributes)
-        attribute_types = self.get_editable_attribute_types(user)
-        for attribute_type in attribute_types:
-            try:
-                attribute_value = draft_attributes.get_value_for_attribute_type(attribute_type)
-            except KeyError:
-                pass
-            else:
-                attribute_type.commit_attribute(self, attribute_value)
-
-    def publish(self, revision, user=None, **kwargs):
-        attributes = revision.content.pop('attributes')
-        super().publish(revision, user=user, **kwargs)
-        self.commit_attributes(attributes, user)
-
-    def serializable_data(self, *args, **kwargs):
-        # Do not serialize translated virtual fields
-        i18n_field = get_i18n_field(self)
-        assert i18n_field
-        for field in i18n_field.get_translated_fields():
-            assert field.serialize is True
-            field.serialize = False
-        try:
-            result = super().serializable_data(*args, **kwargs)
-            if self.draft_attributes is None:
-                # This is a newly created action
-                attributes = {}
-            else:
-                attributes = self.draft_attributes.get_serialized_data()
-            result['attributes'] = attributes
-            return result
-        finally:
-            for field in i18n_field.get_translated_fields():
-                field.serialize = True
-
-    id: int
-
-    # In the GQL API, used to expose the metadata
-    # about what kind of revision this action data actually came from
-    _actual_workflow_state: WorkflowStateEnum | None
-
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
-    plan: ParentalKey[Plan, Plan] = ParentalKey( # pyright: ignore
+    plan: ParentalKey[Plan] = ParentalKey(
         'actions.Plan', on_delete=models.CASCADE, related_name='actions',
         verbose_name=_('plan'),
     )
-    primary_org = models.ForeignKey(
+    primary_org: models.ForeignKey[Organization | None, Organization | None] = models.ForeignKey(  # pyright: ignore
         'orgs.Organization', verbose_name=_('primary organization'),
         blank=True, null=True, on_delete=models.SET_NULL,
     )
@@ -290,8 +236,8 @@ class Action(  # type: ignore[django-manager-missing]
         help_text=_('Describe the reason why this action has has this status'),
     )
 
-    merged_with = models.ForeignKey(
-        'Action', blank=True, null=True, on_delete=models.SET_NULL,
+    merged_with: FK[Action | None] = models.ForeignKey(
+        'self', blank=True, null=True, on_delete=models.SET_NULL,
         verbose_name=_('merged with action'), help_text=_('Set if this action is merged with another action'),
         related_name='merged_actions',
     )
@@ -300,7 +246,7 @@ class Action(  # type: ignore[django-manager-missing]
         help_text=_('The completion percentage for this action'),
     )
     schedule = models.ManyToManyField(
-        'ActionSchedule', blank=True, verbose_name=_('schedule'),
+        'actions.ActionSchedule', blank=True, verbose_name=_('schedule'),
     )
     schedule_continuous = models.BooleanField(
         default=False, verbose_name=_('continuous action'),
@@ -310,27 +256,27 @@ class Action(  # type: ignore[django-manager-missing]
         'ActionDecisionLevel', blank=True, null=True, related_name='actions', on_delete=models.SET_NULL,
         verbose_name=_('decision-making level'),
     )
-    categories = models.ManyToManyField(
-        'Category', blank=True, verbose_name=_('categories'), related_name='actions',
+    categories: models.ManyToManyField[Category, Category] = models.ManyToManyField(
+        'actions.Category', blank=True, verbose_name=_('categories'), related_name='actions',
     )
-    indicators = models.ManyToManyField(
+    indicators: M2M[Indicator, ActionIndicator] = models.ManyToManyField(
         'indicators.Indicator', blank=True, verbose_name=_('indicators'),
         through='indicators.ActionIndicator', related_name='actions',
     )
-    related_actions = models.ManyToManyField('self', blank=True, verbose_name=_('related actions'))
+    related_actions: M2M[Self, Any] = models.ManyToManyField('self', blank=True, verbose_name=_('related actions'))
 
-    responsible_organizations = models.ManyToManyField(
-        Organization, through='ActionResponsibleParty', blank=True,
+    responsible_organizations = models.ManyToManyField[Organization, 'ActionResponsibleParty'](
+        Organization, through='actions.ActionResponsibleParty', blank=True,
         related_name='responsible_for_actions', verbose_name=_('responsible organizations'),
     )
 
-    contact_persons_unordered = models.ManyToManyField(
-        'people.Person', through='ActionContactPerson', blank=True,
+    contact_persons_unordered = models.ManyToManyField['Person', 'ActionContactPerson'](
+        'people.Person', through='actions.ActionContactPerson', blank=True,
         related_name='contact_for_actions', verbose_name=_('contact persons'),
     )
 
-    monitoring_quality_points = models.ManyToManyField(
-        'MonitoringQualityPoint', blank=True, related_name='actions',
+    monitoring_quality_points: M2M[MonitoringQualityPoint, Any] = models.ManyToManyField(
+        'actions.MonitoringQualityPoint', blank=True, related_name='actions',
         editable=False,
     )
 
@@ -359,16 +305,15 @@ class Action(  # type: ignore[django-manager-missing]
         null=True,
         default=None,
     )
-    superseded_by = models.ForeignKey(
+    superseded_by: FK[Action | None] = models.ForeignKey(
         'self', verbose_name=pgettext_lazy('action', 'superseded by'), blank=True, null=True, on_delete=models.SET_NULL,
         related_name='superseded_actions', help_text=_('Set if this action is superseded by another action'),
     )
-    dependency_role = models.ForeignKey(
-        'ActionDependencyRole', on_delete=models.SET_NULL, null=True, blank=True, related_name='actions',
+    dependency_role: FK[ActionDependencyRole | None] = models.ForeignKey(  # pyright: ignore
+        'actions.ActionDependencyRole', on_delete=models.SET_NULL, null=True, blank=True, related_name='actions',
         verbose_name=_('Role in dependencies'),
         help_text=_('Set if this action has the same role in all its dependency relationships with other actions'),
     )
-
     sent_notifications = GenericRelation('notifications.SentNotification', related_query_name='action')
 
     i18n = TranslationField(
@@ -387,7 +332,71 @@ class Action(  # type: ignore[django-manager-missing]
         for_concrete_model=False,
     )
 
-    objects: ActionManager = ActionManager()
+    def revision_enabled(self):
+        return self.plan.features.enable_moderation_workflow
+
+    def save_revision(self, *args, **kwargs):
+        # This method has been overridden temporarily.
+        #
+        # The reason is that for plans without the moderation workflow enabled, RevisionMixin.save_revision is still called for all
+        # subclasses of RevisionMixin.
+        #
+        # This results in newly created actions to have has_unpublished_changes == True and a revision to be created for them. This in turn
+        # results in the action edit form not showing the actual saved action data but the data of a "draft" revision (which itself cannot
+        # be edited in a plan with workflows disabled currently).
+        #
+        # In the future we will probably want to have drafting enabled by default for all plans and we can remove this.
+        if not self.revision_enabled():
+            return None
+        return super().save_revision(*args, **kwargs)
+
+    def commit_attributes(self, attributes: dict[str, typing.Any], user):
+        """
+        Called when the serialized draft contents of attribute values must be persisted to the actual Attribute models
+        when publishing an action from a draft
+        """
+        from actions.attributes import DraftAttributes
+        draft_attributes = DraftAttributes.from_revision_content(attributes)
+        attribute_types = self.get_editable_attribute_types(user)
+        for attribute_type in attribute_types:
+            try:
+                attribute_value = draft_attributes.get_value_for_attribute_type(attribute_type)
+            except KeyError:
+                pass
+            else:
+                attribute_type.commit_attribute(self, attribute_value)
+
+    def publish(self, revision, user=None, **kwargs):
+        attributes = revision.content.pop('attributes')
+        super().publish(revision, user=user, **kwargs)
+        self.commit_attributes(attributes, user)
+
+    def serializable_data(self, *args, **kwargs):
+        # Do not serialize translated virtual fields
+        i18n_field = get_i18n_field(self)
+        assert i18n_field
+        for field in i18n_field.get_translated_fields():
+            assert field.serialize is True
+            field.serialize = False
+        try:
+            result = super().serializable_data(*args, **kwargs)
+            if self.draft_attributes is None:
+                # This is a newly created action
+                attributes = {}
+            else:
+                attributes = self.draft_attributes.get_serialized_data()
+            result['attributes'] = attributes
+            return result
+        finally:
+            for field in i18n_field.get_translated_fields():
+                field.serialize = True
+
+    # In the GQL API, used to expose the metadata
+    # about what kind of revision this action data actually came from
+    _actual_workflow_state: WorkflowStateEnum | None
+    id: int
+
+    objects: ClassVar[ActionManager] = ActionManager()
 
     search_fields = [
         TranslatedSearchField('name', boost=10),
@@ -419,14 +428,17 @@ class Action(  # type: ignore[django-manager-missing]
     ]
 
     # type annotations for related objects
-    contact_persons: RelatedManager[ActionContactPerson]
-    merged_actions: RelatedManager[Action]
-    superseded_actions: RelatedManager[Action]
-    tasks: RelatedManager[ActionTask]
-    dependent_relationships: RelatedManager[ActionDependencyRelationship]
-    preceding_relationships: RelatedManager[ActionDependencyRelationship]
-
+    contact_persons: RevMany[ActionContactPerson]
+    merged_actions: RevMany[Action]
+    superseded_actions: RevMany[Action]
+    tasks: RevMany[ActionTask]
+    dependent_relationships: RevMany[ActionDependencyRelationship]
+    preceding_relationships: RevMany[ActionDependencyRelationship]
+    related_indicators: RevMany[ActionIndicator]
     verbose_name_partitive = pgettext_lazy('partitive', 'action')
+    plan_id: int
+    merged_with_id: int | None
+    name_i18n: str
 
     class Meta:
         verbose_name = _('action')
@@ -466,10 +478,8 @@ class Action(  # type: ignore[django-manager-missing]
             else:
                 self.order = max_order + 1
         # Invalidate the plan's action cache because, e.g., we might have changed the order
-        try:
+        with contextlib.suppress(AttributeError):
             del self.plan.cached_actions
-        except AttributeError:
-            pass
         return super().save(*args, **kwargs)
 
     def is_merged(self):
@@ -498,7 +508,7 @@ class Action(  # type: ignore[django-manager-missing]
         )
 
     def get_visible_related_indicators(self):
-        indicator_ids = self.indicators.visible_for_public().values_list("id", flat=True)
+        indicator_ids = self.indicators.get_queryset().visible_for_public().values_list("id", flat=True)
         return self.related_indicators.filter(indicator_id__in=indicator_ids)
 
 
@@ -506,15 +516,14 @@ class Action(  # type: ignore[django-manager-missing]
     def visibility_display(self):
         return self.get_visibility_display()
 
-
-    def _calculate_status_from_indicators(self):
+    def _calculate_status_from_indicators(self) -> None | dict[str, int]:
         progress_indicators = self.related_indicators.filter(indicates_action_progress=True)
         total_completion = 0.0
         total_indicators = 0
         is_late = False
 
         for action_ind in progress_indicators:
-            ind = action_ind.indicator
+            ind: Indicator = action_ind.indicator
             try:
                 latest_value = ind.values.latest()
             except ind.values.model.DoesNotExist:
@@ -549,10 +558,8 @@ class Action(  # type: ignore[django-manager-missing]
                 # Up!
                 if closest_goal.value - latest_value.value > 0:
                     is_late = True
-            else:
-                # Down
-                if closest_goal.value - latest_value.value < 0:
-                    is_late = True
+            elif closest_goal.value - latest_value.value < 0:
+                is_late = True
 
         if not total_indicators:
             return None
@@ -563,13 +570,13 @@ class Action(  # type: ignore[django-manager-missing]
             return None
         return dict(completion=completion, is_late=is_late)
 
-    def _calculate_completion_from_tasks(self, tasks):
+    def _calculate_completion_from_tasks(self, tasks) -> None | dict[str, int]:
         if not tasks:
             return None
         n_completed = len(list(filter(lambda x: x.completed_at is not None, tasks)))
         return dict(completion=int(n_completed * 100 / len(tasks)))
 
-    def _determine_status(self, tasks, indicator_status, today=None):
+    def _determine_status(self, tasks, indicator_status, today=None) -> None | ActionStatus:
         if today is None:
             today = self.plan.now_in_local_timezone().date()
 
@@ -578,9 +585,9 @@ class Action(  # type: ignore[django-manager-missing]
             return None
 
         by_id = {x.identifier: x for x in statuses}
-        KNOWN_IDS = {'not_started', 'on_time', 'late'}
+        known_ids = {'not_started', 'on_time', 'late'}
         # If the status set is not something we can handle, bail out.
-        if not KNOWN_IDS.issubset(set(by_id.keys())):
+        if not known_ids.issubset(set(by_id.keys())):
             logger.warning(
                 'Unable to determine action statuses for plan %s: '
                 'right statuses missing' % self.plan.identifier,
@@ -590,7 +597,7 @@ class Action(  # type: ignore[django-manager-missing]
         if indicator_status is not None and indicator_status.get('is_late'):
             return by_id['late']
 
-        def is_late(task):
+        def is_late(task) -> bool:
             if task.due_at is None or task.completed_at is not None:
                 return False
             return today > task.due_at
@@ -600,8 +607,7 @@ class Action(  # type: ignore[django-manager-missing]
             completed_tasks = list(filter(lambda x: x.completed_at is not None, tasks))
             if not completed_tasks:
                 return by_id['not_started']
-            else:
-                return by_id['on_time']
+            return by_id['on_time']
 
         return by_id['late']
 
@@ -615,7 +621,7 @@ class Action(  # type: ignore[django-manager-missing]
                 self.save(update_fields=['completion'])
             return
 
-        determine_monitoring_quality(self, self.plan.monitoring_quality_points.all())
+        determine_monitoring_quality(self, self.plan.monitoring_quality_points.all())  # pyright: ignore
 
         indicator_status = self._calculate_status_from_indicators()
         if indicator_status:
@@ -752,7 +758,7 @@ class Action(  # type: ignore[django-manager-missing]
     def get_attribute_types_for_plan(cls, plan: Plan, only_in_reporting_tab=False, unless_in_reporting_tab=False):
         action_ct = ContentType.objects.get_for_model(Action)
         plan_ct = ContentType.objects.get_for_model(plan)
-        at_qs: Iterable[AttributeTypeModel] = AttributeTypeModel.objects.filter(
+        at_qs: QuerySet[AttributeTypeModel] = AttributeTypeModel.objects.filter(
             object_content_type=action_ct,
             scope_content_type=plan_ct,
             scope_id=plan.id,
@@ -877,8 +883,9 @@ class Action(  # type: ignore[django-manager-missing]
 
     def get_workflow_progress(self) -> tuple[int, int]:
         """
-        Return a numerical digest of where in the moderation workflow the latest available action revision is,
-        from 0 to n, including the maximum n as the second element in the tuple
+        Return a numerical digest of where in the moderation workflow the latest available action revision is.
+
+        From 0 to n, including the maximum n as the second element in the tuple.
 
         0         there is a draft not yet in moderation
         1         the draft has been sent to moderation
@@ -901,7 +908,7 @@ class Action(  # type: ignore[django-manager-missing]
 
     def get_dependency_relationships(self, user: UserOrAnon | None, plan: Plan | None) -> ActionDependencyRelationshipQuerySet:
         from .action_deps import ActionDependencyRelationship
-        return ActionDependencyRelationship.objects.all_for_action(self).visible_for_user(user, plan)
+        return ActionDependencyRelationship.objects.qs.all_for_action(self).visible_for_user(user, plan)
 
 
 class ModelWithRole:
@@ -931,7 +938,7 @@ class ActionResponsibleParty(OrderedModel, ModelWithRole):
         __empty__ = _('Unspecified')
 
     action = ParentalKey(
-        Action, on_delete=models.CASCADE, related_name='responsible_parties',
+        'actions.Action', on_delete=models.CASCADE, related_name='responsible_parties',
         verbose_name=_('action'),
     )
     organization = models.ForeignKey(
@@ -989,7 +996,7 @@ class ActionResponsibleParty(OrderedModel, ModelWithRole):
 
 
 class ActionContactPerson(OrderedModel, ModelWithRole):
-    """A Person acting as a contact for an action"""
+    """A Person acting as a contact for an action."""
 
     class Role(ModelWithRole.Role):
         EDITOR = 'editor', _('Editor')
@@ -1023,7 +1030,7 @@ class ActionContactPerson(OrderedModel, ModelWithRole):
         verbose_name_plural = _('action contact persons')
 
     def __str__(self):
-        return f'{str(self.person)}: {str(self.action)}'
+        return f'{self.person!s}: {self.action!s}'
 
     def get_label(self):
         if self.role:
@@ -1048,10 +1055,10 @@ class ActionContactPerson(OrderedModel, ModelWithRole):
 
 
 
-class ActionSchedule(models.Model, PlanRelatedModel):  # type: ignore[django-manager-missing]
+class ActionSchedule(models.Model, PlanRelatedModel):
     """A schedule for an action with begin and end dates."""
 
-    plan = ParentalKey('actions.Plan', on_delete=models.CASCADE, related_name='action_schedules')
+    plan: ParentalKey[Plan] = ParentalKey('actions.Plan', on_delete=models.CASCADE, related_name='action_schedules')
     name = models.CharField(max_length=100)
     begins_at = models.DateField()
     ends_at = models.DateField(null=True, blank=True)
@@ -1071,7 +1078,7 @@ class ActionSchedule(models.Model, PlanRelatedModel):  # type: ignore[django-man
 
 
 @reversion.register()
-class ActionStatus(models.Model, PlanRelatedModel):  # type: ignore[django-manager-missing]
+class ActionStatus(models.Model, PlanRelatedModel):
     """The current status for the action ("on time", "late", "completed", etc.)."""
 
     plan = ParentalKey(
@@ -1105,8 +1112,8 @@ class ActionStatus(models.Model, PlanRelatedModel):  # type: ignore[django-manag
 
 
 @reversion.register()
-class ActionImplementationPhase(PlanRelatedModel, OrderedModel):  # type: ignore[django-manager-missing]
-    plan = ParentalKey(
+class ActionImplementationPhase(PlanRelatedModel, OrderedModel):
+    plan: ParentalKey[Plan] = ParentalKey(
         'actions.Plan', on_delete=models.CASCADE, related_name='action_implementation_phases',
         verbose_name=_('plan'),
     )
@@ -1130,7 +1137,7 @@ class ActionImplementationPhase(PlanRelatedModel, OrderedModel):  # type: ignore
         return self.name
 
 
-class ActionDecisionLevel(models.Model, PlanRelatedModel):  # type: ignore[django-manager-missing]
+class ActionDecisionLevel(models.Model, PlanRelatedModel):
     plan = models.ForeignKey(
         'actions.Plan', on_delete=models.CASCADE, related_name='action_decision_levels',
         verbose_name=_('plan'),
@@ -1151,22 +1158,29 @@ class ActionDecisionLevel(models.Model, PlanRelatedModel):  # type: ignore[djang
         return self.name
 
 
-class ActionTaskQuerySet(models.QuerySet):
+class ActionTaskQuerySet(MultilingualQuerySet['ActionTask']):
     def active(self):
         return self.exclude(state__in=(ActionTask.CANCELLED, ActionTask.COMPLETED))
 
+if TYPE_CHECKING:
+    class ActionTaskManager(MLModelManager['ActionTask', ActionTaskQuerySet]):
+        pass
+else:
+    ActionTaskManager = MLModelManager.from_queryset(ActionTaskQuerySet)
 
-class ActionRelatedModelTransModelMixin():
+
+class ActionRelatedModelTransModelMixin:
     @classmethod
-    def from_serializable_data(cls, data, check_fks=True, strict_fks=True):
+    def from_serializable_data(cls, data: dict, check_fks: bool = True, strict_fks: bool = True):
         if 'i18n' in data:
             del data['i18n']
         kwargs = {}
         to_delete = set()
+        meta = cast(Options, getattr(cls, '_meta'))
         for field_name, value in data.items():
             field = None
             try:
-                field = cls._meta.get_field(field_name)
+                field = meta.get_field(field_name)
             except FieldDoesNotExist:
                 kwargs[field_name] = value
             if isinstance(field, TranslatedVirtualField):
@@ -1234,7 +1248,7 @@ class ActionTask(ActionRelatedModelTransModelMixin, models.Model):
 
     i18n = TranslationField(fields=('name', 'comment'), default_language_field='action__plan__primary_language_lowercase')
 
-    objects = ActionTaskQuerySet.as_manager()
+    objects = ActionTaskManager()  # pyright: ignore
 
     verbose_name_partitive = pgettext_lazy('partitive', 'action task')
 
@@ -1280,7 +1294,7 @@ class ActionTask(ActionRelatedModelTransModelMixin, models.Model):
         }
 
 
-class ActionImpact(PlanRelatedModel, OrderedModel):  # type: ignore[django-manager-missing]
+class ActionImpact(PlanRelatedModel, OrderedModel):
     """An impact classification for an action in an action plan."""
 
     plan = ParentalKey(

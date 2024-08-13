@@ -4,17 +4,18 @@ import json
 import typing
 from typing import Protocol, Type
 
-import factory
-import pytest
 from django.contrib.contenttypes.models import ContentType
 from django.db.models.signals import post_save
 from django.urls import reverse
-from factory import LazyAttribute, Sequence, SubFactory
 from graphene_django.utils.testing import graphql_query
-from pytest_factoryboy import LazyFixture, register
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APIClient
 from wagtail.test.utils import wagtail_factories
+
+import factory
+import pytest
+from factory import LazyAttribute, Sequence, SubFactory
+from pytest_factoryboy import LazyFixture, register
 
 from actions.models.attributes import AttributeType
 from actions.tests import factories as actions_factories
@@ -32,13 +33,14 @@ from users.tests import factories as users_factories
 if typing.TYPE_CHECKING:
     import django.test.client
     from django.db.models import Model
+
     from wagtail_modeladmin.options import ModelAdmin
 
     from users.models import User
 
 import logging
 
-logging.getLogger('pytest_factoryboy.codegen').setLevel(logging.WARN)
+logging.getLogger('pytest_factoryboy.codegen').setLevel(logging.WARNING)
 
 
 class JSONAPIClient(APIClient):
@@ -208,15 +210,15 @@ def contains_error():
 
 
 @pytest.fixture(autouse=True)
-def disable_search_autoupdate(settings):
+def _disable_search_autoupdate(settings) -> None:
     for conf in settings.WAGTAILSEARCH_BACKENDS.values():
         conf['AUTO_UPDATE'] = False
 
 
 class ModelAdminEditTest(Protocol):
-    def __call__(
+    def __call__(  # noqa: PLR0913
         self, admin_class: type[ModelAdmin], instance: Model, user: User,
-        post_data: dict = {}, can_inspect: bool = True, can_edit: bool = True): ...
+        post_data: dict = {}, can_inspect: bool = True, can_edit: bool = True): ...  # noqa: B006
 
 
 @pytest.fixture()

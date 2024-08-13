@@ -6,8 +6,11 @@ from typing import Any, List, Optional, Type
 
 from django.utils.formats import date_format
 from django.utils.translation import gettext_lazy as _, pgettext
-from grapple.models import GraphQLForeignKey
 from wagtail import blocks, fields
+
+from grapple.models import GraphQLForeignKey
+
+from aplans.utils import convert_html_to_text
 
 from actions.attributes import AttributeType
 from actions.models.action import (
@@ -25,7 +28,6 @@ from actions.models.category import (
     CategoryLevel,
     CategoryType,
 )
-from aplans.utils import convert_html_to_text
 from orgs.models import Organization
 from reports.graphene_types import GrapheneValueClassProperties, generate_graphene_report_value_node_class
 from reports.utils import get_attribute_for_type_from_related_objects, get_related_model_instances_for_action

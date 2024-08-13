@@ -3,8 +3,9 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Generator, Optional, Sequence, Union
 
-import watchfiles
 from django.utils import autoreload
+
+import watchfiles
 
 
 class DjangoPythonFilter(watchfiles.PythonFilter):

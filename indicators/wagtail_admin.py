@@ -1,10 +1,7 @@
-from dal import autocomplete
 from django import forms
 from django.contrib.admin import SimpleListFilter
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _, ngettext_lazy
-from generic_chooser.views import ModelChooserViewSet
-from generic_chooser.widgets import AdminChooser
 from wagtail import hooks
 from wagtail.admin.panels import (
     FieldPanel,
@@ -13,8 +10,16 @@ from wagtail.admin.panels import (
     MultiFieldPanel,
     ObjectList,
 )
+
+from dal import autocomplete
+from generic_chooser.views import ModelChooserViewSet
+from generic_chooser.widgets import AdminChooser
 from wagtail_modeladmin.helpers import PermissionHelper
 from wagtail_modeladmin.options import ModelAdminGroup
+
+from aplans.context_vars import ctx_instance, ctx_request
+from aplans.extensions import modeladmin_register
+from aplans.wagtail_utils import _get_category_fields
 
 from admin_site.wagtail import (
     AplansAdminModelForm,
@@ -28,9 +33,6 @@ from admin_site.wagtail import (
     InitializeFormWithPlanMixin,
     get_translation_tabs,
 )
-from aplans.context_vars import ctx_instance, ctx_request
-from aplans.extensions import modeladmin_register
-from aplans.wagtail_utils import _get_category_fields
 from orgs.models import Organization
 from people.chooser import PersonChooser
 from users.models import User

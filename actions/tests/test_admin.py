@@ -2,8 +2,9 @@ from __future__ import annotations
 
 import typing
 
-import pytest
 from django.urls import reverse
+
+import pytest
 from pytest_django.asserts import assertContains
 
 from actions.action_admin import ActionAdmin
@@ -12,8 +13,9 @@ from actions.wagtail_admin import ActivePlanAdmin
 from admin_site.tests.factories import ClientPlanFactory
 
 if typing.TYPE_CHECKING:
-    from actions.models import Action
     from aplans.types import WatchAdminRequest
+
+    from actions.models import Action
     from conftest import ModelAdminEditTest
     from people.models import Person
     from users.models import User

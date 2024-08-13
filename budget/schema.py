@@ -1,7 +1,12 @@
 import graphene
 
-from actions.schema import ActionNode, CategoryNode, CategoryTypeNode, PlanNode
+from kausal_common.graphene import GQLInfo
+
 from aplans.graphql_types import DjangoNode, register_django_node
+
+from actions.models.action import Action
+from actions.models.category import Category
+from actions.schema import ActionNode, CategoryNode, CategoryTypeNode, PlanNode
 from budget.models import (
     DataPoint,
     Dataset,
@@ -100,7 +105,7 @@ class DatasetNode(DjangoNode):
         fields = ('uuid', 'schema', 'data_points')
 
     @staticmethod
-    def resolve_scope(root, info):
+    def resolve_scope(root: Dataset, info: GQLInfo) -> Action | Category:
         return root.scope
 
 

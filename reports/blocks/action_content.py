@@ -5,9 +5,10 @@ from typing import TYPE_CHECKING
 
 from django.apps import apps
 from django.utils.translation import gettext_lazy as _
-from grapple.helpers import register_streamfield_block
 from wagtail import blocks
 from wagtail.admin.panels import HelpPanel
+
+from grapple.helpers import register_streamfield_block
 
 from actions.blocks.action_content import get_action_block_for_field
 from actions.blocks.choosers import ActionAttributeTypeChooserBlock, CategoryLevelChooserBlock, CategoryTypeChooserBlock

@@ -5,7 +5,6 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import Any, Generic, TypeVar
 
-from dal import autocomplete, forward as dal_forward
 from django import forms
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import ForeignKey, QuerySet
@@ -14,13 +13,17 @@ from wagtail.admin.panels import FieldPanel
 from wagtail.fields import RichTextField
 from wagtail.rich_text import RichText as WagtailRichText
 
-import actions.models.attributes as models
-from admin_site.utils import FieldLabelRenderer
+from dal import autocomplete, forward as dal_forward
+
 from aplans.utils import convert_html_to_text
 
+import actions.models.attributes as models
+from admin_site.utils import FieldLabelRenderer
+
 if typing.TYPE_CHECKING:
-    from actions.models import Category, Plan
     from aplans.cache import PlanSpecificCache
+
+    from actions.models import Category, Plan
     from reports.utils import SerializedAttributeVersion, SerializedVersion
     from users.models import User
 
@@ -77,7 +80,8 @@ class AttributeValue(ABC):
     def should_exist_in_database(self) -> bool:
         """
         If this returns true, committing an attribute will create or update an attribute model instance; otherwise,
-        committing will delete any existing attribute model instance for the respective attribute type."""
+        committing will delete any existing attribute model instance for the respective attribute type.
+        """
         pass
 
     def instantiate_attribute(self, type: AttributeType[T], obj: models.ModelWithAttributes) -> T:
@@ -204,7 +208,7 @@ class NumericAttributeValue(AttributeValue):
         assert value is None or isinstance(value, float)
         return NumericAttributeValue(value=value)
 
-    def serialize(self) -> Any:
+    def serialize(self) -> float | None:
         return self.value
 
     def attribute_model_kwargs(self) -> dict[str, Any]:
@@ -247,7 +251,7 @@ class AttributeType(ABC, Generic[T]):
 
     @abstractmethod
     def get_value_from_form_data(self, cleaned_data: dict[str, Any]) -> AttributeValue | None:
-        """Returns None if there is no data for this attribute type."""
+        """Return None if there is no data for this attribute type."""
         pass
 
     @abstractmethod
@@ -443,7 +447,7 @@ class CategoryChoice(AttributeType[models.AttributeCategoryChoice]):
         draft_attributes: DraftAttributes | None = None,
     ) -> list[FormField]:
         from actions.models.category import Category
-        initial_categories = None
+        initial_categories: list[Category] | None = None
         if draft_attributes:
             try:
                 attribute_value = draft_attributes.get_value_for_attribute_type(self)
@@ -455,7 +459,7 @@ class CategoryChoice(AttributeType[models.AttributeCategoryChoice]):
         elif obj:
             c = self.get_attributes(obj).first()
             if c:
-                initial_categories = c.categories.all()
+                initial_categories = list(c.categories.all())
 
         categories = Category.objects.filter(type=self.instance.attribute_category_type)
         field = forms.ModelMultipleChoiceField(

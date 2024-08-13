@@ -4,7 +4,6 @@ import json
 import os
 from typing import TYPE_CHECKING, Any
 
-import sentry_sdk
 from django.conf import settings
 from django.core.cache import cache
 from django.core.exceptions import ValidationError
@@ -14,14 +13,17 @@ from graphql import DirectiveNode, ExecutionResult, GraphQLResolveInfo
 from graphql.error import GraphQLError
 from graphql.execution import ExecutionContext
 from graphql.language.ast import StringValueNode, VariableNode
+
+import sentry_sdk
 from loguru import logger
 from rich.console import Console
 from rich.syntax import Syntax
 from sentry_sdk import tracing as sentry_tracing
 
-from actions.models import Plan
 from aplans.settings import LOG_SQL_QUERIES
 from aplans.types import WatchAPIRequest
+
+from actions.models import Plan
 from users.models import User
 
 from .graphql_helpers import GraphQLAuthFailedError, GraphQLAuthRequiredError
