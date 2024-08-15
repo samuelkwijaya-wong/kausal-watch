@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import logging
 import typing
 from datetime import timedelta
@@ -20,8 +22,8 @@ from wagtail_modeladmin.helpers import ButtonHelper
 from wagtail_modeladmin.options import modeladmin_register
 from wagtail_modeladmin.views import DeleteView
 
+from admin_site.utils import admin_req
 from aplans.context_vars import ctx_instance, ctx_request
-from aplans.types import WatchAdminRequest
 from aplans.utils import naturaltime
 
 from actions.models import ActionContactPerson, Plan, PlanPublicSiteViewer
@@ -43,6 +45,8 @@ from .models import Person
 from .views import ImpersonateUserView, ResetPasswordView
 
 if typing.TYPE_CHECKING:
+    from aplans.types import WatchAdminRequest
+
     from users.models import User
 
 
@@ -54,6 +58,7 @@ class IsContactPersonFilter(SimpleListFilter):
     parameter_name = 'contact_person'
 
     def lookups(self, request, model_admin):
+        request = admin_req(request)
         plan = request.user.get_active_admin_plan()
         related_plans = Plan.objects.filter(pk=plan.pk) | plan.get_all_related_plans().all()
         # If there are related plans that have action contact persons, show a filter for each of these plans

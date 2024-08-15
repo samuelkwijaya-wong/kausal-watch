@@ -3,7 +3,7 @@ from __future__ import annotations
 import functools
 import typing
 import uuid
-from typing import ClassVar, Iterable, Sequence
+from typing import ClassVar, Iterable, Self, Sequence
 
 from django.conf import settings
 from django.contrib import admin
@@ -21,16 +21,18 @@ from wagtail.search import index
 
 from treebeard.mp_tree import MP_Node, MP_NodeQuerySet
 
-from kausal_common.models.types import MLModelManager
+from kausal_common.models.types import MLModelManager, RevManyToMany
 
 from aplans.utils import ModelWithPrimaryLanguage, PlanDefaultsModel, PlanRelatedModel, get_supported_languages
 
 if typing.TYPE_CHECKING:
     from django.db.models import QuerySet
+    from modelcluster.fields import PK
 
-    from kausal_common.models.types import FK, M2M, ForeignKey, RevManyQS
+    from kausal_common.models.types import FK, M2M, RevManyQS
 
-    from actions.models import Plan
+    from actions.models import Action, Plan
+    from actions.models.action import ActionResponsibleParty
     from actions.models.plan import PlanQuerySet
     from people.models import Person
     from users.models import User
@@ -75,10 +77,10 @@ class Node[QS: MP_NodeQuerySet](MP_Node[QS], ClusterableModel):
     @admin.display(
         description=pgettext_lazy('node', 'Parent'),
     )
-    def get_parent(self, *args, **kwargs):
+    def get_parent(self, *args, **kwargs) -> Self | None:
         return super().get_parent(*args, **kwargs)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.name
 
 
@@ -143,7 +145,7 @@ class OrganizationQuerySet(MP_NodeQuerySet['Organization'], MultilingualQuerySet
     def available_for_plan(self, plan: Plan):
         return self.filter(id__in=self._available_for_plan(plan))
 
-    def available_for_plans(self, plans: Sequence[Plan] | models.QuerySet[Plan]):
+    def available_for_plans(self, plans: Sequence[Plan] | PlanQuerySet):
         query = Q(pk__in=[])  # always false; Q() doesn't cut it; https://stackoverflow.com/a/39001190/14595546
         for pl in plans:
             query |= Q(id__in=self._available_for_plan(pl))
@@ -182,23 +184,9 @@ class OrganizationQuerySet(MP_NodeQuerySet['Organization'], MultilingualQuerySet
         return qs
 
 
-class OrganizationManager(MLModelManager['Organization'], gis_models.Manager['Organization']):
-    """Duplicate MP_NodeManager but use OrganizationQuerySet instead of MP_NodeQuerySet."""
-
-    def get_queryset(self) -> OrganizationQuerySet:
-        return OrganizationQuerySet(self.model).order_by('path')
-
-    def editable_by_user(self, user):
-        return self.get_queryset().editable_by_user(user)
-
-    def user_is_plan_admin_for(self, user: User, plan: Plan | None = None):
-        return self.get_queryset().user_is_plan_admin_for(user, plan)
-
-    def available_for_plan(self, plan: Plan):
-        return self.get_queryset().available_for_plan(plan)
-
-    def available_for_plans(self, plans: Sequence[Plan]):
-        return self.get_queryset().available_for_plans(plans)
+_OrganizationManager = models.Manager.from_queryset(OrganizationQuerySet)
+class OrganizationManager(MLModelManager['Organization', OrganizationQuerySet], _OrganizationManager): ...
+del _OrganizationManager
 
 
 class Organization(PlanDefaultsModel, index.Indexed, Node[OrganizationQuerySet], ModelWithPrimaryLanguage, gis_models.Model):
@@ -276,7 +264,7 @@ class Organization(PlanDefaultsModel, index.Indexed, Node[OrganizationQuerySet],
 
     i18n = TranslationField(fields=('name', 'abbreviation'), default_language_field='primary_language_lowercase')
 
-    objects: ClassVar[OrganizationManager] = OrganizationManager()
+    objects: ClassVar[OrganizationManager] = OrganizationManager()  # type: ignore[assignment]
 
     public_fields = ['id', 'uuid', 'name', 'abbreviation', 'internal_abbreviation', 'parent']
 
@@ -290,7 +278,7 @@ class Organization(PlanDefaultsModel, index.Indexed, Node[OrganizationQuerySet],
     id: int
     classification_id: int | None
     plans: RevManyQS[Plan, PlanQuerySet]
-
+    responsible_for_actions: RevManyToMany[Action, ActionResponsibleParty]
 
     @property
     def parent(self):
@@ -323,7 +311,7 @@ class Organization(PlanDefaultsModel, index.Indexed, Node[OrganizationQuerySet],
 
         name = self.name
         parent = self.get_parent()
-        for level in range(levels):
+        for _level in range(levels):
             if parent is None:
                 break
             if parent.abbreviation:
@@ -416,6 +404,7 @@ class Organization(PlanDefaultsModel, index.Indexed, Node[OrganizationQuerySet],
 
         root_org = Organization.objects.get_queryset().filter(id=self.pk)\
             .annotate_action_count().annotate_contact_person_count().first()
+        assert root_org is not None
         root_tree = Tree(get_label(root_org))
         add_children(root_org, root_tree)
         print(root_tree)
@@ -452,7 +441,7 @@ class OrganizationIdentifier(models.Model):
         return f'{self.identifier} @ {self.namespace.name}'
 
 
-class OrganizationPlanAdmin(models.Model, PlanRelatedModel):
+class OrganizationPlanAdmin(PlanRelatedModel):
     """Person who can administer plan-specific content that is related to the organization."""
 
     class Meta:
@@ -462,13 +451,13 @@ class OrganizationPlanAdmin(models.Model, PlanRelatedModel):
         verbose_name = _("plan admin")
         verbose_name_plural = _("plan admins")
 
-    organization = ParentalKey(
+    organization: PK = ParentalKey(
         Organization, on_delete=models.CASCADE, related_name='organization_plan_admins', verbose_name=_('organization'),
     )
-    plan: ForeignKey[Plan] = models.ForeignKey(
+    plan: FK[Plan] = models.ForeignKey(
         'actions.Plan', on_delete=models.CASCADE, related_name='organization_plan_admins', verbose_name=_('plan'),
     )
-    person: ForeignKey[Person] = models.ForeignKey(
+    person: FK[Person] = models.ForeignKey(
         'people.Person', on_delete=models.CASCADE, related_name='organization_plan_admins', verbose_name=_('person'),
     )
 

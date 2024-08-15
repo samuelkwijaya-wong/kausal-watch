@@ -110,7 +110,9 @@ class PersonQuerySet(MultilingualQuerySet['Person']):
 
 
 if TYPE_CHECKING:
-    class PersonManager(MLModelManager['Person', PersonQuerySet]): ...
+    _PersonManager = models.Manager.from_queryset(PersonQuerySet)
+    class PersonManager(MLModelManager['Person', PersonQuerySet], _PersonManager): ...
+    del _PersonManager
 else:
     PersonManager = MLModelManager.from_queryset(PersonQuerySet)
 

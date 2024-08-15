@@ -3,8 +3,7 @@ from __future__ import annotations
 import datetime
 import logging
 import typing
-from abc import abstractmethod, abstractproperty
-from typing import TYPE_CHECKING, Generic, Protocol, Sequence, TypeVar, cast
+from typing import TYPE_CHECKING, Sequence, TypeVar, cast
 
 import reversion
 from django.conf import settings
@@ -13,7 +12,6 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Q
-from django.db.models.fields.related_descriptors import ForwardManyToOneDescriptor
 from django.db.models.query import QuerySet
 from django.utils.translation import gettext_lazy as _, pgettext_lazy
 from modelcluster.fields import ParentalKey
@@ -32,6 +30,7 @@ if typing.TYPE_CHECKING:
     from modelcluster.fields import PK
 
     from actions.models.plan import Plan
+    from admin_site.models import Client
 
     from .recipients import EmailRecipient, NotificationRecipient
 
@@ -206,7 +205,7 @@ class NotificationTemplateManager(models.Manager):
         return self.get(base__plan__identifier=base[0], type=type_)
 
 
-class NotificationTemplate(models.Model, IndirectPlanRelatedModel):
+class NotificationTemplate(IndirectPlanRelatedModel):
     base: ParentalKey[BaseTemplate, BaseTemplate]
 
     type = models.CharField(
@@ -269,6 +268,7 @@ class NotificationTemplate(models.Model, IndirectPlanRelatedModel):
             return None
         plan = self.base.plan
         client_plan = plan.clients.first()
+        client: Client | None
         if client_plan:
             client = client_plan.client
         else:

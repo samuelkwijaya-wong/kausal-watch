@@ -1,13 +1,16 @@
-from typing import Generic, Type, TypeVar
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Generic
+from typing_extensions import TypeVar
 
 from django.db import models
-from django.db.models import ProtectedError
+from django.db.models import Model, ProtectedError
+from django.forms.models import ModelForm
 from django.utils.text import capfirst
 from django.utils.translation import gettext as _
 from wagtail.admin import messages
 from wagtail.snippets.views.snippets import CreateView, EditView, SnippetViewSet
 
-from aplans.types import WatchAdminRequest
 from aplans.utils import PlanRelatedModel
 
 from admin_site.forms import WatchAdminModelForm
@@ -19,27 +22,31 @@ from admin_site.mixins import (
     SetInstanceMixin,
 )
 from admin_site.permissions import PlanRelatedPermissionPolicy
+from admin_site.utils import admin_req
 from admin_site.wagtail import execute_admin_post_save_tasks
 
-M = TypeVar('M', bound=models.Model)
+if TYPE_CHECKING:
+    from aplans.types import WatchAdminRequest
+
+_Model = TypeVar('_Model', bound=models.Model)
+_Form = TypeVar('_Form', bound=WatchAdminModelForm, default=WatchAdminModelForm)
 
 
 class WatchEditView(
+    Generic[_Model, _Form],
     PersistFiltersEditingMixin,
     ContinueEditingMixin,
     PlanRelatedViewMixin,
     ActivatePermissionHelperPlanContextMixin,
-    EditView,
-    SetInstanceMixin,
-    Generic[M],
+    EditView[_Model, _Form],
+    SetInstanceMixin[_Model],
 ):
-    request: WatchAdminRequest
-    model: type[M]
+    model: type[_Model]
 
     def get_form_kwargs(self):
         return {
             **super().get_form_kwargs(),
-            'plan': self.request.user.get_active_admin_plan(),
+            'plan': admin_req(self.request).user.get_active_admin_plan(),
         }
 
     def form_valid(self, form, *args, **kwargs):
@@ -54,7 +61,7 @@ class WatchEditView(
             messages.validation_error(self.request, self.get_error_message(), form)
             return self.render_to_response(self.get_context_data(form=form))
 
-        execute_admin_post_save_tasks(form.instance, self.request.user)
+        execute_admin_post_save_tasks(form.instance, admin_req(self.request).user)
         return form_valid_return
 
     def get_error_message(self):
@@ -66,9 +73,8 @@ class WatchEditView(
         return _("%s could not be created due to errors.") % capfirst(model_name)
 
 
-class WatchCreateView(CreateView, Generic[M]):
+class WatchCreateView[ModelT: Model, FormT: ModelForm](CreateView[ModelT, FormT]):
     request: WatchAdminRequest
-    model: type[M]
 
     def get_form_kwargs(self):
         return {
@@ -77,8 +83,7 @@ class WatchCreateView(CreateView, Generic[M]):
         }
 
 
-class WatchViewSet(SnippetViewSet, Generic[M]):
-    model: type[M]
+class WatchViewSet[ModelT: Model, FormT: ModelForm](SnippetViewSet[ModelT, FormT]):
     add_view_class = WatchCreateView
     edit_view_class = WatchEditView
 
@@ -89,6 +94,6 @@ class WatchViewSet(SnippetViewSet, Generic[M]):
         return super().permission_policy
 
     def get_form_class(self, for_update: bool = False):
-        if not self._edit_handler.base_form_class:
-            self._edit_handler.base_form_class = WatchAdminModelForm
+        if self._edit_handler and not self._edit_handler.base_form_class:
+            self._edit_handler.base_form_class = WatchAdminModelForm[ModelT]
         return super().get_form_class(for_update)

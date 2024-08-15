@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import importlib
 from contextlib import contextmanager
-from typing import TYPE_CHECKING, Callable, Protocol
+from typing import TYPE_CHECKING, Any, Callable, Protocol, Sequence, cast
 from urllib.parse import urljoin
 
 import reversion
@@ -14,6 +14,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.contenttypes.models import ContentType
 from django.db import transaction
 from django.db.models import ProtectedError
+from django.forms.models import ModelChoiceField, ModelForm
 from django.http.request import QueryDict
 from django.http.response import HttpResponseRedirect
 from django.urls.base import reverse
@@ -24,41 +25,51 @@ from modeltrans.translator import get_i18n_field
 from reversion.revisions import add_to_revision, create_revision, set_comment, set_user
 from wagtail.admin import messages
 from wagtail.admin.forms.models import WagtailAdminModelForm
-from wagtail.admin.panels import FieldPanel, InlinePanel, ObjectList, TabbedInterface
+from wagtail.admin.panels import (
+    InlinePanel,
+    ObjectList,
+    TabbedInterface,
+)
+from wagtail.admin.panels.field_panel import FieldPanel
 
 from wagtail_modeladmin.helpers import ButtonHelper, PermissionHelper
 from wagtail_modeladmin.options import ModelAdmin
 from wagtail_modeladmin.views import CreateView, EditView, IndexView
 from wagtailautocomplete.edit_handlers import AutocompletePanel as WagtailAutocompletePanel
 
-from aplans.context_vars import ctx_instance, ctx_request, set_instance
+from aplans.context_vars import ctx_instance, ctx_request
 from aplans.utils import InstancesVisibleForMixin, PlanDefaultsModel, PlanRelatedModel, get_language_from_default_language_field
 
 from actions.models.plan import Plan
 from budget.models import DatasetSchema
 from pages.models import ActionListPage
 
-from .utils import FieldLabelRenderer
+from .utils import FieldLabelRenderer, admin_req
 
 if TYPE_CHECKING:
     from django.db.models import Model
+    from django.http import HttpRequest
+    from modeltrans.fields import TranslatedVirtualField
+    from wagtail.admin.panels.base import Panel
 
     from aplans.types import WatchAdminRequest
 
     from users.models import User
 
 
-def insert_model_translation_panels(model, panels, request, plan=None) -> list:
+def insert_model_translation_panels[M: Model](
+    model: type[M], panels: Sequence[Panel[M]], request: WatchAdminRequest, plan: Plan | None = None,
+) -> Sequence[Panel[M]]:
     """Return a list of panels containing all of `panels` and language-specific panels for fields with i18n."""
     i18n_field = get_i18n_field(model)
     if not i18n_field:
-        return panels
+        return ()
 
     out = []
     if plan is None:
         plan = request.user.get_active_admin_plan()
 
-    field_map = {}
+    field_map: dict[str, dict[str | None, TranslatedVirtualField]] = {}
     for f in i18n_field.get_translated_fields():
         field_map.setdefault(f.original_name, {})[f.language] = f
 
@@ -78,7 +89,7 @@ def insert_model_translation_panels(model, panels, request, plan=None) -> list:
     return out
 
 
-def get_translation_tabs(instance, request, include_all_languages: bool = False, extra_panels=None):
+def get_translation_tabs[M: Model](instance: M, request, include_all_languages: bool = False, extra_panels=None):
     # extra_panels maps a language code to a list of panels that should be put on the tab of that language
     if extra_panels is None:
         extra_panels = {}
@@ -105,7 +116,7 @@ def get_translation_tabs(instance, request, include_all_languages: bool = False,
         for field in i18n_field.get_translated_fields():
             if field.language != lang_code:
                 continue
-            panels.append(FieldPanel(field.name))
+            panels.append(FieldPanel[M](field.name))
         panels += extra_panels.get(lang_code, [])
         tabs.append(ObjectList(panels, heading=languages_by_code[lang_code]))
     return tabs
@@ -185,30 +196,36 @@ class AdminOnlyPanel(ObjectList):
     pass
 
 
-class AplansAdminModelForm(WagtailAdminModelForm):
+class AplansAdminModelForm[M: Model](WagtailAdminModelForm[M, 'User']):
     pass
 
+if TYPE_CHECKING:
+    BoundFieldPanelMixinBase = FieldPanel.BoundPanel
+else:
+    BoundFieldPanelMixinBase = object
 
-class BoundPlanFilteredFieldPanelMixin:
+class BoundPlanFilteredFieldPanelMixin(BoundFieldPanelMixinBase):
     """Mixin for bound panels to filter the related model queryset based on the active plan."""
 
     request: WatchAdminRequest
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        field = self.bound_field.field
+        field = cast(ModelChoiceField, self.bound_field.field)
+        queryset = field.queryset
+        assert queryset is not None
         plan = self.request.get_active_admin_plan()
-        related_model = field.queryset.model
+        related_model = queryset.model
         assert issubclass(related_model, PlanRelatedModel)
-        field.queryset = related_model.filter_by_plan(plan, field.queryset)
+        field.queryset = related_model.filter_by_plan(plan, queryset)
 
 
-class PlanFilteredFieldPanel(FieldPanel):
+class PlanFilteredFieldPanel[M: Model](FieldPanel[M]):
     class BoundPanel(BoundPlanFilteredFieldPanelMixin, FieldPanel.BoundPanel):
         pass
 
 
-class BoundCustomizableBuiltInFieldPanelMixin:
+class BoundCustomizableBuiltInFieldPanelMixin(BoundFieldPanelMixinBase):
     """Mixin for bound panels for built-in fields to enable customizations by BuiltInFieldCustomization."""
 
     request: WatchAdminRequest
@@ -237,17 +254,23 @@ class BoundCustomizableBuiltInFieldPanelMixin:
         self.heading = FieldLabelRenderer(plan)(self.heading, public=is_public_field)
 
 
-class CustomizableBuiltInFieldPanel(FieldPanel):
+class CustomizableBuiltInFieldPanel[M: Model](FieldPanel[M]):
     class BoundPanel(BoundCustomizableBuiltInFieldPanelMixin, FieldPanel.BoundPanel):
         pass
 
 
-class CustomizableBuiltInPlanFilteredFieldPanel(FieldPanel):  # Ugh...
+class CustomizableBuiltInPlanFilteredFieldPanel[M: Model](FieldPanel[M]):  # Ugh...
     class BoundPanel(BoundCustomizableBuiltInFieldPanelMixin, BoundPlanFilteredFieldPanelMixin, FieldPanel.BoundPanel):
         pass
 
 
-class BuiltInFieldCustomizationAwareEditHandlerMixin:
+if TYPE_CHECKING:
+    FieldPanelMixinBase = FieldPanel[Any]
+else:
+    FieldPanelMixinBase = object
+
+
+class BuiltInFieldCustomizationAwareEditHandlerMixin(FieldPanelMixinBase):
     """
     Mixin to make an edit handler take instances of BuiltInFieldCustomization into account.
 
@@ -263,7 +286,7 @@ class BuiltInFieldCustomizationAwareEditHandlerMixin:
         user = request.user
         plan = request.get_active_admin_plan()
 
-        def change_base_fields(form_class: WagtailAdminModelForm, model: type[Model]):
+        def change_base_fields(form_class: type[WagtailAdminModelForm], model: type[Model]) -> None:
             customizations_qs = BuiltInFieldCustomization.objects.filter(
                 plan=plan,
                 content_type=ContentType.objects.get_for_model(model),
@@ -401,18 +424,26 @@ class AplansButtonHelper(DatasetButtonMixin, ButtonHelper):
         return buttons
 
 
-class AplansTabbedInterface(TabbedInterface):
-    def get_bound_panel(self, instance=None, request: WatchAdminRequest | None = None, form=None, prefix='panel'):
+
+
+class AplansTabbedInterface[M: Model, F: ModelForm](TabbedInterface[M, F]):
+    class BoundPanel(TabbedInterface.BoundPanel[Any, Any, Any]):
+        pass
+
+    def get_bound_panel(
+        self, instance: M | None = None, request: HttpRequest | None = None, form=None, prefix='panel',
+    ):
         if request is not None:
-            plan = request.get_active_admin_plan()
-            user = request.user
+            req = admin_req(request)
+            plan = req.get_active_admin_plan()
+            user = req.user
             is_admin = user.is_general_admin_for_plan(plan)
         else:
             is_admin = False
         if not is_admin:
             for child in list(self.children):
                 if isinstance(child, AdminOnlyPanel):
-                    self.children.remove(child)
+                    cast(list, self.children).remove(child)
 
         return super().get_bound_panel(instance, request, form, prefix)
 
@@ -420,8 +451,18 @@ class AplansTabbedInterface(TabbedInterface):
 # TODO: Reimplemented in admin_site/mixins.py to make this work without
 # ModelAdmin. Use that when implementing new classes or migrating away from
 # ModelAdmin. Remove this class when ModelAdmin migration is finished.
-class PersistFiltersEditingModelAdminMixin:
-    def get_success_url(self):
+
+if TYPE_CHECKING:
+    class PersistFiltersBase(Protocol):
+        continue_editing_active: Callable[[], bool]
+        get_success_url: Callable[[], str | None]
+        model_name: str
+        request: HttpRequest
+else:
+    PersistFiltersBase = object
+
+class PersistFiltersEditingModelAdminMixin(PersistFiltersBase):
+    def get_success_url(self: PersistFiltersBase):
         if hasattr(super(), 'continue_editing_active') and super().continue_editing_active():
             return super().get_success_url()
         model = self.model_name
@@ -474,14 +515,14 @@ class ContinueEditingModelAdminMixin:
 # ModelAdmin. Use that when implementing new classes or migrating away from
 # ModelAdmin. Remove this class when ModelAdmin migration is finished.
 class PlanRelatedViewModelAdminMixin:
-    request: WatchAdminRequest
+    request: HttpRequest
 
     def form_valid(self, form, *args, **kwargs):
         obj = form.instance
         if isinstance(obj, PlanRelatedModel):
             # Sanity check to ensure we're saving the model to a currently active
             # action plan.
-            active_plan = self.request.user.get_active_admin_plan()
+            active_plan = admin_req(self.request).user.get_active_admin_plan()
             plans = obj.get_plans()
             assert active_plan in plans
 
@@ -530,14 +571,15 @@ class ActivatePermissionHelperPlanContextModelAdminMixin:
 # TODO: Reimplemented in admin_site/mixins.py to make this work without
 # ModelAdmin. Use that when implementing new classes or migrating away from
 # ModelAdmin. Remove this class when ModelAdmin migration is finished.
-class SetInstanceModelAdminMixin:
+class SetInstanceModelAdminMixin[M: Model]:
+    instance: M
     def setup(self, *args, **kwargs):
-        with set_instance(self.instance):
-            super().setup(*args, **kwargs)
+        with ctx_instance.activate(self.instance):
+            super().setup(*args, **kwargs)  # type: ignore
 
     def dispatch(self, *args, **kwargs):
-        with set_instance(self.instance):
-            return super().dispatch(*args, **kwargs)
+        with ctx_instance.activate(self.instance):
+            return super().dispatch(*args, **kwargs)  # type: ignore
 
 
 def execute_admin_post_save_tasks(instance: Model, user: User):
@@ -564,7 +606,7 @@ def execute_admin_post_save_tasks(instance: Model, user: User):
 # TODO: Partly reimplemented in admin_site/viewsets.py. Use that when
 # implementing new classes or migrating away from ModelAdmin. Remove this class
 # when ModelAdmin migration is finished.
-class AplansEditView(
+class AplansEditView[M: Model](
     PersistFiltersEditingModelAdminMixin,
     ContinueEditingModelAdminMixin,
     PlanRelatedViewModelAdminMixin,
@@ -584,7 +626,7 @@ class AplansEditView(
             messages.validation_error(self.request, self.get_error_message(), form)
             return self.render_to_response(self.get_context_data(form=form))
 
-        execute_admin_post_save_tasks(form.instance, self.request.user)
+        execute_admin_post_save_tasks(form.instance, admin_req(self.request).user)
         return form_valid_return
 
     def get_error_message(self):
@@ -639,7 +681,7 @@ class AplansCreateView(
     SetInstanceModelAdminMixin,
     CreateView,
 ):
-    request: WatchAdminRequest
+    request: HttpRequest
 
     def initialize_instance(self, request):
         if isinstance(self.instance, PlanDefaultsModel):
@@ -672,11 +714,13 @@ class AplansIndexView(ActivatePermissionHelperPlanContextModelAdminMixin, IndexV
 # TODO: Partly reimplemented in admin_site/viewsets.py as SnippetViewSet. Use
 # that when implementing new classes or migrating away from ModelAdmin. Remove
 # this class when ModelAdmin migration is finished.
-class AplansModelAdmin(ModelAdmin):
+class AplansModelAdmin[M: Model](ModelAdmin):
+    model: type[M]
     edit_view_class = AplansEditView
     create_view_class = AplansCreateView
     index_view_class = AplansIndexView
     button_helper_class = AplansButtonHelper
+    permission_helper_class: type[PermissionHelper] | None
 
     def __init__(self, *args, **kwargs):
         if not self.permission_helper_class and issubclass(self.model, PlanRelatedModel):
@@ -688,7 +732,7 @@ class AplansModelAdmin(ModelAdmin):
         return ret + ['admin_site/js/wagtail_customizations.js']
 
 
-class CondensedInlinePanel(InlinePanel):
+class CondensedInlinePanel[M: Model, RelatedM: Model](InlinePanel[M, RelatedM]):
     pass
 
 

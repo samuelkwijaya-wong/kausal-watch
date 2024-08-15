@@ -3,11 +3,11 @@ from __future__ import annotations
 import typing
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import Any, Generic, TypeVar
+from typing import Any, Generic, TypeVar, cast
 
 from django import forms
 from django.contrib.contenttypes.models import ContentType
-from django.db.models import ForeignKey, QuerySet
+from django.db.models import Field, ForeignKey, Model, QuerySet
 from django.utils.translation import gettext_lazy as _
 from wagtail.admin.panels import FieldPanel
 from wagtail.fields import RichTextField
@@ -28,12 +28,12 @@ if typing.TYPE_CHECKING:
     from users.models import User
 
 
-class AttributeFieldPanel(FieldPanel):
+class AttributeFieldPanel[M: Model](FieldPanel[M]):
     pass
 
 
 @dataclass
-class FormField:
+class FormField[M: Model]:
     plan: Plan
     attribute_type: AttributeType
     django_field: forms.Field
@@ -43,7 +43,7 @@ class FormField:
     language: str = ''
     is_public: bool = False
 
-    def get_panel(self):
+    def get_panel(self) -> AttributeFieldPanel[M]:
         if self.label:
             heading = self.label
         else:
@@ -51,7 +51,7 @@ class FormField:
         if self.language:
             heading += f' ({self.language})'
         heading = FieldLabelRenderer(self.plan)(heading, public=self.is_public)
-        return AttributeFieldPanel(self.name, heading=heading)
+        return AttributeFieldPanel[M](self.name, heading=heading)
 
 
 class AttributeValue(ABC):
@@ -219,6 +219,7 @@ class NumericAttributeValue(AttributeValue):
 
 
 T = TypeVar('T', bound=models.Attribute)
+M = TypeVar('M', bound=models.ModelWithAttributes)
 class AttributeType(ABC, Generic[T]):
     # In subclasses, define ATTRIBUTE_MODEL to be the model of the attributes of that type. It needs to have a foreign
     # key to actions.models.attributes.AttributeType called `type` with a defined `related_name`.
@@ -235,9 +236,9 @@ class AttributeType(ABC, Generic[T]):
         self,
         user: User,
         plan: Plan,
-        obj: models.ModelWithAttributes | None = None,
+        obj: M | None = None,
         draft_attributes: DraftAttributes | None = None,
-    ) -> list[FormField]:
+    ) -> list[FormField[M]]:
         """
         Get form fields for this attribute type.
 
@@ -556,7 +557,7 @@ class OptionalChoiceWithText(AttributeType[models.AttributeChoiceWithText]):
         if not editable:
             choice_field.disabled = True
         is_public = self.instance.instances_visible_for == self.instance.VisibleFor.PUBLIC
-        fields = [FormField(
+        fields: list[FormField] = [FormField(
             plan=plan,
             attribute_type=self,
             django_field=choice_field,
@@ -573,7 +574,7 @@ class OptionalChoiceWithText(AttributeType[models.AttributeChoiceWithText]):
                 initial_text = draft_attribute.text_vals.get(attribute_text_field_name)
             elif committed_attribute:
                 initial_text = getattr(committed_attribute, attribute_text_field_name)
-            form_field_kwargs = dict(initial=initial_text, required=False, help_text=self.instance.help_text_i18n)
+            form_field_kwargs: dict[str, Any] = dict(initial=initial_text, required=False, help_text=self.instance.help_text_i18n)
             if self.instance.max_length:
                 form_field_kwargs.update(max_length=self.instance.max_length)
             text_field = self.ATTRIBUTE_MODEL._meta.get_field(attribute_text_field_name).formfield(**form_field_kwargs)  # type: ignore[union-attr]
@@ -653,7 +654,7 @@ class GenericTextAttributeType(AttributeType[T]):
             committed_attribute = self.get_attributes(obj).first()
         editable = self.is_editable(user, plan, obj)
 
-        fields = []
+        fields: list[FormField] = []
         for language in ('', *self.instance.other_languages):
             initial_text = None
             attribute_text_field_name = f'text_{language}' if language else 'text'
@@ -666,10 +667,11 @@ class GenericTextAttributeType(AttributeType[T]):
                 if isinstance(committed_attribute._meta.get_field(attribute_text_field_name), RichTextField):
                     initial_text = WagtailRichText(initial_text)
 
-            form_field_kwargs = dict(initial=initial_text, required=False, help_text=self.instance.help_text_i18n)
+            form_field_kwargs: dict[str, Any] = dict(initial=initial_text, required=False, help_text=self.instance.help_text_i18n)
             if self.instance.max_length:
                 form_field_kwargs.update(max_length=self.instance.max_length)
-            field = self.ATTRIBUTE_MODEL._meta.get_field(attribute_text_field_name).formfield(**form_field_kwargs)
+            db_field = cast(Field, self.ATTRIBUTE_MODEL._meta.get_field(attribute_text_field_name))
+            field = db_field.formfield(**form_field_kwargs)
             if not editable:
                 field.disabled = True
             is_public = self.instance.instances_visible_for == self.instance.VisibleFor.PUBLIC

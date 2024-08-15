@@ -3,6 +3,7 @@ import importlib
 import json
 import os
 from typing import TYPE_CHECKING, Any
+from uuid import UUID
 
 from django.conf import settings
 from django.core.cache import cache
@@ -56,11 +57,11 @@ class APITokenMiddleware:
                         raise GraphQLError("Invalid type: %s" % str(type(arg.value)), [arg])
                     val = arg.value.value
                 try:
-                    user = User.objects.get(uuid=val)
-                except User.DoesNotExist:
-                    raise GraphQLAuthFailedError("User not found", [arg])
-                except ValidationError:
-                    raise GraphQLAuthFailedError("Invalid UUID", [arg])
+                    user = User.objects.get(uuid=UUID(val))
+                except User.DoesNotExist as e:
+                    raise GraphQLAuthFailedError("User not found", [arg]) from e
+                except (ValidationError, ValueError, TypeError) as e:
+                    raise GraphQLAuthFailedError("Invalid UUID", [arg]) from e
 
             elif arg.name.value == 'token':
                 if isinstance(arg.value, VariableNode):
@@ -80,7 +81,7 @@ class APITokenMiddleware:
             if user.auth_token.key != token:
                 raise GraphQLAuthFailedError("Invalid token", [directive])
         except User.auth_token.RelatedObjectDoesNotExist:  # type: ignore
-            raise GraphQLAuthFailedError("Invalid token", [directive])
+            raise GraphQLAuthFailedError("Invalid token", [directive]) from None
 
         info.context.user = user
 
@@ -95,9 +96,8 @@ class APITokenMiddleware:
 
         rt = info.return_type
         gt = getattr(rt, 'graphene_type', None)
-        if gt and issubclass(gt, AuthenticatedUserNode):
-            if not getattr(context, 'user', None):
-                raise GraphQLAuthRequiredError("Authentication required")
+        if gt and issubclass(gt, AuthenticatedUserNode) and not getattr(context, 'user', None):
+            raise GraphQLAuthRequiredError("Authentication required")
         return next(root, info, **kwargs)
 
 

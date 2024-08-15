@@ -1,3 +1,7 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from django.contrib.admin.utils import quote
 from django.urls import path, reverse
 from django.utils.translation import gettext_lazy as _
@@ -12,8 +16,14 @@ from wagtail.snippets.views.snippets import (
     SnippetViewSet,
 )
 
+from aplans.types import WatchAdminRequest
+
 from .models import UserFeedback
 from .views import SetUserFeedbackProcessedView
+
+if TYPE_CHECKING:
+    from django.db.models.query import QuerySet
+    from wagtail.admin.menu import MenuItem
 
 
 class UserFeedbackPermissionPolicy(ModelPermissionPolicy):
@@ -102,7 +112,7 @@ class UserFeedbackIndexView(IndexView):
 
         return [*buttons, process_button]
 
-class UserFeedbackViewSet(SnippetViewSet):
+class UserFeedbackViewSet(SnippetViewSet[UserFeedback, WatchAdminRequest]):
     model = UserFeedback
     add_to_admin_menu = True
     icon = 'mail'
@@ -118,7 +128,7 @@ class UserFeedbackViewSet(SnippetViewSet):
     set_user_feedback_unprocessed_url_name = 'set_user_feedback_unprocessed'
 
     @property
-    def permission_policy(self):
+    def permission_policy(self) -> UserFeedbackPermissionPolicy:
         return UserFeedbackPermissionPolicy(self.model)
 
     @property
@@ -136,9 +146,9 @@ class UserFeedbackViewSet(SnippetViewSet):
     # for the specific line of code). This seems to be fixed in the latest
     # still unreleased Wagtail code, so when upgraded to Wagtail 6.2.X this
     # workaround should be safe to delete.
-    def get_menu_item(self, order=None):
+    def get_menu_item(self, order: int | None = None) -> MenuItem:
         menu_item = super().get_menu_item(order)
-        menu_item.is_shown = lambda _: True
+        menu_item.is_shown = lambda request: True  # noqa: ARG005
         return menu_item
 
     def get_common_view_kwargs(self, **kwargs):
@@ -148,7 +158,7 @@ class UserFeedbackViewSet(SnippetViewSet):
             **kwargs,
         )
 
-    def get_queryset(self, request):
+    def get_queryset(self, request: WatchAdminRequest) -> QuerySet[UserFeedback, UserFeedback]:
         qs = self.model.objects.get_queryset()
         user = request.user
         plan = user.get_active_admin_plan()

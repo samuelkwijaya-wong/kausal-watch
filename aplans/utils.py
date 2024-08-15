@@ -8,13 +8,13 @@ from enum import Enum
 from typing import (
     TYPE_CHECKING,
     Generic,
-    Iterable,
     Literal,
     Protocol,
+    Self,
     TypedDict,
-    TypeVar,
     cast,
 )
+from typing_extensions import TypeVar
 
 from django import forms
 from django.conf import settings
@@ -24,7 +24,6 @@ from django.core import checks
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
 from django.db import models
-from django.db.models import QuerySet
 from django.utils.translation import get_language, gettext_lazy as _
 from modelcluster.forms import BaseChildFormSet
 from modeltrans.translator import get_i18n_field
@@ -36,17 +35,19 @@ import html2text
 import humanize
 import libvoikko  # type: ignore
 import sentry_sdk
-from tinycss2.color3 import parse_color  # type: ignore
+from tinycss2.color3 import parse_color
 
 if TYPE_CHECKING:
+    from collections.abc import Iterable
     from datetime import datetime, timedelta
 
+    from django.db.models import Model, QuerySet
+    from django.http import HttpRequest
     from django.utils.choices import _Choices
     from modeltrans.fields import TranslationField
 
     from aplans.types import UserOrAnon
 
-    from actions.models.action import Action
     from actions.models.plan import Plan
     from users.models import User
 
@@ -176,7 +177,7 @@ class IdentifierField(models.CharField[str, str]):
         super().__init__(*args, **kwargs)
 
 
-class OrderedModel[QS: QuerySet](models.Model):
+class OrderedModel(models.Model):
     """Like wagtailorderable.models.Orderable, but with additional functionality in filter_siblings()."""
 
     order = models.PositiveIntegerField(default=0, editable=True, verbose_name=_('order'))
@@ -218,7 +219,7 @@ class OrderedModel[QS: QuerySet](models.Model):
         return self.order
 
     @abc.abstractmethod
-    def filter_siblings(self, qs: QS) -> QS:
+    def filter_siblings(self, qs: QuerySet[Self, Self]) -> QuerySet[Self, Self]:
         raise NotImplementedError("Implement in subclass")
 
     def get_sort_order_max(self) -> int:
@@ -234,7 +235,7 @@ class OrderedModel[QS: QuerySet](models.Model):
         ```
         """
         mgr = cast(models.Manager, getattr(type(self), 'objects'))  # noqa: B009
-        qs = cast(QS, mgr.all())
+        qs = mgr.all()
         if not getattr(self.filter_siblings, '__isabstractmethod__', False):
             qs = self.filter_siblings(qs)
 
@@ -287,10 +288,11 @@ class PlanDefaultsModel:
         raise NotImplementedError()
 
 
-_PRQS = TypeVar('_PRQS', bound=QuerySet[PlanDefaultsModel])  # type: ignore
-
-class PlanRelatedModel(PlanDefaultsModel):
+class PlanRelatedModel(PlanDefaultsModel, models.Model):
     wagtail_reference_index_ignore = False
+
+    class Meta:
+        abstract = True
 
     def __init_subclass__(cls) -> None:
         from django.db.models.base import Model
@@ -301,7 +303,7 @@ class PlanRelatedModel(PlanDefaultsModel):
         return super().__init_subclass__()
 
     @classmethod
-    def filter_by_plan(cls, plan: Plan, qs: _PRQS) -> _PRQS:
+    def filter_by_plan(cls, plan: Plan, qs: QuerySet[Self, Self]) -> QuerySet[Self, Self]:
         return qs.filter(plan=plan)
 
     def get_plans(self) -> list[Plan]:
@@ -310,7 +312,12 @@ class PlanRelatedModel(PlanDefaultsModel):
     def initialize_plan_defaults(self, plan: Plan):
         setattr(self, 'plan', plan)  # noqa: B010
 
-    def filter_siblings(self, qs: _PRQS) -> _PRQS:
+
+class PlanRelatedOrderedModel(OrderedModel, PlanRelatedModel):
+    class Meta:
+        abstract = True
+
+    def filter_siblings(self, qs: QuerySet[Self, Self]) -> QuerySet[Self, Self]:
         # Used by OrderedModel
         plans = self.get_plans()
         assert len(plans) == 1
@@ -371,10 +378,10 @@ class InstancesEditableByMixin(models.Model):
         action_specific_values = [self.EditableBy.CONTACT_PERSONS, self.EditableBy.MODERATORS]
         return self.instances_editable_by in action_specific_values
 
-    def is_instance_editable_by(self, user: UserOrAnon, plan: Plan, action: Action | None):  # noqa: PLR0911
+    def is_instance_editable_by(self, user: UserOrAnon, plan: Plan, instance: Model | None):  # noqa: PLR0911
         from actions.models.action import Action, ActionContactPerson
         # `action` may only be None if `self.instances_editable_by` is not action-specific
-        if __debug__ and self.instance_editability_is_action_specific and action is None:
+        if __debug__ and self.instance_editability_is_action_specific and instance is None:
             msg = (
                 f"instances_editable_by has action-specific value '{self.instances_editable_by}', "
                                  "but no action has been supplied."
@@ -393,12 +400,12 @@ class InstancesEditableByMixin(models.Model):
         if self.instances_editable_by == self.EditableBy.PLAN_ADMINS:
             return is_plan_admin
         if self.instances_editable_by == self.EditableBy.CONTACT_PERSONS:
-            assert isinstance(action, Action)
-            is_contact_person = user.is_contact_person_for_action(action)
+            assert isinstance(instance, Action)
+            is_contact_person = user.is_contact_person_for_action(instance)
             return is_contact_person or is_plan_admin
         if self.instances_editable_by == self.EditableBy.MODERATORS:
-            assert isinstance(action, Action)
-            is_moderator = user.has_contact_person_role_for_action(ActionContactPerson.Role.MODERATOR, action)
+            assert isinstance(instance, Action)
+            is_moderator = user.has_contact_person_role_for_action(ActionContactPerson.Role.MODERATOR, instance)
             return is_moderator or is_plan_admin
         if self.instances_editable_by == self.EditableBy.AUTHENTICATED:
             assert user.is_authenticated  # checked above
@@ -446,10 +453,10 @@ class InstancesVisibleForMixin(models.Model):
         action_specific_values = [self.VisibleFor.CONTACT_PERSONS, self.VisibleFor.MODERATORS]
         return self.instances_visible_for in action_specific_values
 
-    def is_instance_visible_for(self, user: UserOrAnon, plan: Plan, action: Action | None) -> bool:  # noqa: PLR0911
+    def is_instance_visible_for(self, user: UserOrAnon, plan: Plan, instance: Model | None) -> bool:  # noqa: PLR0911
         from actions.models.action import Action, ActionContactPerson
         # `action` may only be None if `self.instances_visible_for` is not action-specific
-        if __debug__ and self.instance_visibility_is_action_specific and action is None:
+        if __debug__ and self.instance_visibility_is_action_specific and instance is None:
             msg = (
                 f"instances_visible_for has action-specific value '{self.instances_visible_for}', "
                                  "but no action has been supplied."
@@ -466,12 +473,12 @@ class InstancesVisibleForMixin(models.Model):
         if self.instances_visible_for == self.VisibleFor.PLAN_ADMINS:
             return is_plan_admin
         if self.instances_visible_for == self.VisibleFor.CONTACT_PERSONS:
-            assert isinstance(action, Action)
-            is_contact_person = user.is_contact_person_for_action(action)
+            assert isinstance(instance, Action)
+            is_contact_person = user.is_contact_person_for_action(instance)
             return is_contact_person or is_plan_admin
         if self.instances_visible_for == self.VisibleFor.MODERATORS:
-            assert isinstance(action, Action)
-            is_moderator = user.has_contact_person_role_for_action(ActionContactPerson.Role.MODERATOR, action)
+            assert isinstance(instance, Action)
+            is_moderator = user.has_contact_person_role_for_action(ActionContactPerson.Role.MODERATOR, instance)
             return is_moderator or is_plan_admin
         if self.instances_visible_for == self.VisibleFor.PUBLIC:
             return True
@@ -661,7 +668,7 @@ class ModificationTracking(models.Model):
         self.update_modification_metadata(context['user'], context['operation'])
 
 
-def append_query_parameter(request, url, parameter):
+def append_query_parameter(request: HttpRequest, url: str, parameter: str) -> str:
     value = request.GET.get(parameter)
     if value:
         assert '?' not in url

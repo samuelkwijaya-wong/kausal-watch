@@ -1,4 +1,5 @@
 import json
+from typing import TYPE_CHECKING
 
 from django.conf import settings
 from django.contrib.admin.utils import quote, unquote
@@ -648,7 +649,13 @@ class GenericModelEditViewMixin(BeforeAfterHookMixin):
         return reverse(self.edit_url_name, args=(quote(self.object.pk),))
 
 
-class PermissionCheckedMixin:
+if TYPE_CHECKING:
+    from wagtail.admin.views.generic.permissions import PermissionCheckedMixin
+else:
+    PermissionCheckedMixin = object
+
+
+class WatchPermissionCheckedMixin(PermissionCheckedMixin):
     # Source: wagtail.admin.views.generic.permissions.PermissionCheckedMixin
     """
     Mixin for class-based views to enforce permission checks according to
@@ -691,7 +698,7 @@ class PermissionCheckedMixin:
 class SnippetsEditViewCompatibilityMixin(
     CreateEditViewOptionalFeaturesMixin,
     GenericModelEditViewMixin,
-    PermissionCheckedMixin,
+    WatchPermissionCheckedMixin,
 ):
     # Source: wagtail.snippets.views.snippets.EditView and other classes
     view_name = "edit"

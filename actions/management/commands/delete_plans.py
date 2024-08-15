@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from django.conf import settings
 from django.core.management import CommandError
 from django.core.management.base import BaseCommand
@@ -35,11 +37,11 @@ class Command(BaseCommand):
         for identifier in options['exclude']:
             if identifier not in all_identifiers:
                 raise CommandError(f"No plan with identifier '{identifier}' exists.")
-        plans_to_delete = Plan.objects.exclude(identifier__in=options['exclude'])
-        plans_to_keep = Plan.objects.exclude(id__in=plans_to_delete)
+        plans_to_delete = Plan.objects.qs.exclude(identifier__in=options['exclude'])
+        plans_to_keep = Plan.objects.qs.exclude(id__in=plans_to_delete)
         delete_identifiers = plans_to_delete.values_list('identifier', flat=True)
-        orgs_to_keep = Organization.objects.available_for_plans(plans_to_keep)
-        orgs_to_delete = Organization.objects.exclude(id__in=orgs_to_keep)
+        orgs_to_keep = Organization.objects.qs.available_for_plans(plans_to_keep)
+        orgs_to_delete = Organization.objects.qs.exclude(id__in=orgs_to_keep)
         num_delete_suborgs = {}
         for org in orgs_to_delete.filter(depth=1):
             # Unnecessarily inefficient, but what the hell...

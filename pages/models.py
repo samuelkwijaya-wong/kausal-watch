@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import functools
-from typing import TYPE_CHECKING, ClassVar, Sequence
+from typing import TYPE_CHECKING, Any, ClassVar, Self, Sequence
 
 import graphene
 from django.contrib.contenttypes.models import ContentType
@@ -105,7 +105,7 @@ class AplansPage(Page):
         help_text=_('Should subpages of this page use secondary navigation?'),
     )
 
-    content_panels = [
+    content_panels: ClassVar[list[Panel[Any]]] = [
         FieldPanel('title', classname="full title"),
     ]
 
@@ -319,6 +319,9 @@ class CategoryPagePermissionTester(CategoryTypeRelatedPagePermissionTester):
         super().__init__(user, page, page.category.type)
 
 
+
+
+
 class CategoryTypePage(StaticPage):
     category_type: FK[CategoryType] = models.ForeignKey(  # pyright: ignore
         CategoryType, on_delete=models.CASCADE, null=False, verbose_name=_('Category type'),
@@ -329,7 +332,7 @@ class CategoryTypePage(StaticPage):
         # We use a version of FieldPanel with a hacked read-only template to provide the ID of the selected category
         # type as a hidden <input> element.
         ReadOnlyFieldPanelWithRawValueId('category_type', widget=CategoryTypeChooser),
-        InlinePanel('level_layouts', heading=_('Level layouts'), panels=[
+        InlinePanel['CategoryTypePage', 'CategoryTypePageLevelLayout']('level_layouts', heading=_('Level layouts'), panels=[
             FieldPanel('level', widget=CategoryLevelChooser(linked_fields={
                 # ID of the hidden <input> element with the category type ID
                 'type': '#panel-child-content-child-category_type-raw-value-id',
@@ -781,3 +784,6 @@ class PlanLink(OrderedModel):
         if self.title:
             return f'{self.title}: {self.url}'
         return self.url
+
+    def filter_siblings(self, qs: models.QuerySet[Self, Self]) -> models.QuerySet[Self, Self]:
+        return qs.filter(plan=self.plan)

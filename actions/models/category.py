@@ -1,9 +1,8 @@
 from __future__ import annotations
 
-import typing
 import uuid
 from functools import lru_cache
-from typing import Any, ClassVar, Iterable, Self, Sequence
+from typing import TYPE_CHECKING, Any, ClassVar, Iterable, Self, Sequence
 
 import reversion
 from django.conf import settings
@@ -11,16 +10,18 @@ from django.contrib.contenttypes.fields import GenericRelation
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.db import models, transaction
-from django.db.models import Q
 from django.utils import translation
 from django.utils.text import format_lazy
 from django.utils.translation import gettext_lazy as _, override
 from modelcluster.fields import ParentalKey
 from modelcluster.models import ClusterableModel
 from modeltrans.fields import TranslationField
+from modeltrans.manager import MultilingualQuerySet
 from modeltrans.translator import get_i18n_field
 from modeltrans.utils import get_available_languages
 from wagtail.models import Collection, Page
+
+from kausal_common.models.types import manager_from_mlqs
 
 from aplans.utils import (
     IdentifierField,
@@ -37,10 +38,10 @@ from aplans.utils import (
 from ..attributes import AttributeFieldPanel, AttributeType
 from .attributes import AttributeType as AttributeTypeModel, ModelWithAttributes
 
-if typing.TYPE_CHECKING:
-    from modeltrans.manager import MultilingualManager
+if TYPE_CHECKING:
+    from django.db.models import QuerySet
 
-    from kausal_common.models.types import RevMany
+    from kausal_common.models.types import MLMM, RevMany
 
     from aplans.utils import UserOrAnon
 
@@ -95,7 +96,7 @@ class CategoryTypeBase(models.Model):
         ),
     )
 
-    public_fields: typing.ClassVar = [
+    public_fields: ClassVar = [
         'name', 'identifier', 'lead_paragraph', 'help_text', 'hide_category_identifiers',
         'usable_for_indicators', 'usable_for_actions',
         'editable_for_actions', 'editable_for_indicators',
@@ -122,11 +123,13 @@ class CommonCategoryType(CategoryTypeBase, ModelWithPrimaryLanguage):
     i18n = TranslationField(fields=('name', 'lead_paragraph', 'help_text'), default_language_field='primary_language_lowercase')
 
     # type annotations
-    objects: MultilingualManager[Self]
+
+    objects: ClassVar[MLMM[Self, MultilingualQuerySet[Self]]] = manager_from_mlqs(MultilingualQuerySet[Self])
+
     plans: RevMany[Plan]
     categories: RevMany[CommonCategory]
 
-    public_fields: typing.ClassVar = CategoryTypeBase.public_fields + [
+    public_fields: ClassVar = CategoryTypeBase.public_fields + [
         'categories',
     ]
 
@@ -201,7 +204,7 @@ class CategoryType(
     )
     i18n = TranslationField(fields=('name', 'lead_paragraph', 'help_text'), default_language_field='plan__primary_language_lowercase')
 
-    attribute_types = GenericRelation(
+    attribute_types: RevMany[AttributeTypeModel] = GenericRelation(  # type: ignore[assignment]
         to='actions.AttributeType',
         related_query_name='category_type',
         content_type_field='scope_content_type',
@@ -212,7 +215,7 @@ class CategoryType(
     levels: RevMany[CategoryLevel]
     category_type_pages: RevMany[CategoryTypePage]
 
-    public_fields: typing.ClassVar = [
+    public_fields: ClassVar = [
         *CategoryTypeBase.public_fields,
         'id',
         'plan',
@@ -316,7 +319,7 @@ class CategoryLevel(OrderedModel):
 
     i18n = TranslationField(fields=('name',), default_language_field='type__plan__primary_language_lowercase')
 
-    public_fields: typing.ClassVar = [
+    public_fields: ClassVar = [
         'id', 'name', 'name_plural', 'order', 'type',
     ]
 
@@ -354,7 +357,7 @@ class CategoryBase(OrderedModel):
     )
     help_text = models.TextField(verbose_name=_('help text'), blank=True)
 
-    public_fields: typing.ClassVar = [
+    public_fields: ClassVar = [
         'id', 'uuid', 'identifier', 'name', 'lead_paragraph', 'image', 'color', 'help_text', 'order',
     ]
 
@@ -376,7 +379,7 @@ class CommonCategory(CategoryBase, ClusterableModel):
         default_language_field='type__primary_language_lowercase',
     )
 
-    public_fields: typing.ClassVar = CategoryBase.public_fields + [
+    public_fields: ClassVar = CategoryBase.public_fields + [
         'type', 'category_instances',
     ]
 
@@ -390,6 +393,9 @@ class CommonCategory(CategoryBase, ClusterableModel):
 
     def __str__(self):
         return '[%s] %s' % (self.identifier, self.name)
+
+    def filter_siblings(self, qs: models.QuerySet[Self, Self]) -> models.QuerySet[Self, Self]:
+        return qs.filter(type=self.type)
 
     def instantiate_for_category_type(self, category_type):
         """Create category corresponding to this one and set its type to the given one."""
@@ -491,8 +497,11 @@ class Category(ModelWithAttributes, CategoryBase, ClusterableModel, PlanRelatedM
         return [self.type.plan]
 
     @classmethod
-    def filter_by_plan(cls, plan: Plan, qs: models.QuerySet[Self]) -> models.QuerySet[Self]:  # type: ignore[override]
+    def filter_by_plan(cls, plan: Plan, qs: QuerySet[Self, Self]) -> QuerySet[Self]:
         return qs.filter(type__plan=plan)
+
+    def filter_siblings(self, qs: models.QuerySet[Self, Self]) -> models.QuerySet[Self, Self]:
+        return qs.filter(type=self.type)
 
     def set_plan(self, plan):
         # The right plan should be set through CategoryType relation, so

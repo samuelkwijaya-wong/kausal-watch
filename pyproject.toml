@@ -25,13 +25,18 @@ ignore = [
     "ARG001", "UP031", "G002", "BLE001", "SIM108", "SIM103", "SLF001", "C408", "RET504",
     "TRY003", "EM101", "FIX001", "UP035", "ARG002", "ARG004", "RUF012", "FBT002", "PLR2004",
     "FBT001", "TID252", "RSE102", "PIE790", "D202", "PLR1722", "SIM118", "SIM114",
-    "T201", "C401", "PD011", "RUF005",
+    "T201", "C401", "PD011", "RUF005", "PYI021",
 ]
+
+[tool.ruff.lint.per-file-ignores]
+"kausal_common/typings/*" = ["D"]
+"kausal_common/typings/django/*" = ["ALL"]
 
 [tool.ruff.lint.isort]
 split-on-trailing-comma = true
 combine-as-imports = true
 required-imports = ["from __future__ import annotations"]
+extra-standard-library = ["typing_extensions"]
 section-order = ["future", "standard-library", "django", "third-party", "kausal-common", "django-project", "first-party", "local-folder"]
 #section-order = ['FUTURE', 'STDLIB', 'DJANGO', 'THIRDPARTY', 'FIRSTPARTY', 'LOCALFOLDER']
 
@@ -39,7 +44,8 @@ section-order = ["future", "standard-library", "django", "third-party", "kausal-
 [tool.ruff.lint.isort.sections]
 # sections = ['FUTURE', 'STDLIB', 'DJANGO', 'THIRDPARTY', 'FIRSTPARTY', 'LOCALFOLDER']
 django = [
-    'django', 'rest_framework', 'graphene', 'graphql', 'graphene_django', 'modelcluster', 'modeltrans', 'wagtail', 'reversion'
+    'django', 'rest_framework', 'graphene', 'graphql', 'graphene_django', 'modelcluster', 'modeltrans', 'wagtail', 'reversion',
+    'django_stubs_ext',
 ]
 kausal-common = [
     'kausal_common'
@@ -90,8 +96,9 @@ exclude = [
     '^Attic/',
     '^typings/',
     '^local_settings\.py',
-    '^kausal_common/typings/',
-    '/migrations/'
+    #'^kausal_common/typings/',
+    '/migrations/',
+    'node_modules',
 ]
 check_untyped_defs = true
 enable_incomplete_feature = ['NewGenericSyntax']
@@ -106,13 +113,30 @@ module = [
     "modeltrans.*", "wagtail.*", "networkx.*", "plotext.*", "graphene_django.*", "grapple.*", "willow.*",
     "reversion.*", "wagtail_modeladmin.*", "rest_framework_nested.*", "dal_admin_filters.*", "social_core.*",
     "taggit.*", "dal.*", "social_django.*", "easy_thumbnails.*", "graphene_django_optimizer.*", "environ.*",
-    "storages.*",
+    "storages.*", "helusers.*", "elasticsearch_dsl.*", "generic_chooser.*", "xlsxwriter.*", "laces.*",
+    "debug_toolbar.*", "django_filters.*", "permissionedforms.*", "wagtail_localize.*", "rustface.*",
+    "wagtailautocomplete.*", "wagtailorderable.*", "wagtailgeowidget.*", "anymail.*", "django_filters.*",
+    "tinycss2.*", "import_export.*", "nanoid.*", "uwsgidecorators.*", "opentelemetry.*"
 ]
 ignore_missing_imports = true
 
 [tool.mypy-baseline]
 baseline_path = ".mypy-baseline.txt"
 preserve_position = true
+
+[tool.pyright]
+exclude = [
+    'Attic/',
+    '**/__pycache__',
+    #'kausal_common/typings/django',
+    'local_settings.py',
+    '**/migrations',
+    '**/node_modules',
+    '.*',
+]
+stubPath = "kausal_common/typings"
+deprecateTypingAliases = true
+reportAttributeAccessIssue = "warning"
 
 
 [tool.django-stubs]

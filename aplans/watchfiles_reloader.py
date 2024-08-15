@@ -10,11 +10,14 @@ import watchfiles
 
 class DjangoPythonFilter(watchfiles.PythonFilter):
     def __init__(self, *, ignore_paths: Sequence[str | Path] | None = None, extra_extensions: Sequence[str] = ()) -> None:
-        if 'site-packages' in self.ignore_dirs:
+        dirs = list(self.ignore_dirs)
+
+        for dirname in ('site-packages', '.venv'):
             # We want to watch site-packages, too
-            d = list(self.ignore_dirs)
-            d.remove('site-packages')
-            self.ignore_dirs = d
+            if dirname in dirs:
+                dirs.remove(dirname)
+
+        self.ignore_dirs = dirs
         super().__init__(ignore_paths=ignore_paths, extra_extensions=extra_extensions)
 
 

@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import re
 
 from django.conf import settings
@@ -14,7 +16,7 @@ from loguru import logger
 from social_core.exceptions import SocialAuthBaseException
 
 from aplans.cache import WatchObjectCache
-from aplans.context_vars import set_request
+from aplans.context_vars import ctx_request
 from aplans.types import WatchAdminRequest, WatchRequest
 
 from actions.models import Plan
@@ -95,7 +97,7 @@ class RequestMiddleware:
         log_context = {}
         if request.session and request.session.session_key:
             log_context['session'] = str(request.session.session_key)[0:8]
-        with set_request(request), logger.contextualize(**log_context):
+        with ctx_request.activate(request), logger.contextualize(**log_context):
             return self.get_response(request)
 
 
@@ -112,7 +114,7 @@ class PrintQueryCountMiddleware:
         sqltime = round(1000 * sqltime)
 
         query_count = len(connection.queries)
-        level = 'INFO'
+        level = 'DEBUG'
         if query_count >= 50:
             level = 'WARNING'
         if query_count >= 100:

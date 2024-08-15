@@ -181,7 +181,7 @@ class PlanAdmin(AplansModelAdmin):
 
     def get_edit_handler(self):
         request = ctx_request.get()
-        instance = ctx_instance.get()
+        instance = ctx_instance.get_as_type(Plan)
 
         creating = instance.pk is None
         panels_enabled_when_creating = {
@@ -218,9 +218,9 @@ class PlanAdmin(AplansModelAdmin):
             ActionSchedule, self.action_schedule_panels, request, instance,
         )
 
-        panels = insert_model_translation_panels(
+        panels = list(insert_model_translation_panels(
             Plan, panels, request, instance,
-        )
+        ))
         if request.user.is_superuser:
             panels.append(InlinePanel('clients', min_num=1, panels=[
                 FieldPanel('client', widget=ClientChooser),
@@ -237,12 +237,12 @@ class PlanAdmin(AplansModelAdmin):
                 FieldPanel('matomo_analytics_url'),
             ], heading=_('Domains')))
 
-        links_panel = CondensedInlinePanel(
+        links_panel = CondensedInlinePanel[Plan, PlanLink](
             'links',
-            panels=[
+            panels=(
                 FieldPanel('url'),
                 FieldPanel('title'),
-            ],
+            ),
             heading=_('External links'),
         )
         links_panel.panels = insert_model_translation_panels(PlanLink, links_panel.panels, request, instance)

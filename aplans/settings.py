@@ -94,7 +94,7 @@ BASE_DIR = root()
 if env.bool('ENV_FILE'):
     environ.Env.read_env(env.str('ENV_FILE'))
 else:
-    dotenv_path = Path(BASE_DIR) / Path('.env')
+    dotenv_path = BASE_DIR / Path('.env')
     if dotenv_path.exists():
         environ.Env.read_env(dotenv_path)
 
@@ -264,7 +264,7 @@ ROOT_URLCONF = f'{PROJECT_NAME}.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')],
+        'DIRS': [BASE_DIR / Path('templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -518,7 +518,7 @@ WAGTAIL_I18N_ENABLED = True
 USE_TZ = True
 
 LOCALE_PATHS = [
-    os.path.join(BASE_DIR, 'locale'),
+    str(BASE_DIR / Path('locale')),
 ]
 
 SPECTACULAR_SETTINGS = {
@@ -623,7 +623,7 @@ WAGTAIL_EMAIL_MANAGEMENT_ENABLED = False
 WAGTAIL_PASSWORD_RESET_ENABLED = True
 WAGTAILADMIN_PERMITTED_LANGUAGES = list(LANGUAGES)
 WAGTAILADMIN_USER_LOGIN_FORM = 'admin_site.forms.LoginForm'
-WAGTAILSEARCH_BACKENDS = {
+WAGTAILSEARCH_BACKENDS: dict[str, dict[str, Any]] = {
     # Will be overridden below if ELASTICSEARCH_URL is specified
     'default': {
         'BACKEND': 'wagtail.search.backends.database',
@@ -631,7 +631,7 @@ WAGTAILSEARCH_BACKENDS = {
 }
 
 if ELASTICSEARCH_URL:
-    ANALYSIS_CONFIG = {
+    ANALYSIS_CONFIG: dict[str, dict[str, Any]] = {
         'fi': {
             'analyzer': {
                 'default': {
@@ -718,7 +718,7 @@ THUMBNAIL_PROCESSORS = (
     'images.processors.scale_and_crop',
     'easy_thumbnails.processors.filters',
 )
-IMAGE_CROPPING_JQUERY_URL = None
+IMAGE_CROPPING_JQUERY_URL: str | None = None
 THUMBNAIL_HIGH_RESOLUTION = True
 
 WAGTAIL_SLIM_SIDEBAR = False
@@ -750,8 +750,8 @@ SILENCED_SYSTEM_CHECKS = [
 ENABLE_DEBUG_TOOLBAR = False
 
 # Show full SQL queries when running `runserver_plus` or `shell_plus` with `--print-sql`
-SHELL_PLUS_PRINT_SQL_TRUNCATE = None
-RUNSERVER_PLUS_PRINT_SQL_TRUNCATE = None
+SHELL_PLUS_PRINT_SQL_TRUNCATE: int | None = None
+RUNSERVER_PLUS_PRINT_SQL_TRUNCATE: int | None = None
 
 
 HOSTNAME_PLAN_DOMAINS = env('HOSTNAME_PLAN_DOMAINS')
@@ -763,32 +763,33 @@ COMMON_CATEGORIES_COLLECTION = 'Common Categories'
 
 # local_settings.py can be used to override environment-specific settings
 # like database and email that differ between development and production.
-f = os.path.join(BASE_DIR, "local_settings.py")
-if os.path.exists(f):
+local_settings = Path(BASE_DIR) / Path("local_settings.py")
+if local_settings.exists():
     import types
     module_name = "%s.local_settings" % ROOT_URLCONF.split('.')[0]
     module = types.ModuleType(module_name)
-    module.__file__ = f
+    module.__file__ = str(local_settings)
     sys.modules[module_name] = module
-    exec(open(f, "rb").read())
+    exec(local_settings.read_bytes())  # noqa: S102
 
 if not locals().get('SECRET_KEY', ''):
-    secret_file = os.path.join(BASE_DIR, '.django_secret')
+    secret_file = Path(BASE_DIR) / Path('.django_secret')
     try:
-        with open(secret_file) as f:
+        with secret_file.open() as f:
             SECRET_KEY = f.read().strip()
     except OSError:
         import random
+
         system_random = random.SystemRandom()
         try:
-            SECRET_KEY = ''.join([system_random.choice('abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(-_=+)') for i in range(64)])  # noqa
-            secret = open(secret_file, 'w')
-            import os
-            os.chmod(secret_file, 0o0600)
-            secret.write(SECRET_KEY)
-            secret.close()
+            SECRET_KEY = ''.join([system_random.choice('abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(-_=+)') for i in range(64)])
+            with secret_file.open('w') as f:
+                secret_file.chmod(0o0600)
+                f.write(SECRET_KEY)
         except OSError:
-            Exception('Please create a %s file with random characters to generate your secret key!' % secret_file)
+            raise ImproperlyConfigured(
+                'Please create a %s file with random characters to generate your secret key!' % secret_file,
+            ) from None
 
 
 if DEBUG:  # noqa: SIM102
@@ -805,10 +806,16 @@ LOG_GRAPHQL_QUERIES = env('LOG_GRAPHQL_QUERIES') and DEBUG
 
 # Logging
 if env('CONFIGURE_LOGGING'):
-    from kausal_common.logging.init import init_logging_django
+    from kausal_common.logging.init import LogFormat, init_logging_django
 
     is_kube = env.bool('KUBERNETES_MODE') or env.bool('KUBERNETES_LOGGING', False) # type: ignore
-    init_logging_django('logfmt' if is_kube or not DEBUG else 'rich', log_sql_queries=LOG_SQL_QUERIES)
+    log_format: LogFormat | None
+    if not is_kube and DEBUG:
+        # If logfmt hasn't been explicitly selected and DEBUG is on, fall back to autodetection.
+        log_format = None
+    else:
+        log_format = 'logfmt'
+    init_logging_django(log_format, log_sql_queries=LOG_SQL_QUERIES)
 
 
 REQUEST_LOG_MAX_DAYS = env('REQUEST_LOG_MAX_DAYS')
@@ -895,7 +902,7 @@ WAGTAILADMIN_RICH_TEXT_EDITORS = {
 }
 
 HIJACK_PERMISSION_CHECK = "admin_site.permissions.superusers_only_hijack"
-HIJACK_INSERT_BEFORE = None
+HIJACK_INSERT_BEFORE: str | None = None
 
 if importlib.util.find_spec('kausal_watch_extensions') is not None:
     INSTALLED_APPS.append('kausal_watch_extensions')

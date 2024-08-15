@@ -1,3 +1,7 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Any, cast
+
 from django import forms
 from django.contrib.admin import SimpleListFilter
 from django.core.exceptions import ValidationError
@@ -21,6 +25,7 @@ from aplans.context_vars import ctx_instance, ctx_request
 from aplans.extensions import modeladmin_register
 from aplans.wagtail_utils import _get_category_fields
 
+from admin_site.utils import admin_req
 from admin_site.wagtail import (
     AplansAdminModelForm,
     AplansCreateView,
@@ -35,9 +40,13 @@ from admin_site.wagtail import (
 )
 from orgs.models import Organization
 from people.chooser import PersonChooser
-from users.models import User
 
 from .models import CommonIndicator, Dimension, Indicator, IndicatorLevel, Quantity, Unit
+
+if TYPE_CHECKING:
+    from wagtail.admin.panels.base import Panel
+
+    from users.models import User
 
 
 class DisconnectedIndicatorFilter(SimpleListFilter):
@@ -52,7 +61,7 @@ class DisconnectedIndicatorFilter(SimpleListFilter):
         )
 
     def queryset(self, request, queryset):
-        plan = request.user.get_active_admin_plan()
+        plan = admin_req(request).user.get_active_admin_plan()
         if self.value() == '1':
             pass
         elif self.value() == '2':
@@ -162,7 +171,7 @@ class DimensionAdmin(AplansModelAdmin):
     ]
 
 
-class QuantityForm(AplansAdminModelForm):
+class QuantityForm(AplansAdminModelForm[Quantity]):
     pass
 
 
@@ -340,12 +349,10 @@ class IndicatorEditView(InitializeFormWithPlanMixin, AplansEditView):
     pass
 
 
-class IndicatorEditHandler(BuiltInFieldCustomizationAwareEditHandlerMixin, AplansTabbedInterface):
+class IndicatorEditHandler(BuiltInFieldCustomizationAwareEditHandlerMixin, AplansTabbedInterface[Indicator]):
     def get_form_class(self):
-        request = ctx_request.get()
-        instance = ctx_instance.get()
-        assert request is not None
-        user = request.user
+        request = ctx_request.get_admin_request()
+        instance = ctx_instance.get_as_type(Indicator)
         plan = request.get_active_admin_plan()
         cat_fields = _get_category_fields(plan, Indicator, instance, with_initial=True)
 
@@ -396,11 +403,11 @@ class IndicatorAdmin(AplansModelAdmin):
         CustomizableBuiltInFieldPanel('description'),
     ]
 
-    advanced_panels = []
+    advanced_panels: list[Panel[Any]] = []
 
     def get_edit_handler(self):
         request = ctx_request.get()
-        instance = ctx_instance.get()  # FIXME: Fails when creating a new indicator
+        instance = cast(Indicator, ctx_instance.get())  # FIXME: Fails when creating a new indicator
         basic_panels = list(self.basic_panels)
         advanced_panels = list(self.advanced_panels)
         plan = request.user.get_active_admin_plan()
@@ -419,7 +426,7 @@ class IndicatorAdmin(AplansModelAdmin):
             )
             if is_general_admin:
                 basic_panels.append(CustomizableBuiltInFieldPanel('visibility'))
-                advanced_panels.append(CondensedInlinePanel('dimensions', panels=[
+                advanced_panels.append(CondensedInlinePanel[Indicator]('dimensions', panels=[
                     FieldPanel('dimension'),
                 ], heading=_("Dimensions")))
                 # If the indicator has values, show a warning that these would be deleted by changing dimensions

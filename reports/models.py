@@ -117,7 +117,7 @@ class NoRevisionSave(Exception):
 
 
 @reversion.register()
-class ReportType(models.Model, PlanRelatedModel):
+class ReportType(PlanRelatedModel):
     plan: models.ForeignKey[Plan, Plan] = models.ForeignKey('actions.Plan', on_delete=models.CASCADE, related_name='report_types')  # pyright: ignore
     name = models.CharField(max_length=100, verbose_name=_('name'))
     fields = StreamField(block_types=ReportFieldBlock(), null=True, blank=True)
@@ -143,7 +143,7 @@ class ReportType(models.Model, PlanRelatedModel):
 
 
 @reversion.register()
-class Report(models.Model, PlanRelatedModel):
+class Report(PlanRelatedModel):
     type: FK[ReportType] = models.ForeignKey(ReportType, on_delete=models.CASCADE, related_name='reports')
     name = models.CharField(max_length=100, verbose_name=_('name'))
     identifier = AutoSlugField(

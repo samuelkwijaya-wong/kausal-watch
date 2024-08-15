@@ -5,6 +5,7 @@ import re
 import typing
 import zoneinfo
 from datetime import datetime, timedelta
+from functools import cache
 from typing import TYPE_CHECKING, ClassVar, Self, cast
 from urllib.parse import urlparse
 
@@ -49,7 +50,7 @@ from indicators.models import Indicator, IndicatorLevel, RelatedIndicator
 from orgs.models import Organization
 from people.models import Person
 
-if typing.TYPE_CHECKING:
+if TYPE_CHECKING:
     from kausal_common.models.types import FK, M2M, RevMany, RevOne
 
     from aplans.graphql_types import WorkflowStateEnum
@@ -72,7 +73,10 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-TIMEZONES = [(x, x) for x in sorted(zoneinfo.available_timezones(), key=str.lower)]
+
+@cache
+def get_timezones() -> list[tuple[str, str]]:
+    return [(x, x) for x in sorted(zoneinfo.available_timezones(), key=str.lower)]
 
 
 def get_plan_identifier_from_wildcard_domain(hostname: str, request: WatchRequest | None = None) -> tuple[str, str] | tuple[None, None]:
@@ -126,7 +130,9 @@ class PlanQuerySet(MultilingualQuerySet['Plan']):
 
 
 if TYPE_CHECKING:
-    class PlanManager(MLModelManager['Plan', PlanQuerySet]): ...
+    _PlanManager = models.Manager.from_queryset(PlanQuerySet)
+    class PlanManager(MLModelManager['Plan', PlanQuerySet], _PlanManager): ...
+    del _PlanManager
 else:
     PlanManager = MLModelManager.from_queryset(PlanQuerySet)
 
@@ -325,7 +331,7 @@ class Plan(ClusterableModel, ModelWithPrimaryLanguage):
         'self', verbose_name=pgettext_lazy('plan', 'superseded by'), blank=True, null=True, on_delete=models.SET_NULL,
         related_name='superseded_plans', help_text=_('Set if this plan is superseded by another plan'),
     )
-    timezone = models.CharField(max_length=64, choices=TIMEZONES, default='UTC')
+    timezone = models.CharField[str, str](max_length=64, choices=get_timezones, default='UTC')  # type: ignore[arg-type]
     country = CountryField(blank=True)
     daily_notifications_triggered_at = models.DateTimeField(blank=True, null=True)
 
@@ -941,7 +947,7 @@ class PlanDomain(models.Model):
             message=_("Base path must begin with a '/' and not end with '/'"),
         )],
     )
-    deployment_environment = models.CharField(
+    deployment_environment = models.CharField[DeploymentEnvironment, DeploymentEnvironment](
         max_length=30, choices=DeploymentEnvironment.choices, verbose_name=_('deployment environment'), blank=True,
     )
     redirect_aliases = ArrayField(
@@ -1022,7 +1028,7 @@ class PlanDomain(models.Model):
         unique_together = (('hostname', 'base_path'),)
 
 
-class Scenario(models.Model, PlanRelatedModel):
+class Scenario(PlanRelatedModel):
     plan = models.ForeignKey(
         Plan, on_delete=models.CASCADE, related_name='scenarios',
         verbose_name=_('plan'),
@@ -1044,7 +1050,7 @@ class Scenario(models.Model, PlanRelatedModel):
         return self.name
 
 
-class ImpactGroup(models.Model, PlanRelatedModel):
+class ImpactGroup(PlanRelatedModel):
     plan = models.ForeignKey(
         Plan, on_delete=models.CASCADE, related_name='impact_groups',
         verbose_name=_('plan'),
@@ -1099,7 +1105,7 @@ class MonitoringQualityPoint(PlanRelatedModel, OrderedModel):
         default_language_field='plan__primary_language_lowercase',
     )
 
-    public_fields: typing.ClassVar = [
+    public_fields: ClassVar = [
         'id', 'name', 'description_yes', 'description_no', 'plan', 'identifier',
     ]
 

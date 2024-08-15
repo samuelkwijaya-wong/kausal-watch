@@ -18,7 +18,7 @@ from aplans.fields import HostnameField
 from aplans.utils import InstancesEditableByMixin, InstancesVisibleForMixin, OrderedModel, PlanRelatedModel
 
 if TYPE_CHECKING:
-    from kausal_common.models.types import ForeignKey
+    from kausal_common.models.types import FK
 
     from actions.models.plan import Plan
 
@@ -132,10 +132,9 @@ class EmailDomains(OrderedModel, ClusterableModel):
 
 
 class BuiltInFieldCustomization(
-    InstancesEditableByMixin, InstancesVisibleForMixin, models.Model,
-    PlanRelatedModel,
+    PlanRelatedModel, InstancesEditableByMixin, InstancesVisibleForMixin,
 ):
-    plan: ForeignKey[Plan] = models.ForeignKey(
+    plan: FK[Plan] = models.ForeignKey(
         'actions.Plan', on_delete=models.CASCADE, related_name='built_in_action_attribute_types',
     )
     # Model of the customized field

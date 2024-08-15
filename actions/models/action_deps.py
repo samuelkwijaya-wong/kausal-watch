@@ -18,7 +18,7 @@ from kausal_common.models.types import ModelManager
 
 from aplans.utils import OrderedModel
 
-if typing.TYPE_CHECKING:
+if TYPE_CHECKING:
     from kausal_common.models.types import FK
 
     from aplans.types import UserOrAnon

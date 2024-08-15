@@ -1,9 +1,8 @@
 from __future__ import annotations
 
-import typing
 from enum import StrEnum, auto
+from typing import TYPE_CHECKING, Literal, overload
 
-from django.apps import apps
 from django.core.exceptions import PermissionDenied
 from django.db import models
 from django.db.models import Q
@@ -16,12 +15,18 @@ from users.managers import UserManager
 
 from .base import AbstractUser
 
-if typing.TYPE_CHECKING:
+if TYPE_CHECKING:
+    from collections.abc import Iterable, Sequence
+
     from rest_framework.authtoken.models import Token
+
+    from kausal_common.models.types import FK
 
     from aplans.utils import InstancesEditableByMixin, InstancesVisibleForMixin
 
     from actions.models import Action, ActionContactPerson, ActionResponsibleParty, ModelWithRole, Plan
+    from actions.models.action import ActionQuerySet
+    from indicators.models import Indicator, IndicatorQuerySet
     from people.models import Person
 
 
@@ -34,8 +39,8 @@ class User(AbstractUser):
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
 
-    email = models.EmailField(_('email address'), unique=True)
-    selected_admin_plan = models.ForeignKey(
+    email: models.EmailField[str, str] = models.EmailField(_('email address'), unique=True) # type: ignore[assignment]
+    selected_admin_plan: FK[Plan | None] = models.ForeignKey(
         'actions.Plan', null=True, blank=True, on_delete=models.SET_NULL,
     )
     deactivated_at = models.DateTimeField(
@@ -57,8 +62,12 @@ class User(AbstractUser):
     _adminable_plans: models.QuerySet[Plan]
     _instance_visibility_perms: set[InstancesVisibleForMixin.VisibleFor]
     _instance_editable_perms: set[InstancesEditableByMixin.EditableBy]
-    _org_admin_for_actions: models.QuerySet[Action]
+    _org_admin_for_actions: ActionQuerySet
+    _org_admin_for_indicators: IndicatorQuerySet
     _contact_for_actions: set[int]
+    _contact_for_actions_by_role: dict[ActionContactPerson.Role, set[int]]
+    _general_admin_for_plans: set[int]
+
 
     autocomplete_search_field = 'email'
 
@@ -110,6 +119,9 @@ class User(AbstractUser):
 
     def has_contact_person_role_for_action(self, role: ActionContactPerson.Role, action=None):
         from actions.models import ActionContactPerson
+
+        actions: dict[ActionContactPerson.Role, set[int]]
+
         # Cache the contact person role status
         if hasattr(self, '_contact_for_actions_by_role'):
             actions = self._contact_for_actions_by_role
@@ -127,8 +139,7 @@ class User(AbstractUser):
             actions[r].update(person.actioncontactperson_set.filter(role=r).values_list('action', flat=True))
         if action is None:
             return bool(actions[role])
-        else:
-            return action.pk in actions[role]
+        return action.pk in actions[role]
 
     def is_contact_person_for_indicator(self, indicator=None):
         if hasattr(self, '_contact_for_indicators'):
@@ -205,7 +216,7 @@ class User(AbstractUser):
                 return bool(plans)
             return plan.pk in plans
 
-        plans = set()
+        plans = set[int]()
         self._general_admin_for_plans = plans
         person = self.get_corresponding_person()
         if not person:
@@ -214,21 +225,25 @@ class User(AbstractUser):
         plans.update({plan.id for plan in person.general_admin_plans.all()})
         if plan is None:
             return bool(plans)
-        else:
-            return plan.pk in plans
+        return plan.pk in plans
 
-    def _get_editable_roles(self, action: Action, _class: ModelWithRole) -> typing.Iterable[ModelWithRole.Role | None]:
+    def _get_editable_roles[Role: ModelWithRole.Role](
+            self, action: Action, _class: type[ModelWithRole[Role]],
+        ) -> Sequence[Role | None]:
         if self.is_general_admin_for_plan(action.plan):
             return _class.get_roles()
         person = self.get_corresponding_person()
+        if person is None:
+            return []
         return _class.get_roles_editable_in_action_by(action, person)
 
-    def get_editable_contact_person_roles(self, action: Action) -> typing.Iterable[ActionContactPerson.Role]:
+    def get_editable_contact_person_roles(self, action: Action) -> Sequence[ActionContactPerson.Role | None]:
         """Return a list of roles so that this user can edit contact persons with those roles for the given action."""
         from actions.models import ActionContactPerson
-        return self._get_editable_roles(action, ActionContactPerson)
+        roles = self._get_editable_roles(action, ActionContactPerson)
+        return roles
 
-    def get_editable_responsible_party_roles(self, action: Action) -> typing.Iterable[ActionResponsibleParty.Role|None]:
+    def get_editable_responsible_party_roles(self, action: Action) -> Iterable[ActionResponsibleParty.Role|None]:
         from actions.models import ActionResponsibleParty
         return self._get_editable_roles(action, ActionResponsibleParty)
 
@@ -245,7 +260,7 @@ class User(AbstractUser):
             actions = self._org_admin_for_actions
         else:
             from actions.models import Action
-            actions = Action.objects.user_is_org_admin_for(self)  # pyright: ignore
+            actions = Action.objects.get_queryset().user_is_org_admin_for(self)
             self._org_admin_for_actions = actions
         # Ensure below that the actions queryset is evaluated to make
         # the cache efficient (it will use queryset's cache)
@@ -253,13 +268,13 @@ class User(AbstractUser):
             return bool(actions)
         return action in actions
 
-    def is_organization_admin_for_indicator(self, indicator=None):
+    def is_organization_admin_for_indicator(self, indicator: Indicator | None = None) -> bool:
         indicators = None
         if hasattr(self, '_org_admin_for_indicators'):
             indicators = self._org_admin_for_indicators
         else:
-            Indicator = apps.get_model('indicators', 'Indicator')
-            indicators = Indicator.objects.filter(organization__in=self.get_adminable_organizations())
+            from indicators.models import Indicator
+            indicators = Indicator.objects.qs.filter(organization__in=self.get_adminable_organizations()).distinct()
             self._org_admin_for_indicators = indicators
         # Ensure below that the indicators queryset is evaluated to make
         # the cache efficient (it will use queryset's cache)
@@ -273,11 +288,11 @@ class User(AbstractUser):
 
         return self._get_admin_orgs()
 
-    @typing.overload
-    def get_active_admin_plan(self, required: typing.Literal[False]) -> Plan | None: ...
+    @overload
+    def get_active_admin_plan(self, required: Literal[False]) -> Plan | None: ...
 
-    @typing.overload
-    def get_active_admin_plan(self, required: typing.Literal[True] = True) -> Plan: ...
+    @overload
+    def get_active_admin_plan(self, required: Literal[True] = True) -> Plan: ...
 
     def get_active_admin_plan(self, required: bool = True) -> Plan | None:
         if hasattr(self, '_active_admin_plan'):
@@ -388,6 +403,8 @@ class User(AbstractUser):
         return self.can_create_action(plan)
 
     def _check_moderation_publish_permissions(self, action: Action, person: Person) -> bool:
+        if action.plan.features.moderation_workflow is None:
+            return False
         if action.plan.features.moderation_workflow.tasks.count() > 1:
             # If the acceptance chain is longer, moderators are restricted to only the first acceptance task
             # (and are not allowed to publish)
@@ -398,7 +415,7 @@ class User(AbstractUser):
         from actions.models.action import ActionContactPerson
         return action.contact_persons.filter(role=ActionContactPerson.Role.MODERATOR, person=person).exists()
 
-    def _check_moderation_permissions(self, moderation_action: ModerationAction, action: Action):
+    def _check_moderation_permissions(self, moderation_action: ModerationAction, action: Action) -> bool:
         # Only called currently if a plan has a moderation workflow enabled
         if self.is_superuser:
             return True
@@ -410,7 +427,7 @@ class User(AbstractUser):
         # TODO: Cache?
         if moderation_action == ModerationAction.PUBLISH:
             return self._check_moderation_publish_permissions(action, person)
-        elif moderation_action == ModerationAction.APPROVE:
+        if moderation_action == ModerationAction.APPROVE:
             return self._check_moderation_approve_permissions(action, person)
         return None
 
@@ -469,10 +486,9 @@ class User(AbstractUser):
         if organization is None:
             # FIXME: Make sure we don't allow plan admins to modify organizations unrelated to them
             return OrganizationMetadataAdmin.objects.filter(person=person).exists()
-        else:
-            # For now we ignore OrganizationMetadataAdmin and let plan admins modify organizations
-            # return organization.organization_metadata_admins.filter(person=person).exists()
-            return organization.user_can_edit(self)
+        # For now we ignore OrganizationMetadataAdmin and let plan admins modify organizations
+        # return organization.organization_metadata_admins.filter(person=person).exists()
+        return organization.user_can_edit(self)
 
     def can_create_organization(self):
         if self.is_superuser:
@@ -533,10 +549,8 @@ class User(AbstractUser):
         if plan is not None and self.is_general_admin_for_plan(plan):
             if orgs is not None:
                 return person.organization_id in orgs
-            else:
-                return person.organization_id in Organization.objects.available_for_plan(plan).values_list('id', flat=True)
-        else:
-            return False
+            return person.organization_id in Organization.objects.qs.available_for_plan(plan).values_list('id', flat=True)
+        return False
 
     def deactivate(self, admin_user):
         self.is_active = False

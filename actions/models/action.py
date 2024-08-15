@@ -5,10 +5,10 @@ import logging
 import typing
 import uuid
 from functools import lru_cache
-from typing import TYPE_CHECKING, Any, ClassVar, Literal, Self, TypedDict, cast
+from typing import TYPE_CHECKING, Any, ClassVar, Literal, Mapping, Self, TypedDict, cast
 
 import reversion
-from django.contrib.admin import display
+from django.contrib import admin
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.contenttypes.fields import GenericRelation
 from django.contrib.contenttypes.models import ContentType
@@ -27,6 +27,7 @@ from modeltrans.fields import TranslatedVirtualField, TranslationField
 from modeltrans.manager import MultilingualQuerySet
 from modeltrans.translator import get_i18n_field
 from reversion.models import Version
+from wagtail.admin.panels.base import Panel
 from wagtail.fields import RichTextField
 from wagtail.models import DraftStateMixin, LockableMixin, RevisionMixin, Task, WorkflowMixin
 from wagtail.search import index
@@ -40,12 +41,13 @@ from aplans.utils import (
     IdentifierField,
     OrderedModel,
     PlanRelatedModel,
+    PlanRelatedOrderedModel,
     RestrictedVisibilityModel,
     generate_identifier,
     get_available_variants_for_language,
 )
 
-from indicators.models import ActionIndicator, Indicator
+from indicators.models import ActionIndicator, Indicator, IndicatorQuerySet
 from orgs.models import Organization
 from search.backends import TranslatedAutocompleteField, TranslatedSearchField
 from users.models import User
@@ -53,12 +55,15 @@ from users.models import User
 from ..action_status_summary import ActionStatusSummaryIdentifier, ActionTimelinessIdentifier, SummaryContext
 from ..attributes import AttributeFieldPanel, AttributeType
 from ..monitoring_quality import determine_monitoring_quality
-from .attributes import AttributeType as AttributeTypeModel, ModelWithAttributes
+from .attributes import Attribute, AttributeType as AttributeTypeModel, ModelWithAttributes
 
 if typing.TYPE_CHECKING:
-    from django.db.models.expressions import Combinable
+    from collections.abc import Sequence
 
-    from kausal_common.models.types import FK, M2M, RevMany
+    from django.db.models.expressions import Combinable
+    from modelcluster.fields import PK
+
+    from kausal_common.models.types import FK, M2M, GetDisplayMethod, RevMany
 
     from aplans.cache import WatchObjectCache
     from aplans.graphql_types import WorkflowStateEnum
@@ -175,13 +180,13 @@ class ResponsiblePartyDict(TypedDict):
 
 @reversion.register(follow=ModelWithAttributes.REVERSION_FOLLOW + ['responsible_parties', 'tasks'])
 class Action(
-    PlanRelatedModel, WorkflowMixin, DraftStateMixin, LockableMixin, RevisionMixin,
-    ModelWithAttributes, OrderedModel, ClusterableModel, RestrictedVisibilityModel, index.Indexed,
+    PlanRelatedOrderedModel, WorkflowMixin, DraftStateMixin, LockableMixin, RevisionMixin,
+    ModelWithAttributes, ClusterableModel, RestrictedVisibilityModel, index.Indexed,
 ):
     """One action/measure tracked in an action plan."""
 
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
-    plan: ParentalKey[Plan] = ParentalKey(
+    plan: PK[Plan] = ParentalKey(
         'actions.Plan', on_delete=models.CASCADE, related_name='actions',
         verbose_name=_('plan'),
     )
@@ -350,7 +355,7 @@ class Action(
             return None
         return super().save_revision(*args, **kwargs)
 
-    def commit_attributes(self, attributes: dict[str, typing.Any], user):
+    def commit_attributes(self, attributes: dict[str, Any], user):
         """
         Called when the serialized draft contents of attribute values must be persisted to the actual Attribute models
         when publishing an action from a draft
@@ -508,9 +513,12 @@ class Action(
         )
 
     def get_visible_related_indicators(self):
-        indicator_ids = self.indicators.get_queryset().visible_for_public().values_list("id", flat=True)
+        ind_qs: IndicatorQuerySet = self.indicators.get_queryset()  # pyright: ignore
+        indicator_ids = ind_qs.visible_for_public().values_list("id", flat=True)
         return self.related_indicators.filter(indicator_id__in=indicator_ids)
 
+
+    get_visibility_display: GetDisplayMethod
 
     @property
     def visibility_display(self):
@@ -701,11 +709,11 @@ class Action(
             'updated_at': self.updated_at, 'view_url': self.get_view_url(plan=plan), 'order': self.order,
         }
 
-    @display(boolean=True, description=_('Has contact persons'))
+    @admin.display(boolean=True, description=_('Has contact persons'))
     def has_contact_persons(self):
         return self.contact_persons.exists()
 
-    @display(description=_('Active tasks'))
+    @admin.display(description=_('Active tasks'))
     def active_task_count(self):
         def task_active(task):
             return task.state != ActionTask.CANCELLED and not task.completed_at
@@ -719,7 +727,7 @@ class Action(
         return '%s/actions/%s' % (plan.get_view_url(client_url=client_url, active_locale=translation.get_language()), self.identifier)
 
     @classmethod
-    def get_indexed_objects(cls):
+    def get_indexed_objects(cls) -> ActionQuerySet:
         # Return only the actions whose plan supports the current language
         lang = translation.get_language()
 
@@ -735,7 +743,7 @@ class Action(
 
     def get_editable_attribute_types(
         self, user: UserOrAnon, only_in_reporting_tab: bool = False, unless_in_reporting_tab: bool = False,
-    ) -> list[AttributeType]:
+    ) -> Sequence[AttributeType[Any]]:
         attribute_types = self.__class__.get_attribute_types_for_plan(
             self.plan,
             only_in_reporting_tab=only_in_reporting_tab,
@@ -745,7 +753,7 @@ class Action(
 
     def get_visible_attribute_types(
         self, user: UserOrAnon, only_in_reporting_tab: bool = False, unless_in_reporting_tab: bool = False,
-    ) -> list[AttributeType]:
+    ) -> Sequence[AttributeType[Any]]:
         attribute_types = self.__class__.get_attribute_types_for_plan(
             self.plan,
             only_in_reporting_tab=only_in_reporting_tab,
@@ -755,7 +763,9 @@ class Action(
 
     @classmethod
     @lru_cache
-    def get_attribute_types_for_plan(cls, plan: Plan, only_in_reporting_tab=False, unless_in_reporting_tab=False):
+    def get_attribute_types_for_plan(
+        cls, plan: Plan, only_in_reporting_tab: bool = False, unless_in_reporting_tab: bool = False,
+    ) -> Sequence[AttributeType[Any]]:
         action_ct = ContentType.objects.get_for_model(Action)
         plan_ct = ContentType.objects.get_for_model(plan)
         at_qs: QuerySet[AttributeTypeModel] = AttributeTypeModel.objects.filter(
@@ -770,24 +780,31 @@ class Action(
         # Convert to wrapper objects
         return [AttributeType.from_model_instance(at) for at in at_qs]
 
-    def get_attribute_panels(self, user: User, draft_attributes: DraftAttributes | None = None):
+    type AFP = AttributeFieldPanel[Action]
+    type _Panel = Panel[Action]
+    type _PanelS = Sequence[_Panel]
+
+    def get_attribute_panels(self, user: User, draft_attributes: DraftAttributes | None = None) -> tuple[_PanelS, _PanelS, Mapping[str, _PanelS]]:
         # Return a triple `(main_panels, reporting_panels, i18n_panels)`, where `main_panels` is a list of panels to be
         # put on the main tab, `reporting_panels` is a list of panels to be put on the reporting tab, and `i18n_panels`
         # is a dict mapping a non-primary language to a list of panels to be put on the tab for that language.
-        main_panels: list[AttributeFieldPanel] = []
-        reporting_panels: list[AttributeFieldPanel] = []
-        i18n_panels: dict[str, list[AttributeFieldPanel]] = {}
+
+        main_panels: list[Action._Panel] = []
+        reporting_panels: list[Action._Panel] = []
+        i18n_panels: dict[str, list[Action._Panel]] = {}
         plan = user.get_active_admin_plan()  # not sure if this is reasonable...
         for panels, kwargs in [(main_panels, {'unless_in_reporting_tab': True}),
                                (reporting_panels, {'only_in_reporting_tab': True})]:
             attribute_types = self.get_visible_attribute_types(user, **kwargs)
+            act = cast(Action, self)
             for attribute_type in attribute_types:
-                fields = attribute_type.get_form_fields(user, plan, self, draft_attributes=draft_attributes)
+                fields = attribute_type.get_form_fields(user, plan, act, draft_attributes=draft_attributes)
                 for field in fields:
                     if field.language:
                         i18n_panels.setdefault(field.language, []).append(field.get_panel())
                     else:
                         panels.append(field.get_panel())
+
         return (main_panels, reporting_panels, i18n_panels)
 
     def get_siblings(self, force_refresh=False):
@@ -911,37 +928,39 @@ class Action(
         return ActionDependencyRelationship.objects.qs.all_for_action(self).visible_for_user(user, plan)
 
 
-class ModelWithRole:
+class ModelWithRole[ModelRole: 'ModelWithRole.Role']:  # pyright: ignore
+    role: models.CharField[str | None, str | None]
+
     class Role(models.TextChoices):
         # If your model allows blank values for the role field, specify it using `__empty__ = _("Text")`, but bear in
         # mind that this won't be included when you iterate over the enum.
         pass
 
     @classmethod
-    def get_roles(cls) -> typing.Iterable[ModelWithRole.Role | None]:
-        roles: list[ModelWithRole.Role | None] = list(cls.Role)
+    def get_roles(cls) -> Sequence[ModelRole | None]:
+        roles = cast(list[ModelRole | None], list(cls.Role))
         if cls.role.field.blank:
             # None is not part of list(cls.Role) even if it's an allowed value in the DB field
             roles.append(None)
         return roles
 
     @classmethod
-    def get_roles_editable_in_action_by(cls, action: Action, person: Person) -> typing.Iterable[ModelWithRole.Role | None]:
+    def get_roles_editable_in_action_by(cls, action: Action, person: Person) -> Sequence[ModelRole | None]:
         raise NotImplementedError
 
 
 @reversion.register()
-class ActionResponsibleParty(OrderedModel, ModelWithRole):
+class ActionResponsibleParty(OrderedModel, ModelWithRole['ActionResponsibleParty.Role']):  # pyright: ignore
     class Role(ModelWithRole.Role):
         PRIMARY = 'primary', _('Primary responsible party')
         COLLABORATOR = 'collaborator', _('Collaborator')
         __empty__ = _('Unspecified')
 
-    action = ParentalKey(
+    action: PK[Action] = ParentalKey(
         'actions.Action', on_delete=models.CASCADE, related_name='responsible_parties',
         verbose_name=_('action'),
     )
-    organization = models.ForeignKey(
+    organization: FK[Organization] = models.ForeignKey(
         Organization, on_delete=models.CASCADE, related_name='responsible_actions', verbose_name=_('organization'),
         # FIXME: The following leads to a weird error in the action edit page, but only if Organization.i18n is there.
         # WTF? Commented out for now.
@@ -968,6 +987,8 @@ class ActionResponsibleParty(OrderedModel, ModelWithRole):
         verbose_name = _('action responsible party')
         verbose_name_plural = _('action responsible parties')
 
+    get_role_display: GetDisplayMethod
+
     def get_label(self):
         label = ''
         if self.role:
@@ -982,8 +1003,11 @@ class ActionResponsibleParty(OrderedModel, ModelWithRole):
     def __str__(self):
         return str(self.organization)
 
+    def filter_siblings(self, qs: QuerySet[Self, Self]) -> QuerySet[Self, Self]:
+        return qs.filter(action=self.action)
+
     @classmethod
-    def get_roles_editable_in_action_by(cls, action: Action, person: Person) -> typing.Iterable[ModelWithRole.Role | None]:
+    def get_roles_editable_in_action_by(cls, action: Action, person: Person) -> Sequence[Role | None]:
         is_contact_person = person is not None and action.contact_persons.filter(
             person_id=person.pk,
         ).exists()
@@ -995,7 +1019,7 @@ class ActionResponsibleParty(OrderedModel, ModelWithRole):
         return []
 
 
-class ActionContactPerson(OrderedModel, ModelWithRole):
+class ActionContactPerson(OrderedModel, ModelWithRole['ActionContactPerson.Role']):  # pyright: ignore
     """A Person acting as a contact for an action."""
 
     class Role(ModelWithRole.Role):
@@ -1032,6 +1056,9 @@ class ActionContactPerson(OrderedModel, ModelWithRole):
     def __str__(self):
         return f'{self.person!s}: {self.action!s}'
 
+    def filter_siblings(self, qs):
+        return qs.filter(action=self.action)
+
     def get_label(self):
         if self.role:
             return self.get_role_display()
@@ -1044,7 +1071,7 @@ class ActionContactPerson(OrderedModel, ModelWithRole):
         return self.role == self.Role.MODERATOR
 
     @classmethod
-    def get_roles_editable_in_action_by(cls, action: Action, person: Person) -> typing.Iterable[ModelWithRole.Role | None]:
+    def get_roles_editable_in_action_by(cls, action: Action, person: Person) -> Sequence[Role]:
         is_moderator = person is not None and action.contact_persons.filter(
             role=cls.Role.MODERATOR,
             person_id=person.pk,
@@ -1055,7 +1082,7 @@ class ActionContactPerson(OrderedModel, ModelWithRole):
 
 
 
-class ActionSchedule(models.Model, PlanRelatedModel):
+class ActionSchedule(PlanRelatedModel):
     """A schedule for an action with begin and end dates."""
 
     plan: ParentalKey[Plan] = ParentalKey('actions.Plan', on_delete=models.CASCADE, related_name='action_schedules')
@@ -1078,7 +1105,7 @@ class ActionSchedule(models.Model, PlanRelatedModel):
 
 
 @reversion.register()
-class ActionStatus(models.Model, PlanRelatedModel):
+class ActionStatus(PlanRelatedModel):
     """The current status for the action ("on time", "late", "completed", etc.)."""
 
     plan = ParentalKey(
@@ -1112,7 +1139,7 @@ class ActionStatus(models.Model, PlanRelatedModel):
 
 
 @reversion.register()
-class ActionImplementationPhase(PlanRelatedModel, OrderedModel):
+class ActionImplementationPhase(PlanRelatedOrderedModel):
     plan: ParentalKey[Plan] = ParentalKey(
         'actions.Plan', on_delete=models.CASCADE, related_name='action_implementation_phases',
         verbose_name=_('plan'),
@@ -1137,7 +1164,7 @@ class ActionImplementationPhase(PlanRelatedModel, OrderedModel):
         return self.name
 
 
-class ActionDecisionLevel(models.Model, PlanRelatedModel):
+class ActionDecisionLevel(PlanRelatedModel):
     plan = models.ForeignKey(
         'actions.Plan', on_delete=models.CASCADE, related_name='action_decision_levels',
         verbose_name=_('plan'),

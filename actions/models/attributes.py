@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import typing
-from typing import TYPE_CHECKING, Any, ClassVar, Self
+from typing import TYPE_CHECKING, Any, ClassVar, Never, Self, Sequence
 
 import reversion
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
@@ -33,7 +33,7 @@ from aplans.utils import (
 
 from indicators.models import Unit
 
-if typing.TYPE_CHECKING:
+if TYPE_CHECKING:
     from modelcluster.fields import PK
 
     from kausal_common.models.types import FK, RevMany
@@ -64,7 +64,9 @@ class AttributeTypeQuerySet(MultilingualQuerySet['AttributeType']):
 
 
 if TYPE_CHECKING:
-    class AttributeTypeManager(MLModelManager['AttributeType', AttributeTypeQuerySet]): ...
+    _AttributeTypeManager = models.Manager.from_queryset(AttributeTypeQuerySet)
+    class AttributeTypeManager(MLModelManager['AttributeType', AttributeTypeQuerySet], _AttributeTypeManager): ...
+    del _AttributeTypeManager
 else:
     AttributeTypeManager = MLModelManager.from_queryset(AttributeTypeQuerySet)
 
@@ -200,6 +202,11 @@ class AttributeType(
 
     def __str__(self):
         return self.name_i18n
+
+    def filter_siblings(self, qs: models.QuerySet[Self, Self]) -> models.QuerySet[Self, Self]:
+        return qs.filter(
+            object_content_type=self.object_content_type, scope_content_type=self.scope_content_type, scope_id=self.scope_id,
+        )
 
 
 class Attribute[ATType: ParentalKey[AttributeType, AttributeType]](models.Model):
@@ -418,14 +425,16 @@ class ModelWithAttributes(ClusterableModel):
         super().__init__(*args, **kwargs)
         self.draft_attributes = None
 
-    def get_editable_attribute_types(self, user: UserOrAnon) -> list[AttributeTypeWrapper]:
+    def get_editable_attribute_types(self, user: UserOrAnon) -> Sequence[AttributeTypeWrapper[Any]]:
         raise NotImplementedError("Implement in subclass")
 
-    def get_visible_attribute_types(self, user: UserOrAnon) -> list[AttributeTypeWrapper]:
+    def get_visible_attribute_types(self, user: UserOrAnon) -> Sequence[AttributeTypeWrapper[Any]]:
         raise NotImplementedError("Implement in subclass")
 
     @classmethod
-    def get_attribute_types_for_plan(cls, plan: Plan, only_in_reporting_tab=False, unless_in_reporting_tab=False) -> typing.Never:
+    def get_attribute_types_for_plan(
+        cls, plan: Plan, only_in_reporting_tab: bool = False, unless_in_reporting_tab: bool = False
+    ) -> Sequence[AttributeTypeWrapper[Any]]:
         raise NotImplementedError("Implement in subclass")
 
     @classmethod

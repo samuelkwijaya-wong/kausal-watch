@@ -11,6 +11,7 @@ from aplans.tests.tree import Tree, parse_tree_string
 
 from actions.api import ActionSerializer, OrganizationSerializer
 from actions.tests.factories import ActionFactory
+from kausal_common.logging.handler import get_rich_log_console
 from orgs.models import Organization
 from orgs.tests.factories import OrganizationFactory
 
