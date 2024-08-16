@@ -922,7 +922,8 @@ class PlanDomain(models.Model):
 
     class DeploymentEnvironment(models.TextChoices):
         PRODUCTION = 'production', _('Production')
-        TESTING = 'testing', _('Testing')
+        PREVIEW = 'preview', _('Preview')
+        DEVELOPMENT = 'development', _('Development')
 
     plan: ParentalKey[Plan] = ParentalKey(  # pyright: ignore
         Plan, on_delete=models.CASCADE, related_name='domains', verbose_name=_('plan'),
