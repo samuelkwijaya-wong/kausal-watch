@@ -22,6 +22,10 @@ from kausal_common.storage import storage_settings_from_s3_url
 if TYPE_CHECKING:
     from urllib.parse import ParseResult
 
+
+# TODO: Rename to `watch`. But then we need to also rename the `aplans` directory and references.
+PROJECT_NAME = 'aplans'
+
 root = environ.Path(__file__) - 2  # two folders back
 env = environ.FileAwareEnv(
     ENV_FILE=(str, ''),
@@ -34,13 +38,14 @@ env = environ.FileAwareEnv(
     CONFIGURE_LOGGING=(bool, True),
     DATABASE_URL=(str, 'sqlite:///db.sqlite3'),
     DATABASE_CONN_MAX_AGE=(int, 20),
+    REDIS_URL=(str, ''),
     CACHE_URL=(str, 'locmemcache://'),
     MEDIA_ROOT=(environ.Path(), root('media')),
     STATIC_ROOT=(environ.Path(), root('static')),
     MEDIA_URL=(str, '/media/'),
     STATIC_URL=(str, '/static/'),
     SENTRY_DSN=(str, ''),
-    COOKIE_PREFIX=(str, 'aplans'),
+    COOKIE_PREFIX=(str, PROJECT_NAME),
     ALLOWED_SENDER_EMAILS=(list, []),
     SERVER_EMAIL=(str, ''),
     DEFAULT_FROM_EMAIL=(str, 'noreply@mj.kausal.tech'),
@@ -67,8 +72,6 @@ env = environ.FileAwareEnv(
     SENDGRID_API_KEY=(str, ''),
     HOSTNAME_PLAN_DOMAINS=(list, ['localhost']),
     ELASTICSEARCH_URL=(str, ''),
-    CELERY_BROKER_URL=(str, 'redis://localhost:6379'),
-    CELERY_RESULT_BACKEND=(str, 'redis://localhost:6379'),
     GOOGLE_MAPS_V3_APIKEY=(str, ''),
     ADMIN_BASE_URL=(str, 'http://localhost:8000'),
     LOG_SQL_QUERIES=(bool, False),
@@ -114,13 +117,22 @@ DATABASES['default']['ATOMIC_REQUESTS'] = True
 # https://docs.djangoproject.com/en/3.2/releases/3.2/#customizing-type-of-auto-created-primary-keys
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
+# If Redis is configured, but no CACHE_URL is set in the environment,
+# default to using Redis as the cache.
+REDIS_URL = env('REDIS_URL')
+
+cache_var = 'CACHE_URL'
+if env.get_value('CACHE_URL', default=None) is None and REDIS_URL:  # pyright: ignore
+    cache_var = 'REDIS_URL'
 CACHES = {
-    'default': env.cache(),
+    'default': env.cache_url(var=cache_var),
     'renditions': {
         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
         'LOCATION': 'watch-renditions',
     },
 }
+if 'KEY_PREFIX' not in CACHES['default']:
+    CACHES['default']['KEY_PREFIX'] = PROJECT_NAME
 
 ELASTICSEARCH_URL = env('ELASTICSEARCH_URL')
 
@@ -240,14 +252,14 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'aplans.middleware.SocialAuthExceptionMiddleware',
-    'aplans.middleware.RequestMiddleware',
-    'aplans.middleware.AdminMiddleware',
+    f'{PROJECT_NAME}.middleware.SocialAuthExceptionMiddleware',
+    f'{PROJECT_NAME}.middleware.RequestMiddleware',
+    f'{PROJECT_NAME}.middleware.AdminMiddleware',
     'request_log.middleware.LogUnsafeRequestMiddleware',
     'hijack.middleware.HijackUserMiddleware',
 ]
 
-ROOT_URLCONF = 'aplans.urls'
+ROOT_URLCONF = f'{PROJECT_NAME}.urls'
 
 TEMPLATES = [
     {
@@ -296,7 +308,7 @@ STATICFILES_FINDERS = [
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
 ]
 
-WSGI_APPLICATION = 'aplans.wsgi.application'
+WSGI_APPLICATION = f'{PROJECT_NAME}.wsgi.application'
 
 # Password validation
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators
@@ -403,13 +415,13 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
     'DEFAULT_PERMISSION_CLASSES': (
-        'aplans.permissions.AnonReadOnly',
+        f'{PROJECT_NAME}.permissions.AnonReadOnly',
     ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
         'rest_framework.authentication.SessionAuthentication',
     ),
-    'DEFAULT_SCHEMA_CLASS': 'aplans.openapi.AutoSchema',
+    'DEFAULT_SCHEMA_CLASS': f'{PROJECT_NAME}.openapi.AutoSchema',
 }
 
 
@@ -425,9 +437,9 @@ CORS_ALLOW_HEADERS = list(default_cors_headers) + [
 # GraphQL
 #
 GRAPHENE = {
-    'SCHEMA': 'aplans.schema.schema',
+    'SCHEMA': f'{PROJECT_NAME}.schema.schema',
     'MIDDLEWARE': [
-        'aplans.graphene_views.APITokenMiddleware',
+        f'{PROJECT_NAME}.graphene_views.APITokenMiddleware',
     ],
     'DJANGO_CHOICE_FIELD_ENUM_V2_NAMING': True,
 }
@@ -586,19 +598,19 @@ WAGTAILEMBEDS_FINDERS = [
         'class': 'wagtail.embeds.finders.oembed',
     },
     {
-        'class': 'aplans.wagtail_embed_finders.GenericFinder',
+        'class': f'{PROJECT_NAME}.wagtail_embed_finders.GenericFinder',
         'provider': 'ArcGIS',
         'domain_whitelist': ('arcgis.com', 'maps.arcgis.com'),
         'title': 'Map',
     },
     {
-        'class': 'aplans.wagtail_embed_finders.GenericFinder',
+        'class': f'{PROJECT_NAME}.wagtail_embed_finders.GenericFinder',
         'provider': 'Plotly Chart Studio',
         'domain_whitelist': ('chart-studio.plotly.com',),
         'title': 'Chart',
     },
     {
-        'class': 'aplans.wagtail_embed_finders.GenericFinder',
+        'class': f'{PROJECT_NAME}.wagtail_embed_finders.GenericFinder',
         'provider': 'Sharepoint',
         'domain_whitelist': ('sharepoint.com', ),
         'title': 'Document',
@@ -819,28 +831,33 @@ if ENABLE_DEBUG_TOOLBAR:
 
 if DEBUG:
     MIDDLEWARE.insert(
-        0, 'aplans.middleware.PrintQueryCountMiddleware',
+        0, f'{PROJECT_NAME}.middleware.PrintQueryCountMiddleware',
     )
 
+if REDIS_URL:
+    CELERY_BROKER_URL = REDIS_URL
+    CELERY_RESULT_BACKEND = REDIS_URL
+else:
+    # TODO: Consider taking django-celery-results into use, as we have in KP
+    CELERY_BROKER_URL = 'redis://localhost:6379'
+    CELERY_RESULT_BACKEND = 'redis://localhost:6379'
 
-CELERY_BROKER_URL = env('CELERY_BROKER_URL')
-CELERY_RESULT_BACKEND = env('CELERY_RESULT_BACKEND')
 CELERY_BEAT_SCHEDULE = {
     'update-action-status': {
         'task': 'actions.tasks.update_action_status',
-        'schedule': crontab(hour=4, minute=0),
+        'schedule': crontab(hour='4', minute='0'),
     },
     'calculate-indicators': {
         'task': 'indicators.tasks.calculate_indicators',
-        'schedule': crontab(hour=23, minute=0),
+        'schedule': crontab(hour='23', minute='0'),
     },
     'send_daily_notifications': {
         'task': 'notifications.tasks.send_daily_notifications',
-        'schedule': crontab(minute=0),
+        'schedule': crontab(minute='0'),
     },
     'update-index': {
         'task': 'actions.tasks.update_index',
-        'schedule': crontab(hour=3, minute=0),
+        'schedule': crontab(hour='3', minute='0'),
     },
 }
 # Required for Celery exporter: https://github.com/OvalMoney/celery-exporter
