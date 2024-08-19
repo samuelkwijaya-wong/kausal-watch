@@ -128,7 +128,6 @@ preserve_position = true
 exclude = [
     'Attic/',
     '**/__pycache__',
-    #'kausal_common/typings/django',
     'local_settings.py',
     '**/migrations',
     '**/node_modules',

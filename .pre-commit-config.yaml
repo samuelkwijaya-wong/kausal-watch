@@ -10,6 +10,14 @@ repos:
         require_serial: true
         entry: kausal_common/development/git-hooks/ruff-pre-commit.sh
 
+      #- id: run-mypy
+      #  name: Run Mypy
+      #  types: [python]
+      #  stages: [pre-commit]
+      #  language: script
+      #  require_serial: true
+      #  entry: kausal_common/development/git-hooks/mypy-pre-push.sh
+
       - id: check-submodules
         name: Check submodules
         stages: [pre-push]
@@ -26,10 +34,10 @@ repos:
       #   require_serial: true
       #   entry: kausal_common/development/git-hooks/ruff-pre-push.sh
 
-      # - id: run-mypy
-      #   name: Run Mypy
-      #   types: [python]
-      #   stages: [pre-push]
-      #   language: script
-      #   require_serial: true
-      #   entry: kausal_common/development/git-hooks/mypy-pre-push.sh
+      - id: run-mypy-pre-push
+        name: Run Mypy
+        types: [python]
+        stages: [pre-push]
+        language: script
+        require_serial: true
+        entry: kausal_common/development/git-hooks/mypy-pre-push.sh
