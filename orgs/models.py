@@ -370,10 +370,11 @@ class Organization(PlanDefaultsModel, index.Indexed, Node[OrganizationQuerySet],
     def get_fully_qualified_name(self, orgs_by_path: dict[str, Organization] | None = None):
         parents = []
         org_map = orgs_by_path
-        if org_map is None and self.depth > 1:
-            org_map = {org.path: org for org in self.get_ancestors()}
-        else:
-            org_map = {}
+        if org_map is None:
+            if self.depth > 1:
+                org_map = {org.path: org for org in self.get_ancestors()}
+            else:
+                org_map = {}
         org = self
         while org.depth > 1:
             parent_path = self._get_basepath(org.path, org.depth - 1)
