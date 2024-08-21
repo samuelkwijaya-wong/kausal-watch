@@ -87,6 +87,7 @@ env = environ.FileAwareEnv(
     DEPLOY_ALLOWED_CNAMES_DEVELOPMENT=(list, []),
     DEPLOY_TASK_GITOPS_REPO=(str, ''),
     MOUNTED_SECRET_PATHS=(list, []),
+    ENABLE_DEBUG_TOOLBAR=(bool, False),
 )
 
 BASE_DIR = root()
@@ -747,7 +748,7 @@ SILENCED_SYSTEM_CHECKS = [
     'fields.W904',  # postgres JSONField -> django JSONField
 ]
 
-ENABLE_DEBUG_TOOLBAR = False
+ENABLE_DEBUG_TOOLBAR = env('ENABLE_DEBUG_TOOLBAR')
 
 # Show full SQL queries when running `runserver_plus` or `shell_plus` with `--print-sql`
 SHELL_PLUS_PRINT_SQL_TRUNCATE: int | None = None
@@ -830,8 +831,7 @@ if SENTRY_DSN:
 
 
 DATABASES['default']['CONN_MAX_AGE'] = env('DATABASE_CONN_MAX_AGE')
-
-if ENABLE_DEBUG_TOOLBAR:
+if DEBUG and ENABLE_DEBUG_TOOLBAR:
     INSTALLED_APPS += ['debug_toolbar']
     MIDDLEWARE.insert(0, 'debug_toolbar.middleware.DebugToolbarMiddleware')
 
