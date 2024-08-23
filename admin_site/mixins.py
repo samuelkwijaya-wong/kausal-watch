@@ -1,7 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Callable, Generic, cast
-from typing_extensions import TypeVar
+from typing import TYPE_CHECKING, Any, Callable, Protocol, cast
 from urllib.parse import urljoin
 
 from django.contrib.auth import REDIRECT_FIELD_NAME
@@ -24,9 +23,6 @@ if TYPE_CHECKING:
     from django.http.response import HttpResponseBase
 
 
-_Model = TypeVar('_Model', bound=Model, default=Model)
-
-
 class SuccessUrlEditPageMixin:
     """After editing a model instance, redirect to the edit page again instead of the index page."""
 
@@ -46,9 +42,11 @@ class SuccessUrlEditPageMixin:
         return []
 
 
-class SetInstanceMixin(Generic[_Model]):
-    object: _Model
+class HasObject(Protocol):
+    object: Model
 
+
+class SetInstanceMixin(HasObject):
     def setup(self, request: HttpRequest, *args: Any, **kwargs: Any) -> None:
         with ctx_instance.activate(self.object):
             super().setup(request, *args, **kwargs)  # type: ignore[misc]
@@ -76,8 +74,6 @@ class PersistFiltersEditingMixin:
         # strings in the url.  The query strings would have to be
         # parsed, merged, and serialized if url contains query strings
         return urljoin(url, filter_qs)
-
-
 
 
 class ContinueEditingMixin:

@@ -1,14 +1,13 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Generic
-from typing_extensions import TypeVar
+from typing import TYPE_CHECKING
 
-from django.db import models
 from django.db.models import Model, ProtectedError
 from django.forms.models import ModelForm
 from django.utils.text import capfirst
 from django.utils.translation import gettext as _
 from wagtail.admin import messages
+from wagtail.admin.forms.models import WagtailAdminModelForm
 from wagtail.snippets.views.snippets import CreateView, EditView, SnippetViewSet
 
 from aplans.utils import PlanRelatedModel
@@ -28,20 +27,17 @@ from admin_site.wagtail import execute_admin_post_save_tasks
 if TYPE_CHECKING:
     from aplans.types import WatchAdminRequest
 
-_Model = TypeVar('_Model', bound=models.Model)
-_Form = TypeVar('_Form', bound=WatchAdminModelForm, default=WatchAdminModelForm)
 
-
-class WatchEditView(
-    Generic[_Model, _Form],
+class WatchEditView[ModelT: Model, FormT: WagtailAdminModelForm](
     PersistFiltersEditingMixin,
     ContinueEditingMixin,
     PlanRelatedViewMixin,
     ActivatePermissionHelperPlanContextMixin,
-    EditView[_Model, _Form],
-    SetInstanceMixin[_Model],
+    EditView[ModelT, FormT],
+    SetInstanceMixin,
 ):
-    model: type[_Model]
+    object: ModelT
+    model: type[ModelT]
 
     def get_form_kwargs(self):
         return {
