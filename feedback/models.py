@@ -90,7 +90,11 @@ def get_latest_revision(page_id):
             return latest_revision
         raise ValidationError("No revisions found for the specified page.")
     except Page.DoesNotExist as e :
-        raise ValidationError("The specified page does not exist.") from e
+        # We might be at the feedback page or accessibility feedback page
+        # where a page doesn't exist and is not needed because it's lacking
+        # the block configuration anyway
+        return None
+
 
 # TODO: The validation works but not critical now and not tested enough yet.
 #  Might take in to use with better time later.
