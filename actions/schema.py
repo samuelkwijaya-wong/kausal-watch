@@ -1101,7 +1101,10 @@ class ActionNode(AdminButtonsMixin, AttributesMixin, DjangoNode):
     )
     def resolve_related_indicators(root: Action, info):
         plan = root.plan
-        return root.get_visible_related_indicators().order_by_setting(plan)
+        indicators = root.get_visible_related_indicators()
+        if hasattr(indicators, 'order_by_setting'):
+            return indicators.order_by_setting(plan)
+        return indicators
 
     @staticmethod
     @gql_optimizer.resolver_hints(
