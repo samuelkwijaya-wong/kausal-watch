@@ -8,52 +8,54 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-07-22 20:00+0200\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: Automatically generated\n"
-"Language-Team: none\n"
+"PO-Revision-Date: 2024-08-26 10:07+0000\n"
+"Last-Translator: Jan-Erik Sundman <jan-erik.sundman@kausal.tech>\n"
+"Language-Team: Greek <https://weblate.kausal.tech/projects/watch/django/el/>"
+"\n"
 "Language: el\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 5.4.2\n"
 
 #: actions/action_admin.py
 msgid "There is already an action with this identifier."
-msgstr ""
+msgstr "Υπάρχει ήδη μια ενέργεια με αυτό το αναγνωριστικό."
 
 #: actions/action_admin.py
 #, python-format
 msgid "%s is listed multiple times in the action."
-msgstr ""
+msgstr "%s αναφέρεται πολλές φορές στη δράση."
 
 #: actions/action_admin.py actions/models/action.py
 msgid "Unspecified"
-msgstr ""
+msgstr "Απροσδιόριστο"
 
 #: actions/action_admin.py actions/api.py actions/blocks/action_content.py
 #: actions/blocks/action_dashboard.py
 msgid "Responsible parties"
-msgstr ""
+msgstr "Υπεύθυνα μέρη"
 
 #: actions/action_admin.py actions/api.py aplans/utils.py
 #: indicators/wagtail_admin.py
 msgid "Contact persons"
-msgstr ""
+msgstr "Πρόσωπα επικοινωνίας"
 
 #: actions/action_admin.py
 #, python-format
 msgid "Mark as complete for report %s"
-msgstr ""
+msgstr "Χαρακτηρίστε ως ολοκληρωμένο για αναφορά %s"
 
 #: actions/action_admin.py
 #, python-format
 msgid "Mark this action as complete for the report %s"
-msgstr ""
+msgstr "Σημειώστε αυτή την ενέργεια ως ολοκληρωμένη για την έκθεση %s"
 
 #: actions/action_admin.py
 #, python-format
 msgid "Undo marking as complete for report %s"
-msgstr ""
+msgstr "Αναίρεση της επισήμανσης ως ολοκληρωμένης για την έκθεση %s"
 
 #: actions/action_admin.py
 #, python-format
