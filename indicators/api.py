@@ -166,6 +166,7 @@ class IndicatorValueListSerializer(serializers.ListSerializer):
 
         return created_or_updated_objects
 
+
 class IndicatorGoalListSerializer(serializers.ListSerializer):
     def validate(self, attrs):
         data = super().validate(attrs)
@@ -346,7 +347,7 @@ class IndicatorCategoriesSerializer(serializers.Serializer):
     parent: IndicatorSerializer
 
     def to_representation(self, instance):
-        request: AuthenticatedWatchRequest = self.context.get('request')
+        request = self.context.get('request')
         user = None
         plan = None
         if request is not None and request.user and request.user.is_authenticated:
@@ -375,7 +376,7 @@ class IndicatorCategoriesSerializer(serializers.Serializer):
     def to_internal_value(self, data):
         if not data:
             return {}
-        request: AuthenticatedWatchRequest = self.context.get('request')
+        request = self.context.get('request')
         user = None
         plan = None
         if request is not None and request.user and request.user.is_authenticated:
@@ -399,7 +400,7 @@ class IndicatorCategoriesSerializer(serializers.Serializer):
     def update(self, instance: Indicator, validated_data):
         assert isinstance(instance, Indicator)
         assert instance.pk is not None
-        request: AuthenticatedWatchRequest = self.context.get('request')
+        request = self.context.get('request')
         user = None
         plan = None
         if request is not None and request.user and request.user.is_authenticated:
@@ -429,23 +430,6 @@ class IndicatorSerializerMixin:
         if plan is None:
             return
         cache: dict[str, Any] = {}
-
-        # # Cache category types
-        # category_types: list[Any] = list(plan.category_types.all().prefetch_related('categories'))
-        # cache['category_types'] = category_types
-        # cache['category_types_by_identifier'] = {ct.identifier: ct for ct in category_types}
-
-        # # Cache categories by type
-        # cache['categories_by_type'] = {
-        #     ct.id: list(ct.categories.all()) for ct in category_types
-        # }
-
-        # # Cache persons
-        # available_persons = set(Person.objects.available_for_plan(plan, include_contact_persons=True).values_list('id', flat=True))
-        # cache['available_person_ids'] = available_persons
-        # cache['persons_by_id'] = {p.pk: p for p in Person.objects.all()}
-
-        # self.context['_cache'] = cache
 
         for field_name in ['categories', 'contact_persons']:
             if field_name in self.fields:
@@ -492,10 +476,9 @@ class IndicatorSerializer(IndicatorSerializerMixin, serializers.ModelSerializer)
         return instance
 
 
-
     def get_fields(self):
         fields = super().get_fields()
-        request: AuthenticatedWatchRequest = self.context.get('request')
+        request = self.context.get('request')
         user = None
         plan = None
         if request is not None and request.user and request.user.is_authenticated:
@@ -506,7 +489,6 @@ class IndicatorSerializer(IndicatorSerializerMixin, serializers.ModelSerializer)
             # Remove fields that are only for admins
             del fields['internal_notes']
         return fields
-
 
 
 class IndicatorGoalSerializer(serializers.ModelSerializer, IndicatorDataPointMixin):
@@ -533,7 +515,6 @@ class IndicatorEditValuesPermission(permissions.DjangoObjectPermissions):
         if not user.has_perms(perms):
             return False
         return user.can_modify_indicator(obj)
-
 
 
 @extend_schema(
