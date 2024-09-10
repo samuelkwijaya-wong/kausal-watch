@@ -37,7 +37,7 @@ class UserFeedback(models.Model):
     email = models.EmailField(null=True, blank=True, verbose_name=_("email address"))
     comment = models.TextField(verbose_name=_("comment"))
 
-    url = models.URLField(verbose_name=_("URL"))
+    url = models.URLField(verbose_name=_("URL"), max_length=500)
 
     additional_fields = models.JSONField(blank=True, null=True)
     page_id = models.CharField(null=True, blank=True, verbose_name=_("page id"))
