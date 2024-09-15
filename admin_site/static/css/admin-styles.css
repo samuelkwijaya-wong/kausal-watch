@@ -130,3 +130,26 @@ section[role="tabpanel"] .help-block {
 .listing .title .title-wrapper, .listing .title h2 {
   display: block;
 }
+
+
+/* Intrusive accessibility fixes for customers with plan.features.admin_accessibility_conformance_level == 'high'
+
+In the end, we would like to move away from these and provide fixes compatible
+with Wagtail's styles but so far these are required.
+
+ */
+
+:root > body.watch-active-accessibility-level-high {
+  a {
+    text-decoration: underline;
+  }
+  button.sidebar-menu-item__link {
+    text-decoration: underline;
+  }
+  a.button {
+    text-decoration: none;
+  }
+  .listing .title .title-wrapper a {
+    text-decoration: underline;
+  }
+}
