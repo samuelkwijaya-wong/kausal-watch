@@ -9,7 +9,8 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-09-18 11:07+0300\n"
 "PO-Revision-Date: 2024-09-18 12:59+0000\n"
-"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
+"Last-Translator: Weblate Translation Memory <noreply-mt-weblate-translation-"
+"memory@weblate.org>\n"
 "Language-Team: Spanish <https://weblate.kausal.tech/projects/watch/django/es/"
 ">\n"
 "Language: es\n"
@@ -35,12 +36,12 @@ msgstr "Sin especificar"
 #: actions/action_admin.py actions/api.py actions/blocks/action_content.py
 #: actions/blocks/action_dashboard.py
 msgid "Responsible parties"
-msgstr ""
+msgstr "Responsables"
 
 #: actions/action_admin.py actions/api.py aplans/utils.py indicators/api.py
 #: indicators/wagtail_admin.py
 msgid "Contact persons"
-msgstr ""
+msgstr "Personas de contacto"
 
 #: actions/action_admin.py
 #, python-format
@@ -71,7 +72,7 @@ msgstr "Última actualización"
 #: admin_site/templates/admin_site/own_indicators_panel.html orgs/models.py
 #: orgs/wagtail_admin.py people/templates/people/chooser_results.html
 msgid "Name"
-msgstr ""
+msgstr "Nombre"
 
 #: actions/action_admin.py actions/category_admin.py
 #: admin_site/wagtail_hooks.py budget/wagtail_admin.py
@@ -92,7 +93,7 @@ msgstr "Información básica"
 #: actions/action_admin.py actions/blocks/category_page_layout.py
 #: indicators/blocks.py
 msgid "Progress"
-msgstr ""
+msgstr "Progreso"
 
 #: actions/action_admin.py
 msgid "Internal notes"
@@ -233,7 +234,7 @@ msgstr "Aplazado"
 
 #: actions/action_status_summary.py reports/spreadsheets/excel_report.py
 msgid "Unknown"
-msgstr ""
+msgstr "Desconocido"
 
 #: actions/action_status_summary.py
 #, python-format
@@ -290,7 +291,7 @@ msgstr "Cancelar la moderación"
 #: indicators/wagtail_admin.py reports/spreadsheets/excel_report.py
 #: reports/tests/test_excel_roundtrip.py templates/modeladmin/create.html
 msgid "Actions"
-msgstr ""
+msgstr "Acciones"
 
 #: actions/attribute_type_admin.py
 msgid "Object type"
@@ -378,7 +379,7 @@ msgstr "Etiqueta"
 
 #: actions/blocks/action_content.py
 msgid "Value"
-msgstr ""
+msgstr "Valor"
 
 #: actions/blocks/action_content.py actions/models/attributes.py
 msgid "Choice"
@@ -436,7 +437,7 @@ msgstr "Rúbrica"
 
 #: actions/blocks/action_content.py
 msgid "Description"
-msgstr ""
+msgstr "Descripción"
 
 #: actions/blocks/action_content.py
 msgid "Email required"
@@ -515,11 +516,11 @@ msgstr "Párrafo principal"
 
 #: actions/blocks/action_content.py
 msgid "Merged actions"
-msgstr ""
+msgstr "Acciones fusionadas"
 
 #: actions/blocks/action_content.py
 msgid "Related actions"
-msgstr ""
+msgstr "Acciones relacionadas"
 
 #: actions/blocks/action_content.py
 msgid "Action dependencies"
@@ -547,27 +548,27 @@ msgstr "Etiqueta de la columna que se utilizará en lugar de la predeterminada"
 
 #: actions/blocks/action_dashboard.py reports/spreadsheets/excel_report.py
 msgid "Identifier"
-msgstr ""
+msgstr "Identificador"
 
 #: actions/blocks/action_dashboard.py actions/blocks/category_page_layout.py
 #: actions/blocks/filters.py reports/blocks/action_content.py
 #: reports/spreadsheets/excel_report.py
 msgid "Implementation phase"
-msgstr ""
+msgstr "Fase de aplicación"
 
 #: actions/blocks/action_dashboard.py actions/blocks/category_page_layout.py
 #: actions/blocks/filters.py reports/blocks/action_content.py
 msgid "Status"
-msgstr ""
+msgstr "Estado"
 
 #: actions/blocks/action_dashboard.py content/models.py
 msgid "Tasks"
-msgstr ""
+msgstr "Tareas"
 
 #: actions/blocks/action_dashboard.py actions/models/plan.py indicators/apps.py
 #: indicators/blocks.py indicators/wagtail_admin.py
 msgid "Indicators"
-msgstr ""
+msgstr "Indicadores"
 
 #: actions/blocks/action_dashboard.py
 msgid "Updated at"
@@ -576,11 +577,11 @@ msgstr "Actualizado en"
 #: actions/blocks/action_dashboard.py content/models.py
 #: indicators/wagtail_admin.py people/templates/people/chooser_results.html
 msgid "Organization"
-msgstr ""
+msgstr "Organización"
 
 #: actions/blocks/action_dashboard.py
 msgid "Impact"
-msgstr ""
+msgstr "Impacto"
 
 #: actions/blocks/action_list.py
 msgid "Action highlights"
@@ -662,16 +663,16 @@ msgstr "Responsable"
 
 #: actions/blocks/filters.py
 msgid "Primary organization"
-msgstr ""
+msgstr "Organización primaria"
 
 #: actions/blocks/filters.py actions/templates/actions/chooser_results.html
 #: actions/wagtail_admin.py
 msgid "Plan"
-msgstr ""
+msgstr "Plan"
 
 #: actions/blocks/filters.py
 msgid "Schedule"
-msgstr ""
+msgstr "Programar"
 
 #: actions/blocks/filters.py
 msgid "Continuous Action"
@@ -786,7 +787,7 @@ msgstr "nombre"
 
 #: actions/export.py actions/models/action.py
 msgid "impact"
-msgstr ""
+msgstr "impacto"
 
 #: actions/export.py actions/models/action.py
 #: reports/spreadsheets/excel_report.py
@@ -803,7 +804,7 @@ msgstr "otros indicadores"
 
 #: actions/export.py actions/models/action.py indicators/models.py
 msgid "contact persons"
-msgstr ""
+msgstr "Personas de contacto"
 
 #: actions/models/action.py actions/models/plan.py content/models.py
 #: feedback/models.py indicators/models.py notifications/models.py
@@ -813,7 +814,7 @@ msgstr "plan"
 
 #: actions/models/action.py
 msgid "primary organization"
-msgstr ""
+msgstr "Organización primaria"
 
 #: actions/models/action.py
 msgid "official name"
@@ -830,7 +831,7 @@ msgstr "El identificador de esta acción (por ejemplo, número)"
 #: actions/models/action.py admin_site/draftail_rich_text_area.py
 #: pages/blocks.py
 msgid "Image"
-msgstr ""
+msgstr "Imagen"
 
 #: actions/models/action.py actions/models/plan.py indicators/models.py
 #: orgs/models.py
@@ -859,7 +860,7 @@ msgstr "notas internas"
 
 #: actions/models/action.py
 msgid "implementation phase"
-msgstr ""
+msgstr "Fase de aplicación"
 
 #: actions/models/action.py
 msgid "override status manually"
@@ -881,7 +882,7 @@ msgstr "Describa la razón por la que esta acción tiene este estatus"
 
 #: actions/models/action.py
 msgid "merged with action"
-msgstr ""
+msgstr "Fusionado con la acción"
 
 #: actions/models/action.py
 msgid "Set if this action is merged with another action"
@@ -921,11 +922,11 @@ msgstr "indicadores"
 
 #: actions/models/action.py
 msgid "related actions"
-msgstr ""
+msgstr "Acciones relacionadas"
 
 #: actions/models/action.py
 msgid "responsible organizations"
-msgstr ""
+msgstr "Organizaciones responsables"
 
 #: actions/models/action.py aplans/utils.py
 #: reports/spreadsheets/excel_report.py
@@ -989,7 +990,7 @@ msgstr "acción"
 
 #: actions/models/action.py
 msgid "actions"
-msgstr ""
+msgstr "acciones"
 
 #: actions/models/action.py
 msgid "Can administrate all actions"
@@ -1043,7 +1044,7 @@ msgstr "Colaborador"
 #: actions/models/action.py indicators/models.py orgs/models.py
 #: people/models.py people/wagtail_admin.py
 msgid "organization"
-msgstr ""
+msgstr "Organización"
 
 #: actions/models/action.py
 msgid "role"
@@ -1981,7 +1982,7 @@ msgstr "Privacidad"
 
 #: actions/models/plan.py feedback/models.py
 msgid "Accessibility"
-msgstr ""
+msgstr "Accesibilidad"
 
 #: actions/models/plan.py aplans/graphql_types.py
 msgid "Published"
@@ -2021,7 +2022,7 @@ msgstr "Vista previa"
 
 #: actions/models/plan.py
 msgid "Development"
-msgstr ""
+msgstr "Desarrollo"
 
 #: actions/models/plan.py
 msgid "host name"
@@ -2592,7 +2593,7 @@ msgstr "Aprobado"
 
 #: aplans/graphql_types.py
 msgid "Draft"
-msgstr ""
+msgstr "Borrador"
 
 #: aplans/middleware.py
 msgid "Login was unsuccessful."
@@ -2817,11 +2818,11 @@ msgstr "Contenido"
 
 #: content/models.py feedback/models.py reports/spreadsheets/excel_report.py
 msgid "Action"
-msgstr ""
+msgstr "Acción"
 
 #: content/models.py
 msgid "Strategy"
-msgstr ""
+msgstr "Estrategia"
 
 #: content/models.py
 msgid "Case study"
@@ -2829,7 +2830,7 @@ msgstr "Estudio de caso"
 
 #: content/models.py
 msgid "Strategies"
-msgstr ""
+msgstr "Estrategias"
 
 #: content/models.py
 msgid "Case studies"
@@ -2853,7 +2854,7 @@ msgstr "División"
 
 #: content/models.py orgs/apps.py orgs/wagtail_admin.py
 msgid "Organizations"
-msgstr ""
+msgstr "Organizaciones"
 
 #: content/models.py
 msgid "Divisions"
@@ -3091,7 +3092,7 @@ msgstr "imágenes"
 
 #: indicators/blocks.py
 msgid "Indicator"
-msgstr ""
+msgstr "Indicador"
 
 #: indicators/blocks.py
 msgid "Indicator highlights"
@@ -3099,7 +3100,7 @@ msgstr "Indicadores destacados"
 
 #: indicators/blocks.py
 msgid "Graph"
-msgstr ""
+msgstr "Gráfico"
 
 #: indicators/blocks.py
 msgid "Animated"
@@ -4073,7 +4074,7 @@ msgstr "Hora de actualización del recurso"
 
 #: orgs/models.py
 msgid "organizations"
-msgstr ""
+msgstr "Organizaciones"
 
 #: orgs/models.py
 msgid "Classification"
@@ -4517,7 +4518,7 @@ msgstr "contenido en plomo"
 
 #: pages/models.py
 msgid "Dashboard"
-msgstr ""
+msgstr "Cuadro de mandos"
 
 #: pages/models.py
 msgid "default view"
@@ -4580,7 +4581,7 @@ msgstr "Filtros avanzados (ocultos por defecto)"
 
 #: pages/models.py
 msgid "Action list filters"
-msgstr ""
+msgstr "Filtros de la lista de acciones"
 
 #: pages/models.py
 msgid "Main column (top part on mobile)"
