@@ -901,10 +901,11 @@ class Action(
 
     def get_workflow_progress(self) -> tuple[int, int]:
         """
-        Return a tuple of integers (i, n) showing how far in moderation the action is.
+        Return a tuple of integers (i, max_i) showing how far in moderation the action is.
 
-        In the sequence of all the moderation tasks, for a workflow with n tasks,
-        shows in which task of the sequence the latest revision of this action is.
+        In the sequence of all the moderation tasks, the first integer shows in which
+        task of the sequence the latest revision of this action is. The second integer
+        shows the maximum possible value for the first integer in this plan.
 
         A workflow with n amount of tasks can be used for moderating
         action revisions in a plan. (Currently only n=1 and n=2 are actually
@@ -917,21 +918,27 @@ class Action(
 
         The integer i in the returned tuple indicates how far the current latest action
         revision has progressed in the sequence of moderation tasks in use in this plan.
-        If i==n, this indicates the revision is in the final stage in the workflow task
+        If i==n+1, this indicates the revision is in the final stage in the workflow task
         sequence, in other words it is a published action.
 
         For a moderation workflow with n tasks, the integer i is interpreted like this:
 
         0         Initial state; a draft revision has been saved
                   but not submitted to moderation.
+
         1         The revision has been sent to the first moderation task.
-        i, where i < n
+
+        i, where i <= n
                   The revision has progressed to the i'th moderation task,
                   with approvals from all the previous tasks.
-        n         The public live version of the action
+
+        n+1       The public live version of the action
                   is the latest revision available for the action,
                   ie. the action revision has received an approval
                   in all the tasks of the moderation workflow.
+
+        The maximum possible value for i is n+1 and is always returned
+        as the second element of the tuple, max_i.
 
         Notice that an action can also be sent backwards in the sequence
         if a moderator requests changes to the revision, rejecting the
