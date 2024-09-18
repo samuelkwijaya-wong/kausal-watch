@@ -10,11 +10,10 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-09-18 11:07+0300\n"
+"POT-Creation-Date: 2024-09-18 16:54+0300\n"
 "PO-Revision-Date: 2024-09-18 10:20+0000\n"
 "Last-Translator: Jan-Erik Sundman <jan-erik.sundman@kausal.tech>\n"
-"Language-Team: Swedish <https://weblate.kausal.tech/projects/watch/django/sv/"
-">\n"
+"Language-Team: Swedish <https://weblate.kausal.tech/projects/watch/django/sv/>\n"
 "Language: sv\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -3099,7 +3098,9 @@ msgid "User feedback"
 msgstr "Användarfeedback"
 
 #: images/image_formats.py
-msgid "Full width (zoomable)"
+#, fuzzy
+#| msgid "Full width (zoomable)"
+msgid "Full width (zoomable) only if width > 1000 px"
 msgstr "Full bredd (zoombar)"
 
 #: images/models.py
@@ -4126,10 +4127,7 @@ msgstr "Ett tydligt namn för denna organisation (genereras automatiskt)"
 
 #: orgs/models.py
 msgid "Organization logo. Please provide a square image (min. 250x250px). The logo used for the organization's social media often works best."
-msgstr ""
-"Organisationens logotyp. Vänligen ge en kvadratisk bild (minst 250x250px). "
-"Den logotyp som används för organisationens sociala medier fungerar ofta "
-"bäst."
+msgstr "Organisationens logotyp. Vänligen ge en kvadratisk bild (minst 250x250px). Den logotyp som används för organisationens sociala medier fungerar ofta bäst."
 
 #: orgs/models.py
 msgid "A date of founding"

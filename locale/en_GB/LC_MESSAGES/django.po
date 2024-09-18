@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-09-18 11:07+0300\n"
+"POT-Creation-Date: 2024-09-18 16:54+0300\n"
 "PO-Revision-Date: 2020-09-07 15:50+0000\n"
 "Last-Translator: Bernhard Bliem, 2022\n"
 "Language-Team: English (United Kingdom) (https://www.transifex.com/kausal-tech/teams/113123/en_GB/)\n"
@@ -2945,7 +2945,7 @@ msgid "User feedback"
 msgstr ""
 
 #: images/image_formats.py
-msgid "Full width (zoomable)"
+msgid "Full width (zoomable) only if width > 1000 px"
 msgstr ""
 
 #: images/models.py

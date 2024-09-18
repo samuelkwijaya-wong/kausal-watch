@@ -7,11 +7,10 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-09-18 11:07+0300\n"
+"POT-Creation-Date: 2024-09-18 16:54+0300\n"
 "PO-Revision-Date: 2024-09-18 10:20+0000\n"
 "Last-Translator: Jan-Erik Sundman <jan-erik.sundman@kausal.tech>\n"
-"Language-Team: Portuguese (Brazil) <https://weblate.kausal.tech/projects/"
-"watch/django/pt_BR/>\n"
+"Language-Team: Portuguese (Brazil) <https://weblate.kausal.tech/projects/watch/django/pt_BR/>\n"
 "Language: pt_BR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -3492,7 +3491,7 @@ msgstr "Feedback do usuário"
 
 #: images/image_formats.py
 #, fuzzy
-msgid "Full width (zoomable)"
+msgid "Full width (zoomable) only if width > 1000 px"
 msgstr "Largura total (com zoom)"
 
 #: images/models.py
@@ -4655,10 +4654,7 @@ msgstr "Um nome distinto para essa organização (gerado automaticamente)"
 
 #: orgs/models.py
 msgid "Organization logo. Please provide a square image (min. 250x250px). The logo used for the organization's social media often works best."
-msgstr ""
-"Logotipo da organização. Forneça uma imagem quadrada (mín. 250x250px). O "
-"logotipo usado para a mídia sociais da organização geralmente funciona "
-"melhor."
+msgstr "Logotipo da organização. Forneça uma imagem quadrada (mín. 250x250px). O logotipo usado para a mídia sociais da organização geralmente funciona melhor."
 
 #: orgs/models.py
 #, fuzzy

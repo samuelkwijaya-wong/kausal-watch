@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-09-18 11:07+0300\n"
+"POT-Creation-Date: 2024-09-18 16:54+0300\n"
 "PO-Revision-Date: 2024-03-08 13:14+0000\n"
 "Last-Translator: Bernhard Bliem <bernhard.bliem@kausal.tech>\n"
 "Language-Team: German (Switzerland) <https://weblate.kausal.tech/projects/watch/django/de_CH/>\n"
@@ -2966,7 +2966,7 @@ msgid "User feedback"
 msgstr ""
 
 #: images/image_formats.py
-msgid "Full width (zoomable)"
+msgid "Full width (zoomable) only if width > 1000 px"
 msgstr ""
 
 #: images/models.py
