@@ -23,7 +23,7 @@ if TYPE_CHECKING:
     from actions.models.plan import Plan
 
 
-class Client(WorkflowMixin, DraftStateMixin, LockableMixin, RevisionMixin, ClusterableModel):
+class Client(ClusterableModel):
     class AuthBackend(models.TextChoices):
         NONE = '', _('Only allow password login')
         # Values are social auth backend names
