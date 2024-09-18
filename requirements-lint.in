@@ -10,3 +10,4 @@ types-python-dateutil
 ondivi
 mypy-baseline
 types-psutil
+types-uwsgi
