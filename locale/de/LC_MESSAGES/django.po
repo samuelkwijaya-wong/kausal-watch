@@ -11,9 +11,10 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-09-18 16:54+0300\n"
-"PO-Revision-Date: 2024-09-18 10:20+0000\n"
-"Last-Translator: Jan-Erik Sundman <jan-erik.sundman@kausal.tech>\n"
-"Language-Team: German <https://weblate.kausal.tech/projects/watch/django/de/>\n"
+"PO-Revision-Date: 2024-09-23 10:20+0000\n"
+"Last-Translator: Liliia Sviridova <liliia.sviridova@kausal.tech>\n"
+"Language-Team: German <https://weblate.kausal.tech/projects/watch/django/de/>"
+"\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -2947,10 +2948,8 @@ msgid "User feedback"
 msgstr "Benutzer-Feedback"
 
 #: images/image_formats.py
-#, fuzzy
-#| msgid "Full width (zoomable)"
 msgid "Full width (zoomable) only if width > 1000 px"
-msgstr "Volle Breite (zoombar)"
+msgstr "Volle Breite (zoombar) nur wenn Breite > 1000 px"
 
 #: images/models.py
 msgid "Image byline or credits"
