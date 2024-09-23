@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-09-18 11:07+0300\n"
-"PO-Revision-Date: 2024-09-18 14:20+0000\n"
-"Last-Translator: Jan-Erik Sundman <jan-erik.sundman@kausal.tech>\n"
+"PO-Revision-Date: 2024-09-23 10:20+0000\n"
+"Last-Translator: Liliia Sviridova <liliia.sviridova@kausal.tech>\n"
 "Language-Team: Spanish <https://weblate.kausal.tech/projects/watch/django/es/"
 ">\n"
 "Language: es\n"
@@ -3071,7 +3071,7 @@ msgstr "Comentarios de los usuarios"
 
 #: images/image_formats.py
 msgid "Full width (zoomable) only if width > 1000 px"
-msgstr ""
+msgstr "Ancho completo (con zoom) solo si el ancho > 1000 px"
 
 #: images/models.py
 msgid "Image byline or credits"
