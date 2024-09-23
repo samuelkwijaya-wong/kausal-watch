@@ -7,11 +7,10 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-09-18 11:07+0300\n"
+"POT-Creation-Date: 2024-09-18 16:54+0300\n"
 "PO-Revision-Date: 2024-09-18 10:20+0000\n"
 "Last-Translator: Jan-Erik Sundman <jan-erik.sundman@kausal.tech>\n"
-"Language-Team: Greek <https://weblate.kausal.tech/projects/watch/django/el/>"
-"\n"
+"Language-Team: Greek <https://weblate.kausal.tech/projects/watch/django/el/>\n"
 "Language: el\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -2945,7 +2944,9 @@ msgid "User feedback"
 msgstr "Ανατροφοδότηση χρηστών"
 
 #: images/image_formats.py
-msgid "Full width (zoomable)"
+#, fuzzy
+#| msgid "Full width (zoomable)"
+msgid "Full width (zoomable) only if width > 1000 px"
 msgstr "Πλήρες πλάτος (με δυνατότητα μεγέθυνσης)"
 
 #: images/models.py
@@ -3928,10 +3929,7 @@ msgstr "Ένα ξεχωριστό όνομα για αυτόν τον οργαν
 
 #: orgs/models.py
 msgid "Organization logo. Please provide a square image (min. 250x250px). The logo used for the organization's social media often works best."
-msgstr ""
-"Λογότυπο του οργανισμού. Παρακαλούμε δώστε μια τετράγωνη εικόνα (τουλάχιστον "
-"250x250px). Το λογότυπο που χρησιμοποιείται για τα μέσα κοινωνικής δικτύωσης "
-"του οργανισμού συχνά λειτουργεί εδώ καλύτερα."
+msgstr "Λογότυπο του οργανισμού. Παρακαλούμε δώστε μια τετράγωνη εικόνα (τουλάχιστον 250x250px). Το λογότυπο που χρησιμοποιείται για τα μέσα κοινωνικής δικτύωσης του οργανισμού συχνά λειτουργεί εδώ καλύτερα."
 
 #: orgs/models.py
 msgid "A date of founding"

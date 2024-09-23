@@ -3070,8 +3070,8 @@ msgid "User feedback"
 msgstr "Comentarios de los usuarios"
 
 #: images/image_formats.py
-msgid "Full width (zoomable)"
-msgstr "Anchura total (ampliable)"
+msgid "Full width (zoomable) only if width > 1000 px"
+msgstr ""
 
 #: images/models.py
 msgid "Image byline or credits"
