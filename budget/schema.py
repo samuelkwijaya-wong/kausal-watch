@@ -1,6 +1,10 @@
-import graphene
+from __future__ import annotations
 
-from kausal_common.graphene import GQLInfo
+import graphene
+import typing
+
+if typing.TYPE_CHECKING:
+    from kausal_common.graphene import GQLInfo
 
 from aplans.graphql_types import DjangoNode, register_django_node
 

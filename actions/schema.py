@@ -4,7 +4,7 @@ import logging
 import typing
 import uuid
 from itertools import chain
-from typing import Generic, Iterable, Optional, Protocol, TypeVar, cast
+from typing import Generic, Iterable, Protocol, TypeVar, cast
 from urllib.parse import urlparse
 
 import graphene
@@ -29,7 +29,6 @@ from aplans.cache import SerializedDictWithRelatedObjectCache
 from aplans.graphql_helpers import AdminButtonsMixin, UpdateModelInstanceMutation
 from aplans.graphql_types import (
     DjangoNode,
-    GQLInfo,
     WorkflowStateDescription,
     WorkflowStateEnum,
     get_plan_from_context,
@@ -91,6 +90,8 @@ from people.models import Person
 from search.backends import get_search_backend
 
 if typing.TYPE_CHECKING:
+    from kausal_common.graphene import GQLInfo
+
     from aplans.cache import PlanSpecificCache
 
     from actions.models.attributes import Attribute
