@@ -65,11 +65,11 @@ def determine_image_dim(image_width, image_height, width, height):
         try:
             x = int(x)
             if x <= 0:
-                raise ValueError()
+                raise ValueError()  # noqa: TRY301
             if x > 4000:
-                raise ValueError()
+                raise ValueError()  # noqa: TRY301
         except (ValueError, TypeError):
-            raise ValueError("invalid %s dimension: %s" % (name, x))
+            raise ValueError("invalid %s dimension: %s" % (name, x)) from None
 
     if width is not None:
         width = int(width)
@@ -101,19 +101,20 @@ class PersonQuerySet(MultilingualQuerySet['Person']):
             q |= Q(id__in=ActionContactPerson.objects.filter(action__plan=plan).values_list('person'))
         return self.filter(q)
 
-    def is_action_contact_person(self, plan):
+    def is_action_contact_person(self, plan: Plan):
         return self.filter(contact_for_actions__plan=plan).distinct()
 
     def visible_for_user(self, user: UserModel | None, plan: Plan):
-        if not plan.features.public_contact_persons:
-            if user is None or not user.is_authenticated or not user.can_access_public_site(plan):
-                return self.none()
+        if plan.features.public_contact_persons:
+            return self
+        if user is None or not user.is_authenticated or not user.can_access_public_site(plan):
+            return self.none()
         return self
 
 
 if TYPE_CHECKING:
     _PersonManager = models.Manager.from_queryset(PersonQuerySet)
-    class PersonManager(MLModelManager['Person', PersonQuerySet], _PersonManager): ...
+    class PersonManager(MLModelManager['Person', PersonQuerySet], _PersonManager): ...  # pyright: ignore
     del _PersonManager
 else:
     PersonManager = MLModelManager.from_queryset(PersonQuerySet)
@@ -166,7 +167,7 @@ class Person(index.Indexed, ClusterableModel, PlanDefaultsModel):
     )
     i18n = TranslationField(fields=('title',), default_language_field='organization__primary_language_lowercase')
 
-    objects: ClassVar[PersonManager] = PersonManager()
+    objects: ClassVar[PersonManager] = PersonManager()  # pyright: ignore
 
     search_fields = [
         index.FilterField('id'),
@@ -235,7 +236,7 @@ class Person(index.Indexed, ClusterableModel, PlanDefaultsModel):
         if self.email.endswith('@hel.fi'):
             url = f'https://api.hel.fi/avatar/{self.email}?s={DEFAULT_AVATAR_SIZE}&d=404'
         else:
-            md5_hash = hashlib.md5(self.email.encode('utf8')).hexdigest()
+            md5_hash = hashlib.md5(self.email.encode('utf8'), usedforsecurity=False).hexdigest()
             url = f'https://www.gravatar.com/avatar/{md5_hash}?f=y&s={DEFAULT_AVATAR_SIZE}&d=404'
 
         try:
@@ -290,7 +291,7 @@ class Person(index.Indexed, ClusterableModel, PlanDefaultsModel):
             return None
 
         try:
-            with self.image.open() as file:  # noqa
+            with self.image.open():
                 pass
         except FileNotFoundError:
             logger.info('Avatar file for %s not found' % self)
