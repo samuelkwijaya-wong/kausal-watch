@@ -32,6 +32,8 @@ from sentry_sdk import capture_exception
 
 from kausal_common.models.types import MLModelManager
 
+from aplans.utils import PlanDefaultsModel
+
 from actions.models import ActionContactPerson
 from admin_site.models import Client
 from orgs.models import Organization
@@ -118,7 +120,7 @@ else:
 
 
 @reversion.register()
-class Person(index.Indexed, ClusterableModel):
+class Person(index.Indexed, ClusterableModel, PlanDefaultsModel):
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     first_name = models.CharField(max_length=100, verbose_name=_('first name'))
     last_name = models.CharField(max_length=100, verbose_name=_('last name'))
@@ -201,6 +203,9 @@ class Person(index.Indexed, ClusterableModel):
         field: ImageRatioField = self._meta.get_field('image_cropping')  # type: ignore
         field.width = DEFAULT_AVATAR_SIZE
         field.height = DEFAULT_AVATAR_SIZE
+
+    def initialize_plan_defaults(self, plan: Plan):
+        self.organization = plan.organization
 
     def validate_unique(self, exclude=None):
         super().validate_unique(exclude)
