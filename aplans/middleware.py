@@ -7,6 +7,7 @@ from collections.abc import Mapping
 from django.conf import settings
 from django.contrib import messages
 from django.db import connection, transaction
+from django import http
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.deprecation import MiddlewareMixin
@@ -136,6 +137,10 @@ class PrintQueryCountMiddleware:
             body = json.loads(request.body)
         except json.JSONDecodeError:
             pass
+        except http.RawPostDataException:
+            pass
+        except Exception as e:
+            logger.error(e)
         else:
             if isinstance(body, Mapping) and 'operationName' in body:
                 graphql_operation_name = str(body.get('operationName', '-'))
