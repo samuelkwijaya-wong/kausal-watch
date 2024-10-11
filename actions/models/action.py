@@ -1499,5 +1499,4 @@ class ActionModeratorApprovalTask(Task):
                 # ("approve", _("Approve with comment"), True),
                 ("reject", _("Request changes"), True),
             ]
-        else:
-            return []
+        return []
