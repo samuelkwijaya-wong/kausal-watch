@@ -523,7 +523,10 @@ class Plan(ClusterableModel, ModelWithPrimaryLanguage):
         update_fields = []
         if self.root_collection is None:
             with transaction.atomic():
-                obj = Collection.get_first_root_node().add_child(name=self.name)
+                first_root = Collection.get_first_root_node()
+                if first_root is None:
+                    raise ValueError('Collection tree not properly initialized with root.')
+                obj = first_root.add_child(name=self.name)
             self.root_collection = obj
             update_fields.append('root_collection')
         elif self.root_collection.name != self.name:

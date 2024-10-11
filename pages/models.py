@@ -655,7 +655,10 @@ class ActionListPage(FixedSlugPage):
     ]
 
     def set_default_content_blocks(self):
-        plan: Plan = self.get_site().plan
+        site = self.get_site()
+        if site is None:
+            raise ValueError('ActionListPage has no site.')
+        plan: Plan = site.plan
 
         blks = get_default_action_content_blocks(plan)
         for key, val in blks.items():

@@ -63,10 +63,10 @@ class PlanSpecificCache:
             schema__scopes__scope_content_type=category_type_content_type, schema__scopes__scope_id__in=category_type_ids,
         )
         for ds in action_datasets:
-            if ds.scope_id is not None:
+            if ds.scope_id is not None and ds.schema is not None:
                 result.setdefault('actions.Action', {}).setdefault(ds.scope_id, {})[str(ds.schema.uuid)] = ds
         for ds in category_datasets:
-            if ds.scope_id is not None:
+            if ds.scope_id is not None and ds.schema is not None:
                 result.setdefault('actions.Category', {}).setdefault(ds.scope_id, {})[str(ds.schema.uuid)] = ds
         return result
 

@@ -148,7 +148,10 @@ class CommonCategoryType(CategoryTypeBase, ModelWithPrimaryLanguage):
             with transaction.atomic():
                 ct_coll = Collection.objects.filter(name=settings.COMMON_CATEGORIES_COLLECTION).first()
                 if ct_coll is None:
-                    ct_coll = Collection.get_first_root_node().add_child(name=settings.COMMON_CATEGORIES_COLLECTION)
+                    first_root = Collection.get_first_root_node()
+                    if first_root is None:
+                        raise ValueError('Collection tree not properly initialized with root.')
+                    ct_coll = first_root.add_child(name=settings.COMMON_CATEGORIES_COLLECTION)
                 obj = ct_coll.add_child(name=self.name)
                 self.collection = obj
                 self.save(update_fields=['collection'])
@@ -542,7 +545,8 @@ class Category(ModelWithAttributes, CategoryBase, ClusterableModel, PlanRelatedM
                 )
                 parent.add_child(instance=page)
             else:
-                update_page_parent = page.get_parent().specific != parent
+                current_parent = page.get_parent()
+                update_page_parent = current_parent is None or current_parent.specific != parent
                 prev_cat = Category.objects.filter(type=self.type, parent=self.parent, order__lt=self.order).last()
                 if prev_cat is None:
                     prev_cat_page = None
