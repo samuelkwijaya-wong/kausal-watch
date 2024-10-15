@@ -448,28 +448,29 @@ class Plan(ClusterableModel, ModelWithPrimaryLanguage):
             raise ValidationError({'secondary_action_classification': _(
                 'Primary and secondary classification cannot be the same')})
 
-        if self.parent:
-            if Plan.objects.filter(
-                parent=self.parent,
+        if self.short_identifier:
+            if self.parent:
+                if Plan.objects.filter(
+                    parent=self.parent,
+                    short_identifier=self.short_identifier,
+                ).exclude(pk=self.pk).exists():
+                    raise ValidationError({
+                        'short_identifier': _(
+                            'This short identifier is already in use within the parent plan.',
+                        ),
+                    })
+            # Check uniqueness within organization for top-level plans
+            elif Plan.objects.filter(
+                organization=self.organization,
                 short_identifier=self.short_identifier,
+                parent__isnull=True,
             ).exclude(pk=self.pk).exists():
                 raise ValidationError({
                     'short_identifier': _(
-                        'This short identifier is already in use within the parent plan.',
+                        'This short identifier is already in use for a top-level plan within this organization.',
                     ),
                 })
 
-        # Check uniqueness within organization for top-level plans
-        elif Plan.objects.filter(
-            organization=self.organization,
-            short_identifier=self.short_identifier,
-            parent__isnull=True,
-        ).exclude(pk=self.pk).exists():
-            raise ValidationError({
-                'short_identifier': _(
-                    'This short identifier is already in use for a top-level plan within this organization.',
-                ),
-            })
     @property
     def root_page(self) -> Page:
         if self.site_id is None or self.site is None:
