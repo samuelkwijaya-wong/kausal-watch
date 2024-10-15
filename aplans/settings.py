@@ -825,6 +825,7 @@ LOG_GRAPHQL_QUERIES = env('LOG_GRAPHQL_QUERIES') and DEBUG
 
 
 # Logging
+LOGGING = None
 if env('CONFIGURE_LOGGING'):
     from kausal_common.logging.init import LogFormat, UserLoggingOptions, init_logging_django
 
@@ -855,7 +856,7 @@ if env('CONFIGURE_LOGGING'):
         sql_queries=LOG_SQL_QUERIES,
         **runserver_logging,
     )
-    LOGGING=init_logging_django(log_format, options=options)
+    LOGGING = init_logging_django(log_format, options=options)
 
 
 REQUEST_LOG_MAX_DAYS = env('REQUEST_LOG_MAX_DAYS')
