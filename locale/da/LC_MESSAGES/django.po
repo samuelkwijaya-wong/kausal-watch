@@ -12,7 +12,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-10-21 15:28+0300\n"
-"PO-Revision-Date: 2024-10-22 07:20+0000\n"
+"PO-Revision-Date: 2024-10-22 12:20+0000\n"
 "Last-Translator: Matias Wargelin <matias.wargelin@kausal.tech>\n"
 "Language-Team: Danish <https://weblate.kausal.tech/projects/watch/django/da/>"
 "\n"
@@ -4319,14 +4319,10 @@ msgid "The email message will be sent on the specified day at"
 msgstr "E-mailen bliver sendt på den angivne dag på"
 
 #: notifications/wagtail_admin.py
-#, fuzzy
-#| msgid "Notifications"
 msgid "One-off notifications"
 msgstr "Engangsmeddelelser"
 
 #: notifications/wagtail_admin.py
-#, fuzzy
-#| msgid "Notifications"
 msgid "Event-based notifications"
 msgstr "Begivenhedsbaserede notifikationer"
 
