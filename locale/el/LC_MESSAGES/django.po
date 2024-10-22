@@ -8,9 +8,10 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-10-21 15:28+0300\n"
-"PO-Revision-Date: 2024-09-23 10:20+0000\n"
-"Last-Translator: Liliia Sviridova <liliia.sviridova@kausal.tech>\n"
-"Language-Team: Greek <https://weblate.kausal.tech/projects/watch/django/el/>\n"
+"PO-Revision-Date: 2024-10-22 07:20+0000\n"
+"Last-Translator: Matias Wargelin <matias.wargelin@kausal.tech>\n"
+"Language-Team: Greek <https://weblate.kausal.tech/projects/watch/django/el/>"
+"\n"
 "Language: el\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -3988,13 +3989,13 @@ msgstr "Το μήνυμα ηλεκτρονικού ταχυδρομείου θα
 #, fuzzy
 #| msgid "Single notifications"
 msgid "One-off notifications"
-msgstr "Ενιαίες ειδοποιήσεις"
+msgstr "Εφάπαξ κοινοποιήσεις"
 
 #: notifications/wagtail_admin.py
 #, fuzzy
 #| msgid "Single notifications"
 msgid "Event-based notifications"
-msgstr "Ενιαίες ειδοποιήσεις"
+msgstr "Ειδοποιήσεις βάσει συμβάντων"
 
 #: notifications/wagtail_admin.py
 msgid "Notification contents"
