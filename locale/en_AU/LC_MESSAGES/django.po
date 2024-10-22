@@ -3,19 +3,21 @@
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-10-21 15:28+0300\n"
-"PO-Revision-Date: 2020-09-07 15:50+0000\n"
-"Language-Team: English (Australia) (https://www.transifex.com/kausal-tech/teams/113123/en_AU/)\n"
+"PO-Revision-Date: 2024-10-22 07:20+0000\n"
+"Last-Translator: Matias Wargelin <matias.wargelin@kausal.tech>\n"
+"Language-Team: English (Australia) <https://weblate.kausal.tech/projects/"
+"watch/django/en_AU/>\n"
 "Language: en_AU\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 5.4.2\n"
 
 #: actions/action_admin.py
 msgid "There is already an action with this identifier."
@@ -3932,16 +3934,14 @@ msgid "The email message will be sent on the specified day at"
 msgstr ""
 
 #: notifications/wagtail_admin.py
-#, fuzzy
-#| msgid "organizations"
 msgid "One-off notifications"
-msgstr "organisations"
+msgstr "One-off notifications"
 
 #: notifications/wagtail_admin.py
 #, fuzzy
 #| msgid "organizations"
 msgid "Event-based notifications"
-msgstr "organisations"
+msgstr "Event-based notifications"
 
 #: notifications/wagtail_admin.py
 msgid "Notification contents"
