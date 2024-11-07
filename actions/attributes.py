@@ -11,7 +11,6 @@ from django.db.models import Field, ForeignKey, Model, QuerySet
 from django.utils.translation import gettext_lazy as _
 from wagtail.admin.panels import FieldPanel, field_panel
 from wagtail.fields import RichTextField
-from wagtail.models import DraftStateMixin, RevisionMixin
 from wagtail.rich_text import RichText as WagtailRichText
 
 from dal import autocomplete, forward as dal_forward
@@ -29,7 +28,7 @@ if typing.TYPE_CHECKING:
     from users.models import User
 
 
-class AttributeFieldPanel[M: models.ModelWithAttributes](FieldPanel[M]):
+class AttributeFieldPanel[M: Model](FieldPanel[M]):
     """Add compatibility for Wagtail read_only field panels for attributes."""
 
     attribute_type: AttributeType | None
@@ -45,15 +44,9 @@ class AttributeFieldPanel[M: models.ModelWithAttributes](FieldPanel[M]):
         kwargs['attribute_type'] = self.attribute_type
         return kwargs
 
-    class BoundPanel[_M: models.ModelWithAttributes](field_panel.FieldPanel.BoundPanel):
-        instance: _M
-
+    class BoundPanel(field_panel.FieldPanel.BoundPanel):
         def value_from_instance(self):
-            if (
-                isinstance(self.instance, DraftStateMixin) and
-                isinstance(self.instance, RevisionMixin) and
-                self.instance.has_unpublished_changes
-            ):
+            if self.instance.has_unpublished_changes:
                 rev = self.instance.get_latest_revision()
                 draft_attributes = DraftAttributes.from_revision_content(rev.content.get('attributes'))
                 attribute_value = draft_attributes.get_value_for_attribute_type(self.panel.attribute_type)
@@ -70,7 +63,7 @@ class AttributeFieldPanel[M: models.ModelWithAttributes](FieldPanel[M]):
 
 
 @dataclass
-class FormField[M: models.ModelWithAttributes]:
+class FormField[M: Model]:
     plan: Plan
     attribute_type: AttributeType
     django_field: forms.Field
