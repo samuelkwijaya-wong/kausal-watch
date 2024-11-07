@@ -373,9 +373,7 @@ class AttributeRichText(Attribute):
         unique_together = ('type', 'content_type', 'object_id')
 
     def __str__(self):
-        text_field = typing.cast(RichTextField, self._meta.get_field('text'))
-        return " ".join(text_field.get_searchable_content(str(self.text_i18n)))
-
+        return self.text_i18n
 
 
 @reversion.register()

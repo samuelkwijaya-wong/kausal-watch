@@ -9,9 +9,8 @@ from django import forms
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Field, ForeignKey, Model, QuerySet
 from django.utils.translation import gettext_lazy as _
-from wagtail.admin.panels import FieldPanel, field_panel
+from wagtail.admin.panels import FieldPanel
 from wagtail.fields import RichTextField
-from wagtail.models import DraftStateMixin, RevisionMixin
 from wagtail.rich_text import RichText as WagtailRichText
 
 from dal import autocomplete, forward as dal_forward
@@ -29,48 +28,12 @@ if typing.TYPE_CHECKING:
     from users.models import User
 
 
-class AttributeFieldPanel[M: models.ModelWithAttributes](FieldPanel[M]):
-    """Add compatibility for Wagtail read_only field panels for attributes."""
-
-    attribute_type: AttributeType | None
-
-    def __init__(self, *args, attribute_type: AttributeType, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.attribute_type = attribute_type
-        self.icon = 'placeholder'
-        self.help_text = attribute_type.instance.help_text
-
-    def clone_kwargs(self):
-        kwargs = super().clone_kwargs()
-        kwargs['attribute_type'] = self.attribute_type
-        return kwargs
-
-    class BoundPanel[_M: models.ModelWithAttributes](field_panel.FieldPanel.BoundPanel):
-        instance: _M
-
-        def value_from_instance(self):
-            if (
-                isinstance(self.instance, DraftStateMixin) and
-                isinstance(self.instance, RevisionMixin) and
-                self.instance.has_unpublished_changes
-            ):
-                rev = self.instance.get_latest_revision()
-                draft_attributes = DraftAttributes.from_revision_content(rev.content.get('attributes'))
-                attribute_value = draft_attributes.get_value_for_attribute_type(self.panel.attribute_type)
-                if attribute_value.should_exist_in_database():
-                    attribute = attribute_value.instantiate_attribute(self.panel.attribute_type, self.instance)
-                    return str(attribute)
-                return ''
-            return " ".join(
-                str(x) for x in self.panel.attribute_type.get_attributes(self.instance)
-            )
-
-    def format_value_for_display(self, value):
-        return value()
+class AttributeFieldPanel[M: Model](FieldPanel[M]):
+    pass
 
 
 @dataclass
-class FormField[M: models.ModelWithAttributes]:
+class FormField[M: Model]:
     plan: Plan
     attribute_type: AttributeType
     django_field: forms.Field
@@ -79,7 +42,6 @@ class FormField[M: models.ModelWithAttributes]:
     # If the field refers to a modeltrans field and `language` is not empty, use localized virtual field for `language`.
     language: str = ''
     is_public: bool = False
-    read_only: bool = False
 
     def get_panel(self) -> AttributeFieldPanel[M]:
         if self.label:
@@ -89,12 +51,7 @@ class FormField[M: models.ModelWithAttributes]:
         if self.language:
             heading += f' ({self.language})'
         heading = FieldLabelRenderer(self.plan)(heading, public=self.is_public)
-        return AttributeFieldPanel[M](
-            self.name,
-            heading=heading,
-            read_only=self.read_only,
-            attribute_type=self.attribute_type,
-        )
+        return AttributeFieldPanel[M](self.name, heading=heading)
 
 
 class AttributeValue(ABC):
@@ -122,11 +79,9 @@ class AttributeValue(ABC):
     @abstractmethod
     def should_exist_in_database(self) -> bool:
         """
-        If this returns true, committing an attribute will create or update an attribute model instance.
-
-        Otherwise, committing will delete any existing attribute model instance for the respective attribute type.
+        If this returns true, committing an attribute will create or update an attribute model instance; otherwise,
+        committing will delete any existing attribute model instance for the respective attribute type.
         """
-
         pass
 
     def instantiate_attribute(self, type: AttributeType[T], obj: models.ModelWithAttributes) -> T:
@@ -447,6 +402,9 @@ class OrderedChoice(AttributeType[models.AttributeChoice]):
         field = forms.ModelChoiceField(
             choice_options, initial=initial_choice, required=False, help_text=self.instance.help_text_i18n,
         )
+        if not self.is_editable(user, plan, obj):
+            field.disabled = True
+
         is_public = self.instance.instances_visible_for == self.instance.VisibleFor.PUBLIC
         return [FormField(
             plan=plan,
@@ -454,7 +412,6 @@ class OrderedChoice(AttributeType[models.AttributeChoice]):
             django_field=field,
             name=self.form_field_name,
             is_public=is_public,
-            read_only=not self.is_editable(user, plan, obj),
         )]
 
     def get_value_from_form_data(self, cleaned_data: dict[str, Any]) -> OrderedChoiceAttributeValue | None:
@@ -518,6 +475,8 @@ class CategoryChoice(AttributeType[models.AttributeCategoryChoice]):
                 ),
             ),
         )
+        if not self.is_editable(user, plan, obj):
+            field.disabled = True
         is_public = self.instance.instances_visible_for == self.instance.VisibleFor.PUBLIC
         return [FormField(
             plan=plan,
@@ -525,7 +484,6 @@ class CategoryChoice(AttributeType[models.AttributeCategoryChoice]):
             django_field=field,
             name=self.form_field_name,
             is_public=is_public,
-            read_only=not self.is_editable(user, plan, obj),
         )]
 
     def get_value_from_form_data(self, cleaned_data: dict[str, Any]) -> CategoryChoiceAttributeValue | None:
@@ -596,6 +554,8 @@ class OptionalChoiceWithText(AttributeType[models.AttributeChoiceWithText]):
         choice_field = forms.ModelChoiceField(
             choice_options, initial=initial_choice, required=False, help_text=self.instance.help_text_i18n,
         )
+        if not editable:
+            choice_field.disabled = True
         is_public = self.instance.instances_visible_for == self.instance.VisibleFor.PUBLIC
         fields: list[FormField] = [FormField(
             plan=plan,
@@ -604,7 +564,6 @@ class OptionalChoiceWithText(AttributeType[models.AttributeChoiceWithText]):
             name=self.choice_form_field_name,
             is_public=is_public,
             label=_('%(attribute_type)s (choice)') % {'attribute_type': self.instance.name_i18n},
-            read_only=not editable,
         )]
 
         # Text (one field for each language)
@@ -619,6 +578,9 @@ class OptionalChoiceWithText(AttributeType[models.AttributeChoiceWithText]):
             if self.instance.max_length:
                 form_field_kwargs.update(max_length=self.instance.max_length)
             text_field = self.ATTRIBUTE_MODEL._meta.get_field(attribute_text_field_name).formfield(**form_field_kwargs)  # type: ignore[union-attr]
+            if not editable:
+                text_field.disabled = True
+                is_public = self.instance.instances_visible_for == self.instance.VisibleFor.PUBLIC
             fields.append(FormField(
                 plan=plan,
                 attribute_type=self,
@@ -627,7 +589,6 @@ class OptionalChoiceWithText(AttributeType[models.AttributeChoiceWithText]):
                 language=language,
                 label=_('%(attribute_type)s (text)') % {'attribute_type': self.instance.name_i18n},
                 is_public=is_public,
-                read_only=not editable,
             ))
         return fields
 
@@ -707,6 +668,8 @@ class GenericTextAttributeType(AttributeType[T]):
                 form_field_kwargs.update(max_length=self.instance.max_length)
             db_field = cast(Field, self.ATTRIBUTE_MODEL._meta.get_field(attribute_text_field_name))
             field = db_field.formfield(**form_field_kwargs)
+            if not editable:
+                field.disabled = True
             is_public = self.instance.instances_visible_for == self.instance.VisibleFor.PUBLIC
             fields.append(FormField(
                 plan=plan,
@@ -715,7 +678,6 @@ class GenericTextAttributeType(AttributeType[T]):
                 name=self.get_form_field_name(language),
                 language=language,
                 is_public=is_public,
-                read_only=not editable,
             ))
         return fields
 
@@ -789,6 +751,8 @@ class Numeric(AttributeType[models.AttributeNumericValue]):
             if committed_attribute:
                 initial_value = committed_attribute.value
         field = forms.FloatField(initial=initial_value, required=False, help_text=self.instance.help_text_i18n)
+        if not self.is_editable(user, plan, obj):
+            field.disabled = True
         is_public = self.instance.instances_visible_for == self.instance.VisibleFor.PUBLIC
         return [FormField(
             plan=plan,
@@ -796,7 +760,6 @@ class Numeric(AttributeType[models.AttributeNumericValue]):
             django_field=field,
             name=self.form_field_name,
             is_public=is_public,
-            read_only=not self.is_editable(user, plan, obj),
         )]
 
     def get_value_from_form_data(self, cleaned_data: dict[str, Any]) -> NumericAttributeValue | None:
