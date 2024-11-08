@@ -785,7 +785,10 @@ class Action(
     type _Panel = Panel[Action]
     type _PanelS = Sequence[_Panel]
 
-    def get_attribute_panels(self, user: User, draft_attributes: DraftAttributes | None = None) -> tuple[_PanelS, _PanelS, Mapping[str, _PanelS]]:
+    def get_attribute_panels(
+            self, user: User,
+            draft_attributes: DraftAttributes | None = None,
+    ) -> tuple[_PanelS, _PanelS, Mapping[str, _PanelS]]:
         # Return a triple `(main_panels, reporting_panels, i18n_panels)`, where `main_panels` is a list of panels to be
         # put on the main tab, `reporting_panels` is a list of panels to be put on the reporting tab, and `i18n_panels`
         # is a dict mapping a non-primary language to a list of panels to be put on the tab for that language.
