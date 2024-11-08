@@ -647,12 +647,10 @@ class Category(ModelWithAttributes, CategoryBase, ClusterableModel, PlanRelatedM
         attribute_types = self.get_visible_attribute_types(user)
         plan = user.get_active_admin_plan()  # not sure if this is reasonable...
         for attribute_type in attribute_types:
-            fields = attribute_type.get_form_fields(user, plan, self)
-            for field in fields:
-                if field.language:
-                    i18n_panels.setdefault(field.language, []).append(field.get_panel())
-                else:
-                    main_panels.append(field.get_panel())
+            main, i18n = attribute_type.get_panels(user, plan, self)
+            main_panels.extend(main)
+            for lang, lang_panels in i18n.items():
+                i18n_panels.setdefault(lang, []).extend(lang_panels)
         return (main_panels, i18n_panels)
 
     def get_siblings(self, force_refresh=False):

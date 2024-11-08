@@ -294,13 +294,13 @@ class AttributeType(ABC, Generic[T]):
     VALUE_CLASS: type[AttributeValue]
     instance: models.AttributeType
 
-    @abstractmethod
     def get_form_fields(
         self,
         user: User,
         plan: Plan,
         obj: M | None = None,
         draft_attributes: DraftAttributes | None = None,
+        include_read_only_fields: bool = False,
     ) -> list[FormField[M]]:
         """
         Get form fields for this attribute type.
@@ -310,6 +310,31 @@ class AttributeType(ABC, Generic[T]):
 
         If `draft_attributes` is given, its contents override the attributes attached to `obj` because it is assumed
         that the values in `draft_attributes` should be edited but are not yet committed to the model's database table.
+
+        By default, read_only fields are not returned because we do not want to include those
+        fields in the Django forms. We do want to generate Wagtail panels for those fields,
+        which is why get_panels uses the argument include_read_only_fields=True.
+        """
+
+        all_fields = self.get_all_form_fields(
+            user, plan, obj, draft_attributes,
+        )
+        if include_read_only_fields:
+            return all_fields
+        return [f for f in all_fields if not f.read_only]
+
+    @abstractmethod
+    def get_all_form_fields(
+        self,
+        user: User,
+        plan: Plan,
+        obj: M | None = None,
+        draft_attributes: DraftAttributes | None = None,
+    ) -> list[FormField[M]]:
+        """
+        Get all of the form fields for this attribute type.
+
+        Generally, you should call get_form_fields instead.
         """
         pass
 
@@ -324,6 +349,25 @@ class AttributeType(ABC, Generic[T]):
     ) -> list[Any]:
         """Return the value for each of this attribute type's columns for the given attribute (can be None)."""
         pass
+
+    def get_panels(
+        self,
+        user: User,
+        plan: Plan,
+        obj: M | None = None,
+        draft_attributes: DraftAttributes | None = None,
+    ) -> tuple[list[AttributeFieldPanel[M]], dict[str, list[AttributeFieldPanel[M]]]]:
+        main_panels = []
+        i18n_panels: dict[str, list[AttributeFieldPanel[M]]] = {}
+        fields: list[FormField[M]] = self.get_form_fields(
+            user, plan, obj, draft_attributes=draft_attributes, include_read_only_fields=True,
+        )
+        for field in fields:
+            if field.language:
+                i18n_panels.setdefault(field.language, []).append(field.get_panel())
+            else:
+                main_panels.append(field.get_panel())
+        return (main_panels, i18n_panels)
 
     @classmethod
     def format_to_class(cls, format: models.AttributeType.AttributeFormat) -> type[AttributeType]:
@@ -440,7 +484,7 @@ class OrderedChoice(AttributeType[models.AttributeChoice]):
     def form_field_name(self):
         return f'attribute_type_{self.instance.identifier}'
 
-    def get_form_fields(
+    def get_all_form_fields(
         self,
         user: User,
         plan: Plan,
@@ -501,7 +545,7 @@ class CategoryChoice(AttributeType[models.AttributeCategoryChoice]):
     def form_field_name(self):
         return f'attribute_type_{self.instance.identifier}'
 
-    def get_form_fields(
+    def get_all_form_fields(
         self,
         user: User,
         plan: Plan,
@@ -583,7 +627,7 @@ class OptionalChoiceWithText(AttributeType[models.AttributeChoiceWithText]):
             name += f'_{language}'
         return name
 
-    def get_form_fields(
+    def get_all_form_fields(  # noqa: PLR0912,C901
         self,
         user: User,
         plan: Plan,
@@ -696,7 +740,7 @@ class GenericTextAttributeType(AttributeType[T]):
             name += f'_{language}'
         return name
 
-    def get_form_fields(
+    def get_all_form_fields(
         self,
         user: User,
         plan: Plan,
@@ -792,7 +836,7 @@ class Numeric(AttributeType[models.AttributeNumericValue]):
     def form_field_name(self):
         return f'attribute_type_{self.instance.identifier}'
 
-    def get_form_fields(
+    def get_all_form_fields(
         self,
         user: User,
         plan: Plan,

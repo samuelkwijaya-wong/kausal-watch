@@ -802,12 +802,10 @@ class Action(
             attribute_types = self.get_visible_attribute_types(user, **kwargs)
             act = cast(Action, self)
             for attribute_type in attribute_types:
-                fields = attribute_type.get_form_fields(user, plan, act, draft_attributes=draft_attributes)
-                for field in fields:
-                    if field.language:
-                        i18n_panels.setdefault(field.language, []).append(field.get_panel())
-                    else:
-                        panels.append(field.get_panel())
+                main, i18n = attribute_type.get_panels(user, plan, act, draft_attributes=draft_attributes)
+                panels.extend(main)
+                for lang, lang_panels in i18n.items():
+                    i18n_panels.setdefault(lang, []).extend(lang_panels)
 
         return (main_panels, reporting_panels, i18n_panels)
 
