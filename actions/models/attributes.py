@@ -327,8 +327,10 @@ class AttributeChoiceWithText(Attribute):
 
     def __str__(self):
         text_field = typing.cast(RichTextField, self._meta.get_field('text'))
-        text = " ".join(text_field.get_searchable_content(str(self.text_i18n)))
-        return f'{self.choice}; {text}'
+        text = " ".join(text_field.get_searchable_content(str(self.text_i18n))).strip()
+        if len(text):
+            text = f'; {text}'
+        return f'{self.choice}{text}'
 
 
 @reversion.register()
