@@ -315,6 +315,7 @@ class AttributeChoiceWithText(Attribute):
         related_name='choice_with_text_attributes',
     )
     text = RichTextField(verbose_name=_('Text'), blank=True, null=True)
+    text_i18n: str
 
     i18n = TranslationField(
         fields=('text',),
@@ -325,7 +326,11 @@ class AttributeChoiceWithText(Attribute):
         unique_together = ('type', 'content_type', 'object_id')
 
     def __str__(self):
-        return f'{self.choice}; {self.text}'
+        text_field = typing.cast(RichTextField, self._meta.get_field('text'))
+        text = " ".join(text_field.get_searchable_content(str(self.text_i18n))).strip()
+        if len(text):
+            text = f'; {text}'
+        return f'{self.choice}{text}'
 
 
 @reversion.register()
@@ -373,7 +378,9 @@ class AttributeRichText(Attribute):
         unique_together = ('type', 'content_type', 'object_id')
 
     def __str__(self):
-        return self.text_i18n
+        text_field = typing.cast(RichTextField, self._meta.get_field('text'))
+        return " ".join(text_field.get_searchable_content(str(self.text_i18n)))
+
 
 
 @reversion.register()
