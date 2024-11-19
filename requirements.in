@@ -82,3 +82,4 @@ s3cmd
 psutil
 django-stubs-ext
 treelib
+graphene-pydantic

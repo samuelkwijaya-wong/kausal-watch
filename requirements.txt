@@ -6,6 +6,8 @@ aniso8601==9.0.1
     # via
     #   -r requirements.in
     #   graphene
+annotated-types==0.7.0
+    # via pydantic
 anyascii==0.3.2
     # via wagtail
 asgiref==3.8.1
@@ -206,12 +208,16 @@ faker==25.2.0
 filetype==1.2.0
     # via willow
 graphene==3.3
-    # via graphene-django
+    # via
+    #   graphene-django
+    #   graphene-pydantic
 graphene-django==3.2.1
     # via
     #   -r requirements.in
     #   wagtail-grapple
 graphene-django-optimizer @ https://github.com/kausaltech/graphene-django-optimizer/archive/f18d827d0d58c1148288b6b886c167dd2fc1931a.zip
+    # via -r requirements.in
+graphene-pydantic==0.6.1
     # via -r requirements.in
 graphql-core==3.2.3
     # via
@@ -344,6 +350,10 @@ pycparser==2.22
     # via cffi
 pycryptodome==3.20.0
     # via -r requirements.in
+pydantic==2.9.2
+    # via graphene-pydantic
+pydantic-core==2.23.4
+    # via pydantic
 pygithub==2.3.0
     # via -r requirements.in
 pygments==2.18.0
@@ -467,6 +477,8 @@ typing-extensions==4.11.0
     #   jwcrypto
     #   opentelemetry-sdk
     #   psycopg
+    #   pydantic
+    #   pydantic-core
     #   pygithub
     #   pytest-factoryboy
     #   wagtail-localize
