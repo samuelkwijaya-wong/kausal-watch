@@ -57,6 +57,8 @@ mypy-extensions==1.0.0
     # via mypy
 ondivi==0.6.0
     # via -r requirements-lint.in
+orjson==3.10.11
+    # via mypy
 parse==1.20.2
     # via ondivi
 requests==2.31.0

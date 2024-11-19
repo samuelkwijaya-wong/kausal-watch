@@ -1,7 +1,7 @@
 -c requirements.txt
 ruff
 isort
-mypy
+mypy[faster-cache]
 django-stubs
 graphene-stubs
 djangorestframework-stubs
