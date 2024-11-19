@@ -165,7 +165,7 @@ django-reversion==5.0.12
     # via -r requirements.in
 django-storages==1.14.3
     # via -r requirements.in
-django-stubs-ext==5.0.4
+django-stubs-ext==5.1.1
     # via -r requirements.in
 django-taggit==5.0.1
     # via wagtail

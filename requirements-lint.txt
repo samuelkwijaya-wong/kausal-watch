@@ -24,11 +24,11 @@ django==5.0.6
     #   -c requirements.txt
     #   django-stubs
     #   django-stubs-ext
-django-stubs==5.0.4
+django-stubs==5.1.1
     # via
     #   -r requirements-lint.in
     #   djangorestframework-stubs
-django-stubs-ext==5.0.4
+django-stubs-ext==5.1.1
     # via
     #   -c requirements.txt
     #   django-stubs
