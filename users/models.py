@@ -61,8 +61,6 @@ class User(AbstractUser):
     _corresponding_person: Person | None
     _active_admin_plan: Plan
     _adminable_plans: models.QuerySet[Plan]
-    _instance_visibility_perms: set[InstancesVisibleForMixin.VisibleFor]
-    _instance_editable_perms: set[InstancesEditableByMixin.EditableBy]
     _org_admin_for_actions: ActionQuerySet
     _org_admin_for_indicators: IndicatorQuerySet
     _contact_for_actions: set[int]
