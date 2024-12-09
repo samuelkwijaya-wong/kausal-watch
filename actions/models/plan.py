@@ -203,8 +203,10 @@ class Plan(ClusterableModel, ModelWithPrimaryLanguage):
         max_length=3,
         null=True,
         blank=True,
-        verbose_name=_("short identifier"),
-        help_text=_("A unique short identifier for the plan to be shown in UI. Could be eg. a number or an abbreviation"),
+        verbose_name=_('short identifier'),
+        help_text=_(
+            'A unique short identifier for the plan to be shown in the UI. Could be, e.g., a number or an abbreviation.'
+        ),
     )
 
     version_name = models.CharField(

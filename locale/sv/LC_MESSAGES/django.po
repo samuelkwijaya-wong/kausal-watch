@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-10-28 13:42+0200\n"
+"POT-Creation-Date: 2024-12-09 22:38+0100\n"
 "PO-Revision-Date: 2024-10-22 12:20+0000\n"
 "Last-Translator: Matias Wargelin <matias.wargelin@kausal.tech>\n"
 "Language-Team: Swedish <https://weblate.kausal.tech/projects/watch/django/sv/>\n"
@@ -34,8 +34,8 @@ msgstr "%s anges flera gånger i åtgärden."
 msgid "Unspecified"
 msgstr "Ospecificerad"
 
-#: actions/action_admin.py actions/api.py actions/blocks/action_content.py
-#: actions/blocks/action_dashboard.py
+#: actions/action_admin.py actions/api.py
+#: actions/blocks/action_content_blocks.py
 msgid "Responsible parties"
 msgstr "Ansvariga parter"
 
@@ -68,10 +68,11 @@ msgstr "Ångra markeringen av denna åtgärd som slutförd för rapporten %s"
 msgid "Last updated"
 msgstr "Senast uppdaterad"
 
-#: actions/action_admin.py actions/blocks/action_dashboard.py
-#: actions/templates/actions/chooser_results.html admin_site/models.py
-#: admin_site/templates/admin_site/own_indicators_panel.html orgs/models.py
-#: orgs/wagtail_admin.py people/templates/people/chooser_results.html
+#: actions/action_admin.py actions/templates/actions/chooser_results.html
+#: admin_site/models.py
+#: admin_site/templates/admin_site/own_indicators_panel.html copying/views.py
+#: orgs/models.py orgs/wagtail_admin.py
+#: people/templates/people/chooser_results.html
 msgid "Name"
 msgstr "Namn"
 
@@ -198,6 +199,16 @@ msgstr "Avbryt planerad publicering"
 #: admin_site/wagtail.py
 msgid "Edit"
 msgstr "Redigera"
+
+#: actions/action_fields.py actions/tests/fixtures_stream_block.py
+#, fuzzy
+#| msgid "Action schedules"
+msgid "Action dependencies"
+msgstr "Tidsram för åtgärd"
+
+#: actions/action_fields.py actions/tests/fixtures_stream_block.py
+msgid "Merged actions"
+msgstr "Sammanslagna åtgärder"
 
 #: actions/action_status_summary.py actions/defaults.py
 msgid "Completed"
@@ -356,232 +367,15 @@ msgstr "%(attribute_type)s (val)"
 msgid "%(attribute_type)s (text)"
 msgstr "%(attribute_type)s (text)"
 
+#: actions/attributes.py
+#, fuzzy, python-format
+#| msgid "%(attribute_type)s (text)"
+msgid "%(attribute_type)s"
+msgstr "%(attribute_type)s (text)"
+
 #: actions/blocks/__init__.py
 msgid "Related plans"
 msgstr "Relaterade planer"
-
-#: actions/blocks/action_content.py actions/blocks/action_dashboard.py
-#: actions/blocks/category_page_layout.py actions/blocks/choosers.py
-#: actions/blocks/filters.py
-msgid "Field"
-msgstr "Fält"
-
-#: actions/blocks/action_content.py actions/blocks/choosers.py
-#: actions/blocks/filters.py actions/models/attributes.py feedback/models.py
-#: pages/models.py
-msgid "Category"
-msgstr "Kategori"
-
-#: actions/blocks/action_content.py
-msgid "Heading to show instead of the default"
-msgstr "Rubrik som ska visas istället för standardrubriken"
-
-#: actions/blocks/action_content.py actions/blocks/action_dashboard.py
-msgid "Label"
-msgstr "Etikett"
-
-#: actions/blocks/action_content.py
-#, fuzzy
-#| msgid "value"
-msgid "Value"
-msgstr "värde"
-
-#: actions/blocks/action_content.py actions/models/attributes.py
-msgid "Choice"
-msgstr "Val"
-
-#: actions/blocks/action_content.py
-#, fuzzy
-#| msgid "Field label"
-msgid "Field Label"
-msgstr "Fältetikett"
-
-#: actions/blocks/action_content.py actions/models/attributes.py
-#: documentation/models.py pages/models.py
-msgid "Text"
-msgstr "Text"
-
-#: actions/blocks/action_content.py
-msgid "Checkbox"
-msgstr ""
-
-#: actions/blocks/action_content.py actions/blocks/filters.py
-msgid "Dropdown"
-msgstr "Rullgardinsmeny"
-
-#: actions/blocks/action_content.py
-#, fuzzy
-#| msgid "Field label"
-msgid "Field Type"
-msgstr "Fältetikett"
-
-#: actions/blocks/action_content.py
-msgid "Required"
-msgstr ""
-
-#: actions/blocks/action_content.py
-#, fuzzy
-#| msgid "Choice"
-msgid "Choices"
-msgstr "Val"
-
-#: actions/blocks/action_content.py
-#, fuzzy
-#| msgid "This value is only allowed for action fields"
-msgid "Choices are only allowed for 'Dropdown' or 'Checkbox' field types."
-msgstr "Detta värde är endast tillåtet för åtgärdsfält"
-
-#: actions/blocks/action_content.py
-msgid "Choices must be provided for 'Dropdown' or 'Checkbox' field types."
-msgstr ""
-
-#: actions/blocks/action_content.py
-#, fuzzy
-#| msgid "Field"
-msgid "Form Field"
-msgstr "Fält"
-
-#: actions/blocks/action_content.py actions/blocks/action_list.py
-#: actions/blocks/category_list.py actions/blocks/paths_content.py
-#: pages/blocks.py
-msgid "Heading"
-msgstr "Rubrik"
-
-#: actions/blocks/action_content.py
-msgid "Description"
-msgstr "Beskrivning"
-
-#: actions/blocks/action_content.py
-msgid "Feedback field visible"
-msgstr ""
-
-#: actions/blocks/action_content.py
-msgid "Toggle visibility of the feedback field."
-msgstr ""
-
-#: actions/blocks/action_content.py
-#, fuzzy
-#| msgid "User feedback received"
-msgid "Feedback required"
-msgstr "Feedback från användarna"
-
-#: actions/blocks/action_content.py
-msgid "Make the feedback field required when visible."
-msgstr ""
-
-#: actions/blocks/action_content.py
-msgid "Email field visible"
-msgstr ""
-
-#: actions/blocks/action_content.py
-msgid "Toggle visibility of the email field."
-msgstr ""
-
-#: actions/blocks/action_content.py
-msgid "Email required"
-msgstr ""
-
-#: actions/blocks/action_content.py
-msgid "Make the email field required when visible."
-msgstr ""
-
-#: actions/blocks/action_content.py
-#, fuzzy
-#| msgid "Action field"
-msgid "Additional form fields"
-msgstr "Åtgärdsfält"
-
-#: actions/blocks/action_content.py
-msgid "Form fields to be shown in addition to Name, Email and Comment fields"
-msgstr ""
-
-#: actions/blocks/action_content.py
-msgid "Feedback can't be required if it's not visible."
-msgstr ""
-
-#: actions/blocks/action_content.py
-msgid "Email can't be required if it's not visible."
-msgstr ""
-
-#: actions/blocks/action_content.py actions/blocks/category_page_layout.py
-msgid "Contact form"
-msgstr "Kontaktformulär"
-
-#: actions/blocks/action_content.py
-#, fuzzy
-#| msgid "Indicator action"
-msgid "Indicator Causal Chain"
-msgstr "Indikatoråtgärd"
-
-#: actions/blocks/action_content.py
-#, fuzzy
-#| msgid "What label should be used in the public UI for the official name?"
-msgid "What heading should be used in the public UI for the Dataset?"
-msgstr "Vilken etikett ska användas i den offentliga användargränssnittet för det officiella namnet?"
-
-#: actions/blocks/action_content.py
-#, fuzzy
-msgid "Help text for the Dataset to be shown in the public UI"
-msgstr "Hjälptext för fältet som ska visas i användargränssnittet"
-
-#: actions/blocks/action_content.py actions/blocks/action_list.py
-#: actions/blocks/category_list.py actions/blocks/paths_content.py
-msgid "Help text"
-msgstr "Hjälptext"
-
-#: actions/blocks/action_content.py
-#, fuzzy
-#| msgid "datasets"
-msgid "Datasets"
-msgstr "datauppsättningar"
-
-#: actions/blocks/action_content.py
-msgid "What label should be used in the public UI for the official name?"
-msgstr "Vilken etikett ska användas i den offentliga användargränssnittet för det officiella namnet?"
-
-#: actions/blocks/action_content.py
-msgid "Field label"
-msgstr "Fältetikett"
-
-#: actions/blocks/action_content.py
-msgid "Description to show after the field content"
-msgstr "Beskrivning som ska visas efter fältinnehållet"
-
-#: actions/blocks/action_content.py
-msgid "Caption"
-msgstr "Bildtext"
-
-#: actions/blocks/action_content.py
-msgid "Official name"
-msgstr "Officiellt namn"
-
-#: actions/blocks/action_content.py
-#, fuzzy
-msgid "Help text for the field to be shown in the UI"
-msgstr "Hjälptext för fältet som ska visas i användargränssnittet"
-
-#: actions/blocks/action_content.py
-#, python-format
-msgid "Content block: %(label)s"
-msgstr "Innehållsblock:%(label)s"
-
-#: actions/blocks/action_content.py actions/models/action.py pages/models.py
-msgid "Lead paragraph"
-msgstr "Ingress"
-
-#: actions/blocks/action_content.py
-msgid "Merged actions"
-msgstr "Sammanslagna åtgärder"
-
-#: actions/blocks/action_content.py
-msgid "Related actions"
-msgstr "Relaterade åtgärder"
-
-#: actions/blocks/action_content.py
-#, fuzzy
-#| msgid "Action schedules"
-msgid "Action dependencies"
-msgstr "Tidsram för åtgärd"
 
 #: actions/blocks/action_content.py
 msgid "Full width"
@@ -591,6 +385,18 @@ msgstr "Full bredd"
 msgid "Grid"
 msgstr "Nät"
 
+#: actions/blocks/action_content.py actions/blocks/action_content_blocks.py
+#: actions/blocks/action_list.py actions/blocks/category_list.py
+#: actions/blocks/paths_content.py pages/blocks.py
+msgid "Heading"
+msgstr "Rubrik"
+
+#: actions/blocks/action_content.py actions/blocks/action_content_blocks.py
+#: actions/blocks/action_list.py actions/blocks/category_list.py
+#: actions/blocks/paths_content.py aplans/dynamic_blocks.py
+msgid "Help text"
+msgstr "Hjälptext"
+
 #: actions/blocks/action_content.py
 msgid "Blocks"
 msgstr "Block"
@@ -599,58 +405,190 @@ msgstr "Block"
 msgid "Section"
 msgstr "Sektion"
 
-#: actions/blocks/action_dashboard.py
-msgid "Label for the column to be used instead of the default"
-msgstr "Etikett för kolumnen som ska användas istället för standardkolumnen"
+#: actions/blocks/action_content_blocks.py actions/blocks/action_dashboard.py
+#: actions/blocks/category_page_layout.py actions/blocks/choosers.py
+#: actions/blocks/filters.py
+msgid "Field"
+msgstr "Fält"
 
-#: actions/blocks/action_dashboard.py reports/spreadsheets/excel_report.py
-msgid "Identifier"
-msgstr "Identifierare"
+#: actions/blocks/action_content_blocks.py actions/blocks/choosers.py
+#: actions/blocks/filters.py actions/models/attributes.py feedback/models.py
+#: pages/models.py
+msgid "Category"
+msgstr "Kategori"
 
-#: actions/blocks/action_dashboard.py actions/blocks/category_page_layout.py
-#: actions/blocks/filters.py reports/blocks/action_content.py
-#: reports/spreadsheets/excel_report.py
-msgid "Implementation phase"
-msgstr "Fas"
+#: actions/blocks/action_content_blocks.py aplans/dynamic_blocks.py
+msgid "Heading to show instead of the default"
+msgstr "Rubrik som ska visas istället för standardrubriken"
 
-#: actions/blocks/action_dashboard.py actions/blocks/category_page_layout.py
-#: actions/blocks/filters.py reports/blocks/action_content.py
-msgid "Status"
-msgstr "Status"
+#: actions/blocks/action_content_blocks.py actions/blocks/column_block_base.py
+msgid "Label"
+msgstr "Etikett"
 
-#: actions/blocks/action_dashboard.py content/models.py
-msgid "Tasks"
-msgstr "Uppgifter"
-
-#: actions/blocks/action_dashboard.py actions/models/plan.py indicators/apps.py
-#: indicators/blocks.py indicators/wagtail_admin.py
-msgid "Indicators"
-msgstr "Indikatorer"
-
-#: actions/blocks/action_dashboard.py
-msgid "Updated at"
-msgstr "Uppdaterad den"
-
-#: actions/blocks/action_dashboard.py
+#: actions/blocks/action_content_blocks.py
 #, fuzzy
-#| msgid "start date"
-msgid "Start date"
-msgstr "Startdatum för implementering"
+#| msgid "value"
+msgid "Value"
+msgstr "värde"
 
-#: actions/blocks/action_dashboard.py
+#: actions/blocks/action_content_blocks.py actions/models/attributes.py
+msgid "Choice"
+msgstr "Val"
+
+#: actions/blocks/action_content_blocks.py
 #, fuzzy
-#| msgid "end date"
-msgid "End date"
-msgstr "Slutdatum för implementering"
+#| msgid "Field label"
+msgid "Field Label"
+msgstr "Fältetikett"
 
-#: actions/blocks/action_dashboard.py content/models.py
-#: indicators/wagtail_admin.py people/templates/people/chooser_results.html
-msgid "Organization"
-msgstr "Organisation"
+#: actions/blocks/action_content_blocks.py actions/models/attributes.py
+#: documentation/models.py pages/models.py
+msgid "Text"
+msgstr "Text"
 
-#: actions/blocks/action_dashboard.py
-msgid "Impact"
-msgstr "Påverkan"
+#: actions/blocks/action_content_blocks.py
+msgid "Checkbox"
+msgstr ""
+
+#: actions/blocks/action_content_blocks.py actions/blocks/filters.py
+msgid "Dropdown"
+msgstr "Rullgardinsmeny"
+
+#: actions/blocks/action_content_blocks.py
+#, fuzzy
+#| msgid "Field label"
+msgid "Field Type"
+msgstr "Fältetikett"
+
+#: actions/blocks/action_content_blocks.py
+msgid "Required"
+msgstr ""
+
+#: actions/blocks/action_content_blocks.py
+#, fuzzy
+#| msgid "Choice"
+msgid "Choices"
+msgstr "Val"
+
+#: actions/blocks/action_content_blocks.py
+#, fuzzy
+#| msgid "This value is only allowed for action fields"
+msgid "Choices are only allowed for 'Dropdown' or 'Checkbox' field types."
+msgstr "Detta värde är endast tillåtet för åtgärdsfält"
+
+#: actions/blocks/action_content_blocks.py
+msgid "Choices must be provided for 'Dropdown' or 'Checkbox' field types."
+msgstr ""
+
+#: actions/blocks/action_content_blocks.py
+#, fuzzy
+#| msgid "Field"
+msgid "Form Field"
+msgstr "Fält"
+
+#: actions/blocks/action_content_blocks.py
+msgid "Description"
+msgstr "Beskrivning"
+
+#: actions/blocks/action_content_blocks.py
+msgid "Feedback field visible"
+msgstr ""
+
+#: actions/blocks/action_content_blocks.py
+msgid "Toggle visibility of the feedback field."
+msgstr ""
+
+#: actions/blocks/action_content_blocks.py
+#, fuzzy
+#| msgid "User feedback received"
+msgid "Feedback required"
+msgstr "Feedback från användarna"
+
+#: actions/blocks/action_content_blocks.py
+msgid "Make the feedback field required when visible."
+msgstr ""
+
+#: actions/blocks/action_content_blocks.py
+msgid "Email field visible"
+msgstr ""
+
+#: actions/blocks/action_content_blocks.py
+msgid "Toggle visibility of the email field."
+msgstr ""
+
+#: actions/blocks/action_content_blocks.py
+msgid "Email required"
+msgstr ""
+
+#: actions/blocks/action_content_blocks.py
+msgid "Make the email field required when visible."
+msgstr ""
+
+#: actions/blocks/action_content_blocks.py
+#, fuzzy
+#| msgid "Action field"
+msgid "Additional form fields"
+msgstr "Åtgärdsfält"
+
+#: actions/blocks/action_content_blocks.py
+msgid "Form fields to be shown in addition to Name, Email and Comment fields"
+msgstr ""
+
+#: actions/blocks/action_content_blocks.py
+msgid "Feedback can't be required if it's not visible."
+msgstr ""
+
+#: actions/blocks/action_content_blocks.py
+msgid "Email can't be required if it's not visible."
+msgstr ""
+
+#: actions/blocks/action_content_blocks.py
+#: actions/blocks/category_page_layout.py
+msgid "Contact form"
+msgstr "Kontaktformulär"
+
+#: actions/blocks/action_content_blocks.py
+#, fuzzy
+#| msgid "Indicator action"
+msgid "Indicator Causal Chain"
+msgstr "Indikatoråtgärd"
+
+#: actions/blocks/action_content_blocks.py
+#, fuzzy
+#| msgid "What label should be used in the public UI for the official name?"
+msgid "What heading should be used in the public UI for the dataset?"
+msgstr "Vilken etikett ska användas i den offentliga användargränssnittet för det officiella namnet?"
+
+#: actions/blocks/action_content_blocks.py
+#, fuzzy
+msgid "Help text for the Dataset to be shown in the public UI"
+msgstr "Hjälptext för fältet som ska visas i användargränssnittet"
+
+#: actions/blocks/action_content_blocks.py
+#, fuzzy
+#| msgid "datasets"
+msgid "Datasets"
+msgstr "datauppsättningar"
+
+#: actions/blocks/action_content_blocks.py
+msgid "What label should be used in the public UI for the official name?"
+msgstr "Vilken etikett ska användas i den offentliga användargränssnittet för det officiella namnet?"
+
+#: actions/blocks/action_content_blocks.py aplans/dynamic_blocks.py
+msgid "Field label"
+msgstr "Fältetikett"
+
+#: actions/blocks/action_content_blocks.py
+msgid "Description to show after the field content"
+msgstr "Beskrivning som ska visas efter fältinnehållet"
+
+#: actions/blocks/action_content_blocks.py
+msgid "Caption"
+msgstr "Bildtext"
+
+#: actions/blocks/action_content_blocks.py
+msgid "Official name"
+msgstr "Officiellt namn"
 
 #: actions/blocks/action_list.py
 msgid "Action highlights"
@@ -744,11 +682,25 @@ msgstr "Kropp"
 msgid "Basis"
 msgstr "Grund"
 
+#: actions/blocks/category_page_layout.py actions/blocks/filters.py
+#: reports/blocks/action_content.py reports/spreadsheets/excel_report.py
+msgid "Implementation phase"
+msgstr "Fas"
+
+#: actions/blocks/category_page_layout.py actions/blocks/filters.py
+#: reports/blocks/action_content.py
+msgid "Status"
+msgstr "Status"
+
 #: actions/blocks/choosers.py
 #, fuzzy
 #| msgid "dataset license"
 msgid "Dataset Schema"
 msgstr "dataset-licens"
+
+#: actions/blocks/column_block_base.py
+msgid "Label for the column to be used instead of the default"
+msgstr "Etikett för kolumnen som ska användas istället för standardkolumnen"
 
 #: actions/blocks/filters.py
 msgid "Label for 'show all'"
@@ -793,6 +745,36 @@ msgstr "Tidsram"
 #| msgid "continuous action"
 msgid "Continuous Action"
 msgstr "kontinuerlig åtgärd"
+
+#: actions/blocks/mixins.py
+#, fuzzy
+msgid "[not included]"
+msgstr "[ingenting]"
+
+#: actions/blocks/mixins.py
+#, fuzzy
+msgid "in primary filters"
+msgstr "Applicera filter"
+
+#: actions/blocks/mixins.py
+msgid "in main filters"
+msgstr "i huvudfilter"
+
+#: actions/blocks/mixins.py
+msgid "in advanced filters"
+msgstr "i avancerade filter"
+
+#: actions/blocks/mixins.py
+msgid "in main column (top)"
+msgstr "i huvudkolumnen (överst)"
+
+#: actions/blocks/mixins.py
+msgid "in main column (bottom)"
+msgstr "i huvudkolumnen (längst ner)"
+
+#: actions/blocks/mixins.py
+msgid "in side column"
+msgstr "i sidokolumn"
 
 #: actions/blocks/paths_content.py
 #, fuzzy
@@ -976,6 +958,10 @@ msgstr "Identifieraren för denna åtgärd (t.ex. nummer)"
 msgid "Image"
 msgstr "Bild"
 
+#: actions/models/action.py pages/models.py
+msgid "Lead paragraph"
+msgstr "Ingress"
+
 #: actions/models/action.py actions/models/plan.py indicators/models.py
 #: orgs/models.py
 msgid "description"
@@ -1112,6 +1098,17 @@ msgid "Set if this action is superseded by another action"
 msgstr "Ange om denna åtgärd ersätts av en annan åtgärd"
 
 #: actions/models/action.py
+msgctxt "action"
+msgid "copy of"
+msgstr ""
+
+#: actions/models/action.py
+#, fuzzy
+#| msgid "Set if this action is superseded by another action"
+msgid "Set if this action has been created by copying another action"
+msgstr "Ange om denna åtgärd ersätts av en annan åtgärd"
+
+#: actions/models/action.py
 #, fuzzy
 msgid "Role in dependencies"
 msgstr "Roll i beroenden"
@@ -1179,8 +1176,8 @@ msgstr "Primärt ansvarig part"
 msgid "Collaborator"
 msgstr "Samarbetspartner"
 
-#: actions/models/action.py indicators/models.py orgs/models.py
-#: people/models.py people/wagtail_admin.py
+#: actions/models/action.py actions/models/plan.py indicators/models.py
+#: orgs/models.py people/models.py people/wagtail_admin.py
 msgid "organization"
 msgstr "organisation"
 
@@ -1958,7 +1955,7 @@ msgid "short identifier"
 msgstr "identifierare"
 
 #: actions/models/plan.py
-msgid "A unique short identifier for the plan to be shown in UI. Could be eg. a number or an abbreviation"
+msgid "A unique short identifier for the plan to be shown in the UI. Could be, e.g., a number or an abbreviation."
 msgstr ""
 
 #: actions/models/plan.py
@@ -2003,7 +2000,9 @@ msgid "Can actions be added and the official metadata edited?"
 msgstr "Kan åtgärder läggas till och de officiella metadata redigeras?"
 
 #: actions/models/plan.py
-msgid "main organization for the plan"
+#, fuzzy
+#| msgid "main organization for the plan"
+msgid "The main organization for the plan"
 msgstr "huvudorganisation för planen"
 
 #: actions/models/plan.py
@@ -2093,6 +2092,16 @@ msgid "Set if this plan is superseded by another plan"
 msgstr "Ange om den här åtgärden slås samman med en annan åtgärd"
 
 #: actions/models/plan.py
+msgctxt "plan"
+msgid "copy of"
+msgstr ""
+
+#: actions/models/plan.py
+#, fuzzy
+msgid "Set if this plan has been created by copying another plan"
+msgstr "Ange om den här åtgärden slås samman med en annan åtgärd"
+
+#: actions/models/plan.py
 msgid "Kausal Paths instance UUID"
 msgstr ""
 
@@ -2130,6 +2139,11 @@ msgstr "Organisationen är redan inkluderad i planen"
 msgid "This short identifier is already in use for a top-level plan within this organization."
 msgstr ""
 
+#: actions/models/plan.py indicators/apps.py indicators/blocks.py
+#: indicators/wagtail_admin.py
+msgid "Indicators"
+msgstr "Indikatorer"
+
 #: actions/models/plan.py
 msgid "Privacy"
 msgstr "Integritet"
@@ -2137,6 +2151,20 @@ msgstr "Integritet"
 #: actions/models/plan.py feedback/models.py
 msgid "Accessibility"
 msgstr "Tillgänglighet"
+
+#: actions/models/plan.py
+#, python-format
+msgid "%(plan)s (copy from %(date)s)"
+msgstr ""
+
+#: actions/models/plan.py
+#, python-format
+msgid "Copy from %(date)s"
+msgstr ""
+
+#: actions/models/plan.py actions/wagtail_admin.py
+msgid "Clients"
+msgstr "Kunder"
 
 #: actions/models/plan.py aplans/graphql_types.py
 msgid "Published"
@@ -2367,10 +2395,6 @@ msgstr "allmänna administratörer"
 #: actions/wagtail_admin.py
 msgid "Only set if explicitly required by customer. Use a color key from the UI theme's graphColors, for example red070 or grey030."
 msgstr "Ställs endast in om kunden uttryckligen kräver det. Använd en färgnyckel från UI-temaets graphColors, till exempel red070 eller grey030."
-
-#: actions/wagtail_admin.py
-msgid "Clients"
-msgstr "Kunder"
 
 #: actions/wagtail_admin.py
 msgid "Domains"
@@ -2612,6 +2636,21 @@ msgstr " Av %(filter_title)s "
 msgid "Administration"
 msgstr "Kan administrera alla åtgärder"
 
+#: admin_site/templates/wagtailadmin/base.html
+#, fuzzy
+#| msgid "Related plans"
+msgid "locked plan"
+msgstr "Relaterade planer"
+
+#: admin_site/templates/wagtailadmin/base.html aplans/utils.py
+msgid "Public"
+msgstr "Offentlig"
+
+#: admin_site/templates/wagtailadmin/base.html aplans/utils.py
+#, fuzzy
+msgid "Internal"
+msgstr "Interna anteckningar"
+
 #: admin_site/templates/wagtailadmin/login.html
 #, fuzzy
 msgid "Sign in to Kausal Watch admin"
@@ -2672,48 +2711,9 @@ msgstr "Visa %s live"
 msgid "Could not remove common category type \"%(removed_cct)\" from the plan because categories with the corresponding category type exist."
 msgstr "Kunde inte ta bort den gemensamma kategoritypen '{removed_cct}' från planen eftersom kategorier med motsvarande kategorityp finns."
 
-#: admin_site/wagtail.py
-#, fuzzy
-msgid "[not included]"
-msgstr "[ingenting]"
-
-#: admin_site/wagtail.py
-#, fuzzy
-msgid "in primary filters"
-msgstr "Applicera filter"
-
-#: admin_site/wagtail.py
-msgid "in main filters"
-msgstr "i huvudfilter"
-
-#: admin_site/wagtail.py
-msgid "in advanced filters"
-msgstr "i avancerade filter"
-
-#: admin_site/wagtail.py
-msgid "in main column (top)"
-msgstr "i huvudkolumnen (överst)"
-
-#: admin_site/wagtail.py
-msgid "in main column (bottom)"
-msgstr "i huvudkolumnen (längst ner)"
-
-#: admin_site/wagtail.py
-msgid "in side column"
-msgstr "i sidokolumn"
-
 #: admin_site/wagtail_hooks.py reports/apps.py reports/wagtail_admin.py
 msgid "Reports"
 msgstr "Rapporter"
-
-#: admin_site/wagtail_hooks.py
-#, fuzzy
-msgid "Create plan"
-msgstr "Skapa ny"
-
-#: admin_site/wagtail_hooks.py
-msgid "Choose plan"
-msgstr "Välj plan"
 
 #: admin_site/wagtail_hooks.py
 msgid "Email domains"
@@ -2726,6 +2726,16 @@ msgstr "Videohandledning"
 #: admin_site/wagtail_hooks.py
 msgid "https://kausal.gitbook.io/watch"
 msgstr "https://kausal.gitbook.io/watch"
+
+#: aplans/dynamic_blocks.py
+#, fuzzy
+msgid "Help text for the field to be shown in the UI"
+msgstr "Hjälptext för fältet som ska visas i användargränssnittet"
+
+#: aplans/dynamic_blocks.py
+#, python-format
+msgid "Content block: %(label)s"
+msgstr "Innehållsblock:%(label)s"
 
 #: aplans/fields.py
 msgid "Enter a valid hostname."
@@ -2837,15 +2847,6 @@ msgstr "År (2020)"
 #: aplans/utils.py kausal_common/models/ordered.py
 msgid "order"
 msgstr "ordning"
-
-#: aplans/utils.py
-#, fuzzy
-msgid "Internal"
-msgstr "Interna anteckningar"
-
-#: aplans/utils.py
-msgid "Public"
-msgstr "Offentlig"
 
 #: aplans/utils.py
 msgid "visibility"
@@ -3007,8 +3008,17 @@ msgid "Milestone"
 msgstr "Milstolpe"
 
 #: content/models.py
+msgid "Tasks"
+msgstr "Uppgifter"
+
+#: content/models.py
 msgid "Milestones"
 msgstr "Milstolpar"
+
+#: content/models.py indicators/wagtail_admin.py
+#: people/templates/people/chooser_results.html
+msgid "Organization"
+msgstr "Organisation"
 
 #: content/models.py
 #, fuzzy
@@ -3103,6 +3113,76 @@ msgstr "webbplatsens allmänna innehåll"
 msgid "Site settings"
 msgstr "Webbplatsinställningar"
 
+#: copying/views.py reports/spreadsheets/excel_report.py
+msgid "Identifier"
+msgstr "Identifierare"
+
+#: copying/views.py
+msgid "A unique value that identifies the copy internally and appears in URLs of testing or preview environments"
+msgstr ""
+
+#: copying/views.py
+#, fuzzy
+msgid "Name to use for the copy"
+msgstr "redigerbar för åtgärder"
+
+#: copying/views.py
+#, fuzzy
+msgid "Version name"
+msgstr "detaljerat namn"
+
+#: copying/views.py
+msgid "Version name to be set for the copied plan in order to distinguish it from other versions"
+msgstr ""
+
+#: copying/views.py
+msgid "Supersede original plan"
+msgstr ""
+
+#: copying/views.py
+#, fuzzy
+msgid "Set if the copy should supersede the original plan"
+msgstr "Ange om den här åtgärden slås samman med en annan åtgärd"
+
+#: copying/views.py
+#, fuzzy
+#| msgid "editable for actions"
+msgid "Supersede original actions"
+msgstr "redigerbar för åtgärder"
+
+#: copying/views.py
+#, fuzzy
+#| msgid "Set if this action is superseded by another action"
+msgid "Set if copies of actions should supersede their original"
+msgstr "Ange om denna åtgärd ersätts av en annan åtgärd"
+
+#: copying/views.py
+#, fuzzy
+#| msgid "Person with this email already exists"
+msgid "A plan with this identifier already exists"
+msgstr "Personen med det här e-postmeddelandet finns redan"
+
+#: copying/views.py
+#, fuzzy
+#| msgid "Person with this email already exists"
+msgid "A plan with this name already exists"
+msgstr "Personen med det här e-postmeddelandet finns redan"
+
+#: copying/views.py
+#, fuzzy
+#| msgid "Choose plan"
+msgid "Copy plan"
+msgstr "Välj plan"
+
+#: copying/views.py
+msgid "The copy will be created in the background. This may take a few minutes. The copy will appear in the list of plans as soon as copying is finished."
+msgstr ""
+
+#: copying/views.py
+#, fuzzy
+msgid "Create copy"
+msgstr "Skapa ny"
+
 #: documentation/models.py
 #, fuzzy
 msgid "CSS style"
@@ -3144,7 +3224,8 @@ msgstr "dokumentera"
 msgid "documents"
 msgstr "dokument"
 
-#: feedback/models.py orgs/models.py people/models.py users/models.py
+#: feedback/models.py kausal_common/users/models.py orgs/models.py
+#: people/models.py users/models.py
 msgid "email address"
 msgstr "e-postadress"
 
@@ -3220,6 +3301,10 @@ msgstr "Användarfeedback '%(user_feedback)s' har markerats som bearbetad."
 #, python-format
 msgid "User feedback '%(user_feedback)s' has been marked as unprocessed."
 msgstr "Användarfeedback '%(user_feedback)s' har markerats som obearbetad."
+
+#: feedback/wagtail_admin.py
+msgid "N/A"
+msgstr ""
 
 #: feedback/wagtail_admin.py
 msgid "Mark as processed"
@@ -5373,6 +5458,25 @@ msgstr "Användare"
 #: users/models.py
 msgid "No permission to remove the user belonging to plans you are not managing."
 msgstr "Inget tillstånd att ta bort användaren som tillhör planer som du inte hanterar."
+
+#~ msgid "Related actions"
+#~ msgstr "Relaterade åtgärder"
+
+#~ msgid "Updated at"
+#~ msgstr "Uppdaterad den"
+
+#, fuzzy
+#~| msgid "start date"
+#~ msgid "Start date"
+#~ msgstr "Startdatum för implementering"
+
+#, fuzzy
+#~| msgid "end date"
+#~ msgid "End date"
+#~ msgstr "Slutdatum för implementering"
+
+#~ msgid "Impact"
+#~ msgstr "Påverkan"
 
 #~ msgid "Automatic notifications"
 #~ msgstr "Automatiska aviseringar"

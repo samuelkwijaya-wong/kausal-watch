@@ -11,11 +11,10 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-10-28 13:42+0200\n"
+"POT-Creation-Date: 2024-12-09 22:38+0100\n"
 "PO-Revision-Date: 2024-11-28 11:20+0000\n"
 "Last-Translator: Timo Tuominen <timo.tuominen@kausal.tech>\n"
-"Language-Team: Finnish <https://weblate.kausal.tech/projects/watch/django/fi/"
-">\n"
+"Language-Team: Finnish <https://weblate.kausal.tech/projects/watch/django/fi/>\n"
 "Language: fi\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -36,8 +35,8 @@ msgstr "%s toistuu toimenpiteen tiedoissa"
 msgid "Unspecified"
 msgstr "Määrittelemätön"
 
-#: actions/action_admin.py actions/api.py actions/blocks/action_content.py
-#: actions/blocks/action_dashboard.py
+#: actions/action_admin.py actions/api.py
+#: actions/blocks/action_content_blocks.py
 msgid "Responsible parties"
 msgstr "Toimenpiteen vastuutahot"
 
@@ -70,10 +69,11 @@ msgstr "Peru tämän toimenpiteen valmiiksi merkitseminen raporttia %s varten"
 msgid "Last updated"
 msgstr "Viimeksi päivitetty"
 
-#: actions/action_admin.py actions/blocks/action_dashboard.py
-#: actions/templates/actions/chooser_results.html admin_site/models.py
-#: admin_site/templates/admin_site/own_indicators_panel.html orgs/models.py
-#: orgs/wagtail_admin.py people/templates/people/chooser_results.html
+#: actions/action_admin.py actions/templates/actions/chooser_results.html
+#: admin_site/models.py
+#: admin_site/templates/admin_site/own_indicators_panel.html copying/views.py
+#: orgs/models.py orgs/wagtail_admin.py
+#: people/templates/people/chooser_results.html
 msgid "Name"
 msgstr "Nimi"
 
@@ -200,6 +200,16 @@ msgstr "Peruuta ajastettu julkaisu"
 #: admin_site/wagtail.py
 msgid "Edit"
 msgstr "Muokkaa"
+
+#: actions/action_fields.py actions/tests/fixtures_stream_block.py
+#, fuzzy
+#| msgid "Action schedules"
+msgid "Action dependencies"
+msgstr "Toimenpiteen aikataulu"
+
+#: actions/action_fields.py actions/tests/fixtures_stream_block.py
+msgid "Merged actions"
+msgstr "Yhdistetyt toimenpiteet"
 
 #: actions/action_status_summary.py actions/defaults.py
 msgid "Completed"
@@ -359,232 +369,15 @@ msgstr "%(attribute_type)s (valinta)"
 msgid "%(attribute_type)s (text)"
 msgstr "%(attribute_type)s (teksti)"
 
+#: actions/attributes.py
+#, fuzzy, python-format
+#| msgid "attribute types"
+msgid "%(attribute_type)s"
+msgstr "ominaisuustyypit"
+
 #: actions/blocks/__init__.py
 msgid "Related plans"
 msgstr "Liittyvät toimenpideohjelmat"
-
-#: actions/blocks/action_content.py actions/blocks/action_dashboard.py
-#: actions/blocks/category_page_layout.py actions/blocks/choosers.py
-#: actions/blocks/filters.py
-msgid "Field"
-msgstr "kentät"
-
-#: actions/blocks/action_content.py actions/blocks/choosers.py
-#: actions/blocks/filters.py actions/models/attributes.py feedback/models.py
-#: pages/models.py
-msgid "Category"
-msgstr "Luokka"
-
-#: actions/blocks/action_content.py
-msgid "Heading to show instead of the default"
-msgstr "Otsikko, joka näytetään oletusarvon sijasta"
-
-#: actions/blocks/action_content.py actions/blocks/action_dashboard.py
-msgid "Label"
-msgstr "Selite"
-
-#: actions/blocks/action_content.py
-#, fuzzy
-#| msgid "value"
-msgid "Value"
-msgstr "arvo"
-
-#: actions/blocks/action_content.py actions/models/attributes.py
-#, fuzzy
-msgid "Choice"
-msgstr "ominaisuuden valintavaihtoehdot"
-
-#: actions/blocks/action_content.py
-#, fuzzy
-#| msgid "Field label"
-msgid "Field Label"
-msgstr "Kentän nimi"
-
-#: actions/blocks/action_content.py actions/models/attributes.py
-#: documentation/models.py pages/models.py
-msgid "Text"
-msgstr "Teksti"
-
-#: actions/blocks/action_content.py
-msgid "Checkbox"
-msgstr ""
-
-#: actions/blocks/action_content.py actions/blocks/filters.py
-msgid "Dropdown"
-msgstr "Alasvetovalikko"
-
-#: actions/blocks/action_content.py
-#, fuzzy
-#| msgid "Field label"
-msgid "Field Type"
-msgstr "Kentän nimi"
-
-#: actions/blocks/action_content.py
-msgid "Required"
-msgstr ""
-
-#: actions/blocks/action_content.py
-#, fuzzy
-msgid "Choices"
-msgstr "ominaisuuden valintavaihtoehdot"
-
-#: actions/blocks/action_content.py
-#, fuzzy
-msgid "Choices are only allowed for 'Dropdown' or 'Checkbox' field types."
-msgstr "Vain numeerisilla ominaisuustyypillä voi olla yksikkö"
-
-#: actions/blocks/action_content.py
-msgid "Choices must be provided for 'Dropdown' or 'Checkbox' field types."
-msgstr ""
-
-#: actions/blocks/action_content.py
-#, fuzzy
-#| msgid "Field"
-msgid "Form Field"
-msgstr "kentät"
-
-#: actions/blocks/action_content.py actions/blocks/action_list.py
-#: actions/blocks/category_list.py actions/blocks/paths_content.py
-#: pages/blocks.py
-msgid "Heading"
-msgstr "Otsikko"
-
-#: actions/blocks/action_content.py
-#, fuzzy
-msgid "Description"
-msgstr "kuvaus"
-
-#: actions/blocks/action_content.py
-msgid "Feedback field visible"
-msgstr ""
-
-#: actions/blocks/action_content.py
-msgid "Toggle visibility of the feedback field."
-msgstr ""
-
-#: actions/blocks/action_content.py
-#, fuzzy
-#| msgid "User feedback received"
-msgid "Feedback required"
-msgstr "Palautetta vastaanotettu"
-
-#: actions/blocks/action_content.py
-msgid "Make the feedback field required when visible."
-msgstr ""
-
-#: actions/blocks/action_content.py
-msgid "Email field visible"
-msgstr ""
-
-#: actions/blocks/action_content.py
-msgid "Toggle visibility of the email field."
-msgstr ""
-
-#: actions/blocks/action_content.py
-msgid "Email required"
-msgstr ""
-
-#: actions/blocks/action_content.py
-msgid "Make the email field required when visible."
-msgstr ""
-
-#: actions/blocks/action_content.py
-#, fuzzy
-#| msgid "Action field"
-msgid "Additional form fields"
-msgstr "Toimenpiteen kenttä"
-
-#: actions/blocks/action_content.py
-msgid "Form fields to be shown in addition to Name, Email and Comment fields"
-msgstr ""
-
-#: actions/blocks/action_content.py
-msgid "Feedback can't be required if it's not visible."
-msgstr ""
-
-#: actions/blocks/action_content.py
-msgid "Email can't be required if it's not visible."
-msgstr ""
-
-#: actions/blocks/action_content.py actions/blocks/category_page_layout.py
-msgid "Contact form"
-msgstr "Yhteydenottolomake"
-
-#: actions/blocks/action_content.py
-#, fuzzy
-#| msgid "Indicator action"
-msgid "Indicator Causal Chain"
-msgstr "Toimenpiteen mittari"
-
-#: actions/blocks/action_content.py
-#, fuzzy
-#| msgid "What label should be used in the public UI for the official name?"
-msgid "What heading should be used in the public UI for the Dataset?"
-msgstr "Mitä selitettä julkisella sivustolla käytään virallisesta nimestä"
-
-#: actions/blocks/action_content.py
-#, fuzzy
-msgid "Help text for the Dataset to be shown in the public UI"
-msgstr "Käyttöliittymässä näytettävän kentän ohjeteksti"
-
-#: actions/blocks/action_content.py actions/blocks/action_list.py
-#: actions/blocks/category_list.py actions/blocks/paths_content.py
-msgid "Help text"
-msgstr "Ohjeteksti"
-
-#: actions/blocks/action_content.py
-#, fuzzy
-#| msgid "datasets"
-msgid "Datasets"
-msgstr "tietoaineistot"
-
-#: actions/blocks/action_content.py
-msgid "What label should be used in the public UI for the official name?"
-msgstr "Mitä selitettä julkisella sivustolla käytään virallisesta nimestä"
-
-#: actions/blocks/action_content.py
-msgid "Field label"
-msgstr "Kentän nimi"
-
-#: actions/blocks/action_content.py
-msgid "Description to show after the field content"
-msgstr "Kuvaus joka näytetään kentän sisällön jälkeen"
-
-#: actions/blocks/action_content.py
-msgid "Caption"
-msgstr "Kuvateksti"
-
-#: actions/blocks/action_content.py
-msgid "Official name"
-msgstr "Virallinen nimi"
-
-#: actions/blocks/action_content.py
-#, fuzzy
-msgid "Help text for the field to be shown in the UI"
-msgstr "Käyttöliittymässä näytettävän kentän ohjeteksti"
-
-#: actions/blocks/action_content.py
-#, python-format
-msgid "Content block: %(label)s"
-msgstr "Sisältölohko: %(label)s"
-
-#: actions/blocks/action_content.py actions/models/action.py pages/models.py
-msgid "Lead paragraph"
-msgstr "Ingressi"
-
-#: actions/blocks/action_content.py
-msgid "Merged actions"
-msgstr "Yhdistetyt toimenpiteet"
-
-#: actions/blocks/action_content.py
-msgid "Related actions"
-msgstr "Liittyvät toimenpiteet"
-
-#: actions/blocks/action_content.py
-#, fuzzy
-#| msgid "Action schedules"
-msgid "Action dependencies"
-msgstr "Toimenpiteen aikataulu"
 
 #: actions/blocks/action_content.py
 msgid "Full width"
@@ -594,6 +387,18 @@ msgstr "Täysi leveys"
 msgid "Grid"
 msgstr "Ruudukko (grid)"
 
+#: actions/blocks/action_content.py actions/blocks/action_content_blocks.py
+#: actions/blocks/action_list.py actions/blocks/category_list.py
+#: actions/blocks/paths_content.py pages/blocks.py
+msgid "Heading"
+msgstr "Otsikko"
+
+#: actions/blocks/action_content.py actions/blocks/action_content_blocks.py
+#: actions/blocks/action_list.py actions/blocks/category_list.py
+#: actions/blocks/paths_content.py aplans/dynamic_blocks.py
+msgid "Help text"
+msgstr "Ohjeteksti"
+
 #: actions/blocks/action_content.py
 msgid "Blocks"
 msgstr "Lohkot"
@@ -602,58 +407,190 @@ msgstr "Lohkot"
 msgid "Section"
 msgstr "Osio"
 
-#: actions/blocks/action_dashboard.py
-msgid "Label for the column to be used instead of the default"
-msgstr "Sarakkeen selite, jota käytetään oletusarvon sijasta"
+#: actions/blocks/action_content_blocks.py actions/blocks/action_dashboard.py
+#: actions/blocks/category_page_layout.py actions/blocks/choosers.py
+#: actions/blocks/filters.py
+msgid "Field"
+msgstr "kentät"
 
-#: actions/blocks/action_dashboard.py reports/spreadsheets/excel_report.py
-msgid "Identifier"
-msgstr "Tunniste"
+#: actions/blocks/action_content_blocks.py actions/blocks/choosers.py
+#: actions/blocks/filters.py actions/models/attributes.py feedback/models.py
+#: pages/models.py
+msgid "Category"
+msgstr "Luokka"
 
-#: actions/blocks/action_dashboard.py actions/blocks/category_page_layout.py
-#: actions/blocks/filters.py reports/blocks/action_content.py
-#: reports/spreadsheets/excel_report.py
-msgid "Implementation phase"
-msgstr "Toteutusvaihe"
+#: actions/blocks/action_content_blocks.py aplans/dynamic_blocks.py
+msgid "Heading to show instead of the default"
+msgstr "Otsikko, joka näytetään oletusarvon sijasta"
 
-#: actions/blocks/action_dashboard.py actions/blocks/category_page_layout.py
-#: actions/blocks/filters.py reports/blocks/action_content.py
-msgid "Status"
-msgstr "Tila"
+#: actions/blocks/action_content_blocks.py actions/blocks/column_block_base.py
+msgid "Label"
+msgstr "Selite"
 
-#: actions/blocks/action_dashboard.py content/models.py
-msgid "Tasks"
-msgstr "Tehtävät"
-
-#: actions/blocks/action_dashboard.py actions/models/plan.py indicators/apps.py
-#: indicators/blocks.py indicators/wagtail_admin.py
-msgid "Indicators"
-msgstr "Mittarit"
-
-#: actions/blocks/action_dashboard.py
-msgid "Updated at"
-msgstr "Päivitysaika"
-
-#: actions/blocks/action_dashboard.py
+#: actions/blocks/action_content_blocks.py
 #, fuzzy
-#| msgid "start date"
-msgid "Start date"
-msgstr "alkupäivämäärä"
+#| msgid "value"
+msgid "Value"
+msgstr "arvo"
 
-#: actions/blocks/action_dashboard.py
+#: actions/blocks/action_content_blocks.py actions/models/attributes.py
 #, fuzzy
-#| msgid "end date"
-msgid "End date"
-msgstr "loppupäivämäärä"
+msgid "Choice"
+msgstr "ominaisuuden valintavaihtoehdot"
 
-#: actions/blocks/action_dashboard.py content/models.py
-#: indicators/wagtail_admin.py people/templates/people/chooser_results.html
-msgid "Organization"
-msgstr "Organisaatio"
+#: actions/blocks/action_content_blocks.py
+#, fuzzy
+#| msgid "Field label"
+msgid "Field Label"
+msgstr "Kentän nimi"
 
-#: actions/blocks/action_dashboard.py
-msgid "Impact"
-msgstr "Vaikuttavuus"
+#: actions/blocks/action_content_blocks.py actions/models/attributes.py
+#: documentation/models.py pages/models.py
+msgid "Text"
+msgstr "Teksti"
+
+#: actions/blocks/action_content_blocks.py
+msgid "Checkbox"
+msgstr ""
+
+#: actions/blocks/action_content_blocks.py actions/blocks/filters.py
+msgid "Dropdown"
+msgstr "Alasvetovalikko"
+
+#: actions/blocks/action_content_blocks.py
+#, fuzzy
+#| msgid "Field label"
+msgid "Field Type"
+msgstr "Kentän nimi"
+
+#: actions/blocks/action_content_blocks.py
+msgid "Required"
+msgstr ""
+
+#: actions/blocks/action_content_blocks.py
+#, fuzzy
+msgid "Choices"
+msgstr "ominaisuuden valintavaihtoehdot"
+
+#: actions/blocks/action_content_blocks.py
+#, fuzzy
+msgid "Choices are only allowed for 'Dropdown' or 'Checkbox' field types."
+msgstr "Vain numeerisilla ominaisuustyypillä voi olla yksikkö"
+
+#: actions/blocks/action_content_blocks.py
+msgid "Choices must be provided for 'Dropdown' or 'Checkbox' field types."
+msgstr ""
+
+#: actions/blocks/action_content_blocks.py
+#, fuzzy
+#| msgid "Field"
+msgid "Form Field"
+msgstr "kentät"
+
+#: actions/blocks/action_content_blocks.py
+#, fuzzy
+msgid "Description"
+msgstr "kuvaus"
+
+#: actions/blocks/action_content_blocks.py
+msgid "Feedback field visible"
+msgstr ""
+
+#: actions/blocks/action_content_blocks.py
+msgid "Toggle visibility of the feedback field."
+msgstr ""
+
+#: actions/blocks/action_content_blocks.py
+#, fuzzy
+#| msgid "User feedback received"
+msgid "Feedback required"
+msgstr "Palautetta vastaanotettu"
+
+#: actions/blocks/action_content_blocks.py
+msgid "Make the feedback field required when visible."
+msgstr ""
+
+#: actions/blocks/action_content_blocks.py
+msgid "Email field visible"
+msgstr ""
+
+#: actions/blocks/action_content_blocks.py
+msgid "Toggle visibility of the email field."
+msgstr ""
+
+#: actions/blocks/action_content_blocks.py
+msgid "Email required"
+msgstr ""
+
+#: actions/blocks/action_content_blocks.py
+msgid "Make the email field required when visible."
+msgstr ""
+
+#: actions/blocks/action_content_blocks.py
+#, fuzzy
+#| msgid "Action field"
+msgid "Additional form fields"
+msgstr "Toimenpiteen kenttä"
+
+#: actions/blocks/action_content_blocks.py
+msgid "Form fields to be shown in addition to Name, Email and Comment fields"
+msgstr ""
+
+#: actions/blocks/action_content_blocks.py
+msgid "Feedback can't be required if it's not visible."
+msgstr ""
+
+#: actions/blocks/action_content_blocks.py
+msgid "Email can't be required if it's not visible."
+msgstr ""
+
+#: actions/blocks/action_content_blocks.py
+#: actions/blocks/category_page_layout.py
+msgid "Contact form"
+msgstr "Yhteydenottolomake"
+
+#: actions/blocks/action_content_blocks.py
+#, fuzzy
+#| msgid "Indicator action"
+msgid "Indicator Causal Chain"
+msgstr "Toimenpiteen mittari"
+
+#: actions/blocks/action_content_blocks.py
+#, fuzzy
+#| msgid "What label should be used in the public UI for the official name?"
+msgid "What heading should be used in the public UI for the dataset?"
+msgstr "Mitä selitettä julkisella sivustolla käytään virallisesta nimestä"
+
+#: actions/blocks/action_content_blocks.py
+#, fuzzy
+msgid "Help text for the Dataset to be shown in the public UI"
+msgstr "Käyttöliittymässä näytettävän kentän ohjeteksti"
+
+#: actions/blocks/action_content_blocks.py
+#, fuzzy
+#| msgid "datasets"
+msgid "Datasets"
+msgstr "tietoaineistot"
+
+#: actions/blocks/action_content_blocks.py
+msgid "What label should be used in the public UI for the official name?"
+msgstr "Mitä selitettä julkisella sivustolla käytään virallisesta nimestä"
+
+#: actions/blocks/action_content_blocks.py aplans/dynamic_blocks.py
+msgid "Field label"
+msgstr "Kentän nimi"
+
+#: actions/blocks/action_content_blocks.py
+msgid "Description to show after the field content"
+msgstr "Kuvaus joka näytetään kentän sisällön jälkeen"
+
+#: actions/blocks/action_content_blocks.py
+msgid "Caption"
+msgstr "Kuvateksti"
+
+#: actions/blocks/action_content_blocks.py
+msgid "Official name"
+msgstr "Virallinen nimi"
 
 #: actions/blocks/action_list.py
 msgid "Action highlights"
@@ -748,11 +685,25 @@ msgstr "Pääsisältö"
 msgid "Basis"
 msgstr "Perusta"
 
+#: actions/blocks/category_page_layout.py actions/blocks/filters.py
+#: reports/blocks/action_content.py reports/spreadsheets/excel_report.py
+msgid "Implementation phase"
+msgstr "Toteutusvaihe"
+
+#: actions/blocks/category_page_layout.py actions/blocks/filters.py
+#: reports/blocks/action_content.py
+msgid "Status"
+msgstr "Tila"
+
 #: actions/blocks/choosers.py
 #, fuzzy
 #| msgid "dataset license"
 msgid "Dataset Schema"
 msgstr "tietoaineiston lisenssi"
+
+#: actions/blocks/column_block_base.py
+msgid "Label for the column to be used instead of the default"
+msgstr "Sarakkeen selite, jota käytetään oletusarvon sijasta"
 
 #: actions/blocks/filters.py
 msgid "Label for 'show all'"
@@ -800,6 +751,34 @@ msgstr "Julkaisu ajastettu"
 #| msgid "continuous action"
 msgid "Continuous Action"
 msgstr "jatkuva toimenpide"
+
+#: actions/blocks/mixins.py
+msgid "[not included]"
+msgstr "[ei mukana]"
+
+#: actions/blocks/mixins.py
+msgid "in primary filters"
+msgstr "ensisijaisissa suotimissa"
+
+#: actions/blocks/mixins.py
+msgid "in main filters"
+msgstr "pääsuotimissa"
+
+#: actions/blocks/mixins.py
+msgid "in advanced filters"
+msgstr "tarkentavissa suotimissa"
+
+#: actions/blocks/mixins.py
+msgid "in main column (top)"
+msgstr "pääpalstalla (ylhäällä)"
+
+#: actions/blocks/mixins.py
+msgid "in main column (bottom)"
+msgstr "pääpalstalla (alhaalla)"
+
+#: actions/blocks/mixins.py
+msgid "in side column"
+msgstr "sivupalstalla"
 
 #: actions/blocks/paths_content.py
 #, fuzzy
@@ -984,6 +963,10 @@ msgstr "Toimenpiteen tunniste (esim. numero)"
 msgid "Image"
 msgstr "Kuva"
 
+#: actions/models/action.py pages/models.py
+msgid "Lead paragraph"
+msgstr "Ingressi"
+
 #: actions/models/action.py actions/models/plan.py indicators/models.py
 #: orgs/models.py
 msgid "description"
@@ -1119,6 +1102,17 @@ msgid "Set if this action is superseded by another action"
 msgstr "Aseta jos toimenpide on korvattu toisella toimenpiteellä"
 
 #: actions/models/action.py
+msgctxt "action"
+msgid "copy of"
+msgstr ""
+
+#: actions/models/action.py
+#, fuzzy
+#| msgid "Set if this action is superseded by another action"
+msgid "Set if this action has been created by copying another action"
+msgstr "Aseta jos toimenpide on korvattu toisella toimenpiteellä"
+
+#: actions/models/action.py
 msgid "Role in dependencies"
 msgstr ""
 
@@ -1185,8 +1179,8 @@ msgstr "Päävastuutaho"
 msgid "Collaborator"
 msgstr "Yhteistyötaho"
 
-#: actions/models/action.py indicators/models.py orgs/models.py
-#: people/models.py people/wagtail_admin.py
+#: actions/models/action.py actions/models/plan.py indicators/models.py
+#: orgs/models.py people/models.py people/wagtail_admin.py
 msgid "organization"
 msgstr "organisaatio"
 
@@ -1934,7 +1928,7 @@ msgid "short identifier"
 msgstr "tunniste"
 
 #: actions/models/plan.py
-msgid "A unique short identifier for the plan to be shown in UI. Could be eg. a number or an abbreviation"
+msgid "A unique short identifier for the plan to be shown in the UI. Could be, e.g., a number or an abbreviation."
 msgstr ""
 
 #: actions/models/plan.py
@@ -1976,7 +1970,9 @@ msgid "Can actions be added and the official metadata edited?"
 msgstr "Voidaanko toimenpiteitä lisätä ja virallisia tietoja muokata?"
 
 #: actions/models/plan.py
-msgid "main organization for the plan"
+#, fuzzy
+#| msgid "main organization for the plan"
+msgid "The main organization for the plan"
 msgstr "toimenpideohjelman pääorganisaatio"
 
 #: actions/models/plan.py
@@ -2062,6 +2058,17 @@ msgid "Set if this plan is superseded by another plan"
 msgstr "Aseta jos toimenpideohjelma on korvattu toisella ohjelmalla"
 
 #: actions/models/plan.py
+msgctxt "plan"
+msgid "copy of"
+msgstr ""
+
+#: actions/models/plan.py
+#, fuzzy
+#| msgid "Set if this plan is superseded by another plan"
+msgid "Set if this plan has been created by copying another plan"
+msgstr "Aseta jos toimenpideohjelma on korvattu toisella ohjelmalla"
+
+#: actions/models/plan.py
 msgid "Kausal Paths instance UUID"
 msgstr ""
 
@@ -2099,6 +2106,11 @@ msgstr "Organisaatio on jo toimenpideohjelmassa"
 msgid "This short identifier is already in use for a top-level plan within this organization."
 msgstr ""
 
+#: actions/models/plan.py indicators/apps.py indicators/blocks.py
+#: indicators/wagtail_admin.py
+msgid "Indicators"
+msgstr "Mittarit"
+
 #: actions/models/plan.py
 msgid "Privacy"
 msgstr "Tietosuoja"
@@ -2106,6 +2118,20 @@ msgstr "Tietosuoja"
 #: actions/models/plan.py feedback/models.py
 msgid "Accessibility"
 msgstr "Saavutettavuus"
+
+#: actions/models/plan.py
+#, python-format
+msgid "%(plan)s (copy from %(date)s)"
+msgstr ""
+
+#: actions/models/plan.py
+#, python-format
+msgid "Copy from %(date)s"
+msgstr ""
+
+#: actions/models/plan.py actions/wagtail_admin.py
+msgid "Clients"
+msgstr "Asiakkaat"
 
 #: actions/models/plan.py aplans/graphql_types.py
 msgid "Published"
@@ -2337,10 +2363,6 @@ msgstr "pääkäyttäjät"
 #: actions/wagtail_admin.py
 msgid "Only set if explicitly required by customer. Use a color key from the UI theme's graphColors, for example red070 or grey030."
 msgstr "Aseta ainoastaan jos asiakas erikseen pyytää. Käytä väriavainta UI-teeman graphColors -arvoista, esimerkiksi red070 tai grey030."
-
-#: actions/wagtail_admin.py
-msgid "Clients"
-msgstr "Asiakkaat"
 
 #: actions/wagtail_admin.py
 msgid "Domains"
@@ -2579,6 +2601,20 @@ msgstr " %(filter_title)s "
 msgid "Administration"
 msgstr "Voi ylläpitää kaikkia toimenpiteitä"
 
+#: admin_site/templates/wagtailadmin/base.html
+#, fuzzy
+#| msgid "Related plans"
+msgid "locked plan"
+msgstr "Liittyvät toimenpideohjelmat"
+
+#: admin_site/templates/wagtailadmin/base.html aplans/utils.py
+msgid "Public"
+msgstr "Julkinen"
+
+#: admin_site/templates/wagtailadmin/base.html aplans/utils.py
+msgid "Internal"
+msgstr "Ei-julkinen"
+
 #: admin_site/templates/wagtailadmin/login.html
 msgid "Sign in to Kausal Watch admin"
 msgstr "Kirjaudu sisään Kausal Watch -ylläpitoon"
@@ -2638,45 +2674,9 @@ msgstr "Näytä julkaistu %s"
 msgid "Could not remove common category type \"%(removed_cct)\" from the plan because categories with the corresponding category type exist."
 msgstr "Yleisen luokan tyyppiä '{removed_cct}' ei voitu poistaa, koska ohjelmassa on vielä luokkia joiden tyyppi on kytketty siihen."
 
-#: admin_site/wagtail.py
-msgid "[not included]"
-msgstr "[ei mukana]"
-
-#: admin_site/wagtail.py
-msgid "in primary filters"
-msgstr "ensisijaisissa suotimissa"
-
-#: admin_site/wagtail.py
-msgid "in main filters"
-msgstr "pääsuotimissa"
-
-#: admin_site/wagtail.py
-msgid "in advanced filters"
-msgstr "tarkentavissa suotimissa"
-
-#: admin_site/wagtail.py
-msgid "in main column (top)"
-msgstr "pääpalstalla (ylhäällä)"
-
-#: admin_site/wagtail.py
-msgid "in main column (bottom)"
-msgstr "pääpalstalla (alhaalla)"
-
-#: admin_site/wagtail.py
-msgid "in side column"
-msgstr "sivupalstalla"
-
 #: admin_site/wagtail_hooks.py reports/apps.py reports/wagtail_admin.py
 msgid "Reports"
 msgstr "Raportit"
-
-#: admin_site/wagtail_hooks.py
-msgid "Create plan"
-msgstr "Luo toimenpideohjelma"
-
-#: admin_site/wagtail_hooks.py
-msgid "Choose plan"
-msgstr "Valitse ohjelma"
 
 #: admin_site/wagtail_hooks.py
 msgid "Email domains"
@@ -2689,6 +2689,16 @@ msgstr "Video-oppaat"
 #: admin_site/wagtail_hooks.py
 msgid "https://kausal.gitbook.io/watch"
 msgstr "https://kausal.gitbook.io/watch"
+
+#: aplans/dynamic_blocks.py
+#, fuzzy
+msgid "Help text for the field to be shown in the UI"
+msgstr "Käyttöliittymässä näytettävän kentän ohjeteksti"
+
+#: aplans/dynamic_blocks.py
+#, python-format
+msgid "Content block: %(label)s"
+msgstr "Sisältölohko: %(label)s"
 
 #: aplans/fields.py
 msgid "Enter a valid hostname."
@@ -2796,14 +2806,6 @@ msgstr ""
 #: aplans/utils.py kausal_common/models/ordered.py
 msgid "order"
 msgstr "järjestys"
-
-#: aplans/utils.py
-msgid "Internal"
-msgstr "Ei-julkinen"
-
-#: aplans/utils.py
-msgid "Public"
-msgstr "Julkinen"
 
 #: aplans/utils.py
 msgid "visibility"
@@ -2958,8 +2960,17 @@ msgid "Milestone"
 msgstr "Virstanpylväs"
 
 #: content/models.py
+msgid "Tasks"
+msgstr "Tehtävät"
+
+#: content/models.py
 msgid "Milestones"
 msgstr "Virstanpylväät"
+
+#: content/models.py indicators/wagtail_admin.py
+#: people/templates/people/chooser_results.html
+msgid "Organization"
+msgstr "Organisaatio"
 
 #: content/models.py
 #, fuzzy
@@ -3053,6 +3064,80 @@ msgstr "sivuston yleiset sisällöt"
 msgid "Site settings"
 msgstr "Sivuston asetukset"
 
+#: copying/views.py reports/spreadsheets/excel_report.py
+msgid "Identifier"
+msgstr "Tunniste"
+
+#: copying/views.py
+msgid "A unique value that identifies the copy internally and appears in URLs of testing or preview environments"
+msgstr ""
+
+#: copying/views.py
+#, fuzzy
+#| msgid "Term to use for 'action'"
+msgid "Name to use for the copy"
+msgstr "Nimi, jolla kutsutaan toimenpiteitä"
+
+#: copying/views.py
+#, fuzzy
+#| msgid "version name"
+msgid "Version name"
+msgstr "version nimi"
+
+#: copying/views.py
+msgid "Version name to be set for the copied plan in order to distinguish it from other versions"
+msgstr ""
+
+#: copying/views.py
+msgid "Supersede original plan"
+msgstr ""
+
+#: copying/views.py
+#, fuzzy
+#| msgid "Set if this plan is superseded by another plan"
+msgid "Set if the copy should supersede the original plan"
+msgstr "Aseta jos toimenpideohjelma on korvattu toisella ohjelmalla"
+
+#: copying/views.py
+#, fuzzy
+#| msgid "editable for actions"
+msgid "Supersede original actions"
+msgstr "muokattavissa toimenpiteille"
+
+#: copying/views.py
+#, fuzzy
+#| msgid "Set if this action is superseded by another action"
+msgid "Set if copies of actions should supersede their original"
+msgstr "Aseta jos toimenpide on korvattu toisella toimenpiteellä"
+
+#: copying/views.py
+#, fuzzy
+#| msgid "Person with this email already exists"
+msgid "A plan with this identifier already exists"
+msgstr "Tällä sähköpostiosoitteella on jo henkilö"
+
+#: copying/views.py
+#, fuzzy
+#| msgid "Person with this email already exists"
+msgid "A plan with this name already exists"
+msgstr "Tällä sähköpostiosoitteella on jo henkilö"
+
+#: copying/views.py
+#, fuzzy
+#| msgid "Choose plan"
+msgid "Copy plan"
+msgstr "Valitse ohjelma"
+
+#: copying/views.py
+msgid "The copy will be created in the background. This may take a few minutes. The copy will appear in the list of plans as soon as copying is finished."
+msgstr ""
+
+#: copying/views.py
+#, fuzzy
+#| msgid "Create plan"
+msgid "Create copy"
+msgstr "Luo toimenpideohjelma"
+
 #: documentation/models.py
 #, fuzzy
 msgid "CSS style"
@@ -3094,7 +3179,8 @@ msgstr "asiakirja"
 msgid "documents"
 msgstr "asiakirjat"
 
-#: feedback/models.py orgs/models.py people/models.py users/models.py
+#: feedback/models.py kausal_common/users/models.py orgs/models.py
+#: people/models.py users/models.py
 msgid "email address"
 msgstr "sähköpostiosoite"
 
@@ -3168,6 +3254,10 @@ msgstr "Käyttäjän palaute '%(user_feedback)s' merkittiin käsitellyksi."
 #, python-format
 msgid "User feedback '%(user_feedback)s' has been marked as unprocessed."
 msgstr "Käyttäjän palaute '%(user_feedback)s' merkittiin käsittelemättömäksi."
+
+#: feedback/wagtail_admin.py
+msgid "N/A"
+msgstr ""
 
 #: feedback/wagtail_admin.py
 msgid "Mark as processed"
@@ -5295,6 +5385,25 @@ msgstr "Käyttäjät"
 msgid "No permission to remove the user belonging to plans you are not managing."
 msgstr "Ei oikeuksia poistaa käyttäjä joka kuuluu toimenpideohjelmiin, joita et hallinnoi."
 
+#~ msgid "Related actions"
+#~ msgstr "Liittyvät toimenpiteet"
+
+#~ msgid "Updated at"
+#~ msgstr "Päivitysaika"
+
+#, fuzzy
+#~| msgid "start date"
+#~ msgid "Start date"
+#~ msgstr "alkupäivämäärä"
+
+#, fuzzy
+#~| msgid "end date"
+#~ msgid "End date"
+#~ msgstr "loppupäivämäärä"
+
+#~ msgid "Impact"
+#~ msgstr "Vaikuttavuus"
+
 #~ msgid "Automatic notifications"
 #~ msgstr "Automaattiset herätteet"
 
@@ -5510,9 +5619,6 @@ msgstr "Ei oikeuksia poistaa käyttäjä joka kuuluu toimenpideohjelmiin, joita 
 
 #~ msgid "attribute type"
 #~ msgstr "ominaisuustyyppi"
-
-#~ msgid "attribute types"
-#~ msgstr "ominaisuustyypit"
 
 #, python-format
 #~ msgid "Add another %(model)s"

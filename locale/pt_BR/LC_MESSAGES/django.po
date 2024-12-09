@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-10-28 13:42+0200\n"
+"POT-Creation-Date: 2024-12-09 22:38+0100\n"
 "PO-Revision-Date: 2024-10-22 12:20+0000\n"
 "Last-Translator: Matias Wargelin <matias.wargelin@kausal.tech>\n"
 "Language-Team: Portuguese (Brazil) <https://weblate.kausal.tech/projects/watch/django/pt_BR/>\n"
@@ -31,8 +31,8 @@ msgstr "%s é listado várias vezes na ação."
 msgid "Unspecified"
 msgstr "Não especificado"
 
-#: actions/action_admin.py actions/api.py actions/blocks/action_content.py
-#: actions/blocks/action_dashboard.py
+#: actions/action_admin.py actions/api.py
+#: actions/blocks/action_content_blocks.py
 msgid "Responsible parties"
 msgstr "Partes responsáveis"
 
@@ -65,10 +65,11 @@ msgstr "Desfazer a marcação dessa ação como concluída para o relatório %s"
 msgid "Last updated"
 msgstr "Última atualização"
 
-#: actions/action_admin.py actions/blocks/action_dashboard.py
-#: actions/templates/actions/chooser_results.html admin_site/models.py
-#: admin_site/templates/admin_site/own_indicators_panel.html orgs/models.py
-#: orgs/wagtail_admin.py people/templates/people/chooser_results.html
+#: actions/action_admin.py actions/templates/actions/chooser_results.html
+#: admin_site/models.py
+#: admin_site/templates/admin_site/own_indicators_panel.html copying/views.py
+#: orgs/models.py orgs/wagtail_admin.py
+#: people/templates/people/chooser_results.html
 msgid "Name"
 msgstr "Nome"
 
@@ -200,6 +201,16 @@ msgstr "Cancelar publicação programada"
 #, fuzzy
 msgid "Edit"
 msgstr "Editar"
+
+#: actions/action_fields.py actions/tests/fixtures_stream_block.py
+#, fuzzy
+msgid "Action dependencies"
+msgstr "Cronogramas de ação"
+
+#: actions/action_fields.py actions/tests/fixtures_stream_block.py
+#, fuzzy
+msgid "Merged actions"
+msgstr "Ações mescladas"
 
 #: actions/action_status_summary.py actions/defaults.py
 #, fuzzy
@@ -385,240 +396,15 @@ msgstr "%(attribute_type)s (escolha)"
 msgid "%(attribute_type)s (text)"
 msgstr "%(attribute_type)s (texto)"
 
+#: actions/attributes.py
+#, fuzzy, python-format
+msgid "%(attribute_type)s"
+msgstr "%(attribute_type)s (texto)"
+
 #: actions/blocks/__init__.py
 #, fuzzy
 msgid "Related plans"
 msgstr "Planos relacionados"
-
-#: actions/blocks/action_content.py actions/blocks/action_dashboard.py
-#: actions/blocks/category_page_layout.py actions/blocks/choosers.py
-#: actions/blocks/filters.py
-#, fuzzy
-msgid "Field"
-msgstr "Campo"
-
-#: actions/blocks/action_content.py actions/blocks/choosers.py
-#: actions/blocks/filters.py actions/models/attributes.py feedback/models.py
-#: pages/models.py
-#, fuzzy
-msgid "Category"
-msgstr "Categoria"
-
-#: actions/blocks/action_content.py
-#, fuzzy
-msgid "Heading to show instead of the default"
-msgstr "Título a ser exibido em vez do padrão"
-
-#: actions/blocks/action_content.py actions/blocks/action_dashboard.py
-#, fuzzy
-msgid "Label"
-msgstr "Rótulo"
-
-#: actions/blocks/action_content.py
-#, fuzzy
-msgid "Value"
-msgstr "valor"
-
-#: actions/blocks/action_content.py actions/models/attributes.py
-#, fuzzy
-msgid "Choice"
-msgstr "Escolha"
-
-#: actions/blocks/action_content.py
-#, fuzzy
-msgid "Field Label"
-msgstr "Etiqueta do campo"
-
-#: actions/blocks/action_content.py actions/models/attributes.py
-#: documentation/models.py pages/models.py
-#, fuzzy
-msgid "Text"
-msgstr "Texto"
-
-#: actions/blocks/action_content.py
-msgid "Checkbox"
-msgstr ""
-
-#: actions/blocks/action_content.py actions/blocks/filters.py
-#, fuzzy
-msgid "Dropdown"
-msgstr "Menu suspenso"
-
-#: actions/blocks/action_content.py
-#, fuzzy
-msgid "Field Type"
-msgstr "Etiqueta do campo"
-
-#: actions/blocks/action_content.py
-msgid "Required"
-msgstr ""
-
-#: actions/blocks/action_content.py
-#, fuzzy
-msgid "Choices"
-msgstr "Escolha"
-
-#: actions/blocks/action_content.py
-#, fuzzy
-msgid "Choices are only allowed for 'Dropdown' or 'Checkbox' field types."
-msgstr "Esse valor só é permitido para campos de ação"
-
-#: actions/blocks/action_content.py
-msgid "Choices must be provided for 'Dropdown' or 'Checkbox' field types."
-msgstr ""
-
-#: actions/blocks/action_content.py
-#, fuzzy
-msgid "Form Field"
-msgstr "Campo"
-
-#: actions/blocks/action_content.py actions/blocks/action_list.py
-#: actions/blocks/category_list.py actions/blocks/paths_content.py
-#: pages/blocks.py
-#, fuzzy
-msgid "Heading"
-msgstr "Título"
-
-#: actions/blocks/action_content.py
-#, fuzzy
-msgid "Description"
-msgstr "Descrição"
-
-#: actions/blocks/action_content.py
-msgid "Feedback field visible"
-msgstr ""
-
-#: actions/blocks/action_content.py
-msgid "Toggle visibility of the feedback field."
-msgstr ""
-
-#: actions/blocks/action_content.py
-#, fuzzy
-msgid "Feedback required"
-msgstr "Feedback do usuário recebido"
-
-#: actions/blocks/action_content.py
-msgid "Make the feedback field required when visible."
-msgstr ""
-
-#: actions/blocks/action_content.py
-msgid "Email field visible"
-msgstr ""
-
-#: actions/blocks/action_content.py
-msgid "Toggle visibility of the email field."
-msgstr ""
-
-#: actions/blocks/action_content.py
-msgid "Email required"
-msgstr ""
-
-#: actions/blocks/action_content.py
-msgid "Make the email field required when visible."
-msgstr ""
-
-#: actions/blocks/action_content.py
-#, fuzzy
-msgid "Additional form fields"
-msgstr "Campo de ação"
-
-#: actions/blocks/action_content.py
-msgid "Form fields to be shown in addition to Name, Email and Comment fields"
-msgstr ""
-
-#: actions/blocks/action_content.py
-msgid "Feedback can't be required if it's not visible."
-msgstr ""
-
-#: actions/blocks/action_content.py
-msgid "Email can't be required if it's not visible."
-msgstr ""
-
-#: actions/blocks/action_content.py actions/blocks/category_page_layout.py
-#, fuzzy
-msgid "Contact form"
-msgstr "Formulário de contato"
-
-#: actions/blocks/action_content.py
-#, fuzzy
-msgid "Indicator Causal Chain"
-msgstr "Dados do indicador"
-
-#: actions/blocks/action_content.py
-#, fuzzy
-msgid "What heading should be used in the public UI for the Dataset?"
-msgstr "Qual rótulo deve ser usado na IU pública para o nome oficial?"
-
-#: actions/blocks/action_content.py
-#, fuzzy
-msgid "Help text for the Dataset to be shown in the public UI"
-msgstr "Texto de ajuda para o campo a ser mostrado na interface do usuário"
-
-#: actions/blocks/action_content.py actions/blocks/action_list.py
-#: actions/blocks/category_list.py actions/blocks/paths_content.py
-#, fuzzy
-msgid "Help text"
-msgstr "Texto de ajuda"
-
-#: actions/blocks/action_content.py
-#, fuzzy
-msgid "Datasets"
-msgstr "conjuntos de dados"
-
-#: actions/blocks/action_content.py
-#, fuzzy
-msgid "What label should be used in the public UI for the official name?"
-msgstr "Qual rótulo deve ser usado na IU pública para o nome oficial?"
-
-#: actions/blocks/action_content.py
-#, fuzzy
-msgid "Field label"
-msgstr "Etiqueta do campo"
-
-#: actions/blocks/action_content.py
-#, fuzzy
-msgid "Description to show after the field content"
-msgstr "Descrição a ser exibida após o conteúdo do campo"
-
-#: actions/blocks/action_content.py
-#, fuzzy
-msgid "Caption"
-msgstr "Legenda"
-
-#: actions/blocks/action_content.py
-#, fuzzy
-msgid "Official name"
-msgstr "Nome oficial"
-
-#: actions/blocks/action_content.py
-#, fuzzy
-msgid "Help text for the field to be shown in the UI"
-msgstr "Texto de ajuda para o campo a ser mostrado na interface do usuário"
-
-#: actions/blocks/action_content.py
-#, fuzzy, python-format
-msgid "Content block: %(label)s"
-msgstr "Bloco de conteúdo: %(label)s"
-
-#: actions/blocks/action_content.py actions/models/action.py pages/models.py
-#, fuzzy
-msgid "Lead paragraph"
-msgstr "Parágrafo principal"
-
-#: actions/blocks/action_content.py
-#, fuzzy
-msgid "Merged actions"
-msgstr "Ações mescladas"
-
-#: actions/blocks/action_content.py
-#, fuzzy
-msgid "Related actions"
-msgstr "Ações relacionadas"
-
-#: actions/blocks/action_content.py
-#, fuzzy
-msgid "Action dependencies"
-msgstr "Cronogramas de ação"
 
 #: actions/blocks/action_content.py
 #, fuzzy
@@ -630,6 +416,20 @@ msgstr "Largura total"
 msgid "Grid"
 msgstr "Grade"
 
+#: actions/blocks/action_content.py actions/blocks/action_content_blocks.py
+#: actions/blocks/action_list.py actions/blocks/category_list.py
+#: actions/blocks/paths_content.py pages/blocks.py
+#, fuzzy
+msgid "Heading"
+msgstr "Título"
+
+#: actions/blocks/action_content.py actions/blocks/action_content_blocks.py
+#: actions/blocks/action_list.py actions/blocks/category_list.py
+#: actions/blocks/paths_content.py aplans/dynamic_blocks.py
+#, fuzzy
+msgid "Help text"
+msgstr "Texto de ajuda"
+
 #: actions/blocks/action_content.py
 #, fuzzy
 msgid "Blocks"
@@ -640,65 +440,193 @@ msgstr "Blocos"
 msgid "Section"
 msgstr "Seção"
 
-#: actions/blocks/action_dashboard.py
+#: actions/blocks/action_content_blocks.py actions/blocks/action_dashboard.py
+#: actions/blocks/category_page_layout.py actions/blocks/choosers.py
+#: actions/blocks/filters.py
 #, fuzzy
-msgid "Label for the column to be used instead of the default"
-msgstr "Rótulo da coluna a ser usado em vez do padrão"
+msgid "Field"
+msgstr "Campo"
 
-#: actions/blocks/action_dashboard.py reports/spreadsheets/excel_report.py
+#: actions/blocks/action_content_blocks.py actions/blocks/choosers.py
+#: actions/blocks/filters.py actions/models/attributes.py feedback/models.py
+#: pages/models.py
 #, fuzzy
-msgid "Identifier"
-msgstr "Identificador"
+msgid "Category"
+msgstr "Categoria"
 
-#: actions/blocks/action_dashboard.py actions/blocks/category_page_layout.py
-#: actions/blocks/filters.py reports/blocks/action_content.py
-#: reports/spreadsheets/excel_report.py
+#: actions/blocks/action_content_blocks.py aplans/dynamic_blocks.py
 #, fuzzy
-msgid "Implementation phase"
-msgstr "Fase de implementação"
+msgid "Heading to show instead of the default"
+msgstr "Título a ser exibido em vez do padrão"
 
-#: actions/blocks/action_dashboard.py actions/blocks/category_page_layout.py
-#: actions/blocks/filters.py reports/blocks/action_content.py
+#: actions/blocks/action_content_blocks.py actions/blocks/column_block_base.py
 #, fuzzy
-msgid "Status"
-msgstr "Status"
+msgid "Label"
+msgstr "Rótulo"
 
-#: actions/blocks/action_dashboard.py content/models.py
+#: actions/blocks/action_content_blocks.py
 #, fuzzy
-msgid "Tasks"
-msgstr "Tarefas"
+msgid "Value"
+msgstr "valor"
 
-#: actions/blocks/action_dashboard.py actions/models/plan.py indicators/apps.py
-#: indicators/blocks.py indicators/wagtail_admin.py
+#: actions/blocks/action_content_blocks.py actions/models/attributes.py
 #, fuzzy
-msgid "Indicators"
-msgstr "Indicadores"
+msgid "Choice"
+msgstr "Escolha"
 
-#: actions/blocks/action_dashboard.py
+#: actions/blocks/action_content_blocks.py
 #, fuzzy
-msgid "Updated at"
-msgstr "Atualizado em"
+msgid "Field Label"
+msgstr "Etiqueta do campo"
 
-#: actions/blocks/action_dashboard.py
+#: actions/blocks/action_content_blocks.py actions/models/attributes.py
+#: documentation/models.py pages/models.py
 #, fuzzy
-msgid "Start date"
-msgstr "data de início"
+msgid "Text"
+msgstr "Texto"
 
-#: actions/blocks/action_dashboard.py
-#, fuzzy
-msgid "End date"
-msgstr "data final"
+#: actions/blocks/action_content_blocks.py
+msgid "Checkbox"
+msgstr ""
 
-#: actions/blocks/action_dashboard.py content/models.py
-#: indicators/wagtail_admin.py people/templates/people/chooser_results.html
+#: actions/blocks/action_content_blocks.py actions/blocks/filters.py
 #, fuzzy
-msgid "Organization"
-msgstr "Organização"
+msgid "Dropdown"
+msgstr "Menu suspenso"
 
-#: actions/blocks/action_dashboard.py
+#: actions/blocks/action_content_blocks.py
 #, fuzzy
-msgid "Impact"
-msgstr "Impacto"
+msgid "Field Type"
+msgstr "Etiqueta do campo"
+
+#: actions/blocks/action_content_blocks.py
+msgid "Required"
+msgstr ""
+
+#: actions/blocks/action_content_blocks.py
+#, fuzzy
+msgid "Choices"
+msgstr "Escolha"
+
+#: actions/blocks/action_content_blocks.py
+#, fuzzy
+msgid "Choices are only allowed for 'Dropdown' or 'Checkbox' field types."
+msgstr "Esse valor só é permitido para campos de ação"
+
+#: actions/blocks/action_content_blocks.py
+msgid "Choices must be provided for 'Dropdown' or 'Checkbox' field types."
+msgstr ""
+
+#: actions/blocks/action_content_blocks.py
+#, fuzzy
+msgid "Form Field"
+msgstr "Campo"
+
+#: actions/blocks/action_content_blocks.py
+#, fuzzy
+msgid "Description"
+msgstr "Descrição"
+
+#: actions/blocks/action_content_blocks.py
+msgid "Feedback field visible"
+msgstr ""
+
+#: actions/blocks/action_content_blocks.py
+msgid "Toggle visibility of the feedback field."
+msgstr ""
+
+#: actions/blocks/action_content_blocks.py
+#, fuzzy
+msgid "Feedback required"
+msgstr "Feedback do usuário recebido"
+
+#: actions/blocks/action_content_blocks.py
+msgid "Make the feedback field required when visible."
+msgstr ""
+
+#: actions/blocks/action_content_blocks.py
+msgid "Email field visible"
+msgstr ""
+
+#: actions/blocks/action_content_blocks.py
+msgid "Toggle visibility of the email field."
+msgstr ""
+
+#: actions/blocks/action_content_blocks.py
+msgid "Email required"
+msgstr ""
+
+#: actions/blocks/action_content_blocks.py
+msgid "Make the email field required when visible."
+msgstr ""
+
+#: actions/blocks/action_content_blocks.py
+#, fuzzy
+msgid "Additional form fields"
+msgstr "Campo de ação"
+
+#: actions/blocks/action_content_blocks.py
+msgid "Form fields to be shown in addition to Name, Email and Comment fields"
+msgstr ""
+
+#: actions/blocks/action_content_blocks.py
+msgid "Feedback can't be required if it's not visible."
+msgstr ""
+
+#: actions/blocks/action_content_blocks.py
+msgid "Email can't be required if it's not visible."
+msgstr ""
+
+#: actions/blocks/action_content_blocks.py
+#: actions/blocks/category_page_layout.py
+#, fuzzy
+msgid "Contact form"
+msgstr "Formulário de contato"
+
+#: actions/blocks/action_content_blocks.py
+#, fuzzy
+msgid "Indicator Causal Chain"
+msgstr "Dados do indicador"
+
+#: actions/blocks/action_content_blocks.py
+#, fuzzy
+msgid "What heading should be used in the public UI for the dataset?"
+msgstr "Qual rótulo deve ser usado na IU pública para o nome oficial?"
+
+#: actions/blocks/action_content_blocks.py
+#, fuzzy
+msgid "Help text for the Dataset to be shown in the public UI"
+msgstr "Texto de ajuda para o campo a ser mostrado na interface do usuário"
+
+#: actions/blocks/action_content_blocks.py
+#, fuzzy
+msgid "Datasets"
+msgstr "conjuntos de dados"
+
+#: actions/blocks/action_content_blocks.py
+#, fuzzy
+msgid "What label should be used in the public UI for the official name?"
+msgstr "Qual rótulo deve ser usado na IU pública para o nome oficial?"
+
+#: actions/blocks/action_content_blocks.py aplans/dynamic_blocks.py
+#, fuzzy
+msgid "Field label"
+msgstr "Etiqueta do campo"
+
+#: actions/blocks/action_content_blocks.py
+#, fuzzy
+msgid "Description to show after the field content"
+msgstr "Descrição a ser exibida após o conteúdo do campo"
+
+#: actions/blocks/action_content_blocks.py
+#, fuzzy
+msgid "Caption"
+msgstr "Legenda"
+
+#: actions/blocks/action_content_blocks.py
+#, fuzzy
+msgid "Official name"
+msgstr "Nome oficial"
 
 #: actions/blocks/action_list.py
 #, fuzzy
@@ -800,10 +728,27 @@ msgstr "Corpo"
 msgid "Basis"
 msgstr "Base"
 
+#: actions/blocks/category_page_layout.py actions/blocks/filters.py
+#: reports/blocks/action_content.py reports/spreadsheets/excel_report.py
+#, fuzzy
+msgid "Implementation phase"
+msgstr "Fase de implementação"
+
+#: actions/blocks/category_page_layout.py actions/blocks/filters.py
+#: reports/blocks/action_content.py
+#, fuzzy
+msgid "Status"
+msgstr "Status"
+
 #: actions/blocks/choosers.py
 #, fuzzy
 msgid "Dataset Schema"
 msgstr "licença do conjunto de dados"
+
+#: actions/blocks/column_block_base.py
+#, fuzzy
+msgid "Label for the column to be used instead of the default"
+msgstr "Rótulo da coluna a ser usado em vez do padrão"
 
 #: actions/blocks/filters.py
 #, fuzzy
@@ -855,6 +800,41 @@ msgstr "Cronograma"
 #, fuzzy
 msgid "Continuous Action"
 msgstr "ação contínua"
+
+#: actions/blocks/mixins.py
+#, fuzzy
+msgid "[not included]"
+msgstr "[não incluído]."
+
+#: actions/blocks/mixins.py
+#, fuzzy
+msgid "in primary filters"
+msgstr "em filtros primários"
+
+#: actions/blocks/mixins.py
+#, fuzzy
+msgid "in main filters"
+msgstr "nos filtros principais"
+
+#: actions/blocks/mixins.py
+#, fuzzy
+msgid "in advanced filters"
+msgstr "em filtros avançados"
+
+#: actions/blocks/mixins.py
+#, fuzzy
+msgid "in main column (top)"
+msgstr "na coluna principal (parte superior)"
+
+#: actions/blocks/mixins.py
+#, fuzzy
+msgid "in main column (bottom)"
+msgstr "na coluna principal (parte inferior)"
+
+#: actions/blocks/mixins.py
+#, fuzzy
+msgid "in side column"
+msgstr "na coluna lateral"
 
 #: actions/blocks/paths_content.py
 #, fuzzy
@@ -1070,6 +1050,11 @@ msgstr "O identificador dessa ação (por exemplo, número)"
 msgid "Image"
 msgstr "Imagem"
 
+#: actions/models/action.py pages/models.py
+#, fuzzy
+msgid "Lead paragraph"
+msgstr "Parágrafo principal"
+
 #: actions/models/action.py actions/models/plan.py indicators/models.py
 #: orgs/models.py
 #, fuzzy
@@ -1234,6 +1219,16 @@ msgid "Set if this action is superseded by another action"
 msgstr "Definir se essa ação for substituída por outra ação"
 
 #: actions/models/action.py
+msgctxt "action"
+msgid "copy of"
+msgstr ""
+
+#: actions/models/action.py
+#, fuzzy
+msgid "Set if this action has been created by copying another action"
+msgstr "Definir se essa ação for substituída por outra ação"
+
+#: actions/models/action.py
 msgid "Role in dependencies"
 msgstr ""
 
@@ -1308,8 +1303,8 @@ msgstr "Parte responsável principal"
 msgid "Collaborator"
 msgstr "Colaborador"
 
-#: actions/models/action.py indicators/models.py orgs/models.py
-#: people/models.py people/wagtail_admin.py
+#: actions/models/action.py actions/models/plan.py indicators/models.py
+#: orgs/models.py people/models.py people/wagtail_admin.py
 #, fuzzy
 msgid "organization"
 msgstr "organização"
@@ -2193,7 +2188,7 @@ msgid "short identifier"
 msgstr "identificador"
 
 #: actions/models/plan.py
-msgid "A unique short identifier for the plan to be shown in UI. Could be eg. a number or an abbreviation"
+msgid "A unique short identifier for the plan to be shown in the UI. Could be, e.g., a number or an abbreviation."
 msgstr ""
 
 #: actions/models/plan.py
@@ -2242,7 +2237,7 @@ msgstr "As ações podem ser adicionadas e os metadados oficiais podem ser edita
 
 #: actions/models/plan.py
 #, fuzzy
-msgid "main organization for the plan"
+msgid "The main organization for the plan"
 msgstr "organização principal do plano"
 
 #: actions/models/plan.py
@@ -2343,6 +2338,16 @@ msgid "Set if this plan is superseded by another plan"
 msgstr "Definir se este plano for substituído por outro plano"
 
 #: actions/models/plan.py
+msgctxt "plan"
+msgid "copy of"
+msgstr ""
+
+#: actions/models/plan.py
+#, fuzzy
+msgid "Set if this plan has been created by copying another plan"
+msgstr "Definir se este plano for substituído por outro plano"
+
+#: actions/models/plan.py
 msgid "Kausal Paths instance UUID"
 msgstr ""
 
@@ -2384,6 +2389,12 @@ msgstr "A organização já está incluída no plano"
 msgid "This short identifier is already in use for a top-level plan within this organization."
 msgstr ""
 
+#: actions/models/plan.py indicators/apps.py indicators/blocks.py
+#: indicators/wagtail_admin.py
+#, fuzzy
+msgid "Indicators"
+msgstr "Indicadores"
+
 #: actions/models/plan.py
 #, fuzzy
 msgid "Privacy"
@@ -2393,6 +2404,21 @@ msgstr "Privacidade"
 #, fuzzy
 msgid "Accessibility"
 msgstr "Acessibilidade"
+
+#: actions/models/plan.py
+#, python-format
+msgid "%(plan)s (copy from %(date)s)"
+msgstr ""
+
+#: actions/models/plan.py
+#, python-format
+msgid "Copy from %(date)s"
+msgstr ""
+
+#: actions/models/plan.py actions/wagtail_admin.py
+#, fuzzy
+msgid "Clients"
+msgstr "Clientes"
 
 #: actions/models/plan.py aplans/graphql_types.py
 #, fuzzy
@@ -2644,11 +2670,6 @@ msgstr "Administradores gerais"
 #, fuzzy
 msgid "Only set if explicitly required by customer. Use a color key from the UI theme's graphColors, for example red070 or grey030."
 msgstr "Somente definido se explicitamente exigido pelo cliente. Use uma chave de cor do graphColors do tema da interface do usuário, por exemplo, red070 ou grey030."
-
-#: actions/wagtail_admin.py
-#, fuzzy
-msgid "Clients"
-msgstr "Clientes"
 
 #: actions/wagtail_admin.py
 #, fuzzy
@@ -2919,6 +2940,21 @@ msgstr " Por %(filter_title)s "
 msgid "Administration"
 msgstr "Pode administrar todas as ações"
 
+#: admin_site/templates/wagtailadmin/base.html
+#, fuzzy
+msgid "locked plan"
+msgstr "Planos relacionados"
+
+#: admin_site/templates/wagtailadmin/base.html aplans/utils.py
+#, fuzzy
+msgid "Public"
+msgstr "Público"
+
+#: admin_site/templates/wagtailadmin/base.html aplans/utils.py
+#, fuzzy
+msgid "Internal"
+msgstr "Interno"
+
 #: admin_site/templates/wagtailadmin/login.html
 #, fuzzy
 msgid "Sign in to Kausal Watch admin"
@@ -2979,55 +3015,10 @@ msgstr "Veja %s ao vivo"
 msgid "Could not remove common category type \"%(removed_cct)\" from the plan because categories with the corresponding category type exist."
 msgstr "Não foi possível remover o tipo de categoria comum '{removed_cct}' do plano porque existem categorias com o tipo de categoria correspondente."
 
-#: admin_site/wagtail.py
-#, fuzzy
-msgid "[not included]"
-msgstr "[não incluído]."
-
-#: admin_site/wagtail.py
-#, fuzzy
-msgid "in primary filters"
-msgstr "em filtros primários"
-
-#: admin_site/wagtail.py
-#, fuzzy
-msgid "in main filters"
-msgstr "nos filtros principais"
-
-#: admin_site/wagtail.py
-#, fuzzy
-msgid "in advanced filters"
-msgstr "em filtros avançados"
-
-#: admin_site/wagtail.py
-#, fuzzy
-msgid "in main column (top)"
-msgstr "na coluna principal (parte superior)"
-
-#: admin_site/wagtail.py
-#, fuzzy
-msgid "in main column (bottom)"
-msgstr "na coluna principal (parte inferior)"
-
-#: admin_site/wagtail.py
-#, fuzzy
-msgid "in side column"
-msgstr "na coluna lateral"
-
 #: admin_site/wagtail_hooks.py reports/apps.py reports/wagtail_admin.py
 #, fuzzy
 msgid "Reports"
 msgstr "Relatórios"
-
-#: admin_site/wagtail_hooks.py
-#, fuzzy
-msgid "Create plan"
-msgstr "Criar plano"
-
-#: admin_site/wagtail_hooks.py
-#, fuzzy
-msgid "Choose plan"
-msgstr "Selecionar plano"
 
 #: admin_site/wagtail_hooks.py
 #, fuzzy
@@ -3043,6 +3034,16 @@ msgstr "Tutoriais em vídeo"
 #, fuzzy
 msgid "https://kausal.gitbook.io/watch"
 msgstr "https://kausal.gitbook.io/watch"
+
+#: aplans/dynamic_blocks.py
+#, fuzzy
+msgid "Help text for the field to be shown in the UI"
+msgstr "Texto de ajuda para o campo a ser mostrado na interface do usuário"
+
+#: aplans/dynamic_blocks.py
+#, fuzzy, python-format
+msgid "Content block: %(label)s"
+msgstr "Bloco de conteúdo: %(label)s"
 
 #: aplans/fields.py
 #, fuzzy
@@ -3171,16 +3172,6 @@ msgstr "Ano (2020)"
 #, fuzzy
 msgid "order"
 msgstr "ordem"
-
-#: aplans/utils.py
-#, fuzzy
-msgid "Internal"
-msgstr "Interno"
-
-#: aplans/utils.py
-#, fuzzy
-msgid "Public"
-msgstr "Público"
 
 #: aplans/utils.py
 #, fuzzy
@@ -3355,8 +3346,19 @@ msgstr "Marco"
 
 #: content/models.py
 #, fuzzy
+msgid "Tasks"
+msgstr "Tarefas"
+
+#: content/models.py
+#, fuzzy
 msgid "Milestones"
 msgstr "Marcos"
+
+#: content/models.py indicators/wagtail_admin.py
+#: people/templates/people/chooser_results.html
+#, fuzzy
+msgid "Organization"
+msgstr "Organização"
 
 #: content/models.py
 #, fuzzy
@@ -3468,6 +3470,72 @@ msgstr "Conteúdo geral do site"
 msgid "Site settings"
 msgstr "Configurações do site"
 
+#: copying/views.py reports/spreadsheets/excel_report.py
+#, fuzzy
+msgid "Identifier"
+msgstr "Identificador"
+
+#: copying/views.py
+msgid "A unique value that identifies the copy internally and appears in URLs of testing or preview environments"
+msgstr ""
+
+#: copying/views.py
+#, fuzzy
+msgid "Name to use for the copy"
+msgstr "Termo a ser usado para \"ação"
+
+#: copying/views.py
+#, fuzzy
+msgid "Version name"
+msgstr "nome da versão"
+
+#: copying/views.py
+msgid "Version name to be set for the copied plan in order to distinguish it from other versions"
+msgstr ""
+
+#: copying/views.py
+msgid "Supersede original plan"
+msgstr ""
+
+#: copying/views.py
+#, fuzzy
+msgid "Set if the copy should supersede the original plan"
+msgstr "Definir se este plano for substituído por outro plano"
+
+#: copying/views.py
+#, fuzzy
+msgid "Supersede original actions"
+msgstr "editável para ações"
+
+#: copying/views.py
+#, fuzzy
+msgid "Set if copies of actions should supersede their original"
+msgstr "Definir se essa ação for substituída por outra ação"
+
+#: copying/views.py
+#, fuzzy
+msgid "A plan with this identifier already exists"
+msgstr "Já existe uma pessoa com esse e-mail"
+
+#: copying/views.py
+#, fuzzy
+msgid "A plan with this name already exists"
+msgstr "Já existe uma pessoa com esse e-mail"
+
+#: copying/views.py
+#, fuzzy
+msgid "Copy plan"
+msgstr "Selecionar plano"
+
+#: copying/views.py
+msgid "The copy will be created in the background. This may take a few minutes. The copy will appear in the list of plans as soon as copying is finished."
+msgstr ""
+
+#: copying/views.py
+#, fuzzy
+msgid "Create copy"
+msgstr "Criar plano"
+
 #: documentation/models.py
 #, fuzzy
 msgid "CSS style"
@@ -3513,7 +3581,8 @@ msgstr "documento"
 msgid "documents"
 msgstr "documentos"
 
-#: feedback/models.py orgs/models.py people/models.py users/models.py
+#: feedback/models.py kausal_common/users/models.py orgs/models.py
+#: people/models.py users/models.py
 #, fuzzy
 msgid "email address"
 msgstr "endereço de e-mail"
@@ -3595,6 +3664,10 @@ msgstr "O feedback do usuário '%(user_feedback)s' foi marcado como processado."
 #, fuzzy, python-format
 msgid "User feedback '%(user_feedback)s' has been marked as unprocessed."
 msgstr "O feedback do usuário '%(user_feedback)s' foi marcado como não processado."
+
+#: feedback/wagtail_admin.py
+msgid "N/A"
+msgstr ""
 
 #: feedback/wagtail_admin.py
 #, fuzzy
@@ -6021,6 +6094,26 @@ msgstr "Usuários"
 #, fuzzy
 msgid "No permission to remove the user belonging to plans you are not managing."
 msgstr "Nenhuma permissão para remover o usuário pertencente a planos que você não está gerenciando."
+
+#, fuzzy
+#~ msgid "Related actions"
+#~ msgstr "Ações relacionadas"
+
+#, fuzzy
+#~ msgid "Updated at"
+#~ msgstr "Atualizado em"
+
+#, fuzzy
+#~ msgid "Start date"
+#~ msgstr "data de início"
+
+#, fuzzy
+#~ msgid "End date"
+#~ msgstr "data final"
+
+#, fuzzy
+#~ msgid "Impact"
+#~ msgstr "Impacto"
 
 #, fuzzy
 #~ msgid "Automatic notifications"
