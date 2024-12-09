@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-10-28 13:42+0200\n"
-"PO-Revision-Date: 2024-12-09 14:20+0000\n"
+"PO-Revision-Date: 2024-12-09 16:20+0000\n"
 "Last-Translator: Weblate Admin <noreply@mj.kausal.tech>\n"
 "Language-Team: German <https://weblate.kausal.tech/projects/watch/django/de/>"
 "\n"
@@ -1980,11 +1980,12 @@ msgstr "Setzen, wenn dieser Plan durch einen anderen Plan ersetzt worden ist"
 
 #: actions/models/plan.py
 msgid "Kausal Paths instance UUID"
-msgstr ""
+msgstr "Kausal Paths Instanz-UUID"
 
 #: actions/models/plan.py
 msgid "UUID of the corresponding Kausal Paths instance for Kausal Paths integration"
 msgstr ""
+"UUID der entsprechenden Kausal-Paths-Instanz für die Kausal-Paths-Integration"
 
 #: actions/models/plan.py indicators/models.py
 msgid "plans"
@@ -2007,10 +2008,8 @@ msgid "Primary and secondary classification cannot be the same"
 msgstr "Primäre und sekundäre Klassifizierung können nicht identisch sein"
 
 #: actions/models/plan.py
-#, fuzzy
-#| msgid "The organization is already included in the plan"
 msgid "This short identifier is already in use within the parent plan."
-msgstr "Die Organisation ist bereits im Plan aufgenommen"
+msgstr "Diese Kurzbezeichnung wird bereits im übergeordneten Plan verwendet."
 
 #: actions/models/plan.py
 msgid "This short identifier is already in use for a top-level plan within this organization."
