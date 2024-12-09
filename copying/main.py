@@ -444,6 +444,8 @@ def copy_action_drafts(plan_copy: Plan, clone_visitor: CloneVisitor):
             # Update but don't save `rev_obj`. (Otherwise we'd overwrite published actions with drafts. We just want to
             # create a revision out of `rev_obj` and save that.
             update_references_visitor.update_instance(rev_obj, save=False)
+            if rev_obj.draft_attributes:
+                rev_obj.draft_attributes.replace_references(clone_visitor)
             new_rev = rev_obj.save_revision()
             action.latest_revision = new_rev
             action.save(update_fields=['latest_revision'])

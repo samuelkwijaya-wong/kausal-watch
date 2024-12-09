@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import typing
 from abc import ABC, abstractmethod
+from contextlib import suppress
 from dataclasses import dataclass
 from typing import Any, Generic, TypeVar, cast
 
@@ -24,6 +25,7 @@ if typing.TYPE_CHECKING:
     from aplans.cache import PlanSpecificCache
 
     from actions.models import Category, Plan
+    from copying.main import CloneVisitor
     from reports.utils import SerializedAttributeVersion, SerializedVersion
     from users.models import User
 
@@ -147,9 +149,12 @@ class AttributeValue(ABC):
 
         pass
 
+    def replace_references(self, clone_visitor: CloneVisitor):  # noqa: B027
+        """Replace any reference to an instance copied by `clone_visitor` by a reference to the copy."""
+        pass
+
     def instantiate_attribute(self, type: AttributeType[T], obj: models.ModelWithAttributes) -> T:
         return type.ATTRIBUTE_MODEL(type=type.instance, content_object=obj, **self.attribute_model_kwargs())
-
 
 
 @dataclass
@@ -177,6 +182,11 @@ class OrderedChoiceAttributeValue(AttributeValue):
 
     def should_exist_in_database(self) -> bool:
         return self.option is not None
+
+    def replace_references(self, clone_visitor: CloneVisitor):
+        if self.option:
+            with suppress(KeyError):
+                self.option = clone_visitor.get_copy(self.option)
 
 
 @dataclass
@@ -206,6 +216,16 @@ class CategoryChoiceAttributeValue(AttributeValue):
 
     def should_exist_in_database(self) -> bool:
         return bool(self.categories)
+
+    def replace_references(self, clone_visitor: CloneVisitor):
+        from actions.models import Category
+        replaced = []
+        for cat in self.categories:
+            try:
+                replaced.append(clone_visitor.get_copy(cat).pk)
+            except KeyError:
+                replaced.append(cat.pk)
+        self.categories = Category.objects.filter(pk__in=replaced)
 
 
 @dataclass
@@ -240,6 +260,11 @@ class OptionalChoiceWithTextAttributeValue(AttributeValue):
     def should_exist_in_database(self) -> bool:
         has_text_in_some_language = any(v for v in self.text_vals.values())
         return bool(self.option or has_text_in_some_language)
+
+    def replace_references(self, clone_visitor: CloneVisitor):
+        if self.option:
+            with suppress(KeyError):
+                self.option = clone_visitor.get_copy(self.option)
 
 
 @dataclass
@@ -889,6 +914,9 @@ class Numeric(AttributeType[models.AttributeNumericValue]):
         return {'num_format': '#,##0.00'}
 
 
+type DraftAttributesValuesMap = dict[str, dict[int, AttributeValue]]
+
+
 class DraftAttributes:
     """
     Contains the values of all draft attributes of a ModelWithAttributes instance.
@@ -897,7 +925,7 @@ class DraftAttributes:
     """
 
     # map attribute type format to a mapping from attribute type ID to attribute value
-    _values: dict[str, dict[int, AttributeValue]]
+    _values: DraftAttributesValuesMap
 
     def __init__(self):
         self._values = {}
@@ -932,3 +960,17 @@ class DraftAttributes:
                 # No idea anymore why we serialize the IDs as strings
                 result[format][str(id)] = value.serialize()
         return result
+
+    def replace_references(self, clone_visitor: CloneVisitor):
+        """Replace any reference to an instance copied by `clone_visitor` by a reference to the copy."""
+        new_values: DraftAttributesValuesMap = {}
+        for format, values_for_type in self._values.items():
+            new_values[format] = {}
+            for id, value in values_for_type.items():
+                try:
+                    new_id = clone_visitor.get_copy(models.AttributeType.objects.get(id=id)).id
+                except KeyError:
+                    new_id = id
+                value.replace_references(clone_visitor)
+                new_values[format][new_id] = value
+        self._values = new_values
