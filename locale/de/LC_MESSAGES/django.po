@@ -11,9 +11,10 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-10-28 13:42+0200\n"
-"PO-Revision-Date: 2024-10-22 12:20+0000\n"
-"Last-Translator: Matias Wargelin <matias.wargelin@kausal.tech>\n"
-"Language-Team: German <https://weblate.kausal.tech/projects/watch/django/de/>\n"
+"PO-Revision-Date: 2024-12-09 14:20+0000\n"
+"Last-Translator: Weblate Admin <noreply@mj.kausal.tech>\n"
+"Language-Team: German <https://weblate.kausal.tech/projects/watch/django/de/>"
+"\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -375,8 +376,6 @@ msgid "Label"
 msgstr "Beschriftung"
 
 #: actions/blocks/action_content.py
-#, fuzzy
-#| msgid "value"
 msgid "Value"
 msgstr "Wert"
 
@@ -385,8 +384,6 @@ msgid "Choice"
 msgstr "Auswahl"
 
 #: actions/blocks/action_content.py
-#, fuzzy
-#| msgid "Field label"
 msgid "Field Label"
 msgstr "Feldbeschriftung"
 
@@ -397,43 +394,39 @@ msgstr "Text"
 
 #: actions/blocks/action_content.py
 msgid "Checkbox"
-msgstr ""
+msgstr "Checkbox"
 
 #: actions/blocks/action_content.py actions/blocks/filters.py
 msgid "Dropdown"
 msgstr "Dropdown"
 
 #: actions/blocks/action_content.py
-#, fuzzy
-#| msgid "Field label"
 msgid "Field Type"
-msgstr "Feldbeschriftung"
+msgstr "Feldtyp"
 
 #: actions/blocks/action_content.py
 msgid "Required"
-msgstr ""
+msgstr "Erforderlich"
 
 #: actions/blocks/action_content.py
-#, fuzzy
-#| msgid "Choice"
 msgid "Choices"
-msgstr "Auswahl"
+msgstr "Auswahlmöglichkeiten"
 
 #: actions/blocks/action_content.py
-#, fuzzy
-#| msgid "This value is only allowed for action fields"
 msgid "Choices are only allowed for 'Dropdown' or 'Checkbox' field types."
-msgstr "Dieser Wert ist nur für Maßnahmenfelder zulässig"
+msgstr ""
+"Auswahlmöglichkeiten sind nur für die Feldtypen \"Dropdown\" oder \"Checkbox"
+"\" zulässig."
 
 #: actions/blocks/action_content.py
 msgid "Choices must be provided for 'Dropdown' or 'Checkbox' field types."
 msgstr ""
+"Für die Feldtypen \"Dropdown\" oder \"Checkbox\" müssen Auswahlmöglichkeiten "
+"angegeben werden."
 
 #: actions/blocks/action_content.py
-#, fuzzy
-#| msgid "Field"
 msgid "Form Field"
-msgstr "Feld"
+msgstr "Formularfeld"
 
 #: actions/blocks/action_content.py actions/blocks/action_list.py
 #: actions/blocks/category_list.py actions/blocks/paths_content.py
@@ -447,55 +440,53 @@ msgstr "Beschreibung"
 
 #: actions/blocks/action_content.py
 msgid "Feedback field visible"
-msgstr ""
+msgstr "Feedback-Feld sichtbar"
 
 #: actions/blocks/action_content.py
 msgid "Toggle visibility of the feedback field."
-msgstr ""
+msgstr "Schalte Sichtbarkeit des Feedback-Feldes um."
 
 #: actions/blocks/action_content.py
-#, fuzzy
-#| msgid "User feedback received"
 msgid "Feedback required"
-msgstr "Benutzer-Feedback erhalten"
+msgstr "Feedback erforderlich"
 
 #: actions/blocks/action_content.py
 msgid "Make the feedback field required when visible."
-msgstr ""
+msgstr "Mache das Feedback-Feld erforderlich, wenn es sichtbar ist."
 
 #: actions/blocks/action_content.py
 msgid "Email field visible"
-msgstr ""
+msgstr "E-Mail-Feld sichtbar"
 
 #: actions/blocks/action_content.py
 msgid "Toggle visibility of the email field."
-msgstr ""
+msgstr "Schalte Sichtbarkeit des E-Mail-Feldes um."
 
 #: actions/blocks/action_content.py
 msgid "Email required"
-msgstr ""
+msgstr "E-Mail erforderlich"
 
 #: actions/blocks/action_content.py
 msgid "Make the email field required when visible."
-msgstr ""
+msgstr "Mach das E-Mail-Feld erforderlich, wenn es sichtbar ist."
 
 #: actions/blocks/action_content.py
-#, fuzzy
-#| msgid "Action field"
 msgid "Additional form fields"
-msgstr "Maßnahmenfeld"
+msgstr "Zusätzliche Formularfelder"
 
 #: actions/blocks/action_content.py
 msgid "Form fields to be shown in addition to Name, Email and Comment fields"
 msgstr ""
+"Formularfelder, die zusätzlich zu den Feldern Name, E-Mail und Kommentar "
+"angezeigt werden"
 
 #: actions/blocks/action_content.py
 msgid "Feedback can't be required if it's not visible."
-msgstr ""
+msgstr "Feedback kann nicht erforderlich sein, wenn es nicht sichtbar ist."
 
 #: actions/blocks/action_content.py
 msgid "Email can't be required if it's not visible."
-msgstr ""
+msgstr "E-Mail kann nicht erforderlich sein, wenn sie nicht sichtbar ist."
 
 #: actions/blocks/action_content.py actions/blocks/category_page_layout.py
 msgid "Contact form"
@@ -506,16 +497,14 @@ msgid "Indicator Causal Chain"
 msgstr "Indikator-Kausalitätskette"
 
 #: actions/blocks/action_content.py
-#, fuzzy
-#| msgid "What label should be used in the public UI for the official name?"
 msgid "What heading should be used in the public UI for the Dataset?"
-msgstr "Welche Bezeichnung sollte in der öffentlichen Benutzeroberfläche für den offiziellen Namen verwendet werden?"
+msgstr ""
+"Welche Überschrift soll in der öffentlichen Benutzeroberfläche für den "
+"Datensatz verwendet werden?"
 
 #: actions/blocks/action_content.py
-#, fuzzy
-#| msgid "Help text for the field to be shown in the UI"
 msgid "Help text for the Dataset to be shown in the public UI"
-msgstr "In Benutzeroberfläche anzuzeigender Hilfetext für das Feld"
+msgstr "In Benutzeroberfläche anzuzeigender Hilfetext für den Datensatz"
 
 #: actions/blocks/action_content.py actions/blocks/action_list.py
 #: actions/blocks/category_list.py actions/blocks/paths_content.py
@@ -523,8 +512,6 @@ msgid "Help text"
 msgstr "Hilfetext"
 
 #: actions/blocks/action_content.py
-#, fuzzy
-#| msgid "datasets"
 msgid "Datasets"
 msgstr "Datensätze"
 
@@ -622,14 +609,10 @@ msgid "Updated at"
 msgstr "Aktualisiert am"
 
 #: actions/blocks/action_dashboard.py
-#, fuzzy
-#| msgid "start date"
 msgid "Start date"
 msgstr "Beginndatum"
 
 #: actions/blocks/action_dashboard.py
-#, fuzzy
-#| msgid "end date"
 msgid "End date"
 msgstr "Enddatum"
 
@@ -647,16 +630,14 @@ msgid "Action highlights"
 msgstr "Maßnahmen-Highlights"
 
 #: actions/blocks/action_list.py
-#, fuzzy
-#| msgid "What label should be used in the public UI for the official name?"
 msgid "What heading should be used in the public UI for the Action list?"
-msgstr "Welche Bezeichnung sollte in der öffentlichen Benutzeroberfläche für den offiziellen Namen verwendet werden?"
+msgstr ""
+"Welche Überschrift soll in der öffentlichen Benutzeroberfläche für die "
+"Maßnahmenliste verwendet werden?"
 
 #: actions/blocks/action_list.py
-#, fuzzy
-#| msgid "Help text for the field to be shown in the UI"
 msgid "Help text for the Action list to be shown in the public UI"
-msgstr "In Benutzeroberfläche anzuzeigender Hilfetext für das Feld"
+msgstr "In Benutzeroberfläche anzuzeigender Hilfetext für die Maßnahmenliste"
 
 #: actions/blocks/action_list.py
 msgid "Filter on category"
@@ -664,13 +645,13 @@ msgstr "Filtere nach Kategorie"
 
 #: actions/blocks/action_list.py actions/blocks/category_list.py
 msgid "Group by level"
-msgstr ""
+msgstr "Gruppiere nach Stufe"
 
 #: actions/blocks/action_list.py actions/blocks/category_list.py
-#, fuzzy
-#| msgid "Help text for the field to be shown in the UI"
 msgid "Use category level for tabbed grouping in the public UI"
-msgstr "In Benutzeroberfläche anzuzeigender Hilfetext für das Feld"
+msgstr ""
+"Kategoriestufe für die Gruppierung von Registerkarten in der öffentlichen "
+"Benutzeroberfläche verwenden"
 
 #: actions/blocks/action_list.py
 msgid "Action list"
@@ -706,28 +687,24 @@ msgid "Category tree map"
 msgstr "Kategorie-Baumkarte"
 
 #: actions/blocks/category_list.py
-#, fuzzy
-#| msgid "What label should be used in the public UI for the official name?"
 msgid "What heading should be used in the public UI for the Category level list?"
-msgstr "Welche Bezeichnung sollte in der öffentlichen Benutzeroberfläche für den offiziellen Namen verwendet werden?"
+msgstr ""
+"Welche Überschrift soll in der öffentlichen Benutzeroberfläche für die Liste "
+"der Kategoriestufen verwendet werden?"
 
 #: actions/blocks/category_list.py
-#, fuzzy
-#| msgid "Help text for the field to be shown in the UI"
 msgid "Help text for the Category level list to be shown in the public UI"
-msgstr "In Benutzeroberfläche anzuzeigender Hilfetext für das Feld"
+msgstr ""
+"In Benutzeroberfläche anzuzeigender Hilfetext für die Liste der "
+"Kategoriestufen"
 
 #: actions/blocks/category_list.py
-#, fuzzy
-#| msgid "category level"
 msgid "Filter by level"
-msgstr "Kategoriestufe"
+msgstr "Nach Stufe filtern"
 
 #: actions/blocks/category_list.py
-#, fuzzy
-#| msgid "Category levels"
 msgid "Category level list"
-msgstr "Kategoriestufen"
+msgstr "Liste der Kategoriestufen"
 
 #: actions/blocks/category_page_layout.py
 msgid "Body"
@@ -738,10 +715,8 @@ msgid "Basis"
 msgstr "Basis"
 
 #: actions/blocks/choosers.py
-#, fuzzy
-#| msgid "dataset license"
 msgid "Dataset Schema"
-msgstr "Datensatzlizenz"
+msgstr "Datensatzschema"
 
 #: actions/blocks/filters.py
 msgid "Label for 'show all'"
@@ -786,28 +761,26 @@ msgid "Continuous Action"
 msgstr "laufende Maßnahme"
 
 #: actions/blocks/paths_content.py
-#, fuzzy
-#| msgid "What label should be used in the public UI for the official name?"
 msgid "What heading should be used in the public UI for the Outcome?"
-msgstr "Welche Bezeichnung sollte in der öffentlichen Benutzeroberfläche für den offiziellen Namen verwendet werden?"
+msgstr ""
+"Welche Überschrift soll in der öffentlichen Benutzeroberfläche für das "
+"Ergebnis verwendet werden?"
 
 #: actions/blocks/paths_content.py
-#, fuzzy
-#| msgid "Help text for the field to be shown in the UI"
 msgid "Help text for the Outcome to be shown in the public UI"
-msgstr "In Benutzeroberfläche anzuzeigender Hilfetext für das Feld"
+msgstr "In Benutzeroberfläche anzuzeigender Hilfetext für das Ergebnis"
 
 #: actions/blocks/paths_content.py
 msgid "Kausal Paths outcome node ID"
-msgstr ""
+msgstr "Kausal Paths Ergebnisknoten-ID"
 
 #: actions/blocks/paths_content.py
 msgid "Kausal Paths outcome node to be used"
-msgstr ""
+msgstr "Zu verwendender Kausal-Paths-Ergebnisknoten"
 
 #: actions/blocks/paths_content.py
 msgid "Paths outcome"
-msgstr ""
+msgstr "Paths Ergebnis"
 
 #: actions/category_admin.py
 msgid "Common category type"
@@ -886,16 +859,12 @@ msgid "Choose another field"
 msgstr "Wähle ein anderes Feld"
 
 #: actions/chooser.py
-#, fuzzy
-#| msgid "Choose a category type"
 msgid "Choose a dataset schema"
-msgstr "Wähle einen Kategorietyp"
+msgstr "Wähle ein Datensatzschema"
 
 #: actions/chooser.py
-#, fuzzy
-#| msgid "Choose another category type"
 msgid "Choose another dataset schema"
-msgstr "Wähle einen anderen Kategorietyp"
+msgstr "Wähle ein anderes Datensatzschema"
 
 #: actions/defaults.py
 msgid "Cancelled or postponed"
@@ -1010,8 +979,6 @@ msgid "specifier for status"
 msgstr "Erläuterung für Status"
 
 #: actions/models/action.py
-#, fuzzy
-#| msgid "Describe the reason why this action has has this status"
 msgid "Describe the reason why this action has this status"
 msgstr "Beschreiben Sie den Grund, warum diese Maßnahme diesen Status hat"
 
@@ -1609,11 +1576,11 @@ msgstr "Setzen, wenn die Kategorie eine Themenfarbe hat"
 
 #: actions/models/category.py
 msgid "Kausal Paths node UUID"
-msgstr ""
+msgstr "Kausal Paths Knoten-UUID"
 
 #: actions/models/category.py
 msgid "Kausal Paths node to link this category to"
-msgstr ""
+msgstr "Kausal-Paths-Knoten, mit dem diese Kategorie verknüpft wird"
 
 #: actions/models/category.py
 msgid "common category"
@@ -1884,14 +1851,14 @@ msgid "A shorter version of the plan name"
 msgstr "Eine kürzere Version des Plannamens"
 
 #: actions/models/plan.py
-#, fuzzy
-#| msgid "identifier"
 msgid "short identifier"
-msgstr "Kennung"
+msgstr "Kurzbezeichnung"
 
 #: actions/models/plan.py
 msgid "A unique short identifier for the plan to be shown in UI. Could be eg. a number or an abbreviation"
 msgstr ""
+"Eine eindeutige Kurzbezeichnung für den Plan, die in der Benutzeroberfläche "
+"angezeigt werden soll. Kann z. B. eine Nummer oder eine Abkürzung sein."
 
 #: actions/models/plan.py
 msgid "version name"
