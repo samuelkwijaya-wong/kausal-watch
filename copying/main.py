@@ -4,11 +4,13 @@ from collections.abc import Generator, Iterable
 from contextlib import ExitStack
 from copy import copy as shallow_copy
 from functools import singledispatchmethod
+from itertools import chain
 from typing import Any
 from uuid import uuid4
 
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
+from django.core.files.base import ContentFile
 from django.db.models import Field, Model, Q, signals
 from wagtail.fields import StreamField
 from wagtail.models import Page, Revision, Site
@@ -26,6 +28,8 @@ from actions.signals import create_notification_settings, create_plan_features
 from content.apps import create_site_general_content
 from copying.utils import get_foreign_keys, get_generic_foreign_keys, temp_disconnect_signal, update_streamfield_block
 from documentation.models import DocumentationRootPage
+from documents.models import AplansDocument
+from images.models import AplansImage
 from pages.models import PlanRootPage
 
 type CloneStructure = dict[str, CloneStructure]
@@ -453,6 +457,21 @@ def copy_action_drafts(plan_copy: Plan, clone_visitor: CloneVisitor):
             action.save(update_fields=['latest_revision'])
 
 
+def copy_collection_with_contents(collection: Collection, clone_visitor: CloneVisitor):
+    images_or_documents = chain(
+        AplansImage.objects.filter(collection_id=collection.pk),
+        AplansDocument.objects.filter(collection_id=collection.pk),
+    )
+    clone(collection, {}, clone_visitor)
+    for image_or_document in images_or_documents:
+        clone(image_or_document, {}, clone_visitor)
+        image_or_document.collection = collection
+        file = image_or_document.file
+        content_file = ContentFile(file.read())
+        filename = file.name.split('/')[-1]
+        file.save(filename, content_file)
+
+
 def _new_site_hostname(old_plan: Plan, new_plan_identifier: str) -> str:
     old_identifier = old_plan.identifier
     old_plan.identifier = new_plan_identifier
@@ -503,7 +522,9 @@ def copy_plan(
     # A couple of hacks to avoid things breaking when creating a copy of the plan.
     # Work on fresh `Plan` objects because `clone` changes its first argument. We just want to get stuff into the
     # visitor's copy cache (and the DB of course).
-    clone(Plan.objects.get(pk=plan.pk).root_collection, {}, clone_visitor)
+    root_collection = Plan.objects.get(pk=plan.pk).root_collection
+    if root_collection:
+        copy_collection_with_contents(root_collection, clone_visitor)
     clone(Plan.objects.get(pk=plan.pk).site, {}, clone_visitor)
     assert plan.site
     assert isinstance(plan.site.root_page.specific, PlanRootPage)
@@ -512,6 +533,8 @@ def copy_plan(
         title_suffix=root_page_title_suffix,
     )
     plan_copy = Plan.objects.get(pk=plan.pk)
+    # Hack to avoid site (and root page) initialization in Plan.save()  # noqa: FIX004
+    plan_copy._site_created = True
 
     # Copy plan
     with ExitStack() as stack:
