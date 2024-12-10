@@ -971,10 +971,11 @@ class Plan(ClusterableModel, ModelWithPrimaryLanguage):
     clients_as_string.admin_order_field = 'clients__client__name'  # type: ignore
 
     def delete(self, *args, **kwargs):
-        result = super().delete(*args, **kwargs)
         if self.root_page:
             # Deleting root page cascades to Site
             self.root_page.get_translations(inclusive=True).delete()
+        self.documentation_root_pages.all().delete()
+        result = super().delete(*args, **kwargs)
         if self.root_collection:
             self.root_collection.delete()
         if self.admin_group:
