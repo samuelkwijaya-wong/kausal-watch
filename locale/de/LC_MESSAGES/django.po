@@ -11,9 +11,10 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-12-09 22:38+0100\n"
-"PO-Revision-Date: 2024-12-09 16:20+0000\n"
+"PO-Revision-Date: 2024-12-10 01:44+0000\n"
 "Last-Translator: Weblate Admin <noreply@mj.kausal.tech>\n"
-"Language-Team: German <https://weblate.kausal.tech/projects/watch/django/de/>\n"
+"Language-Team: German <https://weblate.kausal.tech/projects/watch/django/de/>"
+"\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -360,10 +361,9 @@ msgid "%(attribute_type)s (text)"
 msgstr "%(attribute_type)s (Text)"
 
 #: actions/attributes.py
-#, fuzzy, python-format
-#| msgid "%(attribute_type)s (text)"
+#, python-format
 msgid "%(attribute_type)s"
-msgstr "%(attribute_type)s (Text)"
+msgstr "%(attribute_type)s"
 
 #: actions/blocks/__init__.py
 msgid "Related plans"
@@ -528,10 +528,10 @@ msgid "Indicator Causal Chain"
 msgstr "Indikator-Kausalitätskette"
 
 #: actions/blocks/action_content_blocks.py
-#, fuzzy
-#| msgid "What heading should be used in the public UI for the Dataset?"
 msgid "What heading should be used in the public UI for the dataset?"
-msgstr "Welche Überschrift soll in der öffentlichen Benutzeroberfläche für den Datensatz verwendet werden?"
+msgstr ""
+"Welche Überschrift soll in der öffentlichen Benutzeroberfläche für den "
+"Datensatz verwendet werden?"
 
 #: actions/blocks/action_content_blocks.py
 msgid "Help text for the Dataset to be shown in the public UI"
@@ -1043,13 +1043,13 @@ msgstr "Setzen, wenn diese Maßnahme durch eine andere Maßnahme ersetzt worden 
 #: actions/models/action.py
 msgctxt "action"
 msgid "copy of"
-msgstr ""
+msgstr "Kopie von"
 
 #: actions/models/action.py
-#, fuzzy
-#| msgid "Set if this action is superseded by another action"
 msgid "Set if this action has been created by copying another action"
-msgstr "Setzen, wenn diese Maßnahme durch eine andere Maßnahme ersetzt worden ist"
+msgstr ""
+"Setzen, wenn diese Maßnahme durch Kopieren einer anderen Maßnahme erstellt "
+"wurde"
 
 #: actions/models/action.py
 msgid "Role in dependencies"
@@ -1838,10 +1838,10 @@ msgid "short identifier"
 msgstr "Kurzbezeichnung"
 
 #: actions/models/plan.py
-#, fuzzy
-#| msgid "A unique short identifier for the plan to be shown in UI. Could be eg. a number or an abbreviation"
 msgid "A unique short identifier for the plan to be shown in the UI. Could be, e.g., a number or an abbreviation."
-msgstr "Eine eindeutige Kurzbezeichnung für den Plan, die in der Benutzeroberfläche angezeigt werden soll. Kann z. B. eine Nummer oder eine Abkürzung sein."
+msgstr ""
+"Eine eindeutige Kurzbezeichnung für den Plan, die in der Benutzeroberfläche "
+"angezeigt werden soll. Kann z. B. eine Nummer oder eine Abkürzung sein."
 
 #: actions/models/plan.py
 msgid "version name"
@@ -1880,10 +1880,8 @@ msgid "Can actions be added and the official metadata edited?"
 msgstr "Können Maßnahmen hinzugefügt und offizielle Metadaten bearbeitet werden?"
 
 #: actions/models/plan.py
-#, fuzzy
-#| msgid "main organization for the plan"
 msgid "The main organization for the plan"
-msgstr "Hauptorganisation für den Plan"
+msgstr "Die Hauptorganisation für den Plan"
 
 #: actions/models/plan.py
 msgid "general administrators"
@@ -1966,13 +1964,12 @@ msgstr "Setzen, wenn dieser Plan durch einen anderen Plan ersetzt worden ist"
 #: actions/models/plan.py
 msgctxt "plan"
 msgid "copy of"
-msgstr ""
+msgstr "Kopie von"
 
 #: actions/models/plan.py
-#, fuzzy
-#| msgid "Set if this plan is superseded by another plan"
 msgid "Set if this plan has been created by copying another plan"
-msgstr "Setzen, wenn dieser Plan durch einen anderen Plan ersetzt worden ist"
+msgstr ""
+"Setzen, wenn dieser Plan durch Kopieren eines anderen Plans erstellt wurde"
 
 #: actions/models/plan.py
 msgid "Kausal Paths instance UUID"
@@ -2009,6 +2006,8 @@ msgstr "Diese Kurzbezeichnung wird bereits im übergeordneten Plan verwendet."
 #: actions/models/plan.py
 msgid "This short identifier is already in use for a top-level plan within this organization."
 msgstr ""
+"Diese Kurzbezeichnung wird bereits für einen übergeordneten Plan innerhalb "
+"dieser Organisation verwendet."
 
 #: actions/models/plan.py indicators/apps.py indicators/blocks.py
 #: indicators/wagtail_admin.py
@@ -2026,12 +2025,12 @@ msgstr "Barrierefreiheit"
 #: actions/models/plan.py
 #, python-format
 msgid "%(plan)s (copy from %(date)s)"
-msgstr ""
+msgstr "%(plan)s (Kopie vom %(date)s)"
 
 #: actions/models/plan.py
 #, python-format
 msgid "Copy from %(date)s"
-msgstr ""
+msgstr "Kopie vom %(date)s"
 
 #: actions/models/plan.py actions/wagtail_admin.py
 msgid "Clients"
@@ -2071,13 +2070,11 @@ msgstr "Produktion"
 
 #: actions/models/plan.py
 msgid "Preview"
-msgstr ""
+msgstr "Vorschau"
 
 #: actions/models/plan.py
-#, fuzzy
-#| msgid "Document"
 msgid "Development"
-msgstr "Dokument"
+msgstr "Entwicklung"
 
 #: actions/models/plan.py
 msgid "host name"
@@ -2481,10 +2478,8 @@ msgid "Administration"
 msgstr "Administration"
 
 #: admin_site/templates/wagtailadmin/base.html
-#, fuzzy
-#| msgid "Related plans"
 msgid "locked plan"
-msgstr "Verbundene Pläne"
+msgstr "gesperrter Plan"
 
 #: admin_site/templates/wagtailadmin/base.html aplans/utils.py
 msgid "Public"
@@ -2528,12 +2523,12 @@ msgstr "%s konnte wegen Fehlern nicht erstellt werden."
 #: admin_site/wagtail.py
 #, python-format
 msgid "Edit %(schema_name)s"
-msgstr ""
+msgstr "Bearbeite %(schema_name)s"
 
 #: admin_site/wagtail.py
 #, python-format
 msgid "Add %(schema_name)s"
-msgstr ""
+msgstr "Füge %(schema_name)s hinzu"
 
 #: admin_site/wagtail.py
 msgid "View live"
@@ -2545,10 +2540,11 @@ msgid "View %s live"
 msgstr "%s live ansehen"
 
 #: admin_site/wagtail.py
-#, fuzzy
-#| msgid "Could not remove common category type '{removed_cct}' from the plan because categories with the corresponding category type exist."
 msgid "Could not remove common category type \"%(removed_cct)\" from the plan because categories with the corresponding category type exist."
-msgstr "Der gemeinsame Kategorietyp „{removed_cct}“ konnte nicht aus dem Plan entfernt werden, da Kategorien mit dem entsprechenden Kategorietyp vorhanden sind."
+msgstr ""
+"Der gemeinsame Kategorietyp „{removed_cct}“ konnte nicht aus dem Plan "
+"entfernt werden, da Kategorien mit dem entsprechenden Kategorietyp vorhanden "
+"sind."
 
 #: admin_site/wagtail_hooks.py reports/apps.py reports/wagtail_admin.py
 msgid "Reports"
@@ -2750,10 +2746,8 @@ msgid "unit"
 msgstr "Einheit"
 
 #: budget/models.py
-#, fuzzy
-#| msgid "Time resolution of the time stamps of data points in this dataset"
 msgid "First applicable date for datapoints in these datasets"
-msgstr "Zeitliche Auflösung der Zeitstempel der Datenpunkte in diesem Datensatz"
+msgstr "Erstes anwendbares Datum für Datenpunkte in diesen Datensätzen"
 
 #: budget/models.py
 msgid "schema"
@@ -2931,72 +2925,61 @@ msgstr "Kennung"
 #: copying/views.py
 msgid "A unique value that identifies the copy internally and appears in URLs of testing or preview environments"
 msgstr ""
+"Ein eindeutiger Wert, der die Kopie intern identifiziert und in URLs von "
+"Test- oder Vorschauumgebungen erscheint"
 
 #: copying/views.py
-#, fuzzy
-#| msgid "Term to use for 'action'"
 msgid "Name to use for the copy"
-msgstr "Für 'Maßnahme' zu verwendender Begriff"
+msgstr "Zu verwendender Name für die Kopie"
 
 #: copying/views.py
-#, fuzzy
-#| msgid "version name"
 msgid "Version name"
 msgstr "Versionsname"
 
 #: copying/views.py
 msgid "Version name to be set for the copied plan in order to distinguish it from other versions"
 msgstr ""
+"Versionsname, der für den kopierten Plan gesetzt wird, um diesen von anderen "
+"Versionen zu unterscheiden"
 
 #: copying/views.py
 msgid "Supersede original plan"
-msgstr ""
+msgstr "Ersetze ursprünglichen Plan"
 
 #: copying/views.py
-#, fuzzy
-#| msgid "Set if this plan is superseded by another plan"
 msgid "Set if the copy should supersede the original plan"
-msgstr "Setzen, wenn dieser Plan durch einen anderen Plan ersetzt worden ist"
+msgstr "Setzen, wenn die Kopie den Originalplan ersetzen soll"
 
 #: copying/views.py
-#, fuzzy
-#| msgid "editable for actions"
 msgid "Supersede original actions"
-msgstr "veränderbar für Maßnahmen"
+msgstr "Ersetze Originalmaßnahmen"
 
 #: copying/views.py
-#, fuzzy
-#| msgid "Set if this action is superseded by another action"
 msgid "Set if copies of actions should supersede their original"
-msgstr "Setzen, wenn diese Maßnahme durch eine andere Maßnahme ersetzt worden ist"
+msgstr "Setzen, wenn Kopien von Maßnahmen das Original ersetzen sollen"
 
 #: copying/views.py
-#, fuzzy
-#| msgid "Person with this email already exists"
 msgid "A plan with this identifier already exists"
-msgstr "Person mit dieser E-Mail-Adresse existiert bereits"
+msgstr "Ein Plan mit dieser Kennung existiert bereits"
 
 #: copying/views.py
-#, fuzzy
-#| msgid "Person with this email already exists"
 msgid "A plan with this name already exists"
-msgstr "Person mit dieser E-Mail-Adresse existiert bereits"
+msgstr "Ein Plan mit diesem Namen existiert bereits"
 
 #: copying/views.py
-#, fuzzy
-#| msgid "Choose plan"
 msgid "Copy plan"
-msgstr "Wähle Plan"
+msgstr "Plan kopieren"
 
 #: copying/views.py
 msgid "The copy will be created in the background. This may take a few minutes. The copy will appear in the list of plans as soon as copying is finished."
 msgstr ""
+"Die Kopie wird im Hintergrund erstellt. Dies kann ein paar Minuten dauern. "
+"Die Kopie erscheint in der Liste der Pläne, sobald der Kopiervorgang "
+"abgeschlossen ist."
 
 #: copying/views.py
-#, fuzzy
-#| msgid "Create plan"
 msgid "Create copy"
-msgstr "Plan erstellen"
+msgstr "Kopie erstellen"
 
 #: documentation/models.py
 msgid "CSS style"
@@ -3023,10 +3006,8 @@ msgid "Report this error to your webmaster with the following information:"
 msgstr "Melden Sie diesen Fehler Ihrem Webmaster mit den folgenden Informationen:"
 
 #: documents/models.py
-#, fuzzy
-#| msgid "updated by"
 msgid "uploaded by user"
-msgstr "aktualisiert von"
+msgstr "hochgeladen von Benutzer"
 
 #: documents/models.py
 msgid "document"
@@ -3042,14 +3023,12 @@ msgid "email address"
 msgstr "E-Mail-Adresse"
 
 #: feedback/models.py
-#, fuzzy
-#| msgid "Page link"
 msgid "page id"
-msgstr "Link zur Seite"
+msgstr "Seiten-ID"
 
 #: feedback/models.py
 msgid "latest revision"
-msgstr ""
+msgstr "letzte Überarbeitung"
 
 #: feedback/models.py
 msgid "is processed"
@@ -3065,7 +3044,7 @@ msgstr "Benutzer-Feedbacks"
 
 #: feedback/models.py
 msgid "At least one field must be filled."
-msgstr ""
+msgstr "Mindestens ein Feld muss ausgefüllt werden."
 
 #: feedback/views.py
 msgid "Mark user feedback as processed"
@@ -3115,7 +3094,7 @@ msgstr "Das Benutzer-Feedback '%(user_feedback)s' wurde als unbearbeitet markier
 
 #: feedback/wagtail_admin.py
 msgid "N/A"
-msgstr ""
+msgstr "K.A."
 
 #: feedback/wagtail_admin.py
 msgid "Mark as processed"
@@ -3357,31 +3336,29 @@ msgstr "Wie lautet die Referenz oder Quelle für diesen Indikator?"
 
 #: indicators/models.py
 msgid "show trendline"
-msgstr ""
+msgstr "Trendlinie anzeigen"
 
 #: indicators/models.py
 msgid "desired trend"
-msgstr ""
+msgstr "gewünschte Entwicklung"
 
 #: indicators/models.py
-#, fuzzy
-#| msgid "increases"
 msgid "increasing"
-msgstr "nimmt zu"
+msgstr "zunehmend"
 
 #: indicators/models.py
-#, fuzzy
-#| msgid "decreases"
 msgid "decreasing"
-msgstr "nimmt ab"
+msgstr "abnehmend"
 
 #: indicators/models.py
 msgid "attempt to detect automatically"
-msgstr ""
+msgstr "versuchen, automatisch zu erkennen"
 
 #: indicators/models.py
 msgid "Which trend in the numerical values of this indicator's goals indicates improvement: when the values are increasing or decreasing?"
 msgstr ""
+"Welcher Trend in den Zahlenwerten der Ziele dieses Indikators deutet auf "
+"eine Verbesserung hin: wenn die Werte steigen oder sinken?"
 
 #: indicators/models.py
 msgid "indicator"
@@ -3594,22 +3571,16 @@ msgid "This indicator is linked to a common indicator, so quantity, unit and dim
 msgstr "Dieser Indikator ist mit einem Gemeinsamen Indikator verwunden, daher können Größe, Einheit und Dimensionen nicht bearbeitet werden. Aktuelle Größe: %(quantity)s; Einheit: %(unit)s; Dimensionen: %(dimensions)s"
 
 #: indicators/wagtail_admin.py
-#, fuzzy
-#| msgid "Basic information"
 msgid "Further information"
-msgstr "Grunddaten"
+msgstr "Weitere Informationen"
 
 #: indicators/wagtail_admin.py
-#, fuzzy
-#| msgid "Value field"
 msgid "Value bounds"
-msgstr "Wertfeld"
+msgstr "Wertgrenzen"
 
 #: indicators/wagtail_admin.py
-#, fuzzy
-#| msgid "notification settings"
 msgid "Visualization settings"
-msgstr "Benachrichtigungseinstellungen"
+msgstr "Visualisierungseinstellungen"
 
 #: indicators/wagtail_admin.py
 msgid "Dimensions"
@@ -3623,10 +3594,8 @@ msgstr[0] "Wenn Sie die Dimensionen dieses Indikators (aktuell %(dimensions)s) v
 msgstr[1] "Wenn Sie die Dimensionen dieses Indikators (aktuell %(dimensions)s) verändern, werden seine %(num)d Werte gelöscht."
 
 #: indicators/wagtail_admin.py
-#, fuzzy
-#| msgid "Advanced options"
 msgid "Advanced settings"
-msgstr "Fortgeschrittene Optionen"
+msgstr "Fortgeschrittene Einstellungen"
 
 #: indicators/wagtail_admin.py
 msgid "Indicator for actions"
@@ -3641,16 +3610,12 @@ msgid "Causes"
 msgstr "Ursachen"
 
 #: indicators/wagtail_admin.py
-#, fuzzy
-#| msgid "other indicators"
 msgid "Other indicators"
 msgstr "Andere Indikatoren"
 
 #: indicators/wagtail_admin.py
-#, fuzzy
-#| msgid "Related actions"
 msgid "Relationships"
-msgstr "Verbundene Maßnahmen"
+msgstr "Beziehungen"
 
 #: indicators/wagtail_admin.py
 msgid "Unit"
@@ -3670,26 +3635,20 @@ msgid "This common indicator has indicators linked to it, so quantity, unit and 
 msgstr "Dieser Gemeinsame Indikator hat mit ihm verbundene Indikatoren, daher können Größe, Einheit und Dimensionen nicht bearbeitet werden. Aktuelle Größe: %(quantity)s; Einheit: %(unit)s; Dimensionen: %(dimensions)s"
 
 #: kausal_common/models/modification_tracking.py
-#, fuzzy
-#| msgid "created at"
 msgid "Created at"
-msgstr "erstellt am"
+msgstr "Erstellt am"
 
 #: kausal_common/models/modification_tracking.py
-#, fuzzy
-#| msgid "Last modified"
 msgid "Last modified by"
-msgstr "Zuletzt verändert"
+msgstr "Zuletzt geändert von"
 
 #: kausal_common/models/modification_tracking.py
-#, fuzzy
-#| msgid "Last modified"
 msgid "Last modified at"
-msgstr "Zuletzt verändert"
+msgstr "Zuletzt geändert am"
 
 #: kausal_common/models/uuid.py
 msgid "UUID"
-msgstr ""
+msgstr "UUID"
 
 #: notifications/apps.py notifications/wagtail_admin.py
 msgid "Notifications"
@@ -4615,18 +4574,17 @@ msgstr "Überblick anzeigen"
 #: pages/models.py
 msgid "Should the indicator level be shown for indicators? (Displayed in the column \"Type\")"
 msgstr ""
+"Soll die Indikatorstufe für Indikatoren angezeigt werden? (Wird in der "
+"Spalte \"Typ\" angezeigt)"
 
 #: pages/models.py
-#, fuzzy
-#| msgid "category level"
 msgid "Display level"
-msgstr "Kategoriestufe"
+msgstr "Stufe anzeigen"
 
 #: pages/models.py
-#, fuzzy
-#| msgid "Enable to make this page include actions from related plans."
 msgid "Enable to make this page include indicators from related plans."
-msgstr "Aktivieren, damit diese Seite Maßnahmen aus verbundenen Plänen enthält."
+msgstr ""
+"Aktivieren, damit diese Seite Indikatoren aus verbundenen Plänen enthält."
 
 #: pages/models.py
 msgid "Indicator list page"
