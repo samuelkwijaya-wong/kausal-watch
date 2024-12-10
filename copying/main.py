@@ -246,6 +246,8 @@ class CloneVisitor(AbstractVisitor):
         assert site_copy
         instance.site = site_copy
         instance.site_url = f'https://{site_copy.hostname}'
+        # TODO: Ideally it should be configurable whether 'published_at` is reset
+        instance.published_at = None
 
     @pre_visit.register
     def _(self, instance: Site) -> None:
