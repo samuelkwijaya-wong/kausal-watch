@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-12-11 12:34+0200\n"
-"PO-Revision-Date: 2024-12-11 10:47+0000\n"
+"PO-Revision-Date: 2024-12-11 10:52+0000\n"
 "Last-Translator: Timo Tuominen <timo.tuominen@kausal.tech>\n"
 "Language-Team: Spanish (American) <https://weblate.kausal.tech/projects/"
 "watch/django/es_US/>\n"
@@ -4908,7 +4908,7 @@ msgstr ""
 
 #: reports/report_formatters.py
 msgid "Has goals"
-msgstr ""
+msgstr "Tiene objetivos"
 
 #: reports/report_formatters.py
 msgid "Other responsible parties"
