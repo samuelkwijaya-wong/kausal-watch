@@ -11,9 +11,10 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-12-11 12:34+0200\n"
-"PO-Revision-Date: 2024-10-22 12:20+0000\n"
-"Last-Translator: Matias Wargelin <matias.wargelin@kausal.tech>\n"
-"Language-Team: German (Switzerland) <https://weblate.kausal.tech/projects/watch/django/de_CH/>\n"
+"PO-Revision-Date: 2024-12-11 10:47+0000\n"
+"Last-Translator: Timo Tuominen <timo.tuominen@kausal.tech>\n"
+"Language-Team: German (Switzerland) <https://weblate.kausal.tech/projects/"
+"watch/django/de_CH/>\n"
 "Language: de_CH\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -5055,10 +5056,8 @@ msgid "Has goals"
 msgstr ""
 
 #: reports/report_formatters.py
-#, fuzzy
-#| msgid "action responsible parties"
 msgid "Other responsible parties"
-msgstr "für Massnahme zuständige Stellen"
+msgstr ""
 
 #: reports/spreadsheets/action_print_layout.py
 msgid "Profiles"
