@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-11 12:22+0200\n"
+"POT-Creation-Date: 2024-12-11 12:34+0200\n"
 "PO-Revision-Date: 2024-10-22 12:20+0000\n"
 "Last-Translator: Matias Wargelin <matias.wargelin@kausal.tech>\n"
 "Language-Team: Portuguese (Brazil) <https://weblate.kausal.tech/projects/watch/django/pt_BR/>\n"
@@ -2391,7 +2391,7 @@ msgid "This short identifier is already in use for a top-level plan within this 
 msgstr ""
 
 #: actions/models/plan.py indicators/apps.py indicators/blocks.py
-#: indicators/wagtail_admin.py
+#: indicators/wagtail_admin.py reports/report_formatters.py
 #, fuzzy
 msgid "Indicators"
 msgstr "Indicadores"
@@ -5910,6 +5910,11 @@ msgstr "instantâneo da ação"
 #, fuzzy
 msgid "action snapshots"
 msgstr "instantâneos de ação"
+
+#: reports/report_formatters.py
+#, fuzzy
+msgid "Has goals"
+msgstr "Tem um gráfico"
 
 #: reports/report_formatters.py
 #, fuzzy

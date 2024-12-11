@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-11 12:22+0200\n"
+"POT-Creation-Date: 2024-12-11 12:34+0200\n"
 "PO-Revision-Date: 2024-10-22 12:20+0000\n"
 "Last-Translator: Matias Wargelin <matias.wargelin@kausal.tech>\n"
 "Language-Team: Swedish <https://weblate.kausal.tech/projects/watch/django/sv/>\n"
@@ -2141,7 +2141,7 @@ msgid "This short identifier is already in use for a top-level plan within this 
 msgstr ""
 
 #: actions/models/plan.py indicators/apps.py indicators/blocks.py
-#: indicators/wagtail_admin.py
+#: indicators/wagtail_admin.py reports/report_formatters.py
 msgid "Indicators"
 msgstr "Indikatorer"
 
@@ -5291,6 +5291,12 @@ msgstr "ögonblicksbild av åtgärder"
 
 #: reports/report_formatters.py
 #, fuzzy
+#| msgid "has goals"
+msgid "Has goals"
+msgstr "har mål"
+
+#: reports/report_formatters.py
+#, fuzzy
 #| msgid "action responsible parties"
 msgid "Other responsible parties"
 msgstr "åtgärdsansvariga parter"
@@ -5787,9 +5793,6 @@ msgstr "Inget tillstånd att ta bort användaren som tillhör planer som du inte
 
 #~ msgid "Indicator actions"
 #~ msgstr "Indikatoråtgärder"
-
-#~ msgid "has goals"
-#~ msgstr "har mål"
 
 #~ msgid "week"
 #~ msgstr "vecka"

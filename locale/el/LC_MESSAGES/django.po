@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-11 12:22+0200\n"
+"POT-Creation-Date: 2024-12-11 12:34+0200\n"
 "PO-Revision-Date: 2024-11-07 09:20+0000\n"
 "Last-Translator: Ida Sihvonen <ida.sihvonen@kausal.tech>\n"
 "Language-Team: Greek <https://weblate.kausal.tech/projects/watch/django/el/>\n"
@@ -2059,7 +2059,7 @@ msgid "This short identifier is already in use for a top-level plan within this 
 msgstr "Αυτό το σύντομο αναγνωριστικό χρησιμοποιείται ήδη για ένα σχέδιο ανώτατου επιπέδου σε αυτόν τον οργανισμό."
 
 #: actions/models/plan.py indicators/apps.py indicators/blocks.py
-#: indicators/wagtail_admin.py
+#: indicators/wagtail_admin.py reports/report_formatters.py
 msgid "Indicators"
 msgstr "Δείκτες"
 
@@ -5040,6 +5040,12 @@ msgstr "στιγμιότυπο δράσης"
 #: reports/models.py
 msgid "action snapshots"
 msgstr "στιγμιότυπα δράσης"
+
+#: reports/report_formatters.py
+#, fuzzy
+#| msgid "Has a graph"
+msgid "Has goals"
+msgstr "Έχει γράφημα"
 
 #: reports/report_formatters.py
 #, fuzzy

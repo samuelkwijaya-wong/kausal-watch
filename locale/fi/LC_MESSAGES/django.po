@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-11 12:22+0200\n"
+"POT-Creation-Date: 2024-12-11 12:34+0200\n"
 "PO-Revision-Date: 2024-11-28 11:20+0000\n"
 "Last-Translator: Timo Tuominen <timo.tuominen@kausal.tech>\n"
 "Language-Team: Finnish <https://weblate.kausal.tech/projects/watch/django/fi/>\n"
@@ -2108,7 +2108,7 @@ msgid "This short identifier is already in use for a top-level plan within this 
 msgstr ""
 
 #: actions/models/plan.py indicators/apps.py indicators/blocks.py
-#: indicators/wagtail_admin.py
+#: indicators/wagtail_admin.py reports/report_formatters.py
 msgid "Indicators"
 msgstr "Mittarit"
 
@@ -5226,6 +5226,12 @@ msgstr "toimenpiteiden tallenteet"
 
 #: reports/report_formatters.py
 #, fuzzy
+#| msgid "has goals"
+msgid "Has goals"
+msgstr "on tavoitteita"
+
+#: reports/report_formatters.py
+#, fuzzy
 #| msgid "action responsible parties"
 msgid "Other responsible parties"
 msgstr "toimenpiteen vastuutahot"
@@ -5683,9 +5689,6 @@ msgstr "Ei oikeuksia poistaa käyttäjä joka kuuluu toimenpideohjelmiin, joita 
 
 #~ msgid "[nothing]"
 #~ msgstr "[ei mitään]"
-
-#~ msgid "has goals"
-#~ msgstr "on tavoitteita"
 
 #~ msgid "Select action plan"
 #~ msgstr "Valitse toimenpideohjelma"
