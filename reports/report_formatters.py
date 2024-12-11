@@ -382,7 +382,7 @@ class ActionIndicatorsFormatter(ActionManyToOneFieldFormatter):
         )
 
     def xlsx_column_labels(self, value, plan: Plan | None = None) -> list[str]:
-        return ['Indicators', 'Has goals']
+        return [gettext('Indicators'), gettext('Has goals')]
 
 
 class ActionAttributeTypeReportFieldFormatter(ReportFieldFormatter):
