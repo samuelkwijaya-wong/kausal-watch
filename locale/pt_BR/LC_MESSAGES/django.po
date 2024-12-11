@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-09 22:38+0100\n"
+"POT-Creation-Date: 2024-12-11 12:22+0200\n"
 "PO-Revision-Date: 2024-10-22 12:20+0000\n"
 "Last-Translator: Matias Wargelin <matias.wargelin@kausal.tech>\n"
 "Language-Team: Portuguese (Brazil) <https://weblate.kausal.tech/projects/watch/django/pt_BR/>\n"
@@ -1294,11 +1294,12 @@ msgid "Undid marking action '%(action)s' as complete for report '%(report)s'"
 msgstr "Anular a marcação da ação '%(action)s' como concluída para o relatório '%(report)s'"
 
 #: actions/models/action.py reports/blocks/action_content.py
+#: reports/report_formatters.py
 #, fuzzy
 msgid "Primary responsible party"
 msgstr "Parte responsável principal"
 
-#: actions/models/action.py
+#: actions/models/action.py reports/report_formatters.py
 #, fuzzy
 msgid "Collaborator"
 msgstr "Colaborador"
@@ -5644,12 +5645,14 @@ msgstr "Sim, excluir"
 msgid "No, don't delete"
 msgstr "Não, não exclua"
 
-#: people/templates/people/view_as_user.html templates/aplans/confirmation.html
+#: people/templates/people/view_as_user.html reports/report_formatters.py
+#: templates/aplans/confirmation.html
 #, fuzzy
 msgid "Yes"
 msgstr "Sim"
 
-#: people/templates/people/view_as_user.html templates/aplans/confirmation.html
+#: people/templates/people/view_as_user.html reports/report_formatters.py
+#: templates/aplans/confirmation.html
 #, fuzzy
 msgid "No"
 msgstr "Não"
@@ -5907,6 +5910,11 @@ msgstr "instantâneo da ação"
 #, fuzzy
 msgid "action snapshots"
 msgstr "instantâneos de ação"
+
+#: reports/report_formatters.py
+#, fuzzy
+msgid "Other responsible parties"
+msgstr "ação partes responsáveis"
 
 #: reports/spreadsheets/action_print_layout.py
 msgid "Profiles"

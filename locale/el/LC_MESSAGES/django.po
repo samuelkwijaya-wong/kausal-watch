@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-09 22:38+0100\n"
+"POT-Creation-Date: 2024-12-11 12:22+0200\n"
 "PO-Revision-Date: 2024-11-07 09:20+0000\n"
 "Last-Translator: Ida Sihvonen <ida.sihvonen@kausal.tech>\n"
 "Language-Team: Greek <https://weblate.kausal.tech/projects/watch/django/el/>\n"
@@ -1152,10 +1152,11 @@ msgid "Undid marking action '%(action)s' as complete for report '%(report)s'"
 msgstr "Αναίρεση της επισήμανσης της ενέργειας \"%(action)s\" ως ολοκληρωμένης για την έκθεση \"%(report)s\""
 
 #: actions/models/action.py reports/blocks/action_content.py
+#: reports/report_formatters.py
 msgid "Primary responsible party"
 msgstr "Κύριος υπεύθυνος"
 
-#: actions/models/action.py
+#: actions/models/action.py reports/report_formatters.py
 msgid "Collaborator"
 msgstr "Συνεργάτης"
 
@@ -4816,11 +4817,13 @@ msgstr "Ναι, διαγράψτε"
 msgid "No, don't delete"
 msgstr "Όχι, μη διαγράψετε"
 
-#: people/templates/people/view_as_user.html templates/aplans/confirmation.html
+#: people/templates/people/view_as_user.html reports/report_formatters.py
+#: templates/aplans/confirmation.html
 msgid "Yes"
 msgstr "Ναι"
 
-#: people/templates/people/view_as_user.html templates/aplans/confirmation.html
+#: people/templates/people/view_as_user.html reports/report_formatters.py
+#: templates/aplans/confirmation.html
 msgid "No"
 msgstr "Όχι"
 
@@ -5037,6 +5040,12 @@ msgstr "στιγμιότυπο δράσης"
 #: reports/models.py
 msgid "action snapshots"
 msgstr "στιγμιότυπα δράσης"
+
+#: reports/report_formatters.py
+#, fuzzy
+#| msgid "action responsible parties"
+msgid "Other responsible parties"
+msgstr "δράση υπεύθυνα μέρη"
 
 #: reports/spreadsheets/action_print_layout.py
 msgid "Profiles"

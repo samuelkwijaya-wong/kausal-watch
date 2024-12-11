@@ -10,11 +10,10 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-09 22:38+0100\n"
+"POT-Creation-Date: 2024-12-11 12:22+0200\n"
 "PO-Revision-Date: 2024-12-10 01:44+0000\n"
 "Last-Translator: Weblate Admin <noreply@mj.kausal.tech>\n"
-"Language-Team: German <https://weblate.kausal.tech/projects/watch/django/de/>"
-"\n"
+"Language-Team: German <https://weblate.kausal.tech/projects/watch/django/de/>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -529,9 +528,7 @@ msgstr "Indikator-Kausalitätskette"
 
 #: actions/blocks/action_content_blocks.py
 msgid "What heading should be used in the public UI for the dataset?"
-msgstr ""
-"Welche Überschrift soll in der öffentlichen Benutzeroberfläche für den "
-"Datensatz verwendet werden?"
+msgstr "Welche Überschrift soll in der öffentlichen Benutzeroberfläche für den Datensatz verwendet werden?"
 
 #: actions/blocks/action_content_blocks.py
 msgid "Help text for the Dataset to be shown in the public UI"
@@ -1047,9 +1044,7 @@ msgstr "Kopie von"
 
 #: actions/models/action.py
 msgid "Set if this action has been created by copying another action"
-msgstr ""
-"Setzen, wenn diese Maßnahme durch Kopieren einer anderen Maßnahme erstellt "
-"wurde"
+msgstr "Setzen, wenn diese Maßnahme durch Kopieren einer anderen Maßnahme erstellt wurde"
 
 #: actions/models/action.py
 msgid "Role in dependencies"
@@ -1109,10 +1104,11 @@ msgid "Undid marking action '%(action)s' as complete for report '%(report)s'"
 msgstr "Markieren der Maßnahme „%(action)s“ als abgeschlossen für Bericht „%(report)s“ wurde rückgängig gemacht"
 
 #: actions/models/action.py reports/blocks/action_content.py
+#: reports/report_formatters.py
 msgid "Primary responsible party"
 msgstr "Hauptverantwortliche Stelle"
 
-#: actions/models/action.py
+#: actions/models/action.py reports/report_formatters.py
 msgid "Collaborator"
 msgstr "Mitwirkende Stelle"
 
@@ -1839,9 +1835,7 @@ msgstr "Kurzbezeichnung"
 
 #: actions/models/plan.py
 msgid "A unique short identifier for the plan to be shown in the UI. Could be, e.g., a number or an abbreviation."
-msgstr ""
-"Eine eindeutige Kurzbezeichnung für den Plan, die in der Benutzeroberfläche "
-"angezeigt werden soll. Kann z. B. eine Nummer oder eine Abkürzung sein."
+msgstr "Eine eindeutige Kurzbezeichnung für den Plan, die in der Benutzeroberfläche angezeigt werden soll. Kann z. B. eine Nummer oder eine Abkürzung sein."
 
 #: actions/models/plan.py
 msgid "version name"
@@ -1968,8 +1962,7 @@ msgstr "Kopie von"
 
 #: actions/models/plan.py
 msgid "Set if this plan has been created by copying another plan"
-msgstr ""
-"Setzen, wenn dieser Plan durch Kopieren eines anderen Plans erstellt wurde"
+msgstr "Setzen, wenn dieser Plan durch Kopieren eines anderen Plans erstellt wurde"
 
 #: actions/models/plan.py
 msgid "Kausal Paths instance UUID"
@@ -2005,9 +1998,7 @@ msgstr "Diese Kurzbezeichnung wird bereits im übergeordneten Plan verwendet."
 
 #: actions/models/plan.py
 msgid "This short identifier is already in use for a top-level plan within this organization."
-msgstr ""
-"Diese Kurzbezeichnung wird bereits für einen übergeordneten Plan innerhalb "
-"dieser Organisation verwendet."
+msgstr "Diese Kurzbezeichnung wird bereits für einen übergeordneten Plan innerhalb dieser Organisation verwendet."
 
 #: actions/models/plan.py indicators/apps.py indicators/blocks.py
 #: indicators/wagtail_admin.py
@@ -2541,10 +2532,7 @@ msgstr "%s live ansehen"
 
 #: admin_site/wagtail.py
 msgid "Could not remove common category type \"%(removed_cct)\" from the plan because categories with the corresponding category type exist."
-msgstr ""
-"Der gemeinsame Kategorietyp „{removed_cct}“ konnte nicht aus dem Plan "
-"entfernt werden, da Kategorien mit dem entsprechenden Kategorietyp vorhanden "
-"sind."
+msgstr "Der gemeinsame Kategorietyp „{removed_cct}“ konnte nicht aus dem Plan entfernt werden, da Kategorien mit dem entsprechenden Kategorietyp vorhanden sind."
 
 #: admin_site/wagtail_hooks.py reports/apps.py reports/wagtail_admin.py
 msgid "Reports"
@@ -2924,9 +2912,7 @@ msgstr "Kennung"
 
 #: copying/views.py
 msgid "A unique value that identifies the copy internally and appears in URLs of testing or preview environments"
-msgstr ""
-"Ein eindeutiger Wert, der die Kopie intern identifiziert und in URLs von "
-"Test- oder Vorschauumgebungen erscheint"
+msgstr "Ein eindeutiger Wert, der die Kopie intern identifiziert und in URLs von Test- oder Vorschauumgebungen erscheint"
 
 #: copying/views.py
 msgid "Name to use for the copy"
@@ -2938,9 +2924,7 @@ msgstr "Versionsname"
 
 #: copying/views.py
 msgid "Version name to be set for the copied plan in order to distinguish it from other versions"
-msgstr ""
-"Versionsname, der für den kopierten Plan gesetzt wird, um diesen von anderen "
-"Versionen zu unterscheiden"
+msgstr "Versionsname, der für den kopierten Plan gesetzt wird, um diesen von anderen Versionen zu unterscheiden"
 
 #: copying/views.py
 msgid "Supersede original plan"
@@ -2972,10 +2956,7 @@ msgstr "Plan kopieren"
 
 #: copying/views.py
 msgid "The copy will be created in the background. This may take a few minutes. The copy will appear in the list of plans as soon as copying is finished."
-msgstr ""
-"Die Kopie wird im Hintergrund erstellt. Dies kann ein paar Minuten dauern. "
-"Die Kopie erscheint in der Liste der Pläne, sobald der Kopiervorgang "
-"abgeschlossen ist."
+msgstr "Die Kopie wird im Hintergrund erstellt. Dies kann ein paar Minuten dauern. Die Kopie erscheint in der Liste der Pläne, sobald der Kopiervorgang abgeschlossen ist."
 
 #: copying/views.py
 msgid "Create copy"
@@ -3356,9 +3337,7 @@ msgstr "versuchen, automatisch zu erkennen"
 
 #: indicators/models.py
 msgid "Which trend in the numerical values of this indicator's goals indicates improvement: when the values are increasing or decreasing?"
-msgstr ""
-"Welcher Trend in den Zahlenwerten der Ziele dieses Indikators deutet auf "
-"eine Verbesserung hin: wenn die Werte steigen oder sinken?"
+msgstr "Welcher Trend in den Zahlenwerten der Ziele dieses Indikators deutet auf eine Verbesserung hin: wenn die Werte steigen oder sinken?"
 
 #: indicators/models.py
 msgid "indicator"
@@ -4573,9 +4552,7 @@ msgstr "Überblick anzeigen"
 
 #: pages/models.py
 msgid "Should the indicator level be shown for indicators? (Displayed in the column \"Type\")"
-msgstr ""
-"Soll die Indikatorstufe für Indikatoren angezeigt werden? (Wird in der "
-"Spalte \"Typ\" angezeigt)"
+msgstr "Soll die Indikatorstufe für Indikatoren angezeigt werden? (Wird in der Spalte \"Typ\" angezeigt)"
 
 #: pages/models.py
 msgid "Display level"
@@ -4583,8 +4560,7 @@ msgstr "Stufe anzeigen"
 
 #: pages/models.py
 msgid "Enable to make this page include indicators from related plans."
-msgstr ""
-"Aktivieren, damit diese Seite Indikatoren aus verbundenen Plänen enthält."
+msgstr "Aktivieren, damit diese Seite Indikatoren aus verbundenen Plänen enthält."
 
 #: pages/models.py
 msgid "Indicator list page"
@@ -4726,11 +4702,13 @@ msgstr "Ja, löschen"
 msgid "No, don't delete"
 msgstr "Nein, nicht löschen"
 
-#: people/templates/people/view_as_user.html templates/aplans/confirmation.html
+#: people/templates/people/view_as_user.html reports/report_formatters.py
+#: templates/aplans/confirmation.html
 msgid "Yes"
 msgstr "Ja"
 
-#: people/templates/people/view_as_user.html templates/aplans/confirmation.html
+#: people/templates/people/view_as_user.html reports/report_formatters.py
+#: templates/aplans/confirmation.html
 msgid "No"
 msgstr "Nein"
 
@@ -4947,6 +4925,12 @@ msgstr "Maßnahmen-Snapshot"
 #: reports/models.py
 msgid "action snapshots"
 msgstr "Maßnahmen-Snapshots"
+
+#: reports/report_formatters.py
+#, fuzzy
+#| msgid "action responsible parties"
+msgid "Other responsible parties"
+msgstr "für Maßnahme zuständige Stellen"
 
 #: reports/spreadsheets/action_print_layout.py
 msgid "Profiles"

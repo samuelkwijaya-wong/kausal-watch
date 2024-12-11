@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-09 22:38+0100\n"
+"POT-Creation-Date: 2024-12-11 12:22+0200\n"
 "PO-Revision-Date: 2024-11-28 11:20+0000\n"
 "Last-Translator: Timo Tuominen <timo.tuominen@kausal.tech>\n"
 "Language-Team: Finnish <https://weblate.kausal.tech/projects/watch/django/fi/>\n"
@@ -1172,10 +1172,11 @@ msgid "Undid marking action '%(action)s' as complete for report '%(report)s'"
 msgstr "Toimenpiteen '%(action)s' merkitseminen valmiiksi raporttia '%(report)s' varten peruttiin"
 
 #: actions/models/action.py reports/blocks/action_content.py
+#: reports/report_formatters.py
 msgid "Primary responsible party"
 msgstr "Päävastuutaho"
 
-#: actions/models/action.py
+#: actions/models/action.py reports/report_formatters.py
 msgid "Collaborator"
 msgstr "Yhteistyötaho"
 
@@ -4993,11 +4994,13 @@ msgstr "Kyllä, poista"
 msgid "No, don't delete"
 msgstr "Ei, älä poista"
 
-#: people/templates/people/view_as_user.html templates/aplans/confirmation.html
+#: people/templates/people/view_as_user.html reports/report_formatters.py
+#: templates/aplans/confirmation.html
 msgid "Yes"
 msgstr "Kyllä"
 
-#: people/templates/people/view_as_user.html templates/aplans/confirmation.html
+#: people/templates/people/view_as_user.html reports/report_formatters.py
+#: templates/aplans/confirmation.html
 msgid "No"
 msgstr "Ei"
 
@@ -5220,6 +5223,12 @@ msgstr "toimenpiteen tallenne"
 #: reports/models.py
 msgid "action snapshots"
 msgstr "toimenpiteiden tallenteet"
+
+#: reports/report_formatters.py
+#, fuzzy
+#| msgid "action responsible parties"
+msgid "Other responsible parties"
+msgstr "toimenpiteen vastuutahot"
 
 #: reports/spreadsheets/action_print_layout.py
 msgid "Profiles"

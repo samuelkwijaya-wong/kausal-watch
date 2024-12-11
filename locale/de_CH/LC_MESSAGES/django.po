@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-09 22:38+0100\n"
+"POT-Creation-Date: 2024-12-11 12:22+0200\n"
 "PO-Revision-Date: 2024-10-22 12:20+0000\n"
 "Last-Translator: Matias Wargelin <matias.wargelin@kausal.tech>\n"
 "Language-Team: German (Switzerland) <https://weblate.kausal.tech/projects/watch/django/de_CH/>\n"
@@ -1134,10 +1134,11 @@ msgid "Undid marking action '%(action)s' as complete for report '%(report)s'"
 msgstr "Markieren der Massnahme „%(action)s“ als abgeschlossen für Bericht „%(report)s“ wurde rückgängig gemacht"
 
 #: actions/models/action.py reports/blocks/action_content.py
+#: reports/report_formatters.py
 msgid "Primary responsible party"
 msgstr ""
 
-#: actions/models/action.py
+#: actions/models/action.py reports/report_formatters.py
 msgid "Collaborator"
 msgstr ""
 
@@ -4824,11 +4825,13 @@ msgstr ""
 msgid "No, don't delete"
 msgstr ""
 
-#: people/templates/people/view_as_user.html templates/aplans/confirmation.html
+#: people/templates/people/view_as_user.html reports/report_formatters.py
+#: templates/aplans/confirmation.html
 msgid "Yes"
 msgstr ""
 
-#: people/templates/people/view_as_user.html templates/aplans/confirmation.html
+#: people/templates/people/view_as_user.html reports/report_formatters.py
+#: templates/aplans/confirmation.html
 msgid "No"
 msgstr ""
 
@@ -5046,6 +5049,12 @@ msgstr "Massnahmen-Snapshot"
 #: reports/models.py
 msgid "action snapshots"
 msgstr "Massnahmen-Snapshots"
+
+#: reports/report_formatters.py
+#, fuzzy
+#| msgid "action responsible parties"
+msgid "Other responsible parties"
+msgstr "für Massnahme zuständige Stellen"
 
 #: reports/spreadsheets/action_print_layout.py
 msgid "Profiles"

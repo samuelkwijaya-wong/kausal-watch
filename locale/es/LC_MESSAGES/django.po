@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-09 22:38+0100\n"
+"POT-Creation-Date: 2024-12-11 12:22+0200\n"
 "PO-Revision-Date: 2024-10-22 12:20+0000\n"
 "Last-Translator: Matias Wargelin <matias.wargelin@kausal.tech>\n"
 "Language-Team: Spanish <https://weblate.kausal.tech/projects/watch/django/es/>\n"
@@ -1132,10 +1132,11 @@ msgid "Undid marking action '%(action)s' as complete for report '%(report)s'"
 msgstr "Deshacer el marcado de la acción '%(action)s' como completa para el informe '%(report)s'"
 
 #: actions/models/action.py reports/blocks/action_content.py
+#: reports/report_formatters.py
 msgid "Primary responsible party"
 msgstr "Responsable principal"
 
-#: actions/models/action.py
+#: actions/models/action.py reports/report_formatters.py
 msgid "Collaborator"
 msgstr "Colaborador"
 
@@ -4761,11 +4762,13 @@ msgstr "Sí, borrar"
 msgid "No, don't delete"
 msgstr "No, no borres"
 
-#: people/templates/people/view_as_user.html templates/aplans/confirmation.html
+#: people/templates/people/view_as_user.html reports/report_formatters.py
+#: templates/aplans/confirmation.html
 msgid "Yes"
 msgstr "Sí"
 
-#: people/templates/people/view_as_user.html templates/aplans/confirmation.html
+#: people/templates/people/view_as_user.html reports/report_formatters.py
+#: templates/aplans/confirmation.html
 msgid "No"
 msgstr "No"
 
@@ -4982,6 +4985,12 @@ msgstr "instantánea de la acción"
 #: reports/models.py
 msgid "action snapshots"
 msgstr "instantáneas de la acción"
+
+#: reports/report_formatters.py
+#, fuzzy
+#| msgid "action responsible parties"
+msgid "Other responsible parties"
+msgstr "acción partes responsables"
 
 #: reports/spreadsheets/action_print_layout.py
 msgid "Profiles"
