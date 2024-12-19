@@ -8,14 +8,16 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-12-19 14:36+0200\n"
-"PO-Revision-Date: 2024-12-11 10:52+0000\n"
-"Last-Translator: Timo Tuominen <timo.tuominen@kausal.tech>\n"
-"Language-Team: Latvian <https://weblate.kausal.tech/projects/watch/django/lv/>\n"
+"PO-Revision-Date: 2024-12-19 14:20+0000\n"
+"Last-Translator: Matias Wargelin <matias.wargelin@kausal.tech>\n"
+"Language-Team: Latvian <https://weblate.kausal.tech/projects/watch/django/lv/"
+">\n"
 "Language: lv\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n % 10 == 0 || n % 100 >= 11 && n % 100 <= 19) ? 0 : ((n % 10 == 1 && n % 100 != 11) ? 1 : 2);\n"
+"Plural-Forms: nplurals=3; plural=(n % 10 == 0 || n % 100 >= 11 && n % 100 <= "
+"19) ? 0 : ((n % 10 == 1 && n % 100 != 11) ? 1 : 2);\n"
 "X-Generator: Weblate 5.4.2\n"
 
 #: actions/action_admin.py
@@ -3524,7 +3526,7 @@ msgstr ""
 
 #: indicators/models.py
 msgid "show trendline"
-msgstr ""
+msgstr "parādīt tendenču līniju"
 
 #: indicators/models.py
 msgid "desired trend"
@@ -3551,10 +3553,8 @@ msgid "Which trend in the numerical values of this indicator's goals indicates i
 msgstr ""
 
 #: indicators/models.py
-#, fuzzy
-#| msgid "show in additional links"
 msgid "show total line"
-msgstr "parādīt papildu saitēs"
+msgstr "parādīt kopējo līniju"
 
 #: indicators/models.py
 msgid "indicator"
