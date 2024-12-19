@@ -8,9 +8,10 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-12-19 14:36+0200\n"
-"PO-Revision-Date: 2024-12-11 10:52+0000\n"
-"Last-Translator: Timo Tuominen <timo.tuominen@kausal.tech>\n"
-"Language-Team: Greek <https://weblate.kausal.tech/projects/watch/django/el/>\n"
+"PO-Revision-Date: 2024-12-19 14:20+0000\n"
+"Last-Translator: Matias Wargelin <matias.wargelin@kausal.tech>\n"
+"Language-Team: Greek <https://weblate.kausal.tech/projects/watch/django/el/>"
+"\n"
 "Language: el\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -3481,10 +3482,8 @@ msgid "Which trend in the numerical values of this indicator's goals indicates i
 msgstr "Ποια τάση στις αριθμητικές τιμές των στόχων αυτού του δείκτη υποδηλώνει βελτίωση: όταν οι τιμές αυξάνονται ή μειώνονται;"
 
 #: indicators/models.py
-#, fuzzy
-#| msgid "show trendline"
 msgid "show total line"
-msgstr "Εμφάνιση γραμμής τάσης"
+msgstr "Εμφάνιση συνολικής γραμμής"
 
 #: indicators/models.py
 msgid "indicator"
