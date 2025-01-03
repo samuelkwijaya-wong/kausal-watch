@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-12-19 14:36+0200\n"
-"PO-Revision-Date: 2024-12-19 14:20+0000\n"
+"PO-Revision-Date: 2025-01-03 13:20+0000\n"
 "Last-Translator: Matias Wargelin <matias.wargelin@kausal.tech>\n"
 "Language-Team: German <https://weblate.kausal.tech/projects/watch/django/de/>"
 "\n"
@@ -3391,7 +3391,7 @@ msgstr "Welcher Trend in den Zahlenwerten der Ziele dieses Indikators deutet auf
 
 #: indicators/models.py
 msgid "show total line"
-msgstr "Gesamtzeile anzeigen"
+msgstr "Gesamtlinie anzeigen"
 
 #: indicators/models.py
 msgid "indicator"
