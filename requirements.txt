@@ -35,7 +35,7 @@ cachetools==5.3.3
     # via django-helusers
 celery==5.4.0
     # via -r requirements.in
-certifi==2024.2.2
+certifi==2024.7.4
     # via
     #   elasticsearch
     #   requests
@@ -67,7 +67,7 @@ coreschema==0.0.4
     # via coreapi
 coverage==7.5.1
     # via pytest-cov
-cryptography==42.0.7
+cryptography==43.0.3
     # via
     #   -r requirements.in
     #   jwcrypto
@@ -91,7 +91,7 @@ diff-match-patch==20230430
     # via django-import-export
 diffsync==2.0.1
     # via -r requirements.in
-django==5.0.6
+django==5.0.10
     # via
     #   -r requirements.in
     #   django-anymail
@@ -179,7 +179,7 @@ django-taggit==5.0.1
     # via wagtail
 django-treebeard==4.7.1
     # via wagtail
-djangorestframework==3.15.1
+djangorestframework==3.15.2
     # via
     #   -r requirements.in
     #   drf-nested-routers
@@ -252,7 +252,7 @@ iniconfig==2.0.0
     # via pytest
 itypes==1.2.0
     # via coreapi
-jinja2==3.1.4
+jinja2==3.1.5
     # via
     #   -r requirements.in
     #   coreschema
@@ -423,7 +423,7 @@ referencing==0.35.1
     # via
     #   jsonschema
     #   jsonschema-specifications
-requests==2.31.0
+requests==2.32.3
     # via
     #   -r requirements.in
     #   coreapi
@@ -504,7 +504,7 @@ uritemplate==4.1.1
     #   -r requirements.in
     #   coreapi
     #   drf-spectacular
-urllib3==1.26.18
+urllib3==1.26.20
     # via
     #   botocore
     #   django-anymail
