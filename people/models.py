@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import contextlib
+import copy
 import hashlib
 import io
 import logging
@@ -26,15 +27,15 @@ from wagtail.search import index
 
 import requests
 import willow
-from easy_thumbnails.files import get_thumbnailer  # type: ignore
-from image_cropping import ImageRatioField  # type: ignore
+from easy_thumbnails.files import get_thumbnailer
+from image_cropping import ImageRatioField
 from sentry_sdk import capture_exception
 
 from kausal_common.models.types import MLModelManager
 
 from aplans.utils import PlanDefaultsModel
 
-from actions.models import ActionContactPerson
+from actions.models import ActionContactPerson, PlanFeatures
 from admin_site.models import Client
 from orgs.models import Organization
 from users.models import User
@@ -44,8 +45,8 @@ if TYPE_CHECKING:
 
     from aplans.types import UserOrAnon, WatchRequest
 
-    from actions.models import Action, Plan
-    from actions.models.plan import PlanPublicSiteViewer
+    from actions.models.action import Action
+    from actions.models.plan import Plan, PlanPublicSiteViewer
     from indicators.models import Indicator
     from orgs.models import OrganizationPlanAdmin
     from users.models import User as UserModel
@@ -464,6 +465,26 @@ class Person(index.Indexed, ClusterableModel, PlanDefaultsModel):
         if plan is None:
             return self.plans_with_public_site_access.exists()
         return plan.pk in self.plans_with_public_site_access.values_list('plan_id', flat=True)
+
+    def get_redacted_copy(self, plan: Plan):
+        """
+        Return a copy of self with redacted information according to the configuration of the given plan.
+
+        You better not save the returned object.
+        """
+        if plan.features.contact_persons_public_data == PlanFeatures.ContactPersonsPublicData.ALL:
+            return copy.copy(self)
+        if plan.features.contact_persons_public_data == PlanFeatures.ContactPersonsPublicData.NAME:
+            return Person(
+                id=self.id,  # if we omit this, GraphQL will complain that we return null for nun-nullable `id` fields
+                first_name=self.first_name,
+                last_name=self.last_name,
+                title=self.title,
+                organization=self.organization,
+            )
+        if plan.features.contact_persons_public_data == PlanFeatures.ContactPersonsPublicData.NONE:
+            return Person(id=self.id)
+        raise AssertionError("Unexpected value for PlanFeatures.contact_persons_public_data")
 
     def __str__(self):
         return "%s %s" % (self.first_name, self.last_name)

@@ -1202,18 +1202,10 @@ class ActionNode(AdminButtonsMixin, AttributesMixin, DjangoNode):
     )
     def resolve_contact_persons(root: Action, info: GQLInfo, show_all_contact_persons: bool):
         plan: Plan = get_plan_from_context(info)
+        assert plan == root.plan
         user = info.context.user
-        acps = []
         cache = info.context.watch_cache.for_plan(plan)
-        for acp in root.contact_persons.all():
-            person = cache.get_person(acp.person_id) or acp.person
-            if not person.visible_for_user(user=user, plan=plan):
-                continue
-            acps.append(acp)
-        if plan.features.contact_persons_hide_moderators and (
-            not show_all_contact_persons or not user.is_authenticated or not user.can_access_admin(plan)):
-            acps = [acp for acp in acps if not acp.is_moderator()]
-        return acps
+        return root.get_redacted_contact_persons(user, show_all_contact_persons, cache)
 
     @staticmethod
     def resolve_similar_actions(root: Action, info):
@@ -1296,10 +1288,16 @@ class ActionImplementationPhaseNode(DjangoNode):
 
 
 class ActionResponsiblePartyNode(DjangoNode):
+    has_contact_person = graphene.Boolean(required=True)
+
     @staticmethod
     def resolve_organization(root: ActionResponsibleParty, info) -> Organization:
         cache = info.context.watch_cache.for_plan_id(root.action.plan_id)
         return cache.get_organization(root.organization_id) or root.organization
+
+    @staticmethod
+    def resolve_has_contact_person(root: ActionResponsibleParty, info: GQLInfo) -> bool:
+        return root.action.has_contact_person_from_organization(root.organization, include_suborganizations=True)
 
     class Meta:
         model = ActionResponsibleParty
