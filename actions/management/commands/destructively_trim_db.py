@@ -10,8 +10,8 @@ from wagtail.models import ModelLogEntry, PageLogEntry, Revision as WagtailRevis
 from actions.models.plan import Plan
 from admin_site.models import Client
 from orgs.models import Organization
-from users.models import User
 from request_log.models import LoggedRequest
+from users.models import User
 
 
 class Command(BaseCommand):
