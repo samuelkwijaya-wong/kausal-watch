@@ -61,7 +61,7 @@ class User(AbstractUser):
     )
     deactivated_by = models.ForeignKey(
         'self',
-        on_delete=models.PROTECT,
+        on_delete=models.SET_NULL,
         null=True,
     )
 
