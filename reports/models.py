@@ -222,7 +222,7 @@ class Report(PlanRelatedModel):
             ).order_by('order')
         result = LiveVersions()
 
-        incomplete_actions = []
+        incomplete_actions: list[Action] = []
 
         ct = ContentType.objects.get_for_model(Action)
         version_qs = Version.objects.filter(
@@ -262,7 +262,7 @@ class Report(PlanRelatedModel):
         related_versions: set[Version] = set() # non-Action versions from the same revision as any of our actions
 
         for action in actions_to_snapshot:
-            snapshot = action_snapshots_by_action_pk.get(action.pk)
+            snapshot = action_snapshots_by_action_pk.get(action.pk)  # type: ignore[assignment]
             if snapshot is None:
                 incomplete_actions.append(action)
                 continue
