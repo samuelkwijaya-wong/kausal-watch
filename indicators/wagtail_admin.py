@@ -17,7 +17,7 @@ from wagtail.admin.panels import (
     ObjectList,
 )
 
-from dal import autocomplete
+from dal import autocomplete, forward as dal_forward
 from generic_chooser.views import ModelChooserViewSet
 from generic_chooser.widgets import AdminChooser
 from wagtail_modeladmin.helpers import PermissionHelper
@@ -533,9 +533,12 @@ class IndicatorAdmin(AplansModelAdmin):
             InlinePanel(
                 'related_actions',
                 panels=[
-                    CustomizableBuiltInFieldPanel(
-                        'action', widget=autocomplete.ModelSelect2(url='action-autocomplete'),
-                    ),
+                    CustomizableBuiltInFieldPanel('action', widget=autocomplete.ModelSelect2(
+                        url='action-autocomplete',
+                        forward=(
+                            dal_forward.Const(val=True, dst='only_modifiable'),
+                        ),
+                    )),
                     CustomizableBuiltInFieldPanel('effect_type'),
                     CustomizableBuiltInFieldPanel('indicates_action_progress'),
                 ],

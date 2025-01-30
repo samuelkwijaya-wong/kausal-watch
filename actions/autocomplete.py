@@ -1,10 +1,17 @@
+from __future__ import annotations
+
+import typing
+
 from django.db.models import Q
 
 from dal import autocomplete
 
-from aplans.types import WatchAdminRequest
-
 from actions.models import Action, Category, CommonCategoryType, Plan
+from actions.models.action import ActionQuerySet
+
+if typing.TYPE_CHECKING:
+    from aplans.types import WatchAdminRequest
+
 
 
 class ActionAutocomplete(autocomplete.Select2QuerySetView):
@@ -34,6 +41,9 @@ class ActionAutocomplete(autocomplete.Select2QuerySetView):
         else:
             plans = [plan]
         qs = Action.objects.filter(plan__in=plans).select_related('plan')
+        assert isinstance(qs, ActionQuerySet)
+        if self.forwarded.get('only_modifiable', False):
+            qs = qs.modifiable_by(self.request.user)
         if self.q:
             qs = qs.filter(Q(identifier__istartswith=self.q) | Q(name__icontains=self.q) | Q(official_name__icontains=self.q))
 
