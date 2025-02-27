@@ -702,6 +702,8 @@ def get_available_variants_for_language(language: str):
 
 def convert_html_to_text(html):
     # Create an instance of the HTML2Text converter
+    if html is None:
+        return ''
     converter = html2text.HTML2Text()
 
     # Configure the converter settings
