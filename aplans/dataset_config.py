@@ -8,4 +8,4 @@ dataset_config under the project directory.
 """
 from __future__ import annotations
 
-DATASOURCE_DEFAULT_SCOPE_CONTENT_TYPE =  ('actions', 'plan')
+DATA_SOURCE_DEFAULT_SCOPE_CONTENT_TYPE =  ('actions', 'plan')
