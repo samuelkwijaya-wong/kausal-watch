@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-03-27 13:34+0200\n"
-"PO-Revision-Date: 2025-03-31 07:21+0000\n"
+"PO-Revision-Date: 2025-04-02 07:20+0000\n"
 "Last-Translator: Matias Wargelin <matias.wargelin@kausal.tech>\n"
 "Language-Team: Greek <https://weblate.kausal.tech/projects/watch/django/el/>"
 "\n"
@@ -3798,10 +3798,8 @@ msgid "Time resolution of the time stamps of data points in this dataset"
 msgstr "Χρονική ανάλυση των χρονικών σφραγίδων των σημείων δεδομένων σε αυτό το σύνολο δεδομένων"
 
 #: kausal_common/datasets/models.py
-#, fuzzy
-#| msgid "Choose another category type"
 msgid "Descriptive name of the dataset schema"
-msgstr "Επιλέξτε ένα άλλο σχήμα συνόλου δεδομένων"
+msgstr "Περιγραφικό όνομα του σχήματος του συνόλου δεδομένων"
 
 #: kausal_common/datasets/models.py
 #, fuzzy
