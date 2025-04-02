@@ -12,7 +12,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-03-27 13:34+0200\n"
-"PO-Revision-Date: 2025-03-31 07:20+0000\n"
+"PO-Revision-Date: 2025-04-02 07:20+0000\n"
 "Last-Translator: Matias Wargelin <matias.wargelin@kausal.tech>\n"
 "Language-Team: Danish <https://weblate.kausal.tech/projects/watch/django/da/>"
 "\n"
@@ -4071,10 +4071,8 @@ msgid "Time resolution of the time stamps of data points in this dataset"
 msgstr ""
 
 #: kausal_common/datasets/models.py
-#, fuzzy
-#| msgid "Choose another attribute"
 msgid "Descriptive name of the dataset schema"
-msgstr "Vælg en anden attribut"
+msgstr "Beskrivende navn på datasættets skema"
 
 #: kausal_common/datasets/models.py
 #, fuzzy
