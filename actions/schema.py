@@ -319,7 +319,10 @@ class PlanNode(DjangoNode):
         root_page: Page | None = root.get_translated_root_page()
         if not root_page:
             return None
-        return root_page.get_descendants().live().public().type(ActionListPage).first().specific
+        action_list_page = root_page.get_descendants().live().public().type(ActionListPage).first()
+        if action_list_page is None:
+            return None
+        return action_list_page.specific
 
     @staticmethod
     def resolve_view_url(root: Plan, info, client_url: str | None = None):
