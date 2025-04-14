@@ -47,6 +47,8 @@ check_untyped_defs = true
 cache_fine_grained = true
 explicit_package_bases = true
 strict_optional = true
+always_true = ['IS_WATCH']
+always_false = ['IS_PATHS']
 
 [[tool.mypy.overrides]]
 module = [
@@ -116,6 +118,7 @@ exclude = [
 stubPath = "kausal_common/typings"
 deprecateTypingAliases = true
 reportAttributeAccessIssue = "error"
+defineConstant = { 'IS_PATHS' = false, 'IS_WATCH' = true }
 
 
 [tool.django-stubs]
