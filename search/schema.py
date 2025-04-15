@@ -34,7 +34,7 @@ class SearchHit(graphene.ObjectType):
     highlight = graphene.String()
     plan = graphene.Field('actions.schema.PlanNode')
     object = graphene.Field(SearchHitObject, required=False)
-    page = graphene.Field('grapple.types.pages.PageInterface', required=False)
+    page = graphene.Field('grapple.types.interfaces.PageInterface', required=False)
 
     def resolve_url(root, info, client_url=None):
         object = root.get('object')

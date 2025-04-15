@@ -1,7 +1,8 @@
+from __future__ import annotations
+
 import typing
 
 from django.apps import AppConfig
-from django.conf import settings
 
 from wagtailorderable.signals import post_reorder
 
@@ -50,10 +51,10 @@ def resolve_ancestors(self, info, **kwargs):
 
 
 def patch_grapple_url_resolvers():
-    from grapple.types.pages import PageInterface
+    from grapple.types.interfaces import PageInterface
 
-    PageInterface.resolve_url_path = resolve_page_url_path
-    PageInterface.resolve_parent = resolve_parent
+    PageInterface.resolve_url_path = resolve_page_url_path  # type: ignore
+    PageInterface.resolve_parent = resolve_parent  # type: ignore
     PageInterface.resolve_siblings = resolve_siblings
     PageInterface.resolve_next_siblings = resolve_siblings
     PageInterface.resolve_previous_siblings = resolve_siblings

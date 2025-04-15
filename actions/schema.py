@@ -22,7 +22,7 @@ from wagtail.rich_text import RichText
 import graphene_django_optimizer as gql_optimizer
 import sentry_sdk
 from grapple.registry import registry as grapple_registry
-from grapple.types.pages import PageInterface
+from grapple.types.interfaces import PageInterface
 
 from kausal_common.datasets.models import Dataset
 from kausal_common.users import is_authenticated

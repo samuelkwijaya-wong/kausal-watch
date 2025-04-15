@@ -46,6 +46,8 @@ from .graphene_views import SentryGraphQLView
 if typing.TYPE_CHECKING:
     from types import ModuleType
 
+    from wagtail.query import PageQuerySet
+
 extensions_api_views = []
 kwe_urls: ModuleType | None = None
 if importlib.util.find_spec('kausal_watch_extensions') is not None:
@@ -54,8 +56,10 @@ if importlib.util.find_spec('kausal_watch_extensions') is not None:
     extensions_api_views = all_views
     kwe_urls = urls
 
-
 for view in actions_api_views + indicators_api_views + insight_api_views + extensions_api_views:
+    basename = view.get('basename') or api_router.get_default_basename(view['class'])
+    if api_router.is_already_registered(basename):
+        continue
     api_router.register(view['name'], view['class'], basename=view.get('basename'))
 
 
@@ -77,7 +81,9 @@ class KausalLogoutView(LogoutView):
         return base
 
 
-class PageSearchFilterByPlanMixin:
+class PageSearchView(search.SearchView):
+    """Override Wagtail's SearchView in order to filter the search results by plan."""
+
     show_locale_labels: bool
     ordering: str
     selected_content_type: ContentType
@@ -88,61 +94,15 @@ class PageSearchFilterByPlanMixin:
         # else.
         return restrict_chooser_pages_to_plan(pages, self.request)
 
-    def get_queryset(self):
-        # FIXME: Most of this method is copied from Wagtail's admin/views/pages/search.py. So if this changes in
-        # Wagtail, we need to update this method.
-        # It's also not as easy as just calling super().get_queryset() and doing the filtering afterwards because the
-        # result of super().get_queryset() may be of different types, depending on the search backend, and it's not
-        # necessarily a QuerySet, despite the name of the method and the type annotation. For example, it could be a
-        # PostgresSearchResults or WatchSearchResults object.
-        pages = self.all_pages = (
-            Page.objects.all().prefetch_related("content_type").specific()
-        )
-        if self.show_locale_labels:
-            pages = pages.select_related("locale")
-
-        if self.ordering:
-            pages = pages.order_by(self.ordering)
-
-        if self.selected_content_type:
-            pages = pages.filter(content_type=self.selected_content_type)
-
-        # BEGIN KAUSAL HACK
-        pages = self.restrict_pages_to_plan(pages)
-        self.all_pages = self.restrict_pages_to_plan(self.all_pages)
-        # END KAUSAL HACK
-
-        # Parse query and filter
-        pages, self.all_pages = search.page_filter_search(
-            self.q, pages, self.all_pages, self.ordering,
-        )
-
-        # Facets
-        if pages.supports_facet:
-            self.content_types = [
-                (ContentType.objects.get(id=content_type_id), count)
-                for content_type_id, count in self.all_pages.facet(
-                    "content_type_id",
-                ).items()
-            ]
-
-        return pages
-
-
-class PageSearchView(PageSearchFilterByPlanMixin, search.SearchView):
-    """Override Wagtail's SearchView in order to filter the search results by plan."""
-
-    pass
-
-
-
-class PageSearchResultsView(PageSearchFilterByPlanMixin, search.SearchResultsView):
-    """Override Wagtail's SearchResultsView in order to filter the search results by plan."""
-
-    pass
-
+    def annotate_queryset(self, queryset: PageQuerySet):
+        queryset = self.restrict_pages_to_plan(queryset)
+        self.all_pages = queryset
+        return super().annotate_queryset(queryset)
 
 for prefix, viewset, basename in datasets_api_root_router.registry:
+    reg_base = basename or api_router.get_default_basename(viewset)
+    if api_router.is_already_registered(reg_base):
+        continue
     api_router.register(prefix, viewset, basename=basename)
 
 api_urls = []
@@ -172,7 +132,6 @@ urlpatterns = [
     re_path(r'^admin/autocomplete/', include(autocomplete_admin_urls)),
     # FIXME: This overrides the URLs in Wagtail's admin/urls/pages.py to allow filtering the queryset
     path("admin/pages/search/", PageSearchView.as_view(), name="search"),
-    path("admin/pages/search/results/", PageSearchResultsView.as_view(), name="search_results"),
     re_path(r'^admin/', include(wagtailadmin_urls)),
     re_path(r'^wadmin', WadminRedirectView.as_view(), name='wadmin-redirect'),
     re_path(r'^documents/', include(wagtaildocs_urls)),

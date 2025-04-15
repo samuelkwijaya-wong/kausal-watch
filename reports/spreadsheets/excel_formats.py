@@ -124,7 +124,7 @@ class ExcelFormats(dict):
         @classmethod
         def action_digest_page_header(cls, f: Format) -> None:
             f.set_bg_color(cls.COLOR_PAGE_HEADER)
-            f.set_color('#ffffff')
+            f.set_font_color('#ffffff')
             f.set_align('top')
             f.set_font_size(10)
             f.set_bold()

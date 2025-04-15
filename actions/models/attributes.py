@@ -112,7 +112,9 @@ class AttributeType(
         unique_with=('object_content_type', 'scope_content_type', 'scope_id'),
     )
     help_text = models.TextField(verbose_name=_('help text'), blank=True)
-    format = models.CharField(max_length=50, choices=AttributeFormat.choices, verbose_name=_('Format'))
+    format = models.CharField[AttributeFormat, AttributeFormat](
+        max_length=50, choices=AttributeFormat.choices, verbose_name=_('Format')
+    )
     unit = models.ForeignKey(
         Unit, blank=True, null=True, on_delete=models.PROTECT, related_name='+',
         verbose_name=_('Unit (only if format is numeric)'),

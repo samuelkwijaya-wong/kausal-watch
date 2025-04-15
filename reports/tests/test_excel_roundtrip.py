@@ -28,7 +28,7 @@ def excel_file_from_report_factory(actions_having_attributes, report_with_all_at
 
 
 def assert_report_dimensions(excel_file, report, actions):
-    df_actions = polars.read_excel(BytesIO(excel_file), sheet_name=_('Actions'))
+    df_actions = polars.read_excel(BytesIO(excel_file), sheet_name=_('Actions'), engine='openpyxl')
     non_report_fields = ['action', 'identifier']
     has_complete_actions = False
     if report.is_complete:
@@ -72,7 +72,7 @@ def test_excel_export(
     with translation.override(report_with_all_attributes.xlsx_exporter.language):
         df_complete_minus_completion = df_complete.select(
             cs.all() - cs.by_name(_('Marked as complete by'), _('Marked as complete at')))
-    assert df_incomplete.frame_equal(df_complete_minus_completion)
+    assert df_incomplete.equals(df_complete_minus_completion)
 
 
 def test_partly_completed_report_excel_export(

@@ -21,7 +21,7 @@ class BaseFactoryMeta(FactoryMetaClass):
         return super().__new__(mcs, class_name, bases, attrs)
 
 
-class ModelFactory(Generic[T], DjangoModelFactory, metaclass=BaseFactoryMeta):
+class ModelFactory(Generic[T], DjangoModelFactory[T], metaclass=BaseFactoryMeta):
     class Meta:
         abstract = True
 

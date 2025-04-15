@@ -22,6 +22,8 @@ if TYPE_CHECKING:
 
     from kausal_common.models.types import FK, RevOne
 
+    from aplans.utils import InstancesEditableByMixin, InstancesVisibleForMixin
+
     from actions.models import Action, ActionContactPerson, ActionResponsibleParty, ModelWithRole, Plan
     from actions.models.action import ActionQuerySet
     from indicators.models import Indicator, IndicatorQuerySet
@@ -70,8 +72,17 @@ class User(AbstractUser):
     auth_token: Token
     person: Person
     wagtail_userprofile: RevOne[User, UserProfile]
+    _corresponding_person: Person | None
+    _active_admin_plan: Plan
+    _adminable_plans: models.QuerySet[Plan]
+    _instance_visibility_perms: set[InstancesVisibleForMixin.VisibleFor]
+    _instance_editable_perms: set[InstancesEditableByMixin.EditableBy]
+    _org_admin_for_actions: ActionQuerySet
+    _org_admin_for_indicators: IndicatorQuerySet
+    _contact_for_actions: set[int]
+    _contact_for_actions_by_role: dict[ActionContactPerson.Role, set[int]]
+    _general_admin_for_plans: set[int]
 
-    _cache: UserRelatedModelsCache
 
     autocomplete_search_field = 'email'
 
@@ -399,9 +410,8 @@ class User(AbstractUser):
             else:
                 plan = action.plan
 
-        if plan is not None:
-            if self.is_general_admin_for_plan(plan):
-                return True
+        if plan is not None and self.is_general_admin_for_plan(plan):
+            return True
         if action is not None and action.is_merged():
             # Merged actions can only be edited by admins
             return False

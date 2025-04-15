@@ -20,6 +20,7 @@ Attic/**
 media/**
 *.sublime-project
 *.sublime-workspace
+*.code-workspace
 data/**
 .vscode/**
 .idea/**
@@ -28,5 +29,6 @@ data/**
 .git
 /docker-compose.override.yml
 /kausal_watch_extensions
+/.coverage
 requirements-local.in
 requirements-local.txt

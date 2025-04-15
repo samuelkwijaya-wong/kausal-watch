@@ -845,7 +845,6 @@ if SENTRY_DSN:
     init_sentry(SENTRY_DSN, DEPLOYMENT_TYPE)
 
 
-DATABASES['default']['CONN_MAX_AGE'] = env('DATABASE_CONN_MAX_AGE')
 if DEBUG and ENABLE_DEBUG_TOOLBAR:
     INSTALLED_APPS += ['debug_toolbar']
     MIDDLEWARE.insert(0, 'debug_toolbar.middleware.DebugToolbarMiddleware')

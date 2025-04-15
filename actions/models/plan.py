@@ -290,7 +290,7 @@ class Plan(ClusterableModel, ModelWithPrimaryLanguage):
 
     uses_wagtail = models.BooleanField(default=True)
     statuses_updated_manually = models.BooleanField(default=False)
-    theme_identifier = IdentifierField(verbose_name=_('Theme identifier'), null=True, blank=True)
+    theme_identifier: IdentifierField[str | None] = IdentifierField(verbose_name=_('Theme identifier'), null=True, blank=True)
 
     related_organizations: models.ManyToManyField[Organization, Organization] = models.ManyToManyField(
         Organization, blank=True, related_name='related_plans',

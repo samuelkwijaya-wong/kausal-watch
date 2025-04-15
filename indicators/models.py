@@ -20,7 +20,7 @@ from django.utils.translation import gettext_lazy as _, pgettext_lazy
 from modelcluster.fields import ParentalKey
 from modelcluster.models import ClusterableModel
 from modeltrans.fields import TranslationField
-from modeltrans.manager import MultilingualManager, MultilingualQuerySet
+from modeltrans.manager import MultilingualQuerySet
 from wagtail.fields import RichTextField
 from wagtail.search import index
 from wagtail.search.queryset import SearchableQuerySetMixin
@@ -325,7 +325,7 @@ class FrameworkIndicator(models.Model):
 
 class IndicatorQuerySet(SearchableQuerySetMixin, MultilingualQuerySet['Indicator']):
     def available_for_plan(self, plan: Plan):
-        related_orgs = Organization.objects.available_for_plan(plan)
+        related_orgs = Organization.objects.qs.available_for_plan(plan)
         return self.filter(organization__in=related_orgs)
 
     def visible_for_user(self, user: UserOrAnon | None) -> Self:
@@ -430,6 +430,7 @@ class Indicator(ClusterableModel, index.Indexed, ModificationTracking, PlanDefau
         'people.Person', through='indicators.IndicatorContactPerson', blank=True,
         related_name='contact_for_indicators', verbose_name=_('contact persons'),
     )
+    contact_persons: RevMany[IndicatorContactPerson]
 
     internal_notes = models.TextField(
         blank=True, null=True, verbose_name=_('internal notes'),
@@ -665,7 +666,7 @@ class Indicator(ClusterableModel, index.Indexed, ModificationTracking, PlanDefau
             return
 
         # Generate only for non-categorized values
-        ni_vals = ni.values.filter(categories__isnull=True)  # noqa: PD011
+        ni_vals = ni.values.filter(categories__isnull=True)
         ni_vals_by_date = {v.date: v for v in ni_vals}
 
         vals = list(self.values.filter(categories__isnull=True))
@@ -886,7 +887,7 @@ class IndicatorLevel(ClusterableModel):
 
     public_fields: typing.ClassVar = ['id', 'indicator', 'plan', 'level']
 
-    objects = IndicatorLevelManager()  # pyright: ignore
+    objects: ClassVar[IndicatorLevelManager] = IndicatorLevelManager()  # pyright: ignore
 
     class Meta:
         unique_together = (('indicator', 'plan'),)

@@ -167,7 +167,9 @@ class DateFormatField(models.CharField):
         kwargs['choices'] = DateFormatOptions.choices
         super().__init__(*args, **kwargs)
 
-class IdentifierField(models.CharField[str, str]):
+_IDT = TypeVar('_IDT', bound=str | None, default=str)
+
+class IdentifierField(models.CharField[_IDT, _IDT]):
     def __init__(self, *args, **kwargs):
         if 'validators' not in kwargs:
             kwargs['validators'] = [IdentifierValidator()]

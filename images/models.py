@@ -1,6 +1,8 @@
+from __future__ import annotations
+
 import datetime
 import os
-from typing import List
+from typing import ClassVar
 
 from django.db import models
 from django.utils.translation import gettext_lazy as _
@@ -9,9 +11,11 @@ from wagtail.images.models import AbstractImage, AbstractRendition, Image as Wag
 
 def truncate_filename(directories: list[str], filename: str) -> str:
     """
-    Joins all elements of the list `directories` and the string `filename` with a path separator and makes sure the
-    result fits into a Django file field.
+    Join all elements of the list `directories` and the string `filename`.
+
+    It uses a path separator and makes sure the result fits into a Django file field.
     """
+
     # Adapted from wagtail/images/models.py
     full_path = os.path.join(*directories, filename)
     if len(full_path) >= 95:
@@ -37,6 +41,8 @@ class AplansImage(AbstractImage):
 
     image_credit = models.CharField(max_length=254, blank=True, verbose_name=_('Image byline or credits'))
     alt_text = models.CharField(max_length=254, blank=True, verbose_name=_('Alt text'))
+
+    _default_manager: ClassVar[models.Manager[AplansImage]]
 
     class Meta:
         verbose_name = _('image')

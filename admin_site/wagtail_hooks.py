@@ -1,4 +1,5 @@
-# pyright: reportMissingTypeStubs=true
+from __future__ import annotations
+
 from typing import TYPE_CHECKING, Any
 
 from django.db.models import Q
@@ -8,18 +9,19 @@ from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from wagtail import hooks
-from wagtail.admin.menu import AdminOnlyMenuItem, DismissibleMenuItem, Menu, MenuItem, SubmenuMenuItem
-from wagtail.admin.panels import FieldPanel, InlinePanel, ObjectList
+from wagtail.admin.menu import DismissibleMenuItem, Menu, MenuItem, SubmenuMenuItem
+from wagtail.admin.panels import FieldPanel, InlinePanel
 from wagtail.admin.ui.components import Component
 from wagtail.snippets.models import register_snippet
 from wagtail.snippets.views.snippets import SnippetViewSet
 
 from actions.models import CommonCategoryType
-from actions.wagtail_admin import PlanAdmin
 
 from .models import Client
 
 if TYPE_CHECKING:
+    from collections.abc import Sequence
+
     from aplans.types import WatchAdminRequest
 
 
@@ -238,11 +240,19 @@ def enable_superscript_feature(features):
     features.default_features.append('subscript')
 
 
-def remove_menu_items(items, item_classes_to_remove):
+def remove_menu_items(
+    items: list[MenuItem], item_classes_to_remove: tuple[type, ...] = (), names_to_remove: Sequence[str] | None = None
+):
+    def should_remove(item: MenuItem) -> bool:
+        if isinstance(item, item_classes_to_remove):
+            return True
+        if names_to_remove and item.name in names_to_remove:
+            return True
+        return False
     to_remove = []
     for item in items:
-        if isinstance(item, item_classes_to_remove):
-            to_remove.append(item)
+        if should_remove(item):
+            to_remove.append(item)  # noqa: PERF401
     for item in to_remove:
         items.remove(item)
 
@@ -258,15 +268,12 @@ def remove_settings_menu_items(request, items: list):
     from wagtail.sites.wagtail_hooks import (
         SitesMenuItem,
     )
-    from wagtail.users.wagtail_hooks import (
-        GroupsMenuItem,
-        UsersMenuItem,
-    )
 
     item_classes_to_remove = (
-        GroupsMenuItem, UsersMenuItem, SitesMenuItem, LocalesMenuItem, RedirectsMenuItem,
+        SitesMenuItem, LocalesMenuItem, RedirectsMenuItem,
     )
-    remove_menu_items(items, item_classes_to_remove)
+    names_to_remove = ('users', 'groups')
+    remove_menu_items(items, item_classes_to_remove, names_to_remove)
 
 
 @hooks.register('construct_main_menu')

@@ -1,13 +1,13 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, ClassVar
 
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from wagtail import blocks
 from wagtail.admin.panels import FieldPanel
 from wagtail.fields import StreamField
-from wagtail.models import Page
+from wagtail.models import Page, PageManager
 
 from actions.models.plan import Plan
 from pages.models import DefaultSlugForCopyingMixin
@@ -27,6 +27,8 @@ class DocumentationRootPage(DefaultSlugForCopyingMixin, Page):  # type: ignore[m
     parent_page_types = ['wagtailcore.Page']  # Can only be under the global root page
     subpage_types = ['DocumentationPage']
     is_creatable = False  # Only let this be created programmatically
+
+    _default_manager: ClassVar[PageManager[DocumentationRootPage]]
 
     # Disable Wagtail's previews because our hacks make them break
     @property

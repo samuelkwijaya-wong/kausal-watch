@@ -354,13 +354,13 @@ class ExcelReport:
         action_df = action_df.fill_null('[' + _('Unknown') + ']')
         if len(labels) == 1:
             return (action_df
-                    .groupby(labels)
+                    .group_by(labels)
                     .count()
                     .rename({'count': _('Actions')}))
         return action_df.pivot(  # noqa: PD010
             values=_("Identifier"),
             index=labels[0],
-            columns=labels[1],
+            on=labels[1],
             aggregate_function="len",
             ).sort(labels[0])
 

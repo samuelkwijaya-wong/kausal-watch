@@ -3,7 +3,7 @@ django
 wagtail-orderable
 djangorestframework
 social-auth-app-django
-psycopg[binary]
+psycopg[pool]
 django-extensions
 django-environ
 markdown
