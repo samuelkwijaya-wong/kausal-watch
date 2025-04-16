@@ -13,13 +13,14 @@ asgiref==3.8.1
     #   django
     #   django-cors-headers
     #   django-countries
+    #   strawberry-graphql-django
 attrs==25.3.0
     # via
     #   jsonschema
     #   referencing
 babel==2.17.0
     # via -r requirements.in
-beautifulsoup4==4.13.3
+beautifulsoup4==4.13.4
     # via wagtail
 billiard==4.2.1
     # via celery
@@ -120,6 +121,7 @@ django==5.2
     #   graphene-django
     #   laces
     #   social-auth-app-django
+    #   strawberry-graphql-django
     #   wagtail
     #   wagtail-localize
 django-anymail==13.0
@@ -234,6 +236,7 @@ graphql-core==3.2.6
     #   graphene
     #   graphene-django
     #   graphql-relay
+    #   strawberry-graphql
 graphql-relay==3.2.0
     # via
     #   -r requirements.in
@@ -303,19 +306,19 @@ oauthlib==3.2.2
     #   social-auth-core
 openpyxl==3.1.5
     # via wagtail
-opentelemetry-api==1.32.0
+opentelemetry-api==1.32.1
     # via
     #   opentelemetry-distro
     #   opentelemetry-instrumentation
     #   opentelemetry-sdk
     #   opentelemetry-semantic-conventions
-opentelemetry-distro==0.53b0
+opentelemetry-distro==0.53b1
     # via sentry-sdk
-opentelemetry-instrumentation==0.53b0
+opentelemetry-instrumentation==0.53b1
     # via opentelemetry-distro
-opentelemetry-sdk==1.32.0
+opentelemetry-sdk==1.32.1
     # via opentelemetry-distro
-opentelemetry-semantic-conventions==0.53b0
+opentelemetry-semantic-conventions==0.53b1
     # via
     #   opentelemetry-instrumentation
     #   opentelemetry-sdk
@@ -326,6 +329,7 @@ packaging==23.2
     #   opentelemetry-instrumentation
     #   pytest
     #   pytest-factoryboy
+    #   strawberry-graphql
 pillow==11.2.1
     # via
     #   -r requirements.in
@@ -405,6 +409,7 @@ python-dateutil==2.9.0.post0
     #   elasticsearch-dsl
     #   graphene
     #   s3cmd
+    #   strawberry-graphql
 python-jose==3.4.0
     # via
     #   -r requirements.in
@@ -468,6 +473,12 @@ soupsieve==2.6
     # via beautifulsoup4
 sqlparse==0.5.3
     # via django
+strawberry-graphql==0.265.1
+    # via
+    #   -r requirements.in
+    #   strawberry-graphql-django
+strawberry-graphql-django==0.58.0
+    # via -r requirements.in
 structlog==25.2.0
     # via diffsync
 tablib==3.8.0
@@ -494,6 +505,7 @@ typing-extensions==4.13.2
     #   pydantic-core
     #   pygithub
     #   pytest-factoryboy
+    #   strawberry-graphql
     #   typing-inspection
     #   wagtail-localize
 typing-inspection==0.4.0

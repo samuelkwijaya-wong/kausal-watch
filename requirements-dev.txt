@@ -75,8 +75,6 @@ pygments==2.19.1
     #   ipython
     #   ipython-pygments-lexers
     #   pdbpp
-pyrepl==0.11.3.post1
-    # via fancycompleter
 pyyaml==6.0.2
     # via
     #   -c requirements.txt
@@ -95,11 +93,6 @@ traitlets==5.14.3
     # via
     #   ipython
     #   matplotlib-inline
-typing-extensions==4.13.2
-    # via
-    #   -c requirements-lint.txt
-    #   -c requirements.txt
-    #   anyio
 uv==0.6.14
     # via -r requirements-dev.in
 virtualenv==20.30.0
