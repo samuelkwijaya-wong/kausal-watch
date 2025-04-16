@@ -17,10 +17,10 @@ pytestmark = pytest.mark.django_db
 
 
 def test_dimension_node(graphql_client_query_data, plan, category):
-    dataset = DatasetFactory(scope=category)
+    dataset = DatasetFactory.create(scope=category)
     schema = dataset.schema
-    dimension = DimensionFactory()
-    DatasetSchemaDimensionFactory(schema=schema, dimension=dimension)
+    dimension = DimensionFactory.create()
+    DatasetSchemaDimensionFactory.create(schema=schema, dimension=dimension)
     data = graphql_client_query_data(
         """
         query($plan: ID!) {
@@ -60,10 +60,10 @@ def test_dimension_node(graphql_client_query_data, plan, category):
 
 
 def test_dimension_scope_node(graphql_client_query_data, plan, category):
-    scope = DimensionScopeFactory(scope=category.type)
+    scope = DimensionScopeFactory.create(scope=category.type)
     dimension = scope.dimension
-    dataset = DatasetFactory(scope=category)
-    DatasetSchemaDimensionFactory(schema=dataset.schema, dimension=dimension)
+    dataset = DatasetFactory.create(scope=category)
+    DatasetSchemaDimensionFactory.create(schema=dataset.schema, dimension=dimension)
     data = graphql_client_query_data(
         """
         query($plan: ID!) {
@@ -109,8 +109,8 @@ def test_dimension_scope_node(graphql_client_query_data, plan, category):
 
 
 def test_data_point_node(graphql_client_query_data, plan, category):
-    dataset = DatasetFactory(scope=category)
-    data_point = DataPointFactory(dataset=dataset, date=date(2024, 1, 1), value=10.51)
+    dataset = DatasetFactory.create(scope=category)
+    data_point = DataPointFactory.create(dataset=dataset, date=date(2024, 1, 1), value=10.51)
     data = graphql_client_query_data(
         """
         query($plan: ID!) {
@@ -150,9 +150,9 @@ def test_data_point_node(graphql_client_query_data, plan, category):
 
 
 def test_dataset_schema_scope_node(graphql_client_query_data, plan, category):
-    scope = DatasetSchemaScopeFactory(scope=category.type)
+    scope = DatasetSchemaScopeFactory.create(scope=category.type)
     schema = scope.schema
-    dataset = DatasetFactory(scope=category, schema=schema)
+    dataset = DatasetFactory.create(scope=category, schema=schema)
     assert schema == dataset.schema
     data = graphql_client_query_data(
         """
@@ -191,8 +191,9 @@ def test_dataset_schema_scope_node(graphql_client_query_data, plan, category):
 
 
 def test_dataset_schema_node(graphql_client_query_data, plan, category):
-    dataset = DatasetFactory(scope=category)
+    dataset = DatasetFactory.create(scope=category)
     schema = dataset.schema
+    assert schema is not None
     data = graphql_client_query_data(
         """
         query($plan: ID!) {
@@ -270,20 +271,20 @@ def test_dataset_node(graphql_client_query_data, plan, category):
 
 
 def test_integration_for_category(graphql_client_query_data, plan, category):
-    dimension = DimensionFactory()
-    dim_category1 = DimensionCategoryFactory(dimension=dimension)
-    dim_category2 = DimensionCategoryFactory(dimension=dimension)
+    dimension = DimensionFactory.create()
+    dim_category1 = DimensionCategoryFactory.create(dimension=dimension)
+    dim_category2 = DimensionCategoryFactory.create(dimension=dimension)
 
-    schema1 = DatasetSchemaFactory()
-    schema2 = DatasetSchemaFactory()
-    dataset1 = DatasetFactory(scope=category, schema=schema1)
-    dataset2 = DatasetFactory(scope=category, schema=schema2)
+    schema1 = DatasetSchemaFactory.create()
+    schema2 = DatasetSchemaFactory.create()
+    dataset1 = DatasetFactory.create(scope=category, schema=schema1)
+    dataset2 = DatasetFactory.create(scope=category, schema=schema2)
 
-    data_point1 = DataPointFactory(dataset=dataset1, date=date(2024, 1, 1), value=10.51)
+    data_point1 = DataPointFactory.create(dataset=dataset1, date=date(2024, 1, 1), value=10.51)
     data_point1.dimension_categories.set([dim_category1])
-    data_point2 = DataPointFactory(dataset=dataset1, date=date(2024, 2, 1), value=15.22)
+    data_point2 = DataPointFactory.create(dataset=dataset1, date=date(2024, 2, 1), value=15.22)
     data_point2.dimension_categories.set([dim_category2])
-    data_point3 = DataPointFactory(dataset=dataset2, date=date(2024, 3, 1), value=8)
+    data_point3 = DataPointFactory.create(dataset=dataset2, date=date(2024, 3, 1), value=8)
     data_point3.dimension_categories.set([dim_category1, dim_category2])
 
     data = graphql_client_query_data(

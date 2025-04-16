@@ -5,7 +5,7 @@ import re
 import typing
 import uuid
 from enum import Enum
-from typing import Any, ClassVar, Generic, Protocol, Sequence, Type, TypeVar, cast
+from typing import Any, ClassVar, Protocol, TypeVar, cast
 
 import graphene
 from django.db.models import Model, QuerySet
@@ -14,7 +14,6 @@ from django.utils.translation import gettext_lazy as _
 from graphene.utils.str_converters import to_camel_case, to_snake_case
 from graphene.utils.trim_docstring import trim_docstring
 from graphene_django import DjangoObjectType
-from graphene_django.types import DjangoObjectTypeOptions
 from graphql import GraphQLResolveInfo
 from modeltrans.translator import get_i18n_field
 
@@ -26,6 +25,9 @@ from aplans.utils import get_language_from_default_language_field
 from actions.models.plan import Plan
 
 if typing.TYPE_CHECKING:
+    from collections.abc import Sequence
+
+    from graphene_django.types import DjangoObjectTypeOptions
     from graphql.language.ast import OperationDefinitionNode
 
     from aplans.types import WatchAPIRequest
@@ -37,6 +39,7 @@ graphene_registry: list[type[graphene.ObjectType | graphene.Interface]] = []
 
 def get_i18n_field_with_fallback(field_name: str, obj: Model, info: GQLInfo):
     i18n_field = get_i18n_field(obj._meta.model)
+    assert i18n_field is not None
     fallback_value = getattr(obj, field_name)
     fallback_lang = get_language_from_default_language_field(obj, i18n_field)
     fallback = (fallback_value, fallback_lang)
@@ -65,15 +68,13 @@ def resolve_i18n_field(field_name, obj, info):
     return value
 
 
-M = TypeVar('M', bound=Model)
-
-class DjangoNode(DjangoObjectType, Generic[M]):
+class DjangoNode[M: Model = Model](DjangoObjectType[M]):
     @staticmethod
-    def resolve_id(root, info):
+    def resolve_id(root, info) -> str:
         return getattr(root, 'pk', None) or f'unpublished-{uuid.uuid4()}'
 
     @classmethod
-    def __init_subclass_with_meta__(cls, **kwargs: Any) -> None:
+    def __init_subclass_with_meta__(cls, **kwargs: Any) -> None:  # type: ignore[override]
         if 'name' not in kwargs:
             # Remove the trailing 'Node' from the object types
             kwargs['name'] = re.sub(r'Node$', '', cls.__name__)
@@ -175,7 +176,6 @@ def order_queryset(qs: Q, node_class: type[SupportsOrderable], order_by: str | N
 OT = TypeVar('OT', bound=graphene.ObjectType)
 
 def register_graphene_node(cls: type[OT]) -> type[OT]:
-    global graphene_registry
     graphene_registry.append(cls)
     return cls
 
@@ -184,7 +184,6 @@ IT = TypeVar('IT', bound=graphene.Interface)
 
 
 def register_graphene_interface(cls: type[IT]) -> type[IT]:
-    global graphene_registry
     graphene_registry.append(cls)
     return cls
 
@@ -192,7 +191,7 @@ def register_graphene_interface(cls: type[IT]) -> type[IT]:
 DN = TypeVar('DN', bound=DjangoNode)
 
 def register_django_node(cls: type[DN]) -> type[DN]:
-    meta = cast(DjangoObjectTypeOptions, getattr(cls, '_meta'))
+    meta = cast('DjangoObjectTypeOptions', cls._meta)
     model = meta.model
     grapple_registry.django_models[model] = cls
     return cls

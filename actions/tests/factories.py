@@ -1,6 +1,8 @@
+# ruff: noqa: N805
 from __future__ import annotations
 
 import datetime
+from typing import TYPE_CHECKING
 
 from django.contrib.contenttypes.models import ContentType
 from django.db.models.signals import post_save
@@ -11,7 +13,8 @@ from wagtail.rich_text import RichText
 from wagtail.test.utils.wagtail_factories import StructBlockFactory
 
 import factory
-from factory import LazyAttribute, RelatedFactory, SelfAttribute, Sequence, SubFactory, post_generation
+from factory.declarations import LazyAttribute, RelatedFactory, SelfAttribute, Sequence, SubFactory
+from factory.helpers import post_generation
 
 from aplans.factories import ModelFactory
 
@@ -53,6 +56,10 @@ from orgs.tests.factories import OrganizationFactory
 from people.tests.factories import PersonFactory
 from users.tests.factories import UserFactory
 
+if TYPE_CHECKING:
+    from indicators.models import Unit
+    from people.models import Person
+
 
 @factory.django.mute_signals(post_save)
 class PlanFactory(ModelFactory[Plan]):
@@ -64,7 +71,7 @@ class PlanFactory(ModelFactory[Plan]):
     accessibility_statement_url = 'https://example.com'
     primary_language = 'en'
     other_languages = ['fi']
-    published_at = make_aware(datetime.datetime(2021, 1, 1))
+    published_at = make_aware(datetime.datetime(2021, 1, 1))  # noqa: DTZ001
     general_content = RelatedFactory('content.tests.factories.SiteGeneralContentFactory', factory_related_name='plan')
     features = RelatedFactory('actions.tests.factories.PlanFeaturesFactory', factory_related_name='plan')
     notification_settings = RelatedFactory(
@@ -151,9 +158,9 @@ class AttributeTypeFactory(ModelFactory[AttributeType]):
     identifier = Sequence(lambda i: f'ctm{i}')
     name = Sequence(lambda i: f"Category attribute type {i}")
     help_text = "foo"
-    format = AttributeType.AttributeFormat.RICH_TEXT
-    unit = None
-    attribute_category_type = None
+    format: AttributeType.AttributeFormat = AttributeType.AttributeFormat.RICH_TEXT
+    unit: Unit | None = None
+    attribute_category_type: CategoryType | None = None
     show_choice_names = True
     has_zero_option = False
 
@@ -196,12 +203,13 @@ class AttributeCategoryChoiceFactory(ModelFactory[AttributeCategoryChoice]):
     object_id = SelfAttribute('content_object.id')
 
     @post_generation
-    def categories(self, create, extracted, **kwargs):
+    @staticmethod
+    def categories(obj: AttributeCategoryChoice, create, extracted, **kwargs) -> None:
         if not create:
             return
         if extracted:
             for category in extracted:
-                self.categories.add(category)
+                obj.categories.add(category)
 
 
 class AttributeTextFactory(ModelFactory[AttributeText]):
@@ -288,7 +296,7 @@ class ImpactGroupFactory(ModelFactory[ImpactGroup]):
     plan = SubFactory(PlanFactory)
     name = Sequence(lambda i: f"Impact group {i}")
     identifier = Sequence(lambda i: f'impact-group-{i}')
-    parent = None
+    parent: ImpactGroup | None = None
     weight = 1.0
     color = 'red'
 
@@ -316,19 +324,22 @@ class ActionFactory(ModelFactory[Action]):
     completion = 99
 
     @post_generation
-    def categories(obj, create, extracted, **kwargs):
+    @staticmethod
+    def categories(obj: Action, create, extracted, **kwargs) -> None:
         if create and extracted:
             for category in extracted:
                 obj.categories.add(category)
 
     @post_generation
-    def monitoring_quality_points(obj, create, extracted, **kwargs):
+    @staticmethod
+    def monitoring_quality_points(obj: Action, create, extracted, **kwargs) -> None:
         if create and extracted:
             for monitoring_quality_point in extracted:
                 obj.monitoring_quality_points.add(monitoring_quality_point)
 
     @post_generation
-    def schedule(obj, create, extracted, **kwargs):
+    @staticmethod
+    def schedule(obj: Action, create, extracted, **kwargs) -> None:
         if create and extracted:
             for schedule in extracted:
                 obj.schedule.add(schedule)
@@ -340,8 +351,8 @@ class ActionTaskFactory(ModelFactory[ActionTask]):
     state = ActionTask.NOT_STARTED
     comment = "Comment"
     due_at = datetime.date(2020, 1, 1)
-    completed_at = None
-    completed_by = None
+    completed_at: datetime.date | None = None
+    completed_by: Person | None = None
     # created_at = None  # Should be set automatically
     # modified_at = None  # Should be set automatically
 

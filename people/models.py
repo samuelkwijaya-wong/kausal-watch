@@ -191,6 +191,7 @@ class Person(index.Indexed, ClusterableModel, PlanDefaultsModel):
     organization_plan_admins: RevMany[OrganizationPlanAdmin]
     general_admin_plans: RevMany[Plan]
     plans_with_public_site_access: RevMany[PlanPublicSiteViewer]
+    actioncontactperson_set: RevMany[ActionContactPerson]
     organization_id: int
     created_by_id: int
 
