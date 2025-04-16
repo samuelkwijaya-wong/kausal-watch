@@ -10,6 +10,8 @@ from wagtail.models import PAGE_PERMISSION_TYPES, GroupPagePermission
 
 from treelib import Tree
 
+from kausal_common.datasets import models as dataset_models
+
 from content.models import SiteGeneralContent
 from indicators.models import (
     ActionIndicator,
@@ -115,6 +117,8 @@ def get_action_contact_person_perms():
     new_perms += _get_perm_objs(ActionStatusUpdate, ALL_PERMS)
     new_perms += _get_perm_objs(ActionIndicator, ('view',))
     new_perms += _get_perm_objs(Indicator, ('view',))
+    new_perms += _get_perm_objs(model=dataset_models.DataPoint, perms=ALL_PERMS)
+    new_perms += _get_perm_objs(model=dataset_models.Dataset, perms=ALL_PERMS)
 
     new_perms += [Permission.objects.get(content_type__app_label='wagtailadmin', codename='access_admin')]
     new_perms += get_wagtail_contact_person_perms()

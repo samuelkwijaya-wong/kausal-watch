@@ -8,4 +8,25 @@ dataset_config under the project directory.
 """
 from __future__ import annotations
 
-DATA_SOURCE_DEFAULT_SCOPE_CONTENT_TYPE =  ('actions', 'plan')
+import typing
+
+if typing.TYPE_CHECKING:
+    from collections.abc import Callable
+
+    from django.db.models import Model
+
+def schema_default_scope():
+    # Only call in view contexts where the context has been initialized
+    from aplans.context_vars import ctx_request
+    return ctx_request.get().get_admin_request().get_active_admin_plan()
+
+
+DATA_SOURCE_DEFAULT_SCOPE_CONTENT_TYPE = ('actions', 'plan')
+SCHEMA_HAS_SINGLE_DATASET: bool = False
+SCHEMA_DEFAULT_SCOPE_FUNCTION: Callable[[], Model] | None = schema_default_scope
+# Permission policies for datasets
+SHOW_DATASETS_IN_MENU: bool = False
+SHOW_SCHEMAS_IN_MENU: bool = False
+SCHEMA_PERMISSION_POLICY = 'datasets.permission_policy.DatasetSchemaPermissionPolicy'
+DATASET_PERMISSION_POLICY = 'datasets.permission_policy.ActionOrCategoryInheritedDatasetPermissionPolicy'
+DATA_POINT_PERMISSION_POLICY = 'datasets.permission_policy.DataPointPermissionPolicy'
