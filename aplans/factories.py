@@ -21,14 +21,6 @@ class BaseFactoryMeta(FactoryMetaClass):
         return super().__new__(mcs, class_name, bases, attrs)
 
 
-class ModelFactory(Generic[T], DjangoModelFactory[T], metaclass=BaseFactoryMeta):
+class ModelFactory(DjangoModelFactory[T], metaclass=BaseFactoryMeta):
     class Meta:
         abstract = True
-
-    @classmethod
-    def create(cls, **kwargs) -> T:
-        return super().create(**kwargs)
-
-    @classmethod
-    def build(cls, **kwargs) -> T:
-        return super().build(**kwargs)

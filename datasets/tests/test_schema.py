@@ -411,20 +411,20 @@ def test_integration_for_category(graphql_client_query_data, plan, category):
 
 
 def test_integration_for_action(graphql_client_query_data, action):
-    dimension = DimensionFactory()
-    dim_category1 = DimensionCategoryFactory(dimension=dimension)
-    dim_category2 = DimensionCategoryFactory(dimension=dimension)
+    dimension = DimensionFactory.create()
+    dim_category1 = DimensionCategoryFactory.create(dimension=dimension)
+    dim_category2 = DimensionCategoryFactory.create(dimension=dimension)
 
-    schema1 = DatasetSchemaFactory()
-    schema2 = DatasetSchemaFactory()
-    dataset1 = DatasetFactory(scope=action, schema=schema1)
-    dataset2 = DatasetFactory(scope=action, schema=schema2)
+    schema1 = DatasetSchemaFactory.create()
+    schema2 = DatasetSchemaFactory.create()
+    dataset1 = DatasetFactory.create(scope=action, schema=schema1)
+    dataset2 = DatasetFactory.create(scope=action, schema=schema2)
 
-    data_point2 = DataPointFactory(dataset=dataset1, date=date(2024, 2, 1), value=15.22)
+    data_point2 = DataPointFactory.create(dataset=dataset1, date=date(2024, 2, 1), value=15.22)
     data_point2.dimension_categories.set([dim_category2])
-    data_point1 = DataPointFactory(dataset=dataset1, date=date(2024, 1, 1), value=10.51)
+    data_point1 = DataPointFactory.create(dataset=dataset1, date=date(2024, 1, 1), value=10.51)
     data_point1.dimension_categories.set([dim_category1])
-    data_point3 = DataPointFactory(dataset=dataset2, date=date(2024, 3, 1), value=8)
+    data_point3 = DataPointFactory.create(dataset=dataset2, date=date(2024, 3, 1), value=8)
     data_point3.dimension_categories.set([dim_category1, dim_category2])
 
     data = graphql_client_query_data(

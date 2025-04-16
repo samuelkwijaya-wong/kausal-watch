@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import logging
 import typing
+from functools import cached_property
 from typing import Any, Iterable, Unpack, cast
 
 from django.contrib import admin, messages
@@ -827,6 +828,10 @@ class ActionAdmin(AplansModelAdmin):
 
             def get_menu_item_is_registered(self):
                 return False
+
+            @cached_property
+            def permission_policy(self) -> ModelPermissionPolicy:
+                return ModelPermissionPolicy(Action)
 
         Action.snippet_viewset = FakeSnippetViewSet(self)
 
