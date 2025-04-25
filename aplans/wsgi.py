@@ -26,6 +26,7 @@ django_application = get_wsgi_application()
 
 def run_deployment_checks():
     from django.core import checks  # noqa
+    from django.db import connections
 
     msgs: list[checks.CheckMessage] = checks.run_checks(include_deployment_checks=True)
     LEVEL_MAP = {
@@ -40,7 +41,12 @@ def run_deployment_checks():
         msg.hint = None
         logger.log(LEVEL_MAP.get(msg.level, 'WARNING'), str(msg))
 
-
+    # We need to close the connection pool for the database to be available
+    # for the worker processes.
+    for conn in connections.all():
+        conn.close()
+        if hasattr(conn, 'close_pool'):
+            conn.close_pool()  # type: ignore
 
 
 # We execute all the checks when running under uWSGI, so that we:
