@@ -789,6 +789,9 @@ class Dimension(ClusterableModel):
 
     public_fields = ['id', 'name', 'categories']
 
+    # type annotations
+    categories: RevMany[DimensionCategory]
+
     class Meta:
         verbose_name = _('dimension')
         verbose_name_plural = _('dimensions')

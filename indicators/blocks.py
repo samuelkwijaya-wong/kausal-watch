@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 from django.forms import ValidationError
 from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
@@ -18,12 +20,17 @@ from wagtail.blocks import (
 )
 
 from grapple.helpers import register_streamfield_block
-from grapple.models import GraphQLBoolean, GraphQLForeignKey, GraphQLStreamfield, GraphQLString
+from grapple.models import GraphQLBoolean, GraphQLField, GraphQLForeignKey, GraphQLInt, GraphQLStreamfield, GraphQLString
 
 from pages.blocks import PageLinkBlock
 
 from .chooser import DimensionChooser, IndicatorChooser
 from .models import Dimension, Indicator
+
+if TYPE_CHECKING:
+    from kausal_common.graphene import GQLInfo
+
+    from .schema import DashboardIndicatorChartSeries
 
 
 class IndicatorChooserBlock(ChooserBlock):
@@ -129,6 +136,11 @@ class IndicatorShowcaseBlock(StructBlock):
     ]
 
 
+def _get_dashboard_indicator_chart_series_class() -> type:
+    from .schema import DashboardIndicatorChartSeries
+    return DashboardIndicatorChartSeries
+
+
 class DashboardIndicatorChartBaseBlock(StructBlock):
     """Base class for dashboard indicator chart blocks with common fields and validation."""
 
@@ -144,11 +156,34 @@ class DashboardIndicatorChartBaseBlock(StructBlock):
         required=False
     )
 
-    # graphql_fields = [
-    #     GraphQLString('help_text'),
-    #     GraphQLForeignKey('indicator', Indicator),
-    #     GraphQLForeignKey('dimension', Dimension),
-    # ]
+    graphql_fields = [
+        GraphQLString('help_text'),
+        GraphQLForeignKey('indicator', Indicator),
+        GraphQLForeignKey('dimension', Dimension),
+        GraphQLField(
+            'chart_series',
+            _get_dashboard_indicator_chart_series_class,  # pyright: ignore
+            is_list=True,
+        ),
+    ]
+
+    def chart_series(self, info: GQLInfo, values: dict) -> list[DashboardIndicatorChartSeries]:
+        from .schema import DashboardIndicatorChartSeries
+        indicator = values['indicator']
+        assert isinstance(indicator, Indicator)
+        dimension = values['dimension']
+        assert isinstance(dimension, Dimension)
+        if dimension:
+            categories = dimension.categories.all()
+        else:
+            categories = [None]
+        return [
+            DashboardIndicatorChartSeries(
+                dimension_category=category,
+                values=indicator.values.filter(categories=category),
+            )
+            for category in categories
+        ]
 
     def clean(self, value):
         cleaned_value = super().clean(value)
@@ -184,9 +219,9 @@ class DashboardIndicatorBarChartBlock(DashboardIndicatorChartBaseBlock):
         required=True
     )
 
-    # graphql_fields = DashboardIndicatorChartBaseBlock.graphql_fields + [
-    #     GraphQLString('bar_type'),
-    # ]
+    graphql_fields = DashboardIndicatorChartBaseBlock.graphql_fields + [
+        GraphQLString('bar_type'),
+    ]
 
     class Meta:
         icon = 'fontawesome-chart-simple'
@@ -202,9 +237,9 @@ class DashboardIndicatorLineChartBlock(DashboardIndicatorChartBaseBlock):
         help_text=_('Show total line')
     )
 
-    # graphql_fields = DashboardIndicatorChartBaseBlock.graphql_fields + [
-    #     GraphQLBoolean('show_total_line'),
-    # ]
+    graphql_fields = DashboardIndicatorChartBaseBlock.graphql_fields + [
+        GraphQLBoolean('show_total_line'),
+    ]
 
     class Meta:
         icon = 'fontawesome-chart-line'
@@ -220,9 +255,9 @@ class DashboardIndicatorAreaChartBlock(DashboardIndicatorChartBaseBlock):
         help_text=_('Show total line')
     )
 
-    # graphql_fields = DashboardIndicatorChartBaseBlock.graphql_fields + [
-    #     GraphQLBoolean('show_total_line'),
-    # ]
+    graphql_fields = DashboardIndicatorChartBaseBlock.graphql_fields + [
+        GraphQLBoolean('show_total_line'),
+    ]
 
     class Meta:
         icon = 'fontawesome-chart-area'
@@ -237,9 +272,9 @@ class DashboardIndicatorPieChartBlock(DashboardIndicatorChartBaseBlock):
         help_text=_('Enter the year you want to visualize'),
     )
 
-    # graphql_fields = DashboardIndicatorChartBaseBlock.graphql_fields + [
-    #     GraphQLInteger('year'),
-    # ]
+    graphql_fields = DashboardIndicatorChartBaseBlock.graphql_fields + [
+        GraphQLInt('year'),
+    ]
 
     class Meta:
         icon = 'fontawesome-chart-pie'
@@ -282,9 +317,9 @@ class DashboardIndicatorSummaryBlock(StructBlock):
         help_text=_('Choose the indicator for data visualization')
     )
 
-    # graphql_fields = [
-    #     GraphQLForeignKey('indicator', Indicator),
-    # ]
+    graphql_fields = [
+        GraphQLForeignKey('indicator', Indicator),
+    ]
 
     class Meta:
         icon = 'list-ul'
@@ -298,9 +333,9 @@ class DashboardParagraphBlock(StructBlock):
         required=True
     )
 
-    # graphql_fields = [
-    #     GraphQLString('text'),
-    # ]
+    graphql_fields = [
+        GraphQLString('text'),
+    ]
 
     class Meta:
         icon = 'doc-full'
@@ -316,6 +351,9 @@ class DashboardRowBlock(StreamBlock):
     indicator_summary = DashboardIndicatorSummaryBlock()
     paragraph = DashboardParagraphBlock()
 
+    # The following would make DashboardRowBlock work for streamfields that consist only of instances of this block. But
+    # we want to use it alongside blocks of other types, in which case adding `graphql_types` would lead to an error.
+    # Apparently you can't use the same block type in both ways. Might be due to the GraphQL specification.
     # graphql_types = [
     #     DashboardIndicatorBarChartBlock,
     #     DashboardIndicatorLineChartBlock,
@@ -329,6 +367,7 @@ class DashboardRowBlock(StreamBlock):
         icon = 'fontawesome-bars-progress'
         label = _('Dashboard Row')
         help_text = _('Dashboard row with 1-3 content blocks')
+
 
 @register_streamfield_block
 class RelatedIndicatorsBlock(StaticBlock):

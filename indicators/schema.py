@@ -118,6 +118,7 @@ class IndicatorLevelNode(DjangoNode):
         return root.visible_for_public()
 
 
+@register_django_node
 class DimensionNode(DjangoNode):
     class Meta:
         model = Dimension
@@ -422,6 +423,14 @@ class IndicatorForm(ModelForm):
     class Meta:
         model = Indicator
         fields = ['organization']
+
+
+class DashboardIndicatorChartSeries(graphene.types.ObjectType):
+    class Meta:
+        description = 'A series of values to be displayed in a dashboard indicator chart'
+
+    dimension_category = graphene.types.Field(DimensionCategoryNode)
+    values = graphene.types.List(IndicatorValueNode, required=True)
 
 
 class UpdateIndicatorMutation(UpdateModelInstanceMutation):
