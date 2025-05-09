@@ -96,6 +96,7 @@ if typing.TYPE_CHECKING:
     from aplans.cache import PlanSpecificCache
 
     from actions.models.attributes import Attribute
+    from indicators.models import ActionIndicator
     from users.models import User
 
 
@@ -1116,10 +1117,11 @@ class ActionNode(ModelAdminAdminButtonsMixin, AttributesMixin, DjangoNode):
     def resolve_previous_action(root: Action, info):
         return root.get_previous_action(info.context.user)
 
+    @staticmethod
     @gql_optimizer.resolver_hints(
         model_field='related_indicators',
     )
-    def resolve_related_indicators(root: Action, info):
+    def resolve_related_indicators(root: Action, info) -> Iterable[ActionIndicator]:
         plan = root.plan
         indicators = root.get_visible_related_indicators()
         #  When accessing as Action draft revision, indicators are a FakeQuerySet without the

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 import graphene
 from django.forms import ModelForm
 from graphql.error import GraphQLError
@@ -16,6 +18,7 @@ from actions.schema import ScenarioNode
 from indicators.models import (
     ActionIndicator,
     CommonIndicator,
+    CommonIndicatorNormalizator,
     Dimension,
     DimensionCategory,
     Framework,
@@ -33,6 +36,9 @@ from indicators.models import (
     Unit,
 )
 
+if TYPE_CHECKING:
+    from collections.abc import Iterable
+
 
 class UnitNode(DjangoNode):
     class Meta:
@@ -41,42 +47,46 @@ class UnitNode(DjangoNode):
             'id', 'name', 'short_name', 'verbose_name', 'verbose_name_plural',
         ]
 
+    @staticmethod
     @gql_optimizer.resolver_hints(
         model_field='name',
         only=('name', 'i18n'),
     )
-    def resolve_name(self, info):
-        name = self.name_i18n
+    def resolve_name(root: Unit, info) -> str | None:
+        name = root.name_i18n
         if name is None:
             return None
         return name
 
+    @staticmethod
     @gql_optimizer.resolver_hints(
         model_field='short_name',
         only=('short_name', 'i18n'),
     )
-    def resolve_short_name(self, info):
-        short_name = self.short_name_i18n
+    def resolve_short_name(root: Unit, info) -> str | None:
+        short_name = root.short_name_i18n
         if short_name is None:
             return None
         return short_name
 
+    @staticmethod
     @gql_optimizer.resolver_hints(
         model_field='verbose_name',
         only=('verbose_name', 'i18n'),
     )
-    def resolve_verbose_name(self, info):
-        verbose_name = self.verbose_name_i18n
+    def resolve_verbose_name(root: Unit, info) -> str | None:
+        verbose_name = root.verbose_name_i18n
         if verbose_name is None:
             return None
         return verbose_name
 
+    @staticmethod
     @gql_optimizer.resolver_hints(
         model_field='verbose_name_plural',
         only=('verbose_name_plural', 'i18n'),
     )
-    def resolve_verbose_name_plural(self, info):
-        verbose_name_plural = self.verbose_name_plural_i18n
+    def resolve_verbose_name_plural(root: Unit, info) -> str | None:
+        verbose_name_plural = root.verbose_name_plural_i18n
         if verbose_name_plural is None:
             return None
         return verbose_name_plural
@@ -149,10 +159,11 @@ class CommonIndicatorNode(DjangoNode):
         model = CommonIndicator
         fields = public_fields(CommonIndicator)
 
+    @staticmethod
     @gql_optimizer.resolver_hints(
         model_field='normalizations',
     )
-    def resolve_normalizations(root: CommonIndicator, info):
+    def resolve_normalizations(root: CommonIndicator, info) -> Iterable[CommonIndicatorNormalizator]:
         return root.normalizations.all()
 
 
@@ -193,8 +204,9 @@ class IndicatorValueNode(NormalizedValuesMixin, DjangoNode):
         model = IndicatorValue
         fields = public_fields(IndicatorValue)
 
-    def resolve_date(self: IndicatorValue, info):
-        date = self.date.isoformat()
+    @staticmethod
+    def resolve_date(root: IndicatorValue, info) -> str:
+        date = root.date.isoformat()
         return date
 
 
@@ -206,7 +218,8 @@ class IndicatorGoalNode(NormalizedValuesMixin, DjangoNode):
         model = IndicatorGoal
         fields = public_fields(IndicatorGoal) + ['scenario']
 
-    def resolve_scenario(self: IndicatorGoal, info):
+    @staticmethod
+    def resolve_scenario(root: IndicatorGoal, info) -> None:
         # Scenarios are not used anymore for indicator goals. The UI
         # expects them to be, and they might be again in the future.
         return None
@@ -246,55 +259,61 @@ class IndicatorNode(DjangoNode):
             qs = qs.filter(plan__identifier=plan)
         return qs
 
-    def resolve_related_actions(self, info, plan=None):
+    @staticmethod
+    def resolve_related_actions(root: Indicator, info, plan=None) -> Iterable[ActionIndicator]:
         actions = Action.objects.visible_for_user(info.context.user)
-        qs = ActionIndicator.objects.filter(action__in=actions).filter(indicator=self)
+        qs = ActionIndicator.objects.filter(action__in=actions, indicator=root)
         if plan is not None:
             qs = qs.filter(indicator__plan__identifier=plan)
         return qs
 
+    @staticmethod
     @gql_optimizer.resolver_hints(
         model_field='values',
     )
-    def resolve_values(self, info, include_dimensions=None):
-        qs = self.values.all()
+    def resolve_values(root: Indicator, info, include_dimensions=None) -> Iterable[IndicatorValue]:
+        qs = root.values.all()
         if not include_dimensions:
             qs = qs.filter(categories__isnull=True).distinct()
         return qs
 
+    @staticmethod
     @gql_optimizer.resolver_hints(
         model_field='levels',
     )
-    def resolve_level(self, info, plan):
-        if not self.is_visible_for_public():
+    def resolve_level(root: Indicator, info, plan) -> str | None:
+        if not root.is_visible_for_public():
             return None
         try:
-            obj = self.levels.get(plan__identifier=plan)
+            obj = root.levels.get(plan__identifier=plan)
         except IndicatorLevel.DoesNotExist:
             return None
         return obj.level
 
+    @staticmethod
     @gql_optimizer.resolver_hints(
         model_field=('description', 'i18n'),
     )
-    def resolve_description(self: Indicator, info):
-        description = self.description_i18n
+    def resolve_description(root: Indicator, info) -> RichText | None:
+        description = root.description_i18n
         if description is None:
             return None
         return RichText(description)
 
+    @staticmethod
     @gql_optimizer.resolver_hints(
         model_field=('related_causes', 'i18n'),
     )
-    def resolve_related_causes(self: Indicator, info):
-        return self.related_causes.filter(causal_indicator__visibility=RestrictedVisibilityModel.VisibilityState.PUBLIC)
+    def resolve_related_causes(root: Indicator, info) -> Iterable[RelatedIndicator]:
+        return root.related_causes.filter(causal_indicator__visibility=RestrictedVisibilityModel.VisibilityState.PUBLIC)
 
 
+    @staticmethod
     @gql_optimizer.resolver_hints(
         model_field=('related_effects', 'i18n'),
     )
-    def resolve_related_effects(self: Indicator, info):
-        return self.related_effects.filter(effect_indicator__visibility=RestrictedVisibilityModel.VisibilityState.PUBLIC)
+    def resolve_related_effects(root: Indicator, info) -> Iterable[RelatedIndicator]:
+        return root.related_effects.filter(effect_indicator__visibility=RestrictedVisibilityModel.VisibilityState.PUBLIC)
 
 
 class IndicatorDimensionNode(DjangoNode):

@@ -173,10 +173,7 @@ class DashboardIndicatorChartBaseBlock(StructBlock):
         assert isinstance(indicator, Indicator)
         dimension = values['dimension']
         assert isinstance(dimension, Dimension)
-        if dimension:
-            categories = dimension.categories.all()
-        else:
-            categories = [None]
+        categories = dimension.categories.all() if dimension else [None]
         return [
             DashboardIndicatorChartSeries(
                 dimension_category=category,

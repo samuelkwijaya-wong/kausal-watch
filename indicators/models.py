@@ -127,6 +127,10 @@ class Unit(ClusterableModel, ModificationTracking):
     # type annotations
     indicators: RevMany[Indicator]
     common_indicators: RevMany[CommonIndicator]
+    name_i18n: str
+    short_name_i18n: str
+    verbose_name_i18n: str
+    verbose_name_plural_i18n: str
 
     class Meta:
         verbose_name = _('unit')
@@ -506,9 +510,12 @@ class Indicator(ClusterableModel, index.Indexed, ModificationTracking, PlanDefau
     values: RevMany[IndicatorValue]
     actions: RevMany[Action]
     related_actions: RevMany[ActionIndicator]
+    related_causes: RevMany[RelatedIndicator]
+    related_effects: RevMany[RelatedIndicator]
     goals: RevMany[IndicatorGoal]
     latest_value_id: int | None
     name_i18n: str
+    description_i18n: str
 
     class Meta:
         verbose_name = _('indicator')
