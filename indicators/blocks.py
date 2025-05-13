@@ -364,6 +364,8 @@ class DashboardRowBlock(StreamBlock):
         icon = 'fontawesome-bars-progress'
         label = _('Dashboard Row')
         help_text = _('Dashboard row with 1-3 content blocks')
+        min_num = 1
+        max_num = 3
 
 
 @register_streamfield_block
