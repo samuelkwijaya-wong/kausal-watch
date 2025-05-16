@@ -5,7 +5,7 @@ import re
 import zoneinfo
 from datetime import datetime, timedelta
 from functools import cache
-from typing import TYPE_CHECKING, ClassVar, Self, cast
+from typing import TYPE_CHECKING, ClassVar, Self, Sequence, cast
 from urllib.parse import urlparse
 
 import reversion
@@ -53,11 +53,14 @@ from orgs.models import Organization
 from people.models import Person
 
 if TYPE_CHECKING:
+    from django.http.request import HttpRequest
+
     from kausal_common.models.types import FK, M2M, RevMany, RevOne
 
     from aplans.graphql_types import WorkflowStateEnum
     from aplans.types import UserOrAnon, WatchAPIRequest, WatchRequest
 
+    from actions.models.action_deps import ActionDependencyRole
     from actions.models.attributes import AttributeType
     from actions.models.category import CommonCategoryType
     from admin_site.models import ClientPlan
@@ -81,7 +84,9 @@ def get_timezones() -> list[tuple[str, str]]:
     return [(x, x) for x in sorted(zoneinfo.available_timezones(), key=str.lower)]
 
 
-def get_plan_identifier_from_wildcard_domain(hostname: str, request: WatchRequest | None = None) -> tuple[str, str] | tuple[None, None]:
+def get_plan_identifier_from_wildcard_domain(
+    hostname: str, request: WatchRequest | None = None
+) -> tuple[str, str] | tuple[None, None]:
     # Get plan identifier from hostname for development and testing
     parts = hostname.split('.', maxsplit=1)
     req_wildcards = getattr(request, 'wildcard_domains', None) or []
@@ -117,7 +122,7 @@ class PlanQuerySet(MultilingualQuerySet['Plan']):
     def live(self):
         return self.filter(published_at__isnull=False, archived_at__isnull=True)
 
-    def available_for_request(self, request: WatchRequest):
+    def available_for_request(self, request: HttpRequest):
         # FIXME later: support for logged-in users
         return self.live()
 
@@ -375,6 +380,7 @@ class Plan(ClusterableModel, ModelWithPrimaryLanguage):
         content_type_field='scope_content_type',
         object_id_field='scope_id',
     )
+    action_dependency_roles: RevMany[ActionDependencyRole]
 
     public_fields: ClassVar = [
         'id', 'name', 'short_name', 'version_name', 'identifier', 'short_identifier', 'image', 'action_schedules',
@@ -411,6 +417,7 @@ class Plan(ClusterableModel, ModelWithPrimaryLanguage):
     report_types: RevMany[ReportType]
     superseded_plans: RevMany[Plan]
     user_feedbacks: RevMany[UserFeedback]
+    impact_groups: RevMany[ImpactGroup]
 
     organization_id: int
     id: int
@@ -581,8 +588,8 @@ class Plan(ClusterableModel, ModelWithPrimaryLanguage):
 
         group_name = '%s admins' % self.name
         if self.admin_group is None:
-            obj = Group.objects.create(name=group_name)
-            self.admin_group = obj
+            grp = Group.objects.create(name=group_name)
+            self.admin_group = grp
             update_fields.append('admin_group')
         elif self.admin_group.name != group_name:
             self.admin_group.name = group_name
@@ -590,8 +597,8 @@ class Plan(ClusterableModel, ModelWithPrimaryLanguage):
 
         group_name = '%s contact persons' % self.name
         if self.contact_person_group is None:
-            obj = Group.objects.create(name=group_name)
-            self.contact_person_group = obj
+            grp = Group.objects.create(name=group_name)
+            self.contact_person_group = grp
             update_fields.append('contact_person_group')
         elif self.contact_person_group.name != group_name:
             self.contact_person_group.name = group_name
@@ -639,7 +646,7 @@ class Plan(ClusterableModel, ModelWithPrimaryLanguage):
             primary_root_page = PlanRootPage(
                 title=self.name, slug=self.identifier, url_path='', locale=primary_locale,
             )
-            cast(Page, Page.get_first_root_node()).add_child(instance=primary_root_page)
+            cast('Page', Page.get_first_root_node()).add_child(instance=primary_root_page)
 
         # Create translations of root page
         translation_creator.create_translations(primary_root_page)
@@ -686,7 +693,7 @@ class Plan(ClusterableModel, ModelWithPrimaryLanguage):
             return ''
         return next((f'/{lang}' for lang in self.other_languages if lang.lower() == locale.lower()), '')
 
-    def get_view_url(self, client_url: str | None = None, active_locale: str | None = None) -> str:
+    def get_view_url(self, client_url: str | None = None, active_locale: str | None = None) -> str:  # noqa: C901, PLR0912
         """
         Return an URL for the homepage of the plan.
 
@@ -746,7 +753,7 @@ class Plan(ClusterableModel, ModelWithPrimaryLanguage):
             else:
                 port_str = ''
             return '%s://%s%s%s%s' % (scheme, hostname, port_str, base_path, locale_prefix)
-        else:
+        else:  # noqa: RET505
             assert self.site_url is not None
             if self.site_url.startswith('http'):
                 url = self.site_url.rstrip('/')
@@ -755,13 +762,13 @@ class Plan(ClusterableModel, ModelWithPrimaryLanguage):
             return f'{url}{locale_prefix}'
 
     @classmethod
-    def create_with_defaults(  # noqa: PLR0913
+    def create_with_defaults(
         cls,
         identifier: str,
         name: str,
         primary_language: str,
         organization: Organization,
-        other_languages: list[str] = [],
+        other_languages: Sequence[str] = (),
         short_name: str | None = None,
         base_path: str | None = None,
         hostname: str | None = None,
@@ -791,7 +798,7 @@ class Plan(ClusterableModel, ModelWithPrimaryLanguage):
             plan: Plan,
             base_path: str | None = None,
             hostname: str | None = None,
-    ):
+    ) -> Plan:
         from actions.defaults import DEFAULT_ACTION_IMPLEMENTATION_PHASES, DEFAULT_ACTION_STATUSES
         plan.statuses_updated_manually = True
         if not hostname:
@@ -808,7 +815,7 @@ class Plan(ClusterableModel, ModelWithPrimaryLanguage):
 
             for st in DEFAULT_ACTION_STATUSES:
                 status = ActionStatus(
-                    plan=plan, identifier=st['identifier'], name=cast(str, st['name']),
+                    plan=plan, identifier=st['identifier'], name=cast('str', st['name']),
                     is_completed=st.get('is_completed', False),
                 )
                 status.save()
@@ -850,11 +857,11 @@ class Plan(ClusterableModel, ModelWithPrimaryLanguage):
         return qs
 
     def get_superseded_plans(self, recursive=False) -> PlanQuerySet:
-        result = cast(PlanQuerySet, self.superseded_plans.all())
+        result = cast('PlanQuerySet', self.superseded_plans.all())
         if recursive:
             # To optimize, use recursive queries as in https://stackoverflow.com/a/39933958/14595546
             for child in list(result):
-                result |= cast(PlanQuerySet, child.get_superseded_plans(recursive=True))
+                result |= cast('PlanQuerySet', child.get_superseded_plans(recursive=True))
         return result
 
     def get_superseding_plans(self, recursive=False):
@@ -902,7 +909,9 @@ class Plan(ClusterableModel, ModelWithPrimaryLanguage):
             should_send_at_or_after = datetime.combine(now.date(), self.notification_settings.send_at_time, self.tzinfo)
         else:
             last_sent_at = self.to_local_timezone(self.daily_notifications_triggered_at)
-            should_send_at_or_after = datetime.combine(last_sent_at.date(), self.notification_settings.send_at_time, last_sent_at.tzinfo)
+            should_send_at_or_after = datetime.combine(
+                last_sent_at.date(), self.notification_settings.send_at_time, last_sent_at.tzinfo
+            )
             if last_sent_at.time() >= self.notification_settings.send_at_time:
                 should_send_at_or_after += timedelta(days=1)
         return now >= should_send_at_or_after
@@ -914,9 +923,9 @@ class Plan(ClusterableModel, ModelWithPrimaryLanguage):
 
     def get_next_workflow_task(self, workflow_state: WorkflowStateEnum) -> WorkflowTask | None:
         """
-        Returns the next workflow task that is active after the
-        desired workflow_state has been reached. For example, in a workflow
-        with an approval task (1) and after that a separate publishing task (2),
+        Return the next workflow task that is active after the desired workflow_state has been reached.
+
+        For example, in a workflow with an approval task (1) and after that a separate publishing task (2),
         for an action to be in a "APPROVED" state, task (2) must be the current
         active workflow state task for that action.
 
@@ -936,7 +945,7 @@ class Plan(ClusterableModel, ModelWithPrimaryLanguage):
             return tasks.get().task
         if tasks.count() == 2:
             if workflow_state == WorkflowStateEnum.APPROVED:
-                return tasks.last().task
+                return cast('WorkflowTask', tasks.last()).task
             return None
         return None
 
@@ -1028,7 +1037,7 @@ class PublicationStatus(models.TextChoices):
     SCHEDULED = 'scheduled', _('Scheduled')
 
     @staticmethod
-    def manual_status_choices():
+    def manual_status_choices() -> list[tuple[str, str]]:
         return [(c.value, c.label) for c in PublicationStatus if c != PublicationStatus.SCHEDULED]
 
 
@@ -1137,6 +1146,17 @@ class PlanDomain(models.Model):
         ),
     )
 
+    class Meta:
+        verbose_name = _('plan domain')
+        verbose_name_plural = _('plan domains')
+        unique_together = (('hostname', 'base_path'),)
+
+    def __str__(self) -> str:
+        s = str(self.hostname)
+        if self.base_path:
+            s += ':' + self.base_path
+        return s
+
     @property
     def status(self) -> PublicationStatus:
         if self.publication_status_override is not None:
@@ -1164,8 +1184,7 @@ class PlanDomain(models.Model):
             return False
         if not dn.islower():
             return False
-        if dn.endswith('.'):
-            dn = dn[:-1]
+        dn = dn.removesuffix('.')
         if len(dn) < 1 or len(dn) > 253:
             return False
         ldh_re = re.compile('^[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?$',
@@ -1175,17 +1194,6 @@ class PlanDomain(models.Model):
     def clean(self):
         if not self.validate_hostname():
             raise ValidationError({'hostname': _('Hostname must be a fully qualified domain name in lower-case only')})
-
-    def __str__(self):
-        s = str(self.hostname)
-        if self.base_path:
-            s += ':' + self.base_path
-        return s
-
-    class Meta:
-        verbose_name = _('plan domain')
-        verbose_name_plural = _('plan domains')
-        unique_together = (('hostname', 'base_path'),)
 
 
 class Scenario(PlanRelatedModel):

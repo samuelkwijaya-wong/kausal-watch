@@ -190,15 +190,6 @@ class OrderedModel(models.Model):
     class Meta:
         abstract = True
 
-    def save(self, *args, **kwargs):
-        if self.pk is None:
-            order_on_create = getattr(self, 'order_on_create', None)
-            if order_on_create is not None:
-                self.order = order_on_create
-            else:
-                self.order = self.get_sort_order_max() + 1
-        super().save(*args, **kwargs)
-
     def __init__(self, *args, order_on_create: int | None = None, **kwargs):
         """
         Create new model instance.
@@ -208,6 +199,15 @@ class OrderedModel(models.Model):
         """
         super().__init__(*args, **kwargs)
         self.order_on_create = order_on_create
+
+    def save(self, *args, **kwargs):
+        if self.pk is None:
+            order_on_create = getattr(self, 'order_on_create', None)
+            if order_on_create is not None:
+                self.order = order_on_create
+            else:
+                self.order = self.get_sort_order_max() + 1
+        super().save(*args, **kwargs)
 
     @classmethod
     def check(cls, **kwargs) -> list[checks.CheckMessage]:
@@ -237,7 +237,7 @@ class OrderedModel(models.Model):
             return qs.aggregate(Max(self.sort_order_field))['sort_order__max'] or 0
         ```
         """
-        mgr = cast(models.Manager, getattr(type(self), 'objects'))  # noqa: B009
+        mgr = cast('models.Manager', getattr(type(self), 'objects'))  # noqa: B009
         qs = mgr.all()
         if not getattr(self.filter_siblings, '__isabstractmethod__', False):
             qs = self.filter_siblings(qs)
@@ -373,7 +373,7 @@ class InstancesEditableByMixin(models.Model):
         action_specific_values = [self.EditableBy.CONTACT_PERSONS, self.EditableBy.MODERATORS]
         return self.instances_editable_by in action_specific_values
 
-    def is_instance_editable_by(self, user: UserOrAnon, plan: Plan, instance: Model | None):  # noqa: PLR0911
+    def is_instance_editable_by(self, user: UserOrAnon, plan: Plan, instance: Model | None):
         from actions.models.action import Action, ActionContactPerson
         # `action` may only be None if `self.instances_editable_by` is not action-specific
         if __debug__ and self.instance_editability_is_action_specific and instance is None:
@@ -407,7 +407,7 @@ class InstancesEditableByMixin(models.Model):
             return True
 
         msg = f"Unexpected value for instances_editable_by: {self.instances_editable_by}"
-        raise Exception(msg)  # noqa: TRY002
+        raise Exception(msg)
 
 
 class InstancesVisibleForMixin(models.Model):
@@ -448,7 +448,7 @@ class InstancesVisibleForMixin(models.Model):
         action_specific_values = [self.VisibleFor.CONTACT_PERSONS, self.VisibleFor.MODERATORS]
         return self.instances_visible_for in action_specific_values
 
-    def is_instance_visible_for(self, user: UserOrAnon, plan: Plan, instance: Model | None) -> bool:  # noqa: PLR0911
+    def is_instance_visible_for(self, user: UserOrAnon, plan: Plan, instance: Model | None) -> bool:
         from actions.models.action import Action, ActionContactPerson
         # `action` may only be None if `self.instances_visible_for` is not action-specific
         if __debug__ and self.instance_visibility_is_action_specific and instance is None:
@@ -490,7 +490,7 @@ class ReferenceIndexedModelMixin:
 
         references = ReferenceIndex.get_references_to(self)
         for ref in references:
-            logger.debug(f"Removing referencing block '{ref.describe_source_field()}' from {ref.model_name} "  # noqa: G004
+            logger.debug(f"Removing referencing block '{ref.describe_source_field()}' from {ref.model_name} "
                          f"{ref.object_id}")
             model_class = ref.content_type.model_class()
             assert model_class is not None
@@ -543,7 +543,7 @@ def generate_identifier(qs, type_letter: str, field_name: str) -> str:
         if qs.filter(**{f: identifier}).exists():
             continue
         return identifier
-    raise Exception('Unable to generate an unused identifier')  # noqa: TRY002
+    raise Exception('Unable to generate an unused identifier')
 
 
 def validate_css_color(s):
@@ -563,7 +563,7 @@ class TranslatedModelMixin:
         if language is None:
             language = get_language()
         key = '%s_%s' % (field_name, language)
-        val = cast(dict, self.i18n).get(key)
+        val = cast('dict', self.i18n).get(key)
         if val:
             return val
         return getattr(self, field_name)
@@ -687,7 +687,6 @@ class ConstantMetadata(Generic[E, C]):
 
 
 CM = TypeVar('CM', bound=ConstantMetadata)
-
 
 class MetadataEnum(Enum):
     value: ConstantMetadata

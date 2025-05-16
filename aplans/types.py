@@ -5,9 +5,11 @@ from typing import TYPE_CHECKING, TypeVar
 
 from django.http import HttpRequest
 
-from kausal_common.users import UserOrAnon  # noqa: TCH001, TCH002
-
 if typing.TYPE_CHECKING:
+    from kausal_common.users import UserOrAnon
+
+    from aplans.cache import OrganizationActionCountCache
+
     from actions.models import Plan
     from users.models import User
 
@@ -31,14 +33,15 @@ class WatchAPIRequest(WatchRequest):
     user: UserOrAnon
     _referer: str | None
     wildcard_domains: list[str] | None
-
+    organization_action_count_cache: OrganizationActionCountCache
+    _plan_hostname: str
 
 T = TypeVar('T')
 
 
 def mixin_for_base(baseclass: type[T]) -> type[T]:
     """
-    Useful function to make mixins with baseclass typehint
+    Make mixins with baseclass typehint.
 
     ```
     class ReadonlyMixin(with_typehint(BaseAdmin))):

@@ -1,27 +1,29 @@
+from __future__ import annotations
+
 from typing import TYPE_CHECKING
 
 import graphene
-from graphene_django.forms.mutation import DjangoModelFormMutation
 
 import graphene_django_optimizer as gql_optimizer
 
-from actions.models.action import ActionQuerySet
-from aplans import graphql_gis  # noqa
 from aplans.graphql_helpers import (
     AdminButtonsMixin,
     CreateModelInstanceMutation,
     DeleteModelInstanceMutation,
     UpdateModelInstanceMutation,
 )
-from aplans.graphql_types import AuthenticatedUserNode, DjangoNode, GQLInfo, register_django_node
+from aplans.graphql_types import DjangoNode, register_django_node
 from aplans.utils import public_fields
 
 from actions.models import Plan
 from orgs.forms import NodeForm
-from orgs.models import Organization, OrganizationClass
+from orgs.models import Organization, OrganizationClass, OrganizationQuerySet
 
 if TYPE_CHECKING:
+    from aplans.graphql_types import GQLInfo
+
     from actions.models.plan import PlanQuerySet
+    from images.models import AplansImage
 
 
 # This form is just used in the GraphQL schema, not in Wagtail. For Wagtail, a different form class is created in
@@ -55,18 +57,18 @@ class OrganizationNode(AdminButtonsMixin, DjangoNode):
     )
 
     @staticmethod
-    def resolve_ancestors(root: Organization, info):
+    def resolve_ancestors(root: Organization, info) -> OrganizationQuerySet:
         return root.get_ancestors()
 
     @staticmethod
-    def resolve_descendants(parent, info):
+    def resolve_descendants(parent: Organization, info) -> OrganizationQuerySet:
         return parent.get_descendants()
 
     @staticmethod
     @gql_optimizer.resolver_hints(
         only=tuple(),
     )
-    def resolve_action_count(parent, info):
+    def resolve_action_count(parent: Organization, info) -> int:
         cache = getattr(info.context, 'organization_action_count_cache', None)
         if cache is None:
             return getattr(parent, 'action_count', 0)
@@ -76,25 +78,27 @@ class OrganizationNode(AdminButtonsMixin, DjangoNode):
     @gql_optimizer.resolver_hints(
         only=tuple(),
     )
-    def resolve_contact_person_count(parent, info):
+    def resolve_contact_person_count(parent: Organization, info) -> int:
         return getattr(parent, 'contact_person_count', 0)
 
     @gql_optimizer.resolver_hints(
         only=('path', 'depth'),
     )
-    def resolve_parent(parent: Organization, info):
+    @staticmethod
+    def resolve_parent(parent: Organization, info) -> Organization | None:
         return parent.get_parent()
 
     @gql_optimizer.resolver_hints(
         only=('logo',),
         select_related=('logo',),
     )
-    def resolve_logo(self: Organization, info: GQLInfo, parent_fallback=False):
-        if self.logo is not None:
-            return self.logo
+    @staticmethod
+    def resolve_logo(root: Organization, info: GQLInfo, parent_fallback=False) -> AplansImage | None:
+        if root.logo is not None:
+            return root.logo
         if parent_fallback:
             # Iterate through parents to find one that might have a logo
-            org = self.get_parent()
+            org = root.get_parent()
             while org is not None:
                 if org.logo is not None:
                     return org.logo
@@ -104,7 +108,7 @@ class OrganizationNode(AdminButtonsMixin, DjangoNode):
     @staticmethod
     def resolve_plans_with_action_responsibilities(
         root: Organization, info: GQLInfo, except_plan: str | None = None,
-    ):
+    ) -> PlanQuerySet:
         qs = Plan.objects.qs.filter(
             id__in=root.responsible_for_actions.values_list('plan'),
         )
@@ -124,7 +128,7 @@ class Query:
     organization = graphene.Field(OrganizationNode, id=graphene.ID(required=True))
 
     @staticmethod
-    def resolve_organization(root, info, id):
+    def resolve_organization(root, info, id: str) -> Organization:
         return Organization.objects.get(id=id)
 
 

@@ -10,6 +10,8 @@ from django.utils.translation import gettext_lazy as _
 from aplans.utils import ConstantMetadata, MetadataEnum
 
 if TYPE_CHECKING:
+    from django.utils.functional import _StrOrPromise
+
     from aplans.cache import WatchObjectCache
 
     from .models import Action, ActionStatus, Plan
@@ -24,19 +26,19 @@ class SummaryContext(TypedDict, total=False):
 
 
 class ActionStatusSummary(ConstantMetadata['ActionStatusSummaryIdentifier', SummaryContext]):
-    default_label: str
+    default_label: _StrOrPromise
     color: str
     is_completed: bool
     is_active: bool
     sentiment: Sentiment
-    label: str
+    label: _StrOrPromise
 
     def __init__(self,
-                 default_label=None,
-                 color=None,
-                 is_completed=False,
-                 is_active=False,
-                 sentiment=None):
+                 default_label: _StrOrPromise = '',
+                 color: str = '',
+                 is_completed: bool = False,
+                 is_active: bool = False,
+                 sentiment: Sentiment = Sentiment.NEUTRAL):
         self.default_label = default_label
         self.color = color
         self.is_completed = is_completed
@@ -57,8 +59,10 @@ class ActionStatusSummary(ConstantMetadata['ActionStatusSummaryIdentifier', Summ
             plan_id = context.get('plan_id')
             if plan_id is None and plan is not None:
                 plan_id = plan.id
+            assert plan_id is not None
             status = context['cache'].for_plan_id(plan_id).get_action_status(identifier=identifier)
         else:
+            assert plan is not None
             status = plan.action_statuses.filter(plan=plan, identifier=identifier).first()
         if status is not None:
             self.label = status.name_i18n
@@ -147,7 +151,7 @@ class ActionStatusSummaryIdentifier(MetadataEnum):
         return f'{self.name}.{self.value!s}'
 
     @classmethod
-    def for_status(cls, status: ActionStatus):
+    def for_status(cls, status: ActionStatus | None) -> ActionStatusSummaryIdentifier:
         if status is None:
             return cls.UNDEFINED
         status_identifier = status.identifier.lower() if status else None
@@ -157,7 +161,7 @@ class ActionStatusSummaryIdentifier(MetadataEnum):
             return cls.UNDEFINED
 
     @classmethod
-    def for_action(cls, action: Action):
+    def for_action(cls, action: Action) -> ActionStatusSummaryIdentifier:
         # FIXME: Some plans in production have inconsistent Capitalized identifiers
         # Once the db has been cleaned up, this match logic
         # should be revisited
@@ -181,7 +185,7 @@ Comparison = Enum('Comparison', names='LTE GT')
 class ActionTimeliness(ConstantMetadata['ActionTimelinessIdentifier', SummaryContext]):
     color: str | None
     sentiment: Sentiment | None
-    label: str | None
+    label: _StrOrPromise | None
     boundary: Callable[[Plan], int]
     comparison: Comparison | None
     identifier: ActionTimelinessIdentifier
@@ -200,12 +204,12 @@ class ActionTimeliness(ConstantMetadata['ActionTimelinessIdentifier', SummaryCon
         self.comparison = comparison
         self.boundary = boundary
 
-    def _get_label(self, plan: Plan):
+    def _get_label(self, plan: Plan) -> _StrOrPromise:
         if self.comparison == Comparison.LTE:
             return _('Under %d days') % self._get_days(plan)
         return _('Over %d days') % self._get_days(plan)
 
-    def _get_days(self, plan: Plan):
+    def _get_days(self, plan: Plan) -> int:
         return self.boundary(plan)
 
     def with_context(self, context: SummaryContext):
@@ -247,7 +251,7 @@ class ActionTimelinessIdentifier(MetadataEnum):
     )
 
     @classmethod
-    def for_action(cls, action: Action):
+    def for_action(cls, action: Action) -> ActionTimelinessIdentifier:
         plan = action.plan
         age = timezone.now() - action.updated_at
         if age <= datetime.timedelta(days=cls.OPTIMAL.value.boundary(plan)):

@@ -1,7 +1,10 @@
-from typing import TYPE_CHECKING
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, cast
 
 import graphene
 from django.db.models import Count, Q
+from django.db.models.query import QuerySet
 from graphql import DirectiveLocation
 from graphql.error import GraphQLError
 from graphql.type import (
@@ -14,10 +17,14 @@ from graphql.type import (
 
 import graphene_django_optimizer as gql_optimizer
 from grapple.registry import registry as grapple_registry
+from treebeard.mp_tree import MP_Node
 
 from aplans.cache import OrganizationActionCountCache
 from aplans.graphql_types import WorkflowStateGrapheneEnum
 from aplans.utils import public_fields
+
+if True:
+    from . import graphql_gis  # noqa: F401
 
 from actions import schema as actions_schema
 from actions.models.action import Action
@@ -33,24 +40,25 @@ from people.models import Person
 from reports import schema as reports_schema
 from search import schema as search_schema
 
-from . import graphql_gis  # noqa
 from .graphql_helpers import get_fields
-from .graphql_types import DjangoNode, GQLInfo, WorkflowStateEnum, get_plan_from_context, graphene_registry
+from .graphql_types import DjangoNode, WorkflowStateEnum, get_plan_from_context, graphene_registry
 
 if TYPE_CHECKING:
+    from aplans.graphql_types import GQLInfo
+
     from actions.models import Plan
 
 
-def mp_node_get_ancestors(qs, include_self=False):
+def mp_node_get_ancestors[QS: QuerySet[MP_Node]](qs: QS, include_self: bool = False) -> QS:
     # https://github.com/django-treebeard/django-treebeard/issues/98
-    paths = set()
+    paths: set[str] = set()
     for node in qs:
         length = len(node.path)
         if include_self:
             length += node.steplen
         paths.update(node.path[0:pos]
                      for pos in range(node.steplen, length, node.steplen))
-    return qs.model.objects.filter(path__in=paths)
+    return cast('QS', qs.model.objects.filter(path__in=paths))
 
 
 class SiteGeneralContentNode(DjangoNode):
@@ -92,7 +100,7 @@ class Query(
         else:
             plans = [plan_obj]
 
-        visible_actions = Action.objects.visible_for_user(info.context.user).filter(plan__in=plans)
+        visible_actions = Action.objects.qs.visible_for_user(info.context.user).filter(plan__in=plans)
 
         workflow_state = getattr(info.context.watch_cache, 'query_workflow_state', None)
         some_plan_has_a_workflow = any(p.features.moderation_workflow is not None for p in plans)
@@ -106,7 +114,7 @@ class Query(
             info.context.organization_action_count_cache = OrganizationActionCountCache(visible_actions)
             cache = info.context.organization_action_count_cache
 
-        qs = Organization.objects.available_for_plans(plans)
+        qs = Organization.objects.qs.available_for_plans(plans)
         if plan is not None:
             # Note the weird behavior by Django: Q() is neither "true" nor "false".
             # For all x, Q() | x is equivalent to x, and Q() & x is also equivalent to x.

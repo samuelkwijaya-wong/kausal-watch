@@ -55,7 +55,9 @@ class DocumentationPage(Page):
     ]
 
     parent_page_types = [DocumentationRootPage]
-    subpage_types = []
+    subpage_types: list[type[Page]] = []
+
+    _default_manager: ClassVar[PageManager[DocumentationPage]]
 
     # Disable Wagtail's previews because our hacks make them break
     @property

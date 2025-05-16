@@ -1,3 +1,7 @@
+from __future__ import annotations
+
+from typing import ClassVar
+
 import reversion
 from django.db import models
 from django.utils.translation import gettext_lazy as _
@@ -77,7 +81,7 @@ class SiteGeneralContent(models.Model):
         max_length=30, choices=OrganizationTerm.choices, verbose_name=_("Term to use for 'organization'"),
         default=OrganizationTerm.ORGANIZATION,
     )
-    sitewide_announcement = RichTextField(
+    sitewide_announcement = RichTextField[str | None, str | None](
         blank=True,
         null=True,
         verbose_name=_('Sitewide announcement'),
@@ -92,7 +96,7 @@ class SiteGeneralContent(models.Model):
         ],
         default_language_field='plan__primary_language_lowercase')
 
-    public_fields = [
+    public_fields: ClassVar = [
         'id', 'site_title', 'site_description', 'owner_url', 'owner_name', 'official_name_description',
         'copyright_text', 'creative_commons_license', 'github_api_repository', 'github_ui_repository', 'action_term',
         'action_task_term', 'organization_term', 'sitewide_announcement',
@@ -105,8 +109,7 @@ class SiteGeneralContent(models.Model):
     def __str__(self):
         if self.plan:
             return str(self.plan)
-        else:
-            return '[unknown]'
+        return '[unknown]'
 
     def get_action_term_display_plural(self):
         # Analogous to get_action_term_display, which Django automatically generates

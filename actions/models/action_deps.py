@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import functools
-import typing
 from typing import TYPE_CHECKING, ClassVar, Self
 
 from django.core.exceptions import ValidationError
@@ -80,7 +79,10 @@ class ActionDependencyRelationshipQuerySet(models.QuerySet['ActionDependencyRela
 
 
 if TYPE_CHECKING:
-    class ActionDependencyRelationshipManager(ModelManager['ActionDependencyRelationship', ActionDependencyRelationshipQuerySet]): ...
+
+    class ActionDependencyRelationshipManager(
+        ModelManager['ActionDependencyRelationship', ActionDependencyRelationshipQuerySet]
+    ): ...
 else:
     ActionDependencyRelationshipManager = ModelManager.from_queryset(ActionDependencyRelationshipQuerySet)
 
@@ -109,6 +111,11 @@ class ActionDependencyRelationship(models.Model):
         constraints = [
             models.UniqueConstraint(fields=['preceding', 'dependent'], name='unique_pairs'), # , nulls_distinct=False)
         ]
+
+    def __str__(self):
+        p = str(self.preceding.identifier) if self.preceding is not None else ''
+        d = str(self.dependent.identifier) if self.dependent is not None else ''
+        return f'{p} → {d}'
 
     @classmethod
     def get_graph(cls, plan: Plan) -> DiGraph:
@@ -157,8 +164,8 @@ class ActionDependencyRelationship(models.Model):
             return False
         return True
 
-    def _validate_max_chain_length(self):
-        """Ensures that the max length of a dependency chain does not exceed `MAX_DEPENDENCY_LEVELS`."""
+    def _validate_max_chain_length(self) -> None:
+        """Ensure that the max length of a dependency chain does not exceed `MAX_DEPENDENCY_LEVELS`."""
 
         if not self.dependent:
             return
@@ -199,8 +206,3 @@ class ActionDependencyRelationship(models.Model):
         #     raise ValidationError(_("The dependency relationships contain a cycle."))
         #
         # self._validate_max_chain_length()
-
-    def __str__(self):
-        p = str(self.preceding.identifier) if self.preceding is not None else ''
-        d = str(self.dependent.identifier) if self.dependent is not None else ''
-        return ' → '.join([p, d])

@@ -1,10 +1,11 @@
+# ruff: noqa: ANN205
 from __future__ import annotations
 
 import logging
 import typing
 import uuid
 from itertools import chain
-from typing import Generic, Iterable, Protocol, TypeVar, cast
+from typing import ClassVar, Generic, Mapping, Protocol, TypeVar, cast
 from urllib.parse import urlparse
 
 import graphene
@@ -81,7 +82,6 @@ from actions.models import (
     PublicationStatus,
     Scenario,
 )
-from actions.models.action import ActionQuerySet
 from actions.models.action_deps import ActionDependencyRelationship, ActionDependencyRole
 from actions.models.attributes import ModelWithAttributes
 from orgs.models import Organization
@@ -91,10 +91,14 @@ from people.models import Person
 from search.backends import get_search_backend
 
 if typing.TYPE_CHECKING:
-    from kausal_common.graphene import GQLInfo
+    from collections.abc import Iterable, Sequence
+
+    from django.utils.functional import _StrOrPromise
 
     from aplans.cache import PlanSpecificCache
+    from aplans.graphql_types import GQLInfo
 
+    from actions.models.action import ActionQuerySet
     from actions.models.attributes import Attribute
     from indicators.models import ActionIndicator
     from users.models import User
@@ -159,7 +163,7 @@ class PlanInterface(graphene.Interface, Generic[T]):
     @gql_optimizer.resolver_hints(
         model_field='domains',
     )
-    def resolve_domain(root: Plan, info, hostname=None):
+    def resolve_domain(root: Plan, info, hostname=None) -> PlanDomain | None:
         context_hostname = getattr(info.context, '_plan_hostname', None)
         if not hostname:
             hostname = context_hostname
@@ -171,7 +175,7 @@ class PlanInterface(graphene.Interface, Generic[T]):
     @gql_optimizer.resolver_hints(
         model_field='domains',
     )
-    def resolve_domains(root: Plan, info, hostname=None):
+    def resolve_domains(root: Plan, info, hostname=None) -> None | QuerySet[PlanDomain, PlanDomain]:
         context_hostname = getattr(info.context, '_plan_hostname', None)
         if not hostname:
             hostname = context_hostname
@@ -180,7 +184,7 @@ class PlanInterface(graphene.Interface, Generic[T]):
         return root.domains.filter(plan=root, hostname=hostname)
 
     @classmethod
-    def resolve_type(cls, instance, info):
+    def resolve_type(cls, instance, info) -> type[RestrictedPlanNode | PlanNode]:
         context_hostname = getattr(info.context, '_plan_hostname', None)
         if context_hostname is None:
             return RestrictedPlanNode
@@ -364,7 +368,7 @@ class PlanNode(DjangoNode):
             first: int | None = None,
     ):
         user = info.context.user
-        qs = cast(ActionQuerySet, root.actions.get_queryset())
+        qs = cast('ActionQuerySet', root.actions.get_queryset())
         if restrict_to_publicly_visible:
             qs = qs.visible_for_public()
         else:
@@ -507,13 +511,13 @@ class AttributeInterface(graphene.Interface):
     def resolve_type(cls, instance, info):
         if isinstance(instance, AttributeText):
             return AttributeTextNode
-        elif isinstance(instance, AttributeRichText):
+        if isinstance(instance, AttributeRichText):
             return AttributeRichTextNode
-        elif isinstance(instance, (AttributeChoiceModel, AttributeChoiceWithText)):
+        if isinstance(instance, (AttributeChoiceModel, AttributeChoiceWithText)):
             return AttributeChoice
-        elif isinstance(instance, AttributeNumericValue):
+        if isinstance(instance, AttributeNumericValue):
             return AttributeNumericValueNode
-        elif isinstance(instance, AttributeCategoryChoice):
+        if isinstance(instance, AttributeCategoryChoice):
             return AttributeCategoryChoiceNode
         return None
 
@@ -616,7 +620,7 @@ class ResolveShortDescriptionFromLeadParagraphShim:
     short_description = graphene.String()
 
     @staticmethod
-    def resolve_short_description(root: HasLeadParagraph, info):
+    def resolve_short_description(root: HasLeadParagraph, info) -> str | None:
         return root.lead_paragraph
 
 
@@ -685,7 +689,7 @@ def get_translated_category_page(info, **kwargs) -> Prefetch:
 
 
 def prefetch_workflow_states(info, **_kwargs) -> Prefetch:
-    workflow_states = WorkflowState.objects.active().select_related(
+    workflow_states = WorkflowState.objects.get_queryset().active().select_related(
         "current_task_state__task",
     )
     return Prefetch(
@@ -789,7 +793,7 @@ class CategoryNode(ResolveShortDescriptionFromLeadParagraphShim, AttributesMixin
     def resolve_category_page(root: Category, info):
         # If we have prefetched the page in the right locale, use that
         if hasattr(root, 'category_pages_locale'):
-            pages = root.category_pages_locale
+            pages = root.category_pages_locale  # pyright: ignore
             if not len(pages):
                 return None
             return pages[0]
@@ -917,7 +921,7 @@ class ActionTaskNode(DjangoNode):
         model_field='comment',
     )
     def resolve_comment(root: ActionTask, info):
-        root.i18n  # Workaround to avoid i18n field being deferred in gql_optimizer
+        root.i18n  # Workaround to avoid i18n field being deferred in gql_optimizer  # noqa: B018
         comment = root.comment_i18n
         if comment is None:
             return None
@@ -1031,16 +1035,16 @@ class WorkflowInfoNode(graphene.ObjectType):
         return root.has_unpublished_changes
 
     @staticmethod
-    def resolve_latest_revision(root: Action, info: GQLInfo) -> Revision:
+    def resolve_latest_revision(root: Action, info: GQLInfo) -> Revision[Action] | None:
         return root.get_latest_revision()
 
     @staticmethod
-    def resolve_current_workflow_state(root: Action, info: GQLInfo) -> WorkflowState:
+    def resolve_current_workflow_state(root: Action, info: GQLInfo) -> WorkflowState | None:
         return root.current_workflow_state
 
     @staticmethod
-    def resolve_matching_version(root: Action, info: GQLInfo) -> dict[str, str]:
-        def make_result(match: WorkflowStateEnum | None) -> dict[str, str]:
+    def resolve_matching_version(root: Action, info: GQLInfo) -> Mapping[str, _StrOrPromise | None]:
+        def make_result(match: WorkflowStateEnum) -> Mapping[str, _StrOrPromise | None]:
             return dict(
                 id=match.name,
                 description=WorkflowStateEnum(match).description,
@@ -1050,7 +1054,7 @@ class WorkflowInfoNode(graphene.ObjectType):
 
 @register_django_node
 class ActionNode(ModelAdminAdminButtonsMixin, AttributesMixin, DjangoNode):
-    ORDERABLE_FIELDS = ['updated_at', 'identifier']
+    ORDERABLE_FIELDS: ClassVar[Sequence[str]] = ['updated_at', 'identifier']
 
     name = graphene.String(hyphenated=graphene.Boolean(), required=True)
     categories = graphene.List(graphene.NonNull(CategoryNode), category_type=graphene.ID(), required=True)
@@ -1245,7 +1249,7 @@ class ActionNode(ModelAdminAdminButtonsMixin, AttributesMixin, DjangoNode):
             logger.warning(message)
             _ = sentry_sdk.capture_message(message)
             return root.dependent_relationships.exists() or root.preceding_relationships.exists()
-        return root.has_dependencies
+        return root.has_dependencies  # pyright: ignore
 
     @staticmethod
     def resolve_all_dependency_relationships(root: Action, info: GQLInfo):
@@ -1260,7 +1264,7 @@ class ActionNode(ModelAdminAdminButtonsMixin, AttributesMixin, DjangoNode):
         only=('latest_revision', 'has_unpublished_changes', 'plan', 'plan__features__moderation_workflow'),
         prefetch_related=prefetch_workflow_states,
     )
-    def resolve_workflow_status(root: Action, info) -> WorkflowState | None:
+    def resolve_workflow_status(root: Action, info) -> Action | None:
         user = info.context.user
         plan = root.plan
         if not user.is_authenticated or not user.can_access_public_site(plan):
@@ -1425,16 +1429,17 @@ def _resolve_published_action(
         return None
 
 
-def _resolve_action_revision(action: Action, desired_workflow_state: WorkflowStateEnum):
+def _resolve_action_revision(action: Action, desired_workflow_state: WorkflowStateEnum) -> Action:
     def with_workflow_state(match: WorkflowStateEnum, action: Action) -> Action:
         assert match != WorkflowStateEnum.PUBLISHED
         revision = action.latest_revision
+        assert revision is not None
         revision_action = revision.as_object()
         revision_action.updated_at = revision.created_at
         revision_action._actual_workflow_state = match
         return revision_action
 
-    def published(action: Action):
+    def published(action: Action) -> Action:
         action._actual_workflow_state = WorkflowStateEnum.PUBLISHED
         return action
 
@@ -1535,7 +1540,7 @@ class Query:
     @staticmethod
     def resolve_plans_for_hostname(root, info: GQLInfo, hostname: str):
         info.context._plan_hostname = hostname.lower()
-        plans = Plan.objects.for_hostname(info.context._plan_hostname, request=info.context)
+        plans = Plan.objects.get_queryset().for_hostname(info.context._plan_hostname, request=info.context)
         ret = list(gql_optimizer.query(plans, info))
         req = info.context
         if not ret:
@@ -1568,7 +1573,7 @@ class Query:
             action_pks = [str(pk) for pk in action_queryset.values_list('pk', flat=True)]
             if desired_workflow_task is not None:
                 workflowstates = (
-                    WorkflowState.objects.active()\
+                    WorkflowState.objects.get_queryset().active()\
                     .filter(content_type=ct)\
                     .filter(current_task_state__task=desired_workflow_task)\
                     .filter(object_id__in=action_pks)
@@ -1594,7 +1599,16 @@ class Query:
         return sorted(actions, key=lambda o: o.order)
 
     @staticmethod
-    def resolve_plan_actions(root, info, plan, first=None, category=None, order_by=None, restrict_to_publicly_visible=True, **kwargs):
+    def resolve_plan_actions(
+        root,
+        info: GQLInfo,
+        plan: str,
+        first: int | None = None,
+        category: str | None = None,
+        order_by: str | None = None,
+        restrict_to_publicly_visible: bool = True,
+        **kwargs,
+    ) -> Iterable[Action] | None:
         plan_obj = get_plan_from_context(info, plan)
         if plan_obj is None:
             return None
@@ -1612,13 +1626,13 @@ class Query:
         )
         user = info.context.user
         cache = info.context.watch_cache.for_plan(plan_obj)
-        persons_queryset = Person.objects.filter(actioncontactperson__action__plan=plan_obj)
+        persons_queryset = Person.objects.get_queryset().filter(actioncontactperson__action__plan=plan_obj)
         cache.populate_persons(persons_queryset)
         cache.populate_organizations(
-            Organization.objects.filter(
+            Organization.objects.get_queryset().filter(
                 Q(responsible_actions__action__plan=plan_obj) |
-                Q(people__in=persons_queryset),
-            ),
+                Q(people__in=persons_queryset)
+            )
         )
         if not is_authenticated(user):
             workflow_state = WorkflowStateEnum.PUBLISHED
@@ -1626,8 +1640,7 @@ class Query:
             workflow_state = WorkflowStateEnum.PUBLISHED
         if workflow_state == WorkflowStateEnum.PUBLISHED:
             return qs
-        else:
-            return Query._resolve_plan_action_revisions(plan_obj, workflow_state, qs, cache=cache)
+        return Query._resolve_plan_action_revisions(plan_obj, workflow_state, qs, cache=cache)
 
     @staticmethod
     def resolve_related_plan_actions(root, info, plan, first=None, category=None, order_by=None, **kwargs):

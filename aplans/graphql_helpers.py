@@ -1,12 +1,10 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Self
 
 import graphene
-from django.db.models import Model
 from django.utils.module_loading import import_string
 from graphene_django.forms.mutation import DjangoModelFormMutation
-from graphql import GraphQLResolveInfo
 from graphql.error import GraphQLError
 from graphql.utilities.ast_to_dict import ast_to_dict
 
@@ -14,25 +12,33 @@ from admin_site.permissions import PlanRelatedPermissionPolicy
 from admin_site.utils import admin_req
 from admin_site.wagtail import AplansModelAdmin, PlanRelatedModelAdminPermissionHelper
 
-from .graphql_types import AdminButton, AuthenticatedUserNode, GQLInfo
+from .graphql_types import AdminButton, AuthenticatedUserNode
 
 if TYPE_CHECKING:
+    from django.db.models import Model
+    from graphql import GraphQLResolveInfo
+
+    from kausal_common.graphene import GQLInfo
+
     from admin_site.viewsets import WatchViewSet
 
 
 def collect_fields(node, fragments):
     """
-    Recursively collects fields from the AST
+    Recursively collects fields from the AST.
+
     Args:
         node (dict): A node in the AST
         fragments (dict): Fragment definitions
+
     Returns:
         A dict mapping each field found, along with their sub fields.
         {'name': {},
          'sentimentsPerLanguage': {'id': {},
                                    'name': {},
                                    'totalSentiments': {}},
-         'slug': {}}
+         'slug': {}}.
+
     """
 
     field = {}
@@ -52,12 +58,12 @@ def collect_fields(node, fragments):
 
 def get_fields(info: GraphQLResolveInfo):
     """
-    A convenience function to call collect_fields with info
-    Args:
-        info (ResolveInfo)
+    Call collect_fields with info.
 
-    Returns
-    -------
+    Args:
+        info (ResolveInfo): resolve info
+
+    Returns:
         dict: Returned from collect_fields
 
     """
@@ -107,7 +113,7 @@ class UpdateModelInstanceMutation(DjangoModelFormMutation, AuthenticatedUserNode
         abstract = True
 
     @classmethod
-    def perform_mutate(cls, form, info):
+    def perform_mutate(cls, form, info) -> Self:
         # Require id in `input` argument, otherwise we could create instances with this mutation
         if form.instance.id is None:
             raise ValueError("ID not specified")
@@ -118,6 +124,7 @@ class DeleteModelInstanceMutation(graphene.Mutation, AuthenticatedUserNode):
     class Arguments:
         id = graphene.ID()
 
+    model: type[Model]
     ok = graphene.Boolean()
 
     @classmethod
@@ -126,8 +133,8 @@ class DeleteModelInstanceMutation(graphene.Mutation, AuthenticatedUserNode):
         super().__init_subclass_with_meta__(*args, **kwargs)
 
     @classmethod
-    def mutate(cls, root, info, id):
-        obj = cls.model.objects.get(pk=id)
+    def mutate(cls, root, info, id: str) -> Self:  # noqa: ARG003
+        obj = cls.model._default_manager.get(pk=id)
         obj.delete()
         return cls(ok=True)
 
@@ -137,7 +144,7 @@ class ModelAdminAdminButtonsMixin:
 
     @staticmethod
     def resolve_admin_buttons(root: Model, info: GQLInfo):
-        ModelAdmin: type[AplansModelAdmin] = import_string(root.MODEL_ADMIN_CLASS)  # type: ignore
+        ModelAdmin: type[AplansModelAdmin] = import_string(root.MODEL_ADMIN_CLASS)  # type: ignore  # noqa: N806
 
         if not info.context.user.is_staff:
             return []

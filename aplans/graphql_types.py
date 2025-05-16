@@ -5,7 +5,7 @@ import re
 import typing
 import uuid
 from enum import Enum
-from typing import Any, ClassVar, Protocol, TypeVar, cast
+from typing import TYPE_CHECKING, Any, ClassVar, Protocol, TypeVar, cast
 
 import graphene
 from django.db.models import Model, QuerySet
@@ -14,7 +14,6 @@ from django.utils.translation import gettext_lazy as _
 from graphene.utils.str_converters import to_camel_case, to_snake_case
 from graphene.utils.trim_docstring import trim_docstring
 from graphene_django import DjangoObjectType
-from graphql import GraphQLResolveInfo
 from modeltrans.translator import get_i18n_field
 
 import graphene_django_optimizer as gql_optimizer
@@ -26,9 +25,11 @@ from actions.models.plan import Plan
 
 if typing.TYPE_CHECKING:
     from collections.abc import Sequence
+    from typing import type_check_only
 
     from graphene_django.types import DjangoObjectTypeOptions
-    from graphql.language.ast import OperationDefinitionNode
+
+    from kausal_common.graphene import GQLInfo as CommonGQLInfo
 
     from aplans.types import WatchAPIRequest
 
@@ -207,11 +208,6 @@ class AuthenticatedUserNode(graphene.ObjectType):
     pass
 
 
-class GQLInfo(GraphQLResolveInfo):
-    context: WatchAPIRequest
-    operation: OperationDefinitionNode
-
-
 class AdminButton(graphene.ObjectType):
     url = graphene.String(required=True)
     label = graphene.String(required=True)
@@ -254,3 +250,9 @@ WorkflowStateGrapheneEnum = graphene.Enum.from_enum(WorkflowStateEnum, name='Wor
 class WorkflowStateDescription(graphene.ObjectType):
     id = graphene.String()
     description = graphene.String()
+
+
+if TYPE_CHECKING:
+    @type_check_only
+    class GQLInfo(CommonGQLInfo):  # pyright: ignore
+        context: WatchAPIRequest  # type: ignore[assignment]

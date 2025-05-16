@@ -4,7 +4,6 @@ import contextlib
 import logging
 import typing
 import uuid
-from functools import lru_cache
 from typing import TYPE_CHECKING, Any, ClassVar, Literal, Mapping, Self, TypedDict, cast
 
 import reversion
@@ -17,7 +16,6 @@ from django.core.validators import URLValidator
 from django.db import models
 from django.db.models import Count, Exists, IntegerField, Max, OuterRef, Q, QuerySet
 from django.db.models.functions import Cast
-from django.db.models.options import Options
 from django.urls import reverse
 from django.utils import timezone, translation
 from django.utils.translation import gettext_lazy as _, pgettext_lazy
@@ -33,7 +31,8 @@ from wagtail.models import DraftStateMixin, LockableMixin, Revision, RevisionMix
 from wagtail.search import index
 from wagtail.search.queryset import SearchableQuerySetMixin
 
-from kausal_common.models.types import MLModelManager
+from kausal_common.models.types import MLModelManager, RevManyQS
+from kausal_common.users import user_or_none
 
 from aplans.utils import (
     ConstantMetadata,
@@ -47,7 +46,7 @@ from aplans.utils import (
     get_available_variants_for_language,
 )
 
-from indicators.models import ActionIndicator, Indicator, IndicatorQuerySet
+from indicators.models import ActionIndicator, ActionIndicatorQuerySet, Indicator, IndicatorQuerySet
 from orgs.models import Organization
 from search.backends import TranslatedAutocompleteField, TranslatedSearchField
 from users.models import User
@@ -63,6 +62,7 @@ if typing.TYPE_CHECKING:
     from collections.abc import Sequence
 
     from django.db.models.expressions import Combinable
+    from django.db.models.options import Options
     from modelcluster.fields import PK
 
     from kausal_common.models.types import FK, M2M, GetDisplayMethod, RevMany
@@ -72,7 +72,7 @@ if typing.TYPE_CHECKING:
     from aplans.types import UserOrAnon
 
     from actions.attributes import DraftAttributes
-    from actions.models.category import Category
+    from actions.models.category import Category, CategoryType
     from people.models import Person
 
     from .action_deps import ActionDependencyRelationshipQuerySet, ActionDependencyRole
@@ -223,7 +223,7 @@ class Action(
         verbose_name=_('Image'),
     )
     lead_paragraph = models.TextField(blank=True, verbose_name=_('Lead paragraph'))
-    description = RichTextField(
+    description: RichTextField[str | None, str | None] = RichTextField(
         null=True, blank=True,
         verbose_name=_('description'),
         help_text=_('What does this action involve in more detail?'))
@@ -240,14 +240,16 @@ class Action(
     internal_notes = models.TextField(
         blank=True, null=True, verbose_name=_('internal notes'),
     )
-    status = models.ForeignKey(
+    status: FK[ActionStatus | None] = models.ForeignKey(
         'ActionStatus', blank=True, null=True, on_delete=models.SET_NULL,
         verbose_name=_('status'),
     )
+    status_id: int | None
     implementation_phase = models.ForeignKey(
         'ActionImplementationPhase', blank=True, null=True, on_delete=models.SET_NULL,
         verbose_name=_('implementation phase'),
     )
+    implementation_phase_id: int | None
     manual_status = models.BooleanField(
         default=False, verbose_name=_('override status manually'),
         help_text=_('Set if you want to prevent the action status from being determined automatically'),
@@ -348,6 +350,11 @@ class Action(
         fields=('name', 'official_name', 'description', 'manual_status_reason', 'lead_paragraph'),
         default_language_field='plan__primary_language_lowercase',
     )
+    name_i18n: str
+    official_name_i18n: str | None
+    description_i18n: str | None
+    manual_status_reason_i18n: str | None
+    lead_paragraph_i18n: str | None
 
     # Add reverse GenericRelation to add the ability to prefetch the related workflowstates
     # to optimize the performance of querying actions in GQL.
@@ -395,7 +402,7 @@ class Action(
             else:
                 attribute_type.commit_attribute(self, attribute_value)
 
-    def publish(self, revision, user=None, **kwargs):
+    def publish(self, revision: Revision[Self], user: User | None = None, **kwargs) -> None:  # type: ignore[override]
         attributes = revision.content.pop('attributes')
         super().publish(revision, user=user, **kwargs)
         self.commit_attributes(attributes, user)
@@ -464,10 +471,11 @@ class Action(
     name_i18n: str
     plan_id: int
     preceding_relationships: RevMany[ActionDependencyRelationship]
-    related_indicators: RevMany[ActionIndicator]
+    related_indicators: RevManyQS[ActionIndicator, ActionIndicatorQuerySet]
     superseded_actions: RevMany[Action]
     copies: RevMany[Action]
     tasks: RevMany[ActionTask]
+    responsible_parties: RevMany[ActionResponsibleParty]
 
     verbose_name_partitive = pgettext_lazy('partitive', 'action')
 
@@ -538,10 +546,10 @@ class Action(
             .first()
         )
 
-    def get_visible_related_indicators(self):
+    def get_visible_related_indicators(self) -> ActionIndicatorQuerySet:
         ind_qs: IndicatorQuerySet = self.indicators.get_queryset()  # pyright: ignore
         indicator_ids = ind_qs.visible_for_public().values_list("id", flat=True)
-        return self.related_indicators.filter(indicator_id__in=indicator_ids)
+        return self.related_indicators.get_queryset().filter(indicator_id__in=indicator_ids)
 
 
     get_visibility_display: GetDisplayMethod
@@ -550,7 +558,7 @@ class Action(
     def visibility_display(self):
         return self.get_visibility_display()
 
-    def _calculate_status_from_indicators(self) -> None | dict[str, int]:
+    def _calculate_status_from_indicators(self) -> None | dict[str, int]:  # noqa: C901
         progress_indicators = self.related_indicators.filter(indicates_action_progress=True)
         total_completion = 0.0
         total_indicators = 0
@@ -680,16 +688,16 @@ class Action(
     def handle_admin_save(self, context: dict | None = None):
         self.recalculate_status(force_update=True)
 
-    def set_categories(self, type, categories):
-        if isinstance(type, str):
-            type = self.plan.category_types.get(identifier=type)
-        all_cats = {x.id: x for x in type.categories.all()}
+    def set_categories(self, type_: str | CategoryType, categories: list[Category | int]):
+        if isinstance(type_, str):
+            type_ = self.plan.category_types.get(identifier=type_)
+        all_cats = {x.id: x for x in type_.categories.all()}
 
-        existing_cats = set(self.categories.filter(type=type))
+        existing_cats = set(self.categories.filter(type=type_))
         new_cats = set()
         for cat in categories:
             if isinstance(cat, int):
-                cat = all_cats[cat]
+                cat = all_cats[cat]  # noqa: PLW2901
             new_cats.add(cat)
 
         for cat in existing_cats - new_cats:
@@ -741,7 +749,7 @@ class Action(
 
     @admin.display(description=_('Active tasks'))
     def active_task_count(self):
-        def task_active(task):
+        def task_active(task) -> bool:
             return task.state != ActionTask.CANCELLED and not task.completed_at
 
         active_tasks = [task for task in self.tasks.all() if task_active(task)]
@@ -750,7 +758,10 @@ class Action(
     def get_view_url(self, plan: Plan | None = None, client_url: str | None = None) -> str:
         if plan is None:
             plan = self.plan
-        return '%s/actions/%s' % (plan.get_view_url(client_url=client_url, active_locale=translation.get_language()), self.identifier)
+        return '%s/actions/%s' % (
+            plan.get_view_url(client_url=client_url, active_locale=translation.get_language()),
+            self.identifier,
+        )
 
     @classmethod
     def get_indexed_objects(cls) -> ActionQuerySet:
@@ -824,7 +835,7 @@ class Action(
         for panels, kwargs in [(main_panels, {'unless_in_reporting_tab': True}),
                                (reporting_panels, {'only_in_reporting_tab': True})]:
             attribute_types = self.get_visible_attribute_types(user, **kwargs)
-            act = cast(Action, self)
+            act = cast('Action', self)
             for attribute_type in attribute_types:
                 main, i18n = attribute_type.get_panels(user, plan, act, draft_attributes=draft_attributes)
                 panels.extend(main)
@@ -850,7 +861,7 @@ class Action(
     def get_snapshots(self, report=None):
         """Return the snapshots of this action, optionally restricted to those for the given report."""
         from reports.models import ActionSnapshot
-        versions = Version.objects.get_for_object(self)
+        versions: QuerySet[Version] = Version.objects.get_for_object(self)  # pyright: ignore
         qs = ActionSnapshot.objects.filter(action_version__in=versions)
         if report is not None:
             qs = qs.filter(report=report)
@@ -891,7 +902,7 @@ class Action(
         from reports.models import ActionSnapshot
         snapshots = ActionSnapshot.objects.filter(
             report=report,
-            action_version__in=Version.objects.get_for_object(self),
+            action_version__in=Version.objects.get_for_object(self),  # pyright: ignore
         )
         num_snapshots = snapshots.count()
         if num_snapshots != 1:
@@ -928,8 +939,10 @@ class Action(
         cache: PlanSpecificCache | None = None,
     ):
         """Get contact persons but redact data that should not be revealed according to plan features."""
+
+        auth_user = user_or_none(user)
         if self.plan.features.contact_persons_public_data == PlanFeatures.ContactPersonsPublicData.NONE and not (
-                show_all_contact_persons and user.is_authenticated and user.can_access_admin(self.plan)):
+                show_all_contact_persons and auth_user and auth_user.can_access_admin(self.plan)):
             return self.contact_persons.none()
 
         visible_contact_persons = []
@@ -942,14 +955,14 @@ class Action(
                 continue
             visible_contact_persons.append(acp)
         if self.plan.features.contact_persons_hide_moderators and (
-            not show_all_contact_persons or not user.is_authenticated or not user.can_access_admin(self.plan)
+            not show_all_contact_persons or not auth_user or not auth_user.can_access_admin(self.plan)
         ):
             visible_contact_persons = [acp for acp in visible_contact_persons if not acp.is_moderator()]
 
         if self.plan.features.contact_persons_public_data in (
                 PlanFeatures.ContactPersonsPublicData.ALL,
                 PlanFeatures.ContactPersonsPublicData.ALL_FOR_AUTHENTICATED,
-        ) or (show_all_contact_persons and user.is_authenticated and user.can_access_admin(self.plan)):
+        ) or (show_all_contact_persons and auth_user and auth_user.can_access_admin(self.plan)):
             return visible_contact_persons
 
         # Need to redact due to setting of self.plan.features.contact_persons_public_data
@@ -1112,7 +1125,7 @@ class ModelWithRole[ModelRole: 'ModelWithRole.Role']:  # pyright: ignore
 
     @classmethod
     def get_roles(cls) -> Sequence[ModelRole | None]:
-        roles = cast(list[ModelRole | None], list(cls.Role))
+        roles = cast('list[ModelRole | None]', list(cls.Role))
         if cls.role.field.blank:
             # None is not part of list(cls.Role) even if it's an allowed value in the DB field
             roles.append(None)
@@ -1140,6 +1153,7 @@ class ActionResponsibleParty(OrderedModel, ModelWithRole['ActionResponsibleParty
         # WTF? Commented out for now.
         # limit_choices_to=Q(dissolution_date=None),
     )
+    organization_id: int
     role = models.CharField(max_length=40, choices=Role.choices, blank=True, null=True, verbose_name=_('role'))
     specifier = models.CharField(
         max_length=255,
@@ -1211,7 +1225,9 @@ class ActionContactPerson(OrderedModel, ModelWithRole['ActionContactPerson.Role'
         EDITOR = 'editor', _('Editor')
         MODERATOR = 'moderator', _('Moderator')
 
-    role = models.CharField(max_length=40, choices=Role.choices, default='moderator', blank=False, null=False, verbose_name=_('role'))
+    role = models.CharField(
+        max_length=40, choices=Role.choices, default='moderator', blank=False, null=False, verbose_name=_('role')
+    )
 
     action = ParentalKey(
         Action, on_delete=models.CASCADE, verbose_name=_('action'), related_name='contact_persons',
@@ -1219,6 +1235,7 @@ class ActionContactPerson(OrderedModel, ModelWithRole['ActionContactPerson.Role'
     person: models.ForeignKey[Person | Combinable, Person] = models.ForeignKey(
         'people.Person', on_delete=models.CASCADE, verbose_name=_('person'),
     )
+    person_id: int
     primary_contact = models.BooleanField(
         default=False,
         verbose_name=_('primary contact person'),
@@ -1228,6 +1245,8 @@ class ActionContactPerson(OrderedModel, ModelWithRole['ActionContactPerson.Role'
     public_fields: ClassVar = [
         'id', 'action', 'person', 'order', 'primary_contact', 'role',
     ]
+
+    get_role_display: GetDisplayMethod
 
     class Meta:
         ordering = ['action', 'order']
@@ -1319,6 +1338,9 @@ class ActionStatus(PlanRelatedModel):
         'id', 'plan', 'name', 'identifier', 'is_completed',
     ]
 
+    id: int
+    name_i18n: str
+
     class Meta:
         unique_together = (('plan', 'identifier'),)
         verbose_name = _('action status')
@@ -1349,6 +1371,8 @@ class ActionImplementationPhase(PlanRelatedOrderedModel):
     public_fields: ClassVar = [
         'id', 'plan', 'order', 'name', 'identifier', 'color',
     ]
+
+    id: int
 
     class Meta:
         ordering = ('plan', 'order')
@@ -1406,13 +1430,12 @@ else:
 
 class ActionRelatedModelTransModelMixin:
     @classmethod
-    def from_serializable_data(cls, data: dict, check_fks: bool = True, strict_fks: bool = True):
-        if 'i18n' in data:
-            del data['i18n']
+    def from_serializable_data(cls, data: dict, check_fks: bool = True, strict_fks: bool = True) -> Self:
+        data.pop('i18n', None)
         kwargs = {}
         to_delete = set()
         assert hasattr(cls, '_meta')
-        meta = cast(Options, cls._meta)
+        meta = cast('Options', cls._meta)  # pyright: ignore
         for field_name, value in data.items():
             field = None
             try:
@@ -1423,8 +1446,7 @@ class ActionRelatedModelTransModelMixin:
                 to_delete.add(field_name)
         for f in to_delete:
             del data[f]
-        if 'action' in data:
-            del data['action']
+        data.pop('action', None)
         return model_from_serializable_data(cls, data, check_fks=check_fks, strict_fks=strict_fks)
 
 
@@ -1484,6 +1506,8 @@ class ActionTask(ActionRelatedModelTransModelMixin, models.Model):
     sent_notifications = GenericRelation('notifications.SentNotification', related_query_name='action_task')
 
     i18n = TranslationField(fields=('name', 'comment'), default_language_field='action__plan__primary_language_lowercase')
+    name_i18n: str
+    comment_i18n: str | None
 
     objects = ActionTaskManager()  # pyright: ignore
 
@@ -1565,6 +1589,8 @@ class ActionLink(ActionRelatedModelTransModelMixin, OrderedModel):
     title = models.CharField(max_length=254, verbose_name=_('title'), blank=True)
 
     i18n = TranslationField(fields=('url', 'title'), default_language_field='action__plan__primary_language_lowercase')
+    url_i18n: str
+    title_i18n: str
 
     public_fields: ClassVar = [
         'id', 'action', 'url', 'title', 'order',
@@ -1613,6 +1639,9 @@ class ActionStatusUpdate(models.Model):
         verbose_name_plural = _('action status updates')
         ordering = ('-date',)
 
+    def __str__(self):
+        return '%s – %s – %s' % (self.action, self.created_at, self.title)  # noqa: RUF001
+
     def save(self, *args, **kwargs):
         now = self.action.plan.now_in_local_timezone()
         if self.pk is None:
@@ -1623,9 +1652,6 @@ class ActionStatusUpdate(models.Model):
         if self.modified_at is None:
             self.modified_at = now.date()
         return super().save(*args, **kwargs)
-
-    def __str__(self):
-        return '%s – %s – %s' % (self.action, self.created_at, self.title)
 
 
 class ImpactGroupAction(models.Model):

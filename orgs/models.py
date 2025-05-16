@@ -11,7 +11,6 @@ from django.contrib import admin
 from django.contrib.gis.db import models as gis_models
 from django.db import models
 from django.db.models import Count, Q
-from django.template.loader import render_to_string
 from django.utils.translation import gettext_lazy as _, pgettext_lazy
 from modelcluster.fields import ParentalKey
 from modelcluster.models import ClusterableModel
@@ -35,6 +34,7 @@ if typing.TYPE_CHECKING:
     from actions.models import Action, Plan
     from actions.models.action import ActionResponsibleParty
     from actions.models.plan import PlanQuerySet
+    from images.models import AplansImage
     from people.models import Person
     from users.models import User
 
@@ -117,7 +117,7 @@ class OrganizationQuerySet(MP_NodeQuerySet['Organization'], MultilingualQuerySet
             return self.none()
         q = Q(pk__in=[])  # always false; Q() doesn't cut it; https://stackoverflow.com/a/39001190/14595546
         for plan in adminable_plans:
-            available_orgs = Organization.objects.available_for_plan(plan)
+            available_orgs = Organization.objects.get_queryset().available_for_plan(plan)
             q |= Q(pk__in=available_orgs)
         return self.filter(q)
 
@@ -208,7 +208,7 @@ class Organization(PlanDefaultsModel, index.Indexed, Node[OrganizationQuerySet],
     distinct_name = models.CharField(
         max_length=400, editable=False, null=True, help_text=_('A distinct name for this organization (generated automatically)'),
     )
-    logo = models.ForeignKey(
+    logo: FK[AplansImage | None] = models.ForeignKey(
         'images.AplansImage',
         null=True,
         blank=True,
@@ -285,7 +285,7 @@ class Organization(PlanDefaultsModel, index.Indexed, Node[OrganizationQuerySet],
         stopper_parents: list[int]
 
         if self.classification is not None and self.classification.identifier.startswith('helsinki:'):
-            ROOTS = ['Kaupunki', 'Valtuusto', 'Hallitus', 'Toimiala', 'Lautakunta', 'Toimikunta', 'Jaosto']
+            ROOTS = ['Kaupunki', 'Valtuusto', 'Hallitus', 'Toimiala', 'Lautakunta', 'Toimikunta', 'Jaosto']  # noqa: N806
             stopper_classes = list(OrganizationClass.objects\
                 .filter(identifier__startswith='helsinki:', name__in=ROOTS).values_list('id', flat=True))
             stopper_parents = list(Organization.objects\
@@ -333,7 +333,7 @@ class Organization(PlanDefaultsModel, index.Indexed, Node[OrganizationQuerySet],
         if not user.is_general_admin_for_plan():
             return False
         for plan in user.get_adminable_plans():
-            available_orgs = Organization.objects.available_for_plan(plan)
+            available_orgs = Organization.objects.get_queryset().available_for_plan(plan)
             if available_orgs.filter(pk=self.pk).exists():
                 return True
 
@@ -343,7 +343,7 @@ class Organization(PlanDefaultsModel, index.Indexed, Node[OrganizationQuerySet],
         return user.is_general_admin_for_plan(plan)
 
     @classmethod
-    def make_orgs_by_path(cls, orgs: Iterable[Organization]):
+    def make_orgs_by_path(cls, orgs: Iterable[Organization]) -> dict[str, Organization]:
         return {org.path: org for org in orgs}
 
     def get_fully_qualified_name(self, orgs_by_path: dict[str, Organization] | None = None):
@@ -364,7 +364,7 @@ class Organization(PlanDefaultsModel, index.Indexed, Node[OrganizationQuerySet],
         if self.internal_abbreviation:
             name = f'{self.internal_abbreviation} - {name}'
         if parents:
-            def get_org_path_str(org: Organization):
+            def get_org_path_str(org: Organization) -> str:
                 # if org.abbreviation:
                 #     return org.abbreviation
                 return org.name
@@ -377,12 +377,12 @@ class Organization(PlanDefaultsModel, index.Indexed, Node[OrganizationQuerySet],
         from rich import print
         from rich.tree import Tree
 
-        def get_label(org: Organization):
+        def get_label(org: Organization) -> str:
             return '%s ([green]%d actions; [blue]%d persons)' % (
-                org.name, org.action_count, org.contact_person_count,
+                org.name, org.action_count, org.contact_person_count,  # pyright: ignore
             )
 
-        def add_children(org: Organization, tree: Tree):
+        def add_children(org: Organization, tree: Tree) -> None:
             children: list[Organization] = list(
                 org.get_children().annotate_action_count()  # type: ignore
                 .annotate_contact_person_count().order_by('name'),
@@ -419,14 +419,14 @@ class Namespace(models.Model):
 
 
 class OrganizationIdentifier(models.Model):
+    organization = ParentalKey(Organization, on_delete=models.CASCADE, related_name='identifiers')
+    identifier = models.CharField(max_length=255)
+    namespace = models.ForeignKey(Namespace, on_delete=models.CASCADE)
+
     class Meta:
         constraints = [
             models.UniqueConstraint(fields=['namespace', 'identifier'], name='unique_identifier_in_namespace'),
         ]
-
-    organization = ParentalKey(Organization, on_delete=models.CASCADE, related_name='identifiers')
-    identifier = models.CharField(max_length=255)
-    namespace = models.ForeignKey(Namespace, on_delete=models.CASCADE)
 
     def __str__(self):
         return f'{self.identifier} @ {self.namespace.name}'
@@ -459,13 +459,6 @@ class OrganizationPlanAdmin(PlanRelatedModel):
 class OrganizationMetadataAdmin(models.Model):
     """Person who can administer data of (descendants of) an organization but, in general, no plan-specific content."""
 
-    class Meta:
-        constraints = [
-            models.UniqueConstraint(fields=['organization', 'person'], name='unique_organization_metadata_admin'),
-        ]
-        verbose_name = _("metadata admin")
-        verbose_name_plural = _("metadata admins")
-
     organization = ParentalKey(
         Organization,
         on_delete=models.CASCADE,
@@ -477,6 +470,13 @@ class OrganizationMetadataAdmin(models.Model):
         on_delete=models.CASCADE,
         verbose_name=_('person'),
     )
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['organization', 'person'], name='unique_organization_metadata_admin'),
+        ]
+        verbose_name = _("metadata admin")
+        verbose_name_plural = _("metadata admins")
 
     def __str__(self):
         return str(self.person)

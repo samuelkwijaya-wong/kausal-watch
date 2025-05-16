@@ -21,10 +21,10 @@ from actions.models import (
     CategoryType,
     Plan,
 )
-from actions.models.action import ActionQuerySet
 from reports.models import Report
 
 if typing.TYPE_CHECKING:
+    from actions.models.action import ActionQuerySet
     from orgs.models import Organization, OrganizationQuerySet
     from people.models import Person, PersonQuerySet
 
@@ -73,7 +73,7 @@ class PlanSpecificCache:
 
     def populate_organizations(self, organizations: OrganizationQuerySet) -> None:
         """Add the organizations from a queryset to the cache, keeping any organizations that might already be in the cache."""
-        for org in organizations:
+        for org in list(organizations):
             self.organizations[org.pk] = org
 
     def populate_persons(self, persons: PersonQuerySet) -> None:
@@ -95,20 +95,20 @@ class PlanSpecificCache:
             if id is not None:
                 if a_s.id == id:
                     return a_s
-            else:
-                if a_s.identifier == identifier:
-                    return a_s
+            elif a_s.identifier == identifier:
+                return a_s
         return None
 
-    def get_action_implementation_phase(self, *, id: int | None = None, identifier: str | None = None) -> ActionImplementationPhase | None:
+    def get_action_implementation_phase(
+        self, *, id: int | None = None, identifier: str | None = None
+    ) -> ActionImplementationPhase | None:
         assert bool(id is None) != bool(identifier is None)
         for implementation_phase in self.implementation_phases:
             if id is not None:
                 if implementation_phase.id == id:
                     return implementation_phase
-            else:
-                if implementation_phase.identifier == identifier:
-                    return implementation_phase
+            elif implementation_phase.identifier == identifier:
+                return implementation_phase
         return None
 
     @cached_property
@@ -182,7 +182,7 @@ class WatchObjectCache:
 class OrganizationActionCountCache:
     plans: list[Plan]
     data: dict[int, int]
-    action_qs: 'ActionQuerySet'
+    action_qs: ActionQuerySet
     organization_responsible_party_queryset_filter: Q
 
     def __init__(self, action_qs: ActionQuerySet) -> None:
@@ -225,7 +225,7 @@ S = TypeVar('S')
 
 
 class SerializedDictWithRelatedObjectCache(dict[T, S]):
-    cache: PlanSpecificCache
+    cache: PlanSpecificCache | None
 
     def __init__(self, *args, cache: PlanSpecificCache | None = None, **kwargs):
         super().__init__(*args, **kwargs)

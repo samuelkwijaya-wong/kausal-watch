@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import functools
-from typing import TYPE_CHECKING, Any, ClassVar, Protocol, Self
+from typing import TYPE_CHECKING, Any, ClassVar, Protocol, Self, cast
 
 import graphene
 from django.contrib.contenttypes.models import ContentType
@@ -18,8 +18,8 @@ from modelcluster.models import ClusterableModel
 from modeltrans.fields import TranslationField
 from wagtail import blocks
 from wagtail.admin.panels import FieldPanel, InlinePanel, MultiFieldPanel, Panel
-from wagtail.fields import RichTextField, StreamField
-from wagtail.models import Page, PagePermissionTester, Site
+from wagtail.fields import StreamField
+from wagtail.models import Page, PageManager, PagePermissionTester, Site
 from wagtail.search import index
 
 from grapple.models import (
@@ -88,9 +88,10 @@ PAGE_TRANSLATED_FIELDS = ['title', 'slug', 'url_path']
 if TYPE_CHECKING:
     from collections.abc import Sequence
 
+    from wagtail.blocks.stream_block import StreamValue
     from wagtail.query import PageQuerySet
 
-    from kausal_common.models.types import FK
+    from kausal_common.models.types import FK, RevMany
 
     from images.models import AplansImage
 
@@ -116,7 +117,7 @@ class AplansPage(Page):
         help_text=_('Should subpages of this page use secondary navigation?'),
     )
 
-    content_panels: ClassVar[list[Panel[Any]]] = [
+    content_panels: Sequence[Panel[Any]] = [
         FieldPanel('title', classname="full title"),
     ]
 
@@ -138,14 +139,15 @@ class AplansPage(Page):
         ], _('Common page configuration')),
     ]
 
-    search_fields = Page.search_fields + [
+    search_fields: Sequence[index.BaseField] = [
+        *Page.search_fields,
         index.FilterField('plan'),
     ]
 
     promote_panels: list[Panel] = []
 
     graphql_fields = [
-        GraphQLField('plan', 'actions.schema.PlanNode', required=False),
+        GraphQLField('plan', 'actions.schema.PlanNode', required=False), # type: ignore
         GraphQLBoolean('show_in_footer'),
         GraphQLBoolean('show_in_additional_links'),
         GraphQLBoolean('link_in_all_child_plans'),
@@ -157,21 +159,22 @@ class AplansPage(Page):
 
 
     @classmethod
-    def get_subclasses(cls):
-        """Get implementations of this abstract base class"""
+    def get_subclasses(cls) -> list[type[Page]]:
+        """Get implementations of this abstract base class."""
         content_types = ContentType.objects.filter(app_label=cls._meta.app_label)
         models = [ct.model_class() for ct in content_types]
         return [model for model in models if (model is not None and issubclass(model, cls) and model is not cls)]
 
     @functools.cached_property
     def plan(self) -> Plan | None:
-        root_page = PlanRootPage.objects.ancestor_of(self, inclusive=True).first()
+        root_page = PlanRootPage.objects.get_queryset().ancestor_of(self, inclusive=True).first()
+        assert root_page is not None
         site = Site.objects.filter(root_page__translation_key=root_page.translation_key).first()
         plan = Plan.objects.filter(site=site).first()
         return plan
 
     @classmethod
-    def get_indexed_objects(cls):
+    def get_indexed_objects(cls) -> PageQuerySet:
         # Return only the actions whose plan supports the current language
         lang = translation.get_language()
         qs = super().get_indexed_objects()
@@ -249,10 +252,12 @@ class PlanRootPage(DefaultSlugForCopyingMixin, AplansPage):  # type: ignore[misc
         GraphQLStreamfield('body'),
     ]
 
-    search_fields = AplansPage.search_fields + [
+    search_fields: Sequence[index.BaseField] = [
+        *AplansPage.search_fields,
         index.SearchField('body'),
     ]
 
+    _default_manager: ClassVar[PageManager[Self]]
     class Meta:
         verbose_name = _('Front page')
         verbose_name_plural = _('Front pages')
@@ -266,6 +271,8 @@ class PlanRootPage(DefaultSlugForCopyingMixin, AplansPage):  # type: ignore[misc
 
 class EmptyPage(AplansPage):
     parent_page_types = [PlanRootPage, 'EmptyPage', 'StaticPage', 'CategoryPage']
+
+    _default_manager: ClassVar[PageManager[Self]]
 
     class Meta:
         verbose_name = _('Empty page')
@@ -284,7 +291,7 @@ class StaticPage(AplansPage):
         help_text=_('Lead paragraph right under the heading'),
     )
 
-    body = StreamField([
+    body: StreamField[StreamValue | None] = StreamField([
         ('paragraph', blocks.RichTextBlock(label=_('Paragraph'))),
         ('qa_section', QuestionAnswerBlock(icon='help')),
         ('category_list', CategoryListBlock()),
@@ -298,7 +305,8 @@ class StaticPage(AplansPage):
         *get_body_blocks('StaticPage'),
     ], null=True, blank=True)
 
-    content_panels = AplansPage.content_panels + [
+    content_panels: Sequence[Panel[Any]] = [
+        *AplansPage.content_panels,
         FieldPanel('header_image'),
         FieldPanel('lead_paragraph'),
         FieldPanel('body'),
@@ -312,10 +320,13 @@ class StaticPage(AplansPage):
         GraphQLStreamfield('body'),
     ]
 
-    search_fields = AplansPage.search_fields + [
+    search_fields: Sequence[index.BaseField] = [
+        *AplansPage.search_fields,
         index.SearchField('lead_paragraph'),
         index.SearchField('body'),
     ]
+
+    _default_manager: ClassVar[PageManager[Self]]
 
     class Meta:
         verbose_name = _('Content page')
@@ -372,7 +383,8 @@ class CategoryTypePage(StaticPage):
         related_name='category_type_pages',
     )
 
-    content_panels = StaticPage.content_panels + [
+    content_panels: Sequence[Panel[Any]] = [
+        *StaticPage.content_panels,
         # We use a version of FieldPanel with a hacked read-only template to provide the ID of the selected category
         # type as a hidden <input> element.
         ReadOnlyFieldPanelWithRawValueId('category_type', widget=CategoryTypeChooser),
@@ -387,6 +399,9 @@ class CategoryTypePage(StaticPage):
             FieldPanel('icon_size'),
         ]),
     ]
+
+    level_layouts: RevMany[CategoryTypePageLevelLayout]
+    _default_manager: ClassVar[PageManager[Self]]
 
     class Meta:
         verbose_name = _('Category type page')
@@ -427,13 +442,13 @@ class CategoryTypePageLevelLayout(ClusterableModel):
         'actions.CategoryLevel', on_delete=models.CASCADE, related_name='level_layouts',
         null=True, blank=True, verbose_name=_('level'),
     )
-    layout_main_top = StreamField(
+    layout_main_top: StreamField[StreamValue | None] = StreamField(
         block_types=CategoryPageMainTopBlock(), null=True, blank=True, verbose_name=_('layout main top'),
     )
-    layout_main_bottom = StreamField(
+    layout_main_bottom: StreamField[StreamValue | None] = StreamField(
         block_types=CategoryPageMainBottomBlock(), null=True, blank=True, verbose_name=_('layout main bottom'),
     )
-    layout_aside = StreamField(
+    layout_aside: StreamField[StreamValue | None] = StreamField(
         block_types=CategoryPageAsideBlock(), null=True, blank=True, verbose_name=_('layout aside'),
     )
     icon_size = models.CharField(
@@ -463,7 +478,7 @@ class CategoryPage(AplansPage):
         Category, on_delete=models.CASCADE, null=False, verbose_name=_('Category'),
         related_name='category_pages',
     )
-    body = StreamField([
+    body: StreamField[StreamValue | None] = StreamField([
         ('text', blocks.RichTextBlock(label=_('Text'))),
         ('qa_section', QuestionAnswerBlock(icon='help')),
         ('indicator_group', IndicatorGroupBlock()),
@@ -473,7 +488,8 @@ class CategoryPage(AplansPage):
         ('embed', AdaptiveEmbedBlock()),
     ], null=True, blank=True)
 
-    content_panels = AplansPage.content_panels + [
+    content_panels: Sequence[Panel[Any]] = [
+        *AplansPage.content_panels,
         FieldPanel('category', widget=CategoryChooser, read_only=True),
         FieldPanel('body'),
     ]
@@ -487,16 +503,19 @@ class CategoryPage(AplansPage):
         GraphQLForeignKey('layout', CategoryTypePageLevelLayout),
     ]
 
-    search_fields = AplansPage.search_fields + [
+    search_fields: Sequence[index.BaseField] = [
+        *AplansPage.search_fields,
         index.FilterField('category'),
         index.SearchField('body'),
     ]
+
+    _default_manager: ClassVar[PageManager[Self]]
 
     class Meta:
         verbose_name = _('Category page')
         verbose_name_plural = _('Category pages')
 
-    def set_url_path(self, parent: Page):
+    def set_url_path(self, parent: Page):  # type: ignore[override]
         if self.category.type.hide_category_identifiers:
             path = f'{self.slug}/'
         else:
@@ -517,7 +536,7 @@ class CategoryPage(AplansPage):
             })
 
     def get_layout(self) -> CategoryTypePageLevelLayout | None:
-        type_page = self.get_ancestors().type(CategoryTypePage).specific().last()
+        type_page = cast('CategoryTypePage | None', self.get_ancestors().type(CategoryTypePage).specific().last())
         if not type_page:
             return None
         # First try to get layout for the specific level; if this fails, get layout where `level` is NULL
@@ -564,9 +583,12 @@ class FixedSlugPage(AplansPage):
     restrict_more_button_permissions_very_much = True
     remove_page_action_menu_items_except_publish = True
 
-    lead_content = RichTextField(blank=True, verbose_name=_('lead content'))
+    lead_content = models.TextField(  # pyright: ignore
+        blank=True, verbose_name=_('lead content'),
+    )
 
-    content_panels = AplansPage.content_panels + [
+    content_panels: Sequence[Panel[Any]] = [
+        *AplansPage.content_panels,
         FieldPanel('lead_content'),
     ]
     settings_panels = [
@@ -612,15 +634,19 @@ class ActionListPage(FixedSlugPage):
         CARDS = 'cards', _('Cards')
         DASHBOARD = 'dashboard', _('Dashboard')
 
-    primary_filters = StreamField(block_types=ActionListFilterBlock(), null=True, blank=True)
-    main_filters = StreamField(block_types=ActionListFilterBlock(), null=True, blank=True)
-    advanced_filters = StreamField(block_types=ActionListFilterBlock(), null=True, blank=True)
+    primary_filters: StreamField[StreamValue | None] = StreamField(block_types=ActionListFilterBlock(), null=True, blank=True)
+    main_filters: StreamField[StreamValue | None] = StreamField(block_types=ActionListFilterBlock(), null=True, blank=True)
+    advanced_filters: StreamField[StreamValue | None] = StreamField(block_types=ActionListFilterBlock(), null=True, blank=True)
 
-    dashboard_columns = StreamField(block_types=ActionDashboardColumnBlock(), null=True, blank=True)
+    dashboard_columns: StreamField[StreamValue | None] = StreamField(
+        block_types=ActionDashboardColumnBlock(), null=True, blank=True
+    )
 
-    details_main_top = StreamField(block_types=ActionMainContentBlock(), null=True, blank=True)
-    details_main_bottom = StreamField(block_types=ActionMainContentBlock(), null=True, blank=True)
-    details_aside = StreamField(block_types=ActionAsideContentBlock(), null=True, blank=True)
+    details_main_top: StreamField[StreamValue | None] = StreamField(block_types=ActionMainContentBlock(), null=True, blank=True)
+    details_main_bottom: StreamField[StreamValue | None] = StreamField(
+        block_types=ActionMainContentBlock(), null=True, blank=True
+    )
+    details_aside: StreamField[StreamValue | None] = StreamField(block_types=ActionAsideContentBlock(), null=True, blank=True)
 
     card_icon_category_type = models.ForeignKey(
         CategoryType, on_delete=models.SET_NULL, null=True, blank=True,
@@ -656,7 +682,8 @@ class ActionListPage(FixedSlugPage):
 
     parent_page_type = [PlanRootPage]
 
-    content_panels = FixedSlugPage.content_panels + [
+    content_panels: Sequence[Panel[Any]] = [
+        *FixedSlugPage.content_panels,
         FieldPanel('default_view'),
         FieldPanel('heading_hierarchy_depth'),
         FieldPanel('include_related_plans'),
@@ -693,11 +720,13 @@ class ActionListPage(FixedSlugPage):
         action_list_page_streamfield_node_getter('dashboard_columns'),
     ]
 
+    _default_manager: ClassVar[PageManager[Self]]
+
     def set_default_content_blocks(self):
         site = self.get_site()
         if site is None:
             raise ValueError('ActionListPage has no site.')
-        plan: Plan = site.plan
+        plan = cast('Plan', site.plan)  # pyright: ignore
 
         blks = get_default_action_content_blocks(plan)
         for key, val in blks.items():
@@ -751,7 +780,8 @@ class IndicatorListPage(FixedSlugPage):
         default=False,
     )
 
-    content_panels = FixedSlugPage.content_panels + [
+    content_panels: Sequence[Panel[Any]] = [
+        *FixedSlugPage.content_panels,
         FieldPanel('display_insights'),
         FieldPanel('display_level'),
         FieldPanel('include_related_plans'),
@@ -763,6 +793,8 @@ class IndicatorListPage(FixedSlugPage):
         GraphQLBoolean('include_related_plans'),
     ]
 
+    _default_manager: ClassVar[PageManager[Self]]
+
     class Meta:
         verbose_name = _('Indicator list page')
         verbose_name_plural = _('Indicator list pages')
@@ -772,6 +804,8 @@ class ImpactGroupPage(FixedSlugPage):
     force_slug = 'impact-groups'
     is_creatable = False  # Only let this be created programmatically
     parent_page_type = [PlanRootPage]
+
+    _default_manager: ClassVar[PageManager[Self]]
 
     class Meta:
         verbose_name = _('Impact group page')
@@ -783,10 +817,12 @@ class PrivacyPolicyPage(FixedSlugPage):
     is_creatable = False  # Only let this be created programmatically
     parent_page_type = [PlanRootPage]
 
-    body = StreamField([
+    body: StreamField[StreamValue | None] = StreamField([
         ('text', blocks.RichTextBlock(label=_('Text'))),
         # TODO: What blocks do we want to offer here (cf. AccessibilityStatementPage)?
     ], null=True, blank=True)
+
+    _default_manager: ClassVar[PageManager[Self]]
 
     class Meta:
         verbose_name = _('Privacy policy page')
@@ -798,7 +834,7 @@ class AccessibilityStatementPage(FixedSlugPage):
     is_creatable = False  # Only let this be created programmatically
     parent_page_type = [PlanRootPage]
 
-    body = StreamField([
+    body: StreamField[StreamValue | None] = StreamField([
         ('text', blocks.RichTextBlock(label=_('Text'))),
         ('compliance_status', AccessibilityStatementComplianceStatusBlock()),
         ('preparation', AccessibilityStatementPreparationInformationBlock()),
@@ -806,13 +842,16 @@ class AccessibilityStatementPage(FixedSlugPage):
         ('contact_form', AccessibilityStatementContactFormBlock()),
     ], null=True, blank=True)
 
-    content_panels = FixedSlugPage.content_panels + [
+    content_panels: Sequence[Panel[Any]] = [
+        *FixedSlugPage.content_panels,
         FieldPanel('body'),
     ]
 
     graphql_fields = FixedSlugPage.graphql_fields + [
         GraphQLStreamfield('body'),
     ]
+
+    _default_manager: ClassVar[PageManager[Self]]
 
     class Meta:
         verbose_name = _('Accessibility statement page')

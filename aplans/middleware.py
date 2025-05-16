@@ -4,10 +4,10 @@ import json
 import re
 from collections.abc import Mapping
 
+from django import http
 from django.conf import settings
 from django.contrib import messages
 from django.db import connection, transaction
-from django import http
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.deprecation import MiddlewareMixin
@@ -111,7 +111,7 @@ class PrintQueryCountMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
 
-    def __call__(self, request):
+    def __call__(self, request):  # noqa: C901
         response = self.get_response(request)
         queries = [q for q in connection.queries if q['sql'] not in QUERIES_TO_IGNORE]
 

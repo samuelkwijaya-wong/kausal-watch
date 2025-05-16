@@ -63,6 +63,7 @@ class AttributeFieldPanel[M: models.ModelWithAttributes](FieldPanel[M]):
                 self.instance.has_unpublished_changes
             ):
                 rev = self.instance.get_latest_revision()
+                assert rev is not None
                 draft_attributes = DraftAttributes.from_revision_content(rev.content.get('attributes'))
                 try:
                     attribute_value = draft_attributes.get_value_for_attribute_type(self.panel.attribute_type)
@@ -217,13 +218,13 @@ class CategoryChoiceAttributeValue(AttributeValue):
     def attribute_model_kwargs(self) -> dict[str, Any]:
         return {}  # categories are set not in model's __init__() kwargs but after model instance creation
 
-    def instantiate_attribute(self, type: AttributeType[T], obj: models.ModelWithAttributes) -> T:
+    def instantiate_attribute(self, type: AttributeType[T], obj: models.ModelWithAttributes) -> T:  # noqa: A002
         instance = super().instantiate_attribute(type, obj)
         assert isinstance(instance, models.AttributeCategoryChoice)
         instance.categories.set(self.categories)
         # instance is a ClusterableModel, or at least it probably should be, so we need to call save() if we want to
         # persist the categories we just set.
-        return instance
+        return cast('T', instance)
 
     def update_attribute(self, attribute: models.Attribute):
         assert isinstance(attribute, models.AttributeCategoryChoice)
@@ -727,7 +728,9 @@ class OptionalChoiceWithText(AttributeType[models.AttributeChoiceWithText]):
             form_field_kwargs: dict[str, Any] = dict(initial=initial_text, required=False, help_text=self.instance.help_text_i18n)
             if self.instance.max_length:
                 form_field_kwargs.update(max_length=self.instance.max_length)
-            text_field = self.ATTRIBUTE_MODEL._meta.get_field(attribute_text_field_name).formfield(**form_field_kwargs)  # type: ignore[union-attr]
+            text_field = cast(
+                'forms.Field', self.ATTRIBUTE_MODEL._meta.get_field(attribute_text_field_name).formfield(**form_field_kwargs)  # type: ignore[union-attr]
+            )
             if editable:
                 label = _('%(attribute_type)s (text)') % {'attribute_type': self.instance.name_i18n}
             else:
@@ -752,7 +755,7 @@ class OptionalChoiceWithText(AttributeType[models.AttributeChoiceWithText]):
         for language in ('', *self.instance.other_languages):
             attribute_text_field_name = f'text_{language}' if language else 'text'
             text_form_field_name = self.get_text_form_field_name(language)
-            text_vals[attribute_text_field_name] = cleaned_data.get(text_form_field_name)
+            text_vals[attribute_text_field_name] = cast('str', cleaned_data.get(text_form_field_name))
         return OptionalChoiceWithTextAttributeValue(choice_val, text_vals)
 
     def xlsx_values(
@@ -818,8 +821,8 @@ class GenericTextAttributeType(AttributeType[T]):
             form_field_kwargs: dict[str, Any] = dict(initial=initial_text, required=False, help_text=self.instance.help_text_i18n)
             if self.instance.max_length:
                 form_field_kwargs.update(max_length=self.instance.max_length)
-            db_field = cast(Field, self.ATTRIBUTE_MODEL._meta.get_field(attribute_text_field_name))
-            field = db_field.formfield(**form_field_kwargs)
+            db_field = cast('Field', self.ATTRIBUTE_MODEL._meta.get_field(attribute_text_field_name))
+            field = cast('forms.Field', db_field.formfield(**form_field_kwargs))
             is_public = self.instance.instances_visible_for == self.instance.VisibleFor.PUBLIC
             fields.append(FormField(
                 plan=plan,
@@ -839,7 +842,7 @@ class GenericTextAttributeType(AttributeType[T]):
         for language in ('', *self.instance.other_languages):
             attribute_text_field_name = f'text_{language}' if language else 'text'
             text_form_field_name = self.get_form_field_name(language)
-            text_vals[attribute_text_field_name] = cleaned_data.get(text_form_field_name)
+            text_vals[attribute_text_field_name] = cast('str', cleaned_data.get(text_form_field_name))
         return GenericTextAttributeAttributeValue(text_vals)
 
 
@@ -968,7 +971,7 @@ class DraftAttributes:
         data_for_format[attribute_type.instance.id] = value
 
     def get_value_for_attribute_type(self, attribute_type: AttributeType) -> AttributeValue:
-        """Raises KeyError if there is no value for the given attribute type."""
+        """Raise KeyError if there is no value for the given attribute type."""
         data_for_format = self._values[str(attribute_type.instance.format)]
         return data_for_format[attribute_type.instance.id]
 

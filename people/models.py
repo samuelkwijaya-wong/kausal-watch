@@ -5,10 +5,10 @@ import copy
 import hashlib
 import io
 import logging
-import os
 import re
 import uuid
 from datetime import timedelta
+from pathlib import Path
 from typing import TYPE_CHECKING, ClassVar
 
 import reversion
@@ -26,18 +26,18 @@ from wagtail.images.rect import Rect
 from wagtail.search import index
 
 import requests
-import willow
-from easy_thumbnails.files import get_thumbnailer
+import willow  # type: ignore
+from easy_thumbnails.files import get_thumbnailer  # type: ignore
 from image_cropping import ImageRatioField
 from sentry_sdk import capture_exception
 
-from kausal_common.models.types import MLModelManager
+from kausal_common.models.types import MLModelManager, RevManyToManyQS
 
 from aplans.utils import PlanDefaultsModel
 
 from actions.models import ActionContactPerson, PlanFeatures
 from admin_site.models import Client
-from orgs.models import Organization
+from orgs.models import Organization, OrganizationMetadataAdmin, OrganizationQuerySet
 from users.models import User
 
 if TYPE_CHECKING:
@@ -86,9 +86,10 @@ def determine_image_dim(image_width, image_height, width, height):
     return (width, height)
 
 
-def image_upload_path(instance, filename):
-    file_extension = os.path.splitext(filename)[1]
-    return 'images/%s/%s%s' % (instance._meta.model_name, instance.id, file_extension)
+def image_upload_path(instance: Person, filename: str) -> str:
+    f_path = Path(filename)
+    file_extension = f_path.suffix
+    return 'images/%s/%s%s' % (instance._meta.model_name, instance.pk, file_extension)
 
 
 class PersonQuerySet(MultilingualQuerySet['Person']):
@@ -192,6 +193,7 @@ class Person(index.Indexed, ClusterableModel, PlanDefaultsModel):
     general_admin_plans: RevMany[Plan]
     plans_with_public_site_access: RevMany[PlanPublicSiteViewer]
     actioncontactperson_set: RevMany[ActionContactPerson]
+    metadata_adminable_organizations: RevManyToManyQS[Organization, OrganizationMetadataAdmin, OrganizationQuerySet]
     organization_id: int
     created_by_id: int
 
@@ -377,7 +379,7 @@ class Person(index.Indexed, ClusterableModel, PlanDefaultsModel):
             clients = Client.objects.filter(plans__plan__in=plans).distinct()
             if len(clients) == 1:
                 client = clients[0]
-            elif not user.is_superuser:
+            elif user is not None and not user.is_superuser:
                 logger.warning('Invalid number of clients found for %s [Person-%d]: %d' % (
                     self.email, self.id, len(clients),  # pyright: ignore
                 ))
@@ -480,14 +482,14 @@ class Person(index.Indexed, ClusterableModel, PlanDefaultsModel):
             return copy.copy(self)
         if plan.features.contact_persons_public_data == PlanFeatures.ContactPersonsPublicData.NAME:
             return Person(
-                id=self.id,  # if we omit this, GraphQL will complain that we return null for nun-nullable `id` fields
+                id=self.pk,  # if we omit this, GraphQL will complain that we return null for nun-nullable `id` fields
                 first_name=self.first_name,
                 last_name=self.last_name,
                 title=self.title,
                 organization=self.organization,
             )
         if plan.features.contact_persons_public_data == PlanFeatures.ContactPersonsPublicData.NONE:
-            return Person(id=self.id)
+            return Person(id=self.pk)
         raise AssertionError("Unexpected value for PlanFeatures.contact_persons_public_data")
 
     def __str__(self):

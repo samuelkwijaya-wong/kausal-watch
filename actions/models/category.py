@@ -1,8 +1,7 @@
 from __future__ import annotations
 
 import uuid
-from functools import lru_cache
-from typing import TYPE_CHECKING, Any, ClassVar, Iterable, Self, Sequence
+from typing import TYPE_CHECKING, Any, ClassVar, Iterable, Self, Sequence, cast
 
 import reversion
 from django.conf import settings
@@ -21,7 +20,7 @@ from modeltrans.translator import get_i18n_field
 from modeltrans.utils import get_available_languages
 from wagtail.models import Collection, Page
 
-from kausal_common.models.types import manager_from_mlqs
+from kausal_common.models.types import RevManyQS, manager_from_mlqs
 
 from aplans.utils import (
     IdentifierField,
@@ -36,10 +35,11 @@ from aplans.utils import (
 )
 
 from ..attributes import AttributeFieldPanel, AttributeType
-from .attributes import AttributeType as AttributeTypeModel, ModelWithAttributes
+from .attributes import AttributeType as AttributeTypeModel, AttributeTypeQuerySet, ModelWithAttributes
 
 if TYPE_CHECKING:
     from django.db.models import QuerySet
+    from django.db.models.manager import Manager
 
     from kausal_common.models.types import MLMM, RevMany
 
@@ -161,7 +161,7 @@ class CommonCategoryType(CategoryTypeBase, ModelWithPrimaryLanguage):
         """Create category type corresponding to this one and link it to the given plan."""
         if plan.category_types.filter(common=self).exists():
             raise Exception(f"Instantiation of common category type '{self}' for plan '{plan}' exists already")
-        translated_fields = get_i18n_field(CategoryType).fields
+        translated_fields = cast('TranslationField', get_i18n_field(CategoryType)).fields
         other_languages = [lang.replace('-', '_')
                            for lang in get_available_languages()
                            if lang != plan.primary_language]
@@ -205,9 +205,11 @@ class CategoryType(
         default=False, verbose_name=_("synchronize with pages"),
         help_text=_("Set if categories of this type should be synchronized with pages"),
     )
-    i18n = TranslationField(fields=('name', 'lead_paragraph', 'help_text'), default_language_field='plan__primary_language_lowercase')
+    i18n = TranslationField(
+        fields=('name', 'lead_paragraph', 'help_text'), default_language_field='plan__primary_language_lowercase'
+    )
 
-    attribute_types: RevMany[AttributeTypeModel] = GenericRelation(  # type: ignore[assignment]
+    attribute_types: RevManyQS[AttributeTypeModel, AttributeTypeQuerySet] = GenericRelation(  # type: ignore[assignment]
         to='actions.AttributeType',
         related_query_name='category_type',
         content_type_field='scope_content_type',
@@ -217,6 +219,8 @@ class CategoryType(
     categories: RevMany[Category]
     levels: RevMany[CategoryLevel]
     category_type_pages: RevMany[CategoryTypePage]
+
+    name_i18n: str
 
     public_fields: ClassVar = [
         *CategoryTypeBase.public_fields,
@@ -254,7 +258,7 @@ class CategoryType(
             with override(root_page.locale.language_code):
                 try:
                     ct_pages = self.category_type_pages.all()  # pages for this category type in any language
-                    ct_page = root_page.get_descendants().type(CategoryTypePage).get(id__in=ct_pages)
+                    ct_page = cast('CategoryTypePage', root_page.get_descendants().type(CategoryTypePage).get(id__in=ct_pages))
                 except Page.DoesNotExist:
                     ct_page = CategoryTypePage(
                         category_type=self, title=self.name_i18n, show_in_menus=True, show_in_footer=True,
@@ -282,8 +286,7 @@ class CategoryType(
 
     def categories_projected_by_level(self) -> dict[int, dict[int, Category]]:
         """
-        Returns a dict which can be used to map a category to its parent
-        from any desired CategoryLevel in the category hierarchy.
+        Return a dict which can be used to map a category to its parent from any desired CategoryLevel in the category hierarchy.
 
         For example, in a two-level hierarchy, for the root level,
         all of the leaf level categories get mapped to their parents
@@ -413,7 +416,9 @@ class CommonCategory(CategoryBase, ClusterableModel):
         if category_type.categories.filter(common=self).exists():
             raise Exception(f"Instantiation of common category '{self}' for category type '{category_type}' exists "
                             "already")
-        translated_fields = list(get_i18n_field(Category).fields)
+        i18n_field = get_i18n_field(Category)
+        assert i18n_field is not None
+        translated_fields = list(i18n_field.fields)
         other_languages = [lang.replace('-', '_')
                            for lang in get_available_languages()
                            if lang != category_type.plan.primary_language]
@@ -479,6 +484,8 @@ class Category(ModelWithAttributes, CategoryBase, ClusterableModel, PlanRelatedM
     icons: RevMany[CategoryIcon]
     name_i18n: str
     id: int
+
+    objects: ClassVar[Manager[Category]]
 
     public_fields: ClassVar[list[str]] = CategoryBase.public_fields + [
         'type', 'common', 'external_identifier', 'parent', 'children', 'category_pages', 'indicators',
@@ -600,10 +607,9 @@ class Category(ModelWithAttributes, CategoryBase, ClusterableModel, PlanRelatedM
     def __str__(self):
         if self.identifier and self.type and not self.type.hide_category_identifiers:
             return "%s %s" % (self.identifier, self.name)
-        else:
-            return self.name
+        return self.name
 
-    def _get_icon_without_fallback_to_common_category(self, language: str | None = None):
+    def _get_icon_without_fallback_to_common_category(self, language: str | None = None) -> CategoryIcon | None:
         if language is None:
             try:
                 return self.icons.get(language__isnull=True)
@@ -678,7 +684,7 @@ class Category(ModelWithAttributes, CategoryBase, ClusterableModel, PlanRelatedM
             if sibling.id == self.id:
                 return previous_sibling
             previous_sibling = sibling
-        assert False  # should have returned above at some point
+        raise AssertionError()  # should have returned above at some point
 
     def get_level(self) -> CategoryLevel | None:
         level = 0
@@ -691,7 +697,9 @@ class Category(ModelWithAttributes, CategoryBase, ClusterableModel, PlanRelatedM
         return self.type.levels.filter(order=level).first()
 
     @classmethod
-    def get_attribute_types_for_plan(cls, plan: Plan, only_in_reporting_tab=False, unless_in_reporting_tab=False):
+    def get_attribute_types_for_plan(
+        cls, plan: Plan, only_in_reporting_tab=False, unless_in_reporting_tab=False
+    ) -> list[AttributeType]:
         category_ct = ContentType.objects.get_for_model(cls)
         category_type_content_type = ContentType.objects.get_for_model(CategoryType)
         category_types = plan.category_types.values_list('pk', flat=True)
