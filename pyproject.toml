@@ -105,6 +105,7 @@ ignore_missing_imports = true
 [tool.mypy-baseline]
 baseline_path = ".mypy-baseline.txt"
 preserve_position = false
+sort_baseline = true
 
 [tool.pyright]
 exclude = [
