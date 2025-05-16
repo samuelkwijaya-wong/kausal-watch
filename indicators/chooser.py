@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from django.utils.translation import gettext_lazy as _
 from wagtail import hooks
 from wagtail.search.backends import get_search_backend

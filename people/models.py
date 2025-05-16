@@ -187,6 +187,7 @@ class Person(index.Indexed, ClusterableModel, PlanDefaultsModel):
     ]
 
     # Type annotations for related models etc.
+    id: int
     contact_for_actions: RevMany[Action]
     contact_for_indicators: RevMany[Indicator]
     organization_plan_admins: RevMany[OrganizationPlanAdmin]

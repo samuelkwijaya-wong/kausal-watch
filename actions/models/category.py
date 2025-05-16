@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import uuid
-from typing import TYPE_CHECKING, Any, ClassVar, Iterable, Self, Sequence, cast
+from typing import TYPE_CHECKING, Any, ClassVar, Self, cast
 
 import reversion
 from django.conf import settings
@@ -38,6 +38,8 @@ from ..attributes import AttributeFieldPanel, AttributeType
 from .attributes import AttributeType as AttributeTypeModel, AttributeTypeQuerySet, ModelWithAttributes
 
 if TYPE_CHECKING:
+    from collections.abc import Iterable, Sequence
+
     from django.db.models import QuerySet
     from django.db.models.manager import Manager
 
@@ -220,6 +222,7 @@ class CategoryType(
     levels: RevMany[CategoryLevel]
     category_type_pages: RevMany[CategoryTypePage]
 
+    id: int
     name_i18n: str
 
     public_fields: ClassVar = [
@@ -460,6 +463,7 @@ class Category(ModelWithAttributes, CategoryBase, ClusterableModel, PlanRelatedM
         CategoryType, on_delete=models.CASCADE, related_name='categories',
         verbose_name=_('type'),
     )
+    type_id: int
     common = models.ForeignKey(
         CommonCategory, on_delete=models.PROTECT, related_name='category_instances',
         null=True, blank=True, verbose_name=_('common category'),

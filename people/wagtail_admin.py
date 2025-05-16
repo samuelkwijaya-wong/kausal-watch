@@ -1,15 +1,19 @@
+# ruff: noqa: PLW2901
 from __future__ import annotations
 
 import logging
 import typing
-from datetime import timedelta
+from datetime import date, timedelta
+from typing import cast
 
+from django.contrib import admin
 from django.contrib.admin import SimpleListFilter
 from django.contrib.admin.utils import display_for_value, quote
 from django.contrib.admin.widgets import AdminFileWidget
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db import models, transaction
 from django.db.models import F, ManyToManyField, OneToOneRel, Prefetch, Q
+from django.db.models.fields.reverse_related import ForeignObjectRel
 from django.forms import BooleanField, ChoiceField, ModelMultipleChoiceField
 from django.urls import re_path
 from django.utils import timezone
@@ -46,6 +50,8 @@ from .models import Person
 from .views import ImpersonateUserView, ResetPasswordView
 
 if typing.TYPE_CHECKING:
+    from django_stubs_ext import StrOrPromise
+
     from aplans.types import WatchAdminRequest
 
     from users.models import User
@@ -65,6 +71,7 @@ class IsContactPersonFilter(SimpleListFilter):
         # If there are related plans that have action contact persons, show a filter for each of these plans
         related_plans_contact_persons = ActionContactPerson.objects.filter(action__plan__in=related_plans)
         filter_plans = related_plans.filter(pk__in=related_plans_contact_persons.values_list('action__plan'))
+        action_filters: list[tuple[str, StrOrPromise]]
         if filter_plans.exists():
             action_filters = [(f'action_in_plan__{plan.pk}', _('For an action in %(plan)s') % {'plan': plan.name_i18n})
                               for plan in filter_plans]
@@ -79,7 +86,7 @@ class IsContactPersonFilter(SimpleListFilter):
         return choices
 
     def queryset(self, request, queryset):
-        user = request.user
+        user = cast('User', request.user)
         plan = user.get_active_admin_plan()
         queryset = queryset.prefetch_related(
             Prefetch('contact_for_actions', queryset=plan.actions.all(), to_attr='plan_contact_for_actions'),
@@ -87,16 +94,17 @@ class IsContactPersonFilter(SimpleListFilter):
         queryset = queryset.prefetch_related(
             Prefetch('contact_for_indicators', queryset=plan.indicators.all(), to_attr='plan_contact_for_indicators'),
         )
-        if self.value() is None:
+        val = self.value()
+        if val is None:
             return queryset
-        if self.value() == 'action':
+        if val == 'action':
             queryset = queryset.filter(contact_for_actions__in=plan.actions.all())
-        elif self.value().startswith('action_in_plan__'):
-            plan_pk = int(self.value()[16:])
+        elif val.startswith('action_in_plan__'):
+            plan_pk = int(val[16:])
             queryset = queryset.filter(contact_for_actions__plan=plan_pk)
-        elif self.value() == 'indicator':
+        elif val == 'indicator':
             queryset = queryset.filter(contact_for_indicators__in=plan.indicators.all())
-        elif self.value() == 'peer_contact_persons':
+        elif val == 'peer_contact_persons':
             person = user.person
             my_actions = plan.actions.filter(contact_persons__person=person)
             my_indicators = plan.indicators.filter(contact_persons__person=person)
@@ -146,7 +154,7 @@ class PersonFormForGeneralAdmin(PersonForm):
 
     is_admin_for_active_plan = BooleanField(required=False, label=_('Is plan admin'))
     access_level = ChoiceField(choices=AccessLevel.choices, required=True, label=_('Site access'))
-    organization_plan_admin_orgs = ModelMultipleChoiceField(
+    organization_plan_admin_orgs: ModelMultipleChoiceField[Organization] = ModelMultipleChoiceField(
         queryset=None, required=False, widget=autocomplete.ModelSelect2Multiple(url='organization-autocomplete'),
         label=_('Plan admin organizations'),
     )
@@ -175,17 +183,18 @@ class PersonFormForGeneralAdmin(PersonForm):
             # Allow removing lingering public site restriction if public site login was recently removed
             del self.fields['access_level']
         if 'organization_plan_admin_orgs' in self.fields:
-            self.fields['organization_plan_admin_orgs'].queryset = (
-                Organization.objects.available_for_plan(self.plan).filter(dissolution_date=None)
+            cast('ModelMultipleChoiceField', self.fields['organization_plan_admin_orgs']).queryset = (
+                Organization.objects.get_queryset().available_for_plan(self.plan).filter(dissolution_date=None)
             )
 
     def clean(self):
         cleaned_data = super().clean()
+        assert cleaned_data is not None
         access_level = cleaned_data.get('access_level')
         is_plan_admin = cleaned_data.get('is_admin_for_active_plan')
         organization_plan_admin_orgs = cleaned_data.get('organization_plan_admin_orgs')
         contact_for_actions = cleaned_data.get('contact_for_actions_unordered')
-        if access_level == self.AccessLevel.PUBLIC_SITE_ONLY:
+        if access_level == self.AccessLevel.PUBLIC_SITE_ONLY:  # noqa: SIM102
             if is_plan_admin or organization_plan_admin_orgs or contact_for_actions:
                 raise ValidationError(
                     'Person cannot have admin responsibilities while also being restricted to only public site access.',
@@ -215,16 +224,20 @@ class PersonFormForGeneralAdmin(PersonForm):
 
 
 class PersonCreateView(
-        ActivatePermissionHelperPlanContextModelAdminMixin, InitializeFormWithPlanMixin, InitializeFormWithUserMixin, AplansCreateView,
+    ActivatePermissionHelperPlanContextModelAdminMixin,
+    InitializeFormWithPlanMixin,
+    InitializeFormWithUserMixin,
+    AplansCreateView,
 ):
     def form_valid(self, form, *args, **kwargs):
         # Make sure form only contains is_admin_for_active_plan
         # TODO: Also do this for organization_plan_admin_orgs?
-        plan = self.request.user.get_active_admin_plan()
-        is_general_admin = self.request.user.is_general_admin_for_plan(plan)
+        user = cast('User', self.request.user)
+        plan = user.get_active_admin_plan()
+        is_general_admin = user.is_general_admin_for_plan(plan)
         contains_admin_flag = form.cleaned_data.get('is_admin_for_active_plan') is not None
 
-        def iff(a, b):
+        def iff(a, b) -> bool:
             return (a and b) or (not a and not b)
 
         assert iff(contains_admin_flag, is_general_admin)
@@ -268,13 +281,13 @@ class PersonPermissionHelper(PlanContextModelAdminPermissionHelper):
     def prefetch_cache(self):
         if self.plan is None:
             return
-        org_qs = Organization.objects.available_for_plan(self.plan)
+        org_qs = Organization.objects.get_queryset().available_for_plan(self.plan)
         self._org_map = {org.id: org for org in org_qs}
 
     def clean_cache(self):
         self._org_map = None
 
-    def user_can_edit_obj(self, user: 'User', obj: Person):
+    def user_can_edit_obj(self, user: User, obj: Person):
         if not super().user_can_edit_obj(user, obj):
             return False
         # Users can always edit themselves
@@ -291,11 +304,12 @@ class PersonPermissionHelper(PlanContextModelAdminPermissionHelper):
             obj, plan=self.plan, orgs=self._org_map,
         )
 
-    def user_can_create(self, user: 'User'):
+    def user_can_create(self, user: User):
         if user.is_general_admin_for_plan(self.plan):
             return True
         person = user.get_corresponding_person()
-        # FIXME: there is some hardcoding of assumptions about contact person roles here.  These should be moved to a role-based system.
+        # FIXME: there is some hardcoding of assumptions about contact person roles here.
+        # These should be moved to a role-based system.
         if not ActionContactPerson.objects\
                                   .filter(action__plan=self.plan).filter(person=person).exclude(role=ActionContactPerson.Role.EDITOR):
             # Only persons with role other than editor can add persons
@@ -362,10 +376,12 @@ class PersonDeleteView(ActivatePermissionHelperPlanContextModelAdminMixin, Delet
     def get(self, request, *args, **kwargs):
         linked_objects = []
         fields = self.model._meta.fields_map.values()
-        fields = (obj for obj in fields if not isinstance(
-            obj.field, ManyToManyField))
-        for rel in fields:
+        rel_fields = (
+            obj for obj in fields if isinstance(obj, ForeignObjectRel) and not isinstance(obj.field, ManyToManyField)
+        )
+        for rel in rel_fields:
             obj = None
+            key: str | None
             if isinstance(rel, OneToOneRel):
                 key = rel.get_accessor_name()
                 try:
@@ -381,7 +397,7 @@ class PersonDeleteView(ActivatePermissionHelperPlanContextModelAdminMixin, Delet
                 if key:
                     qs = getattr(self.instance, key)
                     for obj in qs.all():
-                        linked_objects.append(obj)
+                        linked_objects.append(obj)  # noqa: PERF402
         context = self.get_context_data(
             protected_error=True,
             linked_objects=linked_objects,
@@ -428,26 +444,26 @@ class PersonAdmin(AplansModelAdmin):
             return display_for_value(value=False, empty_value_display='', boolean=True)
         return super().get_empty_value_display(field)
 
-    def get_list_display(self, request: WatchAdminRequest):
+    def get_list_display(self, request: WatchAdminRequest):  # noqa: C901
         # get_list_display() gets called a lot, so we cache the results
         if hasattr(request, '_person_list_display'):
-            return request._person_list_display
+            return getattr(request, '_person_list_display')  # noqa: B009
 
         plan = request.get_active_admin_plan()
 
         # We use a cached and path-indexed version of all organizations to reduce
         # SQL queries.
-        all_orgs = list(Organization.objects.available_for_plan(plan))
+        all_orgs = list(Organization.objects.get_queryset().available_for_plan(plan))
         orgs_by_path = Organization.make_orgs_by_path(all_orgs)
         orgs_by_id = {org.id: org for org in all_orgs}
 
-        def edit_url(obj):
+        def edit_url(obj: Person) -> str | None:
             if self.permission_helper.user_can_edit_obj(request.user, obj):
                 return self.url_helper.get_action_url('edit', obj.pk)
-            else:
-                return None
+            return None
 
-        def avatar(obj):
+        @admin.display(description='', empty_value='')
+        def avatar(obj: Person) -> str:
             avatar_url = obj.get_avatar_url(request, size='50x50')
             if not avatar_url:
                 return ''
@@ -455,10 +471,9 @@ class PersonAdmin(AplansModelAdmin):
             url = edit_url(obj)
             if url:
                 return format_html('<a href="{}">{}</a>', url, img)
-            else:
-                return img
-        avatar.short_description = ''
+            return img
 
+        @admin.display(description='', empty_value='')
         def cannot_access_admin_warning(obj: Person) -> str:
             if not _person_can_access_admin(obj):
                 tooltip = _(
@@ -479,40 +494,32 @@ class PersonAdmin(AplansModelAdmin):
                     tooltip,
                 )
             return ''
-        cannot_access_admin_warning.short_description = ''
 
-        def first_name(obj):
+        @admin.display(description=_('first name'), ordering='first_name')
+        def first_name(obj: Person) -> str:
             url = edit_url(obj)
             if url:
                 return format_html('<a href="{}">{}</a>', url, obj.first_name)
-            else:
-                return obj.first_name
-        first_name.short_description = _('first name')
-        first_name.admin_order_field = 'first_name'
+            return obj.first_name
 
-        def last_name(obj):
+        @admin.display(description=_('last name'), ordering='last_name')
+        def last_name(obj: Person) -> str:
             url = edit_url(obj)
             if url:
                 return format_html('<a href="{}">{}</a>', url, obj.last_name)
-            else:
-                return obj.last_name
-        last_name.short_description = _('last name')
-        last_name.admin_order_field = 'last_name'
+            return obj.last_name
 
+        @admin.display(description=_('organization'), ordering='organization__name')
         def organization(obj: Person) -> str:
             org_id = obj.organization_id
-            if org_id in orgs_by_id:
-                org = orgs_by_id[org_id]
-            else:
-                org = obj.organization
+            org = orgs_by_id.get(org_id, obj.organization)
             return org.get_fully_qualified_name(orgs_by_path=orgs_by_path)
-        organization.short_description = _('organization')
-        organization.admin_order_field = 'organization__name'
 
         fields = [avatar, cannot_access_admin_warning, first_name, last_name, 'title', organization]
         #fields = [avatar, first_name, last_name, 'title', organization]
 
-        def last_logged_in(obj):
+        @admin.display(description=_('last login'), ordering='user__last_login')
+        def last_logged_in(obj: Person) -> str | date | None:
             user = obj.user
             if not user or not user.last_login:
                 return None
@@ -521,31 +528,29 @@ class PersonAdmin(AplansModelAdmin):
             if delta > timedelta(days=30):
                 return user.last_login.date()
             return naturaltime(delta)
-        last_logged_in.short_description = _('last login')
-        last_logged_in.admin_order_field = 'user__last_login'
-        last_logged_in._name = 'last_logged_in'
+        setattr(last_logged_in, '_name', 'last_logged_in')  # noqa: B010
 
         user = request.user
         if user.is_general_admin_for_plan(plan):
             plan_admins = set(plan.general_admins.values_list('id', flat=True))
 
-            def is_plan_admin(obj: Person):
+            @admin.display(description=_('Is plan admin'), ordering='is_plan_admin', boolean=True)
+            def is_plan_admin(obj: Person) -> bool:
                 return obj.id in plan_admins
-            is_plan_admin.short_description = _('Is plan admin')
-            is_plan_admin._name = 'is_plan_admin'
-            is_plan_admin.boolean = True
+            setattr(is_plan_admin, '_name', 'is_plan_admin')  # noqa: B010
             fields.append(is_plan_admin)
 
             fields.append(last_logged_in)
             fields.append('participated_in_training')
 
-        def contact_for_actions(obj):
+        @admin.display(description=_('contact for actions'))
+        def contact_for_actions(obj) -> str:
             return '; '.join([smart_truncate(str(act), 40) for act in obj.plan_contact_for_actions])
-        contact_for_actions.short_description = _('contact for actions')
 
-        def contact_for_indicators(obj):
+        @admin.display(description=_('contact for indicators'))
+        def contact_for_indicators(obj) -> str:
             return '; '.join([smart_truncate(str(ind), 40) for ind in obj.plan_contact_for_indicators])
-        contact_for_indicators.short_description = _('contact for indicators')
+
 
         contact_person_filter = request.GET.get('contact_person', '')
         if contact_person_filter == 'action':
@@ -553,7 +558,7 @@ class PersonAdmin(AplansModelAdmin):
         elif contact_person_filter == 'indicator':
             fields.append(contact_for_indicators)
 
-        request._person_list_display = fields
+        setattr(request, '_person_list_display', fields)  # noqa: B010
         return fields
 
     basic_panels = [

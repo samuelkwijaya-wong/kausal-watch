@@ -17,7 +17,7 @@ from django.utils.translation import get_language
 from graphene_django import DjangoObjectType
 from graphene_django.converter import convert_django_field_with_choices
 from graphql.error import GraphQLError
-from wagtail.models import Revision, WorkflowState
+from wagtail.models import Revision, WorkflowState, WorkflowStateQuerySet
 from wagtail.rich_text import RichText
 
 import graphene_django_optimizer as gql_optimizer
@@ -689,7 +689,7 @@ def get_translated_category_page(info, **kwargs) -> Prefetch:
 
 
 def prefetch_workflow_states(info, **_kwargs) -> Prefetch:
-    workflow_states = WorkflowState.objects.get_queryset().active().select_related(
+    workflow_states = cast('WorkflowStateQuerySet', WorkflowState.objects.get_queryset()).active().select_related(
         "current_task_state__task",
     )
     return Prefetch(
@@ -1573,7 +1573,7 @@ class Query:
             action_pks = [str(pk) for pk in action_queryset.values_list('pk', flat=True)]
             if desired_workflow_task is not None:
                 workflowstates = (
-                    WorkflowState.objects.get_queryset().active()\
+                    cast('WorkflowStateQuerySet', WorkflowState.objects.get_queryset()).active()\
                     .filter(content_type=ct)\
                     .filter(current_task_state__task=desired_workflow_task)\
                     .filter(object_id__in=action_pks)

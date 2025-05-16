@@ -77,6 +77,7 @@ if typing.TYPE_CHECKING:
     from django.db.models import Model
     from django.utils.functional import Promise
     from django.utils.safestring import SafeString
+    from django_stubs_ext import StrOrPromise
     from wagtail.admin.panels.group import PanelGroupInitArgs
 
     from aplans.types import WatchAdminRequest
@@ -93,7 +94,7 @@ class ReadOnlyInlinePanel(Panel):
 
     relation_name: str
 
-    def __init__(self, relation_name=None, *args, **kwargs):
+    def __init__(self, relation_name: str, *args, **kwargs):
         self.relation_name = relation_name
         super().__init__(*args, **kwargs)
 
@@ -164,7 +165,7 @@ class ActionAdminForm(WagtailAdminModelForm[Action]):
         self.initial_plan_id = kwargs.pop('initial_plan_id', None)
         super().__init__(*args, **kwargs)
         # There is a corresponding formset for a role if and only if we can edit contact persons of that role.
-        for cls, relation_name, __, __ in MODELS_WITH_ROLES:
+        for cls, relation_name, __, ___ in MODELS_WITH_ROLES:
             for role in cls.get_roles():
                 # For some models, the role can be blank
                 # OMG, we're really hacking this so that a formset is called, e.g., `responsible_parties_None`...
@@ -192,11 +193,11 @@ class ActionAdminForm(WagtailAdminModelForm[Action]):
                 return []  # Help! But apparently if the formset is invalid, there won't be `cleaned_data` in it!?
             return [data[wrapped_object_attr] for data in formset.cleaned_data if not data['DELETE']]
         obj_ids = getattr(self.instance, relation_name).filter(role=role).values_list(wrapped_object_attr, flat=True)
-        return wrapped_cls.objects.filter(id__in=obj_ids)
+        return wrapped_cls._default_manager.filter(id__in=obj_ids)
 
     def _validate_unique_relations_with_roles(
             self, _cls: type[ModelWithRole], relation_name: str, wrapped_object_cls: type[Model], wrapped_object_attr: str,
-    ):
+    ) -> None:
         seen_related_objects = set()
         for role in _cls.get_roles():
             if role is None:
@@ -232,7 +233,7 @@ class ActionAdminForm(WagtailAdminModelForm[Action]):
         if hasattr(self.instance, 'updated_at'):
             self.instance.updated_at = timezone.now()
 
-        for _cls, relation_name, __, __ in MODELS_WITH_ROLES:
+        for _cls, relation_name, __, ___ in MODELS_WITH_ROLES:
             formsets = {}
             # There is a corresponding formset for a role if and only if we can edit objects of that role.
             for role in _cls.get_roles():
@@ -339,6 +340,7 @@ class ModelWithRoleInlinePanel(InlinePanel):
         kwargs.setdefault('panels', self.get_panels())
         if filter_by_role:
             kwargs['relation_name'] = self.get_relation_name(role=role)
+            heading: StrOrPromise
             if role:
                 heading = role.label
             else:
@@ -622,7 +624,7 @@ class ActionCreateView(InitializeFormWithInitialPlanMixin, AplansCreateView):
             assert self.instance.primary_org is None
             person = request.user.get_corresponding_person()
             if person is not None:
-                available_orgs = Organization.objects.available_for_plan(plan)
+                available_orgs = Organization.objects.get_queryset().available_for_plan(plan)
                 default_org = available_orgs.filter(id=person.organization_id).first()
                 self.instance.primary_org = default_org
 
@@ -882,7 +884,7 @@ class ActionAdmin(AplansModelAdmin):
         ct = plan.category_types.filter(identifier='action').first()
         if ct:
             @admin.display(description=ct.name)
-            def action_category(obj) -> str:
+            def action_category(obj: Action) -> str:
                 return '; '.join([str(cat) for cat in obj.categories.all() if cat.type_id == ct.id])
             self.action_category = action_category
             list_display.append('action_category')
@@ -1013,8 +1015,8 @@ class ActionAdmin(AplansModelAdmin):
                help_text=render_field_label('', public=True)),
         ]
 
-        reporting_panels: list[Panel] = [cast(Panel, panel) for panel in reporting_attribute_panels]
-        help_panels_for_field = {}
+        reporting_panels: list[Panel] = [cast('Panel', panel) for panel in reporting_attribute_panels]
+        help_panels_for_field: dict[int, list[Panel]] = {}
         for snapshot in instance.get_snapshots():
             for field in snapshot.report.type.fields:
                 if not hasattr(field.block, 'get_help_panel'):

@@ -468,7 +468,6 @@ class Action(
     dependent_relationships: RevMany[ActionDependencyRelationship]
     merged_actions: RevMany[Action]
     merged_with_id: int | None
-    name_i18n: str
     plan_id: int
     preceding_relationships: RevMany[ActionDependencyRelationship]
     related_indicators: RevManyQS[ActionIndicator, ActionIndicatorQuerySet]
@@ -1435,7 +1434,7 @@ class ActionRelatedModelTransModelMixin:
         kwargs = {}
         to_delete = set()
         assert hasattr(cls, '_meta')
-        meta = cast('Options', cls._meta)  # pyright: ignore
+        meta = cast('Options', cast('models.Model', cls)._meta)
         for field_name, value in data.items():
             field = None
             try:
@@ -1476,7 +1475,7 @@ class ActionTask(ActionRelatedModelTransModelMixin, models.Model):
     )
     name = models.CharField(max_length=250, verbose_name=_('name'))
     state = models.CharField(max_length=20, choices=STATES, default=NOT_STARTED, verbose_name=_('state'))
-    comment = RichTextField(null=True, blank=True, verbose_name=_('comment'))
+    comment = RichTextField[str | None, str | None](null=True, blank=True, verbose_name=_('comment'))
     due_at = models.DateField(
         verbose_name=_('due date'),
         help_text=_('The date by which the task should be completed (deadline)'),

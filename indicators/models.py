@@ -223,9 +223,9 @@ class IndicatorRelationship(models.Model):
 
 @reversion.register()
 class CommonIndicator(ClusterableModel):
-    identifier = IdentifierField(null=True, blank=True, max_length=70)
+    identifier = IdentifierField[str | None](null=True, blank=True, max_length=70)
     name = models.CharField(max_length=200, verbose_name=_('name'))
-    description = RichTextField(null=True, blank=True, verbose_name=_('description'))
+    description = RichTextField[str | None, str | None](null=True, blank=True, verbose_name=_('description'))
 
     quantity = ParentalKey(
         Quantity, related_name='common_indicators', on_delete=models.PROTECT,
@@ -308,7 +308,7 @@ class RelatedCommonIndicator(IndicatorRelationship):
 
 
 class FrameworkIndicator(models.Model):
-    identifier = IdentifierField(null=True, blank=True, max_length=70)
+    identifier = IdentifierField[str | None](null=True, blank=True, max_length=70)
     common_indicator = ParentalKey(
         CommonIndicator, related_name='frameworks', on_delete=models.CASCADE,
         verbose_name=_('common indicator'),
@@ -382,7 +382,7 @@ class Indicator(ClusterableModel, index.Indexed, ModificationTracking, PlanDefau
         'actions.Plan', through='indicators.IndicatorLevel', blank=True,
         verbose_name=_('plans'), related_name='indicators',
     )
-    identifier = IdentifierField(null=True, blank=True, max_length=70)
+    identifier = IdentifierField[str | None](null=True, blank=True, max_length=70)
     name = models.CharField(max_length=200, verbose_name=_('name'))
     quantity = ParentalKey(
         Quantity, related_name='indicators', on_delete=models.PROTECT,
@@ -402,7 +402,7 @@ class Indicator(ClusterableModel, index.Indexed, ModificationTracking, PlanDefau
         help_text=_('What is the maximum value this indicator can reach? '
                     'It is used in visualizations as the Y axis maximum.'),
     )
-    description = RichTextField(null=True, blank=True, verbose_name=_('description'))
+    description = RichTextField[str | None, str | None](null=True, blank=True, verbose_name=_('description'))
     categories: M2M[Category, Any] = models.ManyToManyField(
         'actions.Category', blank=True, related_name='indicators',
         through='indicators.IndicatorCategoryThrough',
@@ -441,7 +441,7 @@ class Indicator(ClusterableModel, index.Indexed, ModificationTracking, PlanDefau
         blank=True, null=True, verbose_name=_('internal notes'),
     )
 
-    reference = RichTextField(
+    reference = RichTextField[str | None, str | None](
         blank=True, null=True, verbose_name=_('reference'), max_length=255,
         help_text=_("What is the reference or source for this indicator?"),
         features=['link'],
@@ -516,6 +516,7 @@ class Indicator(ClusterableModel, index.Indexed, ModificationTracking, PlanDefau
     latest_value_id: int | None
     name_i18n: str
     description_i18n: str
+    dimensions: RevMany[IndicatorDimension]
 
     class Meta:
         verbose_name = _('indicator')

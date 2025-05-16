@@ -35,7 +35,7 @@ from wagtail.models.i18n import Locale
 from django_countries.fields import CountryField
 from wagtail_localize.operations import TranslationCreator  # type: ignore
 
-from kausal_common.models.types import MLModelManager, OneToOne
+from kausal_common.models.types import MLModelManager, OneToOne, RevManyToMany
 
 from aplans.utils import (
     ChoiceArrayField,
@@ -418,6 +418,7 @@ class Plan(ClusterableModel, ModelWithPrimaryLanguage):
     superseded_plans: RevMany[Plan]
     user_feedbacks: RevMany[UserFeedback]
     impact_groups: RevMany[ImpactGroup]
+    indicators: RevManyToMany[Indicator, IndicatorLevel]
 
     organization_id: int
     id: int
