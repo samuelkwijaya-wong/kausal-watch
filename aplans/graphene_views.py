@@ -5,6 +5,9 @@ import importlib
 import importlib.util
 import json
 import os
+from contextlib import ExitStack, contextmanager
+from datetime import datetime
+from pathlib import Path
 from typing import TYPE_CHECKING, Any
 from uuid import UUID
 
@@ -23,6 +26,8 @@ from rich.console import Console
 from rich.syntax import Syntax
 from sentry_sdk import tracing as sentry_tracing
 
+from kausal_common.deployment import env_bool
+
 from aplans.types import WatchAPIRequest
 
 from actions.models import Plan
@@ -32,6 +37,8 @@ from .graphql_helpers import GraphQLAuthFailedError, GraphQLAuthRequiredError
 from .graphql_types import AuthenticatedUserNode, WorkflowStateEnum
 
 if TYPE_CHECKING:
+    from collections.abc import Callable, Generator, Iterable
+
     from graphql import DirectiveNode, ExecutionResult, GraphQLResolveInfo
     from rest_framework.authentication import TokenAuthentication
 
@@ -51,7 +58,7 @@ class APITokenMiddleware:
     # def authenticate_user(self, info):
     #     raise GraphQLError('Token not found')
 
-    def process_auth_directive(self, info: GraphQLResolveInfo, directive: DirectiveNode):
+    def process_auth_directive(self, info: GraphQLResolveInfo, directive: DirectiveNode):  # noqa: C901, PLR0912
         user = None
         token = None
         variable_vals = info.variable_values
@@ -200,7 +207,7 @@ class SentryGraphQLView(GraphQLView):
         if not plan_identifier and not plan_domain:
             return None
 
-        qs: PlanQuerySet = Plan.objects.all()
+        qs: PlanQuerySet = Plan.objects.get_queryset()
         if plan_identifier:
             qs = qs.filter(identifier=plan_identifier)
         if plan_domain:
@@ -209,7 +216,7 @@ class SentryGraphQLView(GraphQLView):
         if plan is None:
             return None
 
-        m = hashlib.sha1()
+        m = hashlib.sha1(usedforsecurity=False)
         m.update(os.getenv('BUILD_ID', 'dev').encode('utf8'))
         m.update(plan.cache_invalidated_at.isoformat().encode('utf8'))
         m.update(json.dumps(variables).encode('utf8'))
@@ -223,6 +230,32 @@ class SentryGraphQLView(GraphQLView):
     def store_to_cache(self, key, result):
         return cache.set(key, result, timeout=600)
 
+    def _enter_viztracer_stack(self, stack: ExitStack, operation_name: str) -> None:
+        from django.db import connection
+
+        from viztracer import VizTracer  # type: ignore
+
+        def trace_sql_query(execute: Callable, sql: str, params: Iterable[Any], many: bool, context: dict) -> Any:
+            with tracer.log_event('sql_query'):
+                res = execute(sql, params, many, context)
+            return res
+
+        now_ts = datetime.now().strftime('%Y%m%d_%H%M%S')  # noqa: DTZ005
+        Path('perf-traces').mkdir(exist_ok=True)
+        trace_fn = f'perf-traces/{operation_name}_{now_ts}.json'
+        tracer = VizTracer(output_file=trace_fn, max_stack_depth=15, log_async=True, tracer_entries=3000000)
+        stack.enter_context(tracer)
+        stack.enter_context(connection.execute_wrapper(trace_sql_query))
+        logger.info(f'Saving trace to {trace_fn}')
+
+    @contextmanager
+    def measure_operation(self, operation_name: str) -> Generator[None]:
+        perf_trace = env_bool('TRACE_GRAPHQL_REQUESTS', default=False)
+        with ExitStack() as stack:
+            if perf_trace:
+                self._enter_viztracer_stack(stack, operation_name)
+            yield
+
     def caching_execute_graphql_request(
             self, span, request: WatchAPIRequest, data, query, variables, operation_name, *args, **kwargs,
         ) -> ExecutionResult:
@@ -235,7 +268,8 @@ class SentryGraphQLView(GraphQLView):
                 return result
 
         span.set_tag('cache', 'miss')
-        result = super().execute_graphql_request(request, data, query, variables, operation_name, *args, **kwargs)
+        with self.measure_operation(operation_name):
+            result = super().execute_graphql_request(request, data, query, variables, operation_name, *args, **kwargs)
         if key and not result.errors:
             self.store_to_cache(key, result)
 
@@ -255,8 +289,8 @@ class SentryGraphQLView(GraphQLView):
                 json.dumps(variables, indent=4, ensure_ascii=False),
             )
 
-    def execute_graphql_request(self, request: WatchAPIRequest, data, query, variables, operation_name, *args, **kwargs):
-        """Execute GraphQL request, cache results and send exceptions to Sentry"""
+    def execute_graphql_request(self, request: WatchAPIRequest, data, query, variables, operation_name, *args, **kwargs):  # type: ignore[override]  # noqa: C901, PLR0915
+        """Execute GraphQL request, cache results and send exceptions to Sentry."""
         request._referer = self.request.META.get('HTTP_REFERER')
         transaction: sentry_tracing.Transaction | None = sentry_sdk.get_current_scope().transaction
 
@@ -304,7 +338,7 @@ class SentryGraphQLView(GraphQLView):
                     from rich.traceback import Traceback
                     console = Console()
 
-                    def print_error(err: GraphQLError):
+                    def print_error(err: GraphQLError) -> None:
                         console.print(err)
                         oe = err.original_error
                         if oe:
@@ -313,7 +347,7 @@ class SentryGraphQLView(GraphQLView):
                             )
                             console.print(tb)
                 else:
-                    def print_error(err: GraphQLError):
+                    def print_error(err: GraphQLError) -> None:
                         pass
 
                 for error in result.errors:

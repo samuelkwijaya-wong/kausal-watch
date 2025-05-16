@@ -32,3 +32,5 @@ data/**
 /.coverage
 requirements-local.in
 requirements-local.txt
+/perf-traces/**
+
