@@ -53,11 +53,11 @@ mypy==1.15.0
     #   graphene-stubs
 mypy-baseline==0.7.2
     # via -r requirements-lint.in
-mypy-extensions==1.0.0
+mypy-extensions==1.1.0
     # via mypy
-ondivi==0.7.0
+ondivi==0.7.2
     # via -r requirements-lint.in
-orjson==3.10.16
+orjson==3.10.18
     # via mypy
 parse==1.20.2
     # via ondivi
@@ -65,7 +65,7 @@ requests==2.32.3
     # via
     #   -c requirements.txt
     #   djangorestframework-stubs
-ruff==0.11.5
+ruff==0.11.10
     # via -r requirements-lint.in
 smmap==5.0.2
     # via gitdb
@@ -73,11 +73,11 @@ sqlparse==0.5.3
     # via
     #   -c requirements.txt
     #   django
-types-psutil==7.0.0.20250401
+types-psutil==7.0.0.20250516
     # via -r requirements-lint.in
-types-python-dateutil==2.9.0.20241206
+types-python-dateutil==2.9.0.20250516
     # via -r requirements-lint.in
-types-pyyaml==6.0.12.20250402
+types-pyyaml==6.0.12.20250516
     # via
     #   django-stubs
     #   djangorestframework-stubs
