@@ -90,6 +90,7 @@ module = [
   "storages.*",
   "taggit.*",
   "tinycss2.*",
+  "traitlets.*",
   "uwsgidecorators.*",
   "wagtail_localize.*",
   "wagtail_modeladmin.*",

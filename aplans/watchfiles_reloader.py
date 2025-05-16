@@ -1,14 +1,19 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Generator, Optional, Sequence, Union
+from typing import TYPE_CHECKING
 
 from django.utils import autoreload
 
-import watchfiles
+import watchfiles  # type: ignore
+
+if TYPE_CHECKING:
+    from collections.abc import Generator, Sequence
 
 
 class DjangoPythonFilter(watchfiles.PythonFilter):
+    ignore_dirs: Sequence[str]
+
     def __init__(self, *, ignore_paths: Sequence[str | Path] | None = None, extra_extensions: Sequence[str] = ()) -> None:
         dirs = list(self.ignore_dirs)
 
@@ -28,7 +33,7 @@ class WatchfilesReloader(autoreload.BaseReloader):
         sys_paths = set(autoreload.sys_path_directories())
         return frozenset((*extra_directories, *watched_file_dirs, *sys_paths))
 
-    def tick(self) -> Generator[None, None, None]:
+    def tick(self) -> Generator[None]:
         watched_files = list(self.watched_files(include_globs=False))
         watched_roots = self.watched_roots(watched_files)
         roots = autoreload.common_roots(watched_roots)
