@@ -10,7 +10,7 @@ from urllib.parse import urlparse
 
 import reversion
 from django.conf import settings
-from django.contrib.auth.models import Group
+from django.contrib.auth.models import AnonymousUser, Group
 from django.contrib.contenttypes.fields import GenericRelation
 from django.contrib.postgres.fields import ArrayField
 from django.core import management
@@ -35,6 +35,7 @@ from wagtail.models.i18n import Locale
 from django_countries.fields import CountryField
 from wagtail_localize.operations import TranslationCreator  # type: ignore
 
+from kausal_common.models.permissions import PermissionedModel
 from kausal_common.models.types import MLModelManager, OneToOne, RevManyToMany
 
 from aplans.utils import (
@@ -48,6 +49,7 @@ from aplans.utils import (
     validate_css_color,
 )
 
+from actions.permission_policy import PlanPermissionPolicy
 from indicators.models import Indicator, IndicatorLevel, RelatedIndicator
 from orgs.models import Organization
 from people.models import Person
@@ -77,7 +79,6 @@ if TYPE_CHECKING:
 
 
 logger = logging.getLogger(__name__)
-
 
 @cache
 def get_timezones() -> list[tuple[str, str]]:
@@ -135,6 +136,11 @@ class PlanQuerySet(MultilingualQuerySet['Plan']):
         # FIXME: Add indicators
         return self.filter(id__in=staff_actions)
 
+    def visible_for_user(self, user: UserOrAnon | None) -> PlanQuerySet:
+        """Filter by visibility using permission policy."""
+        if user is None:
+            user = AnonymousUser()
+        return cast('PlanQuerySet', self.model.permission_policy().filter_by_perm(self, user, 'view'))
 
 if TYPE_CHECKING:
     _PlanManager = models.Manager.from_queryset(PlanQuerySet)
@@ -174,7 +180,7 @@ class UsageStatus(models.TextChoices):
 @reversion.register(follow=[
     'action_statuses', 'action_implementation_phases',  # fixme
 ])
-class Plan(ClusterableModel, ModelWithPrimaryLanguage):
+class Plan(ClusterableModel, ModelWithPrimaryLanguage, PermissionedModel):
     """
     The Action Plan under monitoring.
 
@@ -450,6 +456,11 @@ class Plan(ClusterableModel, ModelWithPrimaryLanguage):
     def __str__(self):
         return self.name
 
+    def __rich_repr__(self):
+        yield self.name
+        yield 'version_name', self.version_name
+        yield 'identifier', self.identifier
+
     def get_last_action_identifier(self):
         return self.actions.order_by('order').values_list('identifier', flat=True).last()
 
@@ -507,6 +518,10 @@ class Plan(ClusterableModel, ModelWithPrimaryLanguage):
         page: Page = self.site.root_page
         return page
 
+    @classmethod
+    def permission_policy(cls) -> PlanPermissionPolicy:
+        return PlanPermissionPolicy(cls)
+
     def get_translated_root_page(self, fallback=True) -> Page | None:
         """Return root page in activated language, fall back to default language by default."""
         if self.site_id is None:
@@ -537,6 +552,9 @@ class Plan(ClusterableModel, ModelWithPrimaryLanguage):
         if root_pages:
             return next(iter(root_pages.values()))
         return None
+
+    def get_if_visible(self, user):
+        return self if self.is_visible_for_user(user) else None
 
     def create_default_site(self, hostname=None):
         if hostname is None:
@@ -688,6 +706,14 @@ class Plan(ClusterableModel, ModelWithPrimaryLanguage):
     def is_live(self):
         now = self.now_in_local_timezone()
         return self.published_at is not None and self.published_at <= now and self.archived_at is None
+
+    def is_visible_for_user(self, user: UserOrAnon | None) -> bool:
+        """Use permission policy to check visibility."""
+        if self.features.expose_unpublished_plan_only_to_authenticated_user is False:
+            return True
+        if user is None:  # TODO: remove this once all places where None is used are fixed
+            user = AnonymousUser()
+        return self.permission_policy().user_has_permission_for_instance(user, 'view', self)
 
     def get_optional_locale_prefix(self, locale: str):
         if locale.lower() == self.primary_language.lower():
@@ -865,14 +891,15 @@ class Plan(ClusterableModel, ModelWithPrimaryLanguage):
                 result |= cast('PlanQuerySet', child.get_superseded_plans(recursive=True))
         return result
 
-    def get_superseding_plans(self, recursive=False):
+    def get_superseding_plans(self, recursive=False, user=None):
         if self.superseded_by is None:
             return []
-        result = [self.superseded_by]
+        result = [self.superseded_by] if self.superseded_by.is_visible_for_user(user) else []
         if recursive:
             # To optimize, use recursive queries as in https://stackoverflow.com/a/39933958/14595546
-            result += self.superseded_by.get_superseding_plans(recursive=True)
+            result += self.superseded_by.get_superseding_plans(recursive=True, user=user)
         return result
+
 
     def get_action_days_until_considered_stale(self):
         days = self.action_days_until_considered_stale
@@ -950,8 +977,8 @@ class Plan(ClusterableModel, ModelWithPrimaryLanguage):
             return None
         return None
 
-    def has_indicator_relationships(self):
-        visible_levels = IndicatorLevel.objects.qs.filter(plan=self).visible_for_public()
+    def has_indicator_relationships(self, user: UserOrAnon | None):
+        visible_levels = IndicatorLevel.objects.qs.filter(plan=self).visible_for_user(user)
         visible_indicators = Indicator.objects.qs.filter(levels__in=visible_levels)
         return RelatedIndicator.objects.filter(Q(causal_indicator__in=visible_indicators) &
                                                Q(effect_indicator__in=visible_indicators)).exists()

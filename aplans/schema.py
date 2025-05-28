@@ -94,9 +94,11 @@ class Query(
         plan_obj: Plan | None = get_plan_from_context(info, plan)
         if plan_obj is None:
             return None
+        if not plan_obj.is_visible_for_user(info.context.user):
+            return None
 
         if include_related_plans:
-            plans = list(plan_obj.get_all_related_plans(inclusive=True))
+            plans = list(plan_obj.get_all_related_plans(inclusive=True).visible_for_user(info.context.user))
         else:
             plans = [plan_obj]
 

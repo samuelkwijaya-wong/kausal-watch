@@ -37,18 +37,20 @@ class SearchHit(graphene.ObjectType):
     page = graphene.Field('grapple.types.interfaces.PageInterface', required=False)
 
     def resolve_url(root, info, client_url=None):
-        object = root.get('object')
-        page = root.get('page')
         plan = root['plan']
+        if not plan or not plan.is_visible_for_user(info.context.user):
+            return None
 
         # Check if this is a search result from other plans, we want to use the site_url for these.
         only_other_plans = getattr(info.context, 'only_other_plans', False)
         if only_other_plans:
             client_url = None
 
-        if object is not None:
-            return object.get_view_url(plan=plan, client_url=client_url)
-        elif page is not None:
+        search_hit_object = root.get('object')
+        page = root.get('page')
+        if search_hit_object is not None:
+            return search_hit_object.get_view_url(plan=plan, client_url=client_url)
+        if page is not None:
             parts = page.get_url_parts(request=info.context)
             return '%s%s' % (plan.get_view_url(client_url=client_url), parts[2])
         return None
@@ -116,6 +118,8 @@ class Query:
         plan_obj: Plan | None = Plan.objects.filter(identifier=plan).first()
         if plan_obj is None:
             raise GraphQLError("Plan %s not found" % plan)
+        if not plan_obj.is_visible_for_user(info.context.user):
+            raise GraphQLError("Plan %s not found" % plan)
         related_plans = plan_obj.get_all_related_plans().all()
         if plan_obj.is_live():
             # For live plans, restrict the related plans to be live also, preventing unreleased plans from showing up in the production site
@@ -127,8 +131,7 @@ class Query:
             if include_related_plans:
                 qs |= Q(id__in=related_plans.values_list('id', flat=True))
             plans = Plan.objects.filter(qs)
-        plans = plans.exclude(exclude_from_search=True)
-
+        plans = plans.exclude(exclude_from_search=True).visible_for_user(info.context.user)
         plan_ids = list(plans.values_list('id', flat=True))
 
         #backend = get_search_backend()
@@ -144,12 +147,14 @@ class Query:
             page_filter |= Q(path__startswith=path)
 
         querysets = [
-            Action.objects.visible_for_user(None).filter(plan__in=plan_ids).select_related('plan', 'plan__organization'),
+            Action.objects.all().visible_for_user( # type: ignore[attr-defined]
+                info.context.user).filter(plan__in=plan_ids).select_related('plan', 'plan__organization'),
             Page.objects.filter(page_filter).live().specific(),
         ]
         # FIXME: This doesn't work with exclude yet
         if not only_other_plans:
-            querysets.append(Indicator.objects.visible_for_public().filter(plans__in=plan_ids))
+            querysets.append(Indicator.objects.visible_for_user(info.context.user).filter(plans__in=plan_ids)) # type: ignore[attr-defined]
+
 
 
         lang = get_language()

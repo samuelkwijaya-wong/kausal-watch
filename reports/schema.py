@@ -1,8 +1,11 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 import graphene
 from graphql.error import GraphQLError
 
+import graphene_django_optimizer as gql_optimizer
 from grapple.registry import registry as grapple_registry
 from loguru import logger
 
@@ -14,6 +17,8 @@ from reports.blocks.action_content import ReportFieldBlock
 from reports.graphene_types import ReportValueInterface
 from reports.models import ActionSnapshot, Report, ReportType
 
+if TYPE_CHECKING:
+    from actions.models.plan import Plan
 
 @register_django_node
 class ReportNode(DjangoNode):
@@ -33,6 +38,8 @@ class ReportNode(DjangoNode):
     def resolve_values_for_action(root, info, action_id=None, action_identifier=None):
         if (action_id and action_identifier) or not (action_id or action_identifier):
             raise GraphQLError("You must specify either actionId or actionIdentifier")
+        if not root.type.plan.is_visible_for_user(info.context.user):
+            return None
         plan_actions = Action.objects.filter(plan=root.type.plan)
         if action_id:
             action = plan_actions.get(id=action_id)
@@ -55,13 +62,18 @@ class ReportNode(DjangoNode):
                 values.append(value)
         return values
 
-
 @register_django_node
 class ReportTypeNode(DjangoNode):
     class Meta:
         model = ReportType
         fields = public_fields(ReportType)
 
+    @staticmethod
+    @gql_optimizer.resolver_hints(
+        model_field='plan',
+    )
+    def resolve_plan(root: ReportType, info) -> Plan | None:
+        return root.plan.get_if_visible(info.context.user)
 
 class Query:
     pass

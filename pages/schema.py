@@ -82,6 +82,8 @@ class MenuNodeMixin:
     @classmethod
     def resolver_from_plan(cls, plan, info):
         root_page = plan.get_translated_root_page()
+        if not plan.is_visible_for_user(info.context.user):
+            return None
         if root_page is None:
             return None
         return root_page.specific
@@ -98,13 +100,16 @@ class MainMenuNode(MenuNodeMixin, graphene.ObjectType):
     def resolve_items(parent, info, with_descendants):
         if not parent:
             return []
+        plan = parent.plan  # type: ignore
+        if not plan.is_visible_for_user(info.context.user):
+            return []
         if with_descendants:
             pages = parent.get_descendants(inclusive=False)
         else:
             pages = parent.get_children()
         pages = pages.live().public().in_menu().specific()
         page_items = [PageMenuItemNode(page=page) for page in pages]
-        links = parent.plan.links
+        links = plan.links
         external_link_items = [
             ExternalLinkMenuItemNode(url=link.url_i18n, link_text=link.title_i18n) for link in links.all()
         ]
@@ -160,7 +165,7 @@ class AdditionalLinksNode(MenuNodeMixin, graphene.ObjectType):
         cross_plan_page_ids = [
             page.id for Model in AplansPage.get_subclasses()
             for page in Model.objects.filter(link_in_all_child_plans=True)
-            if page.get_site().plan == parent_plan
+            if page.get_site().plan == parent_plan and parent_plan.is_visible_for_user(info.context.user)
         ]
 
         cross_plan_pages = Page.objects.filter(id__in=cross_plan_page_ids).specific()
@@ -176,6 +181,8 @@ class Query:
     def resolve_plan_page(self, info, plan, path, **kwargs):
         plan_obj = get_plan_from_context(info, plan)
         if plan_obj is None:
+            return None
+        if not plan_obj.is_visible_for_user(info.context.user):
             return None
 
         root = plan_obj.get_translated_root_page()

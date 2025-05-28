@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
 
 import graphene
 from django.forms import ModelForm
@@ -38,6 +38,9 @@ from indicators.models import (
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
+
+    from actions.models.action import ActionQuerySet
+    from actions.models.plan import Plan, PlanQuerySet
 
 
 class UnitNode(DjangoNode):
@@ -125,8 +128,14 @@ class IndicatorLevelNode(DjangoNode):
 
     @staticmethod
     def get_queryset(root, info):
-        return root.visible_for_public()
+        return root.visible_for_user(info.context.user)
 
+    @staticmethod
+    @gql_optimizer.resolver_hints(
+        model_field='plan',
+    )
+    def resolve_plan(root: IndicatorLevel, info) -> Plan | None:
+        return root.plan.get_if_visible(info.context.user)
 
 @register_django_node
 class DimensionNode(DjangoNode):
@@ -252,9 +261,13 @@ class IndicatorNode(DjangoNode):
 
     @gql_optimizer.resolver_hints(
         model_field='actions',
+        select_related=('plan',),
     )
-    def resolve_actions(self, info, plan=None):
-        qs = self.actions.visible_for_user(info.context.user)
+    @staticmethod
+    def resolve_actions(root: Indicator, info, plan=None) -> ActionQuerySet:
+        qs = cast('ActionQuerySet', root.actions.all())
+        qs = qs.visible_for_user(info.context.user, plan)
+
         if plan is not None:
             qs = qs.filter(plan__identifier=plan)
         return qs
@@ -263,9 +276,14 @@ class IndicatorNode(DjangoNode):
     def resolve_related_actions(root: Indicator, info, plan=None) -> Iterable[ActionIndicator]:
         actions = Action.objects.visible_for_user(info.context.user)
         qs = ActionIndicator.objects.filter(action__in=actions, indicator=root)
-        if plan is not None:
+        if plan is None:
+            return qs
+        plan_obj = get_plan_from_context(info, plan)
+        if plan_obj is None:
+            return qs
+        if plan_obj.is_visible_for_user(info.context.user):
             qs = qs.filter(indicator__plan__identifier=plan)
-        return qs
+        return qs.none()
 
     @staticmethod
     @gql_optimizer.resolver_hints(
@@ -282,8 +300,12 @@ class IndicatorNode(DjangoNode):
         model_field='levels',
     )
     def resolve_level(root: Indicator, info, plan) -> str | None:
-        if not root.is_visible_for_public():
+        if not root.is_visible_for_user(info.context.user):
             return None
+        if plan is not None:
+            plan_obj = get_plan_from_context(info, plan)
+            if plan_obj.is_visible_for_user(info.context.user):
+                return None
         try:
             obj = root.levels.get(plan__identifier=plan)
         except IndicatorLevel.DoesNotExist:
@@ -315,6 +337,10 @@ class IndicatorNode(DjangoNode):
     def resolve_related_effects(root: Indicator, info) -> Iterable[RelatedIndicator]:
         return root.related_effects.filter(effect_indicator__visibility=RestrictedVisibilityModel.VisibilityState.PUBLIC)
 
+    @staticmethod
+    def resolve_plans(root: Indicator, info) -> PlanQuerySet:
+        plans = cast('PlanQuerySet', root.plans.all())
+        return plans.visible_for_user(info.context.user)
 
 class IndicatorDimensionNode(DjangoNode):
     class Meta:
@@ -345,8 +371,10 @@ class Query:
         plan_obj = get_plan_from_context(info, plan)
         if plan_obj is None:
             return None
+        if not plan_obj.is_visible_for_user(info.context.user):
+            return None
 
-        qs = Indicator.objects.get_queryset().visible_for_public()
+        qs = Indicator.objects.get_queryset().visible_for_user(info.context.user)
         qs = qs.filter(levels__plan=plan_obj).distinct()
 
         if has_data is not None:
@@ -368,8 +396,9 @@ class Query:
         plan_obj = get_plan_from_context(info, plan)
         if plan_obj is None:
             return None
-
-        plans = plan_obj.get_all_related_plans()
+        if not plan_obj.is_visible_for_user(info.context.user):
+            return None
+        plans = plan_obj.get_all_related_plans().visible_for_user(info.context.user)
         qs = plans_indicators_queryset(plans=plans, user=info.context.user, kwargs=kwargs)
         return gql_optimizer.query(qs, info)
 
@@ -394,6 +423,8 @@ class Query:
         if plan:
             plan_obj = get_plan_from_context(info, plan)
             if not plan_obj:
+                return None
+            if not plan_obj.is_visible_for_user(user):
                 return None
             if not restrict_to_publicly_visible and user.can_access_admin(plan_obj):
                 qs = qs.visible_for_user(user)
