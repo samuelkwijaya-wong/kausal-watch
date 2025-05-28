@@ -590,7 +590,7 @@ def copy_collection_with_contents(collection: Collection, clone_visitor: CloneVi
         clone(image_or_document, {}, clone_visitor)
         image_or_document.collection = collection
         file = image_or_document.file
-        content_file = ContentFile(file.read())
+        content_file = ContentFile(file.read(), name=file.name)
         filename = file.name.split('/')[-1]
         file.save(filename, content_file)
 
