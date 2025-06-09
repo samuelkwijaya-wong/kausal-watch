@@ -196,16 +196,16 @@ class PlanInterface(graphene.Interface, Generic[T]):
         context_hostname = getattr(info.context, '_plan_hostname', None)
         if context_hostname is None:
             return RestrictedPlanNode
-        domain = instance.domains.filter(plan=instance, hostname=context_hostname)
+        domains = instance.domains.filter(plan=instance, hostname=context_hostname)
+        first_domain = domains.first()
 
         if instance.features.expose_unpublished_plan_only_to_authenticated_user is False:
-            if not domain or domain.first().status == PublicationStatus.PUBLISHED:
+            if first_domain is None or first_domain.status == PublicationStatus.PUBLISHED:
                 return PlanNode
             return RestrictedPlanNode
 
-        if domain:
-            domain = domain.first()
-            override = domain.publication_status_override
+        if first_domain:
+            override = first_domain.publication_status_override
             if override is not None:
                 if override == PublicationStatus.PUBLISHED:
                     return PlanNode
@@ -1204,6 +1204,7 @@ class ActionNode(ModelAdminAdminButtonsMixin, AttributesMixin, DjangoNode):
     def resolve_plan(root: Action, info) -> Plan | None:
         return root.plan.get_if_visible(info.context.user)
 
+    @staticmethod
     @gql_optimizer.resolver_hints(
         model_field='related_indicators',
     )
