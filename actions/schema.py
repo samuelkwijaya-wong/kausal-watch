@@ -157,6 +157,7 @@ class PlanInterface(graphene.Interface, Generic[T]):
     domain = graphene.Field(PlanDomainNode, hostname=graphene.String(required=False))
     domains = graphene.List(PlanDomainNode, hostname=graphene.String(required=False))
     status_message = graphene.String()
+    login_enabled = graphene.Boolean()
 
     @staticmethod
     @gql_optimizer.resolver_hints(
