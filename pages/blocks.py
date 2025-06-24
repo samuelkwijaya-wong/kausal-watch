@@ -1,3 +1,6 @@
+from __future__ import annotations
+
+import re
 from uuid import UUID
 
 import graphene
@@ -64,6 +67,19 @@ RESPONSIVE_STYLES = {
 }
 
 
+IFRAME_SRC_RE = re.compile(r'src="([^"]+)"')
+
+
+def sanitize_iframe(embed_contents: str) -> str:
+    """Try to extract only URL part if complete iframe tag was used."""
+    if not embed_contents.startswith('<iframe'):
+        return embed_contents
+    match = IFRAME_SRC_RE.search(embed_contents)
+    if not match:
+        return embed_contents
+    return match.group(1)
+
+
 class EmbedHTMLValue(graphene.ObjectType):
     html = graphene.String()
 
@@ -90,6 +106,13 @@ class AdaptiveEmbedBlock(blocks.StructBlock):
          ))],
     )
     full_width = blocks.BooleanBlock(required=False)
+
+    def clean(self, value: dict):
+        result = super().clean(value)
+        url = result.get('embed', {}).get('url')
+        if url and len(url):
+            result['embed']['url'] = sanitize_iframe(url)
+        return result
 
     class Meta:
         label = _('Embed')
