@@ -416,12 +416,11 @@ class IndicatorAdmin(AplansModelAdmin):
             dimensions_str = _("none")
 
         # Basic panels
-        panels += [
+        indicator_settings_panels: list[Panel] = [
             CustomizableBuiltInFieldPanel('name'),
             CustomizableBuiltInFieldPanel('time_resolution'),
             CustomizableBuiltInFieldPanel('level'),
         ]
-
         if is_linked_to_common_indicator:
             info_text = _(
                 "This indicator is linked to a common indicator, so quantity, unit and dimensions cannot be edited. "
@@ -431,12 +430,26 @@ class IndicatorAdmin(AplansModelAdmin):
                 'unit': instance.unit,
                 'dimensions': dimensions_str,
             }
-            panels.insert(0, HelpPanel(f'<p class="help-block help-info">{info_text}</p>'))
+            indicator_settings_panels.insert(0, HelpPanel(f'<p class="help-block help-info">{info_text}</p>'))
         else:
-            panels.insert(1, FieldPanel('quantity', widget=autocomplete.ModelSelect2(url='quantity-autocomplete')))
-            panels.insert(2, FieldPanel('unit', widget=autocomplete.ModelSelect2(url='unit-autocomplete')))
+            quantity_panel = FieldPanel('quantity', widget=autocomplete.ModelSelect2(url='quantity-autocomplete'))
+            unit_panel = FieldPanel('unit', widget=autocomplete.ModelSelect2(url='unit-autocomplete'))
+            indicator_settings_panels.insert(1, quantity_panel)
+            indicator_settings_panels.insert(2, unit_panel)
             if is_general_admin:
-                panels.insert(4, CustomizableBuiltInFieldPanel('visibility'))
+                indicator_settings_panels.insert(4, CustomizableBuiltInFieldPanel('visibility'))
+        panels.append(
+            MultiFieldPanel(
+                indicator_settings_panels,
+                heading=_('Indicator settings'),
+            ),
+        )
+
+        # Categories
+        category_fields = _get_category_fields(plan, Indicator, instance, with_initial=True)
+        category_panels = [FieldPanel(key, heading=field.label) for key, field in category_fields.items()]
+        if category_panels:
+            panels.append(MultiFieldPanel(category_panels, heading=_('Classification'), classname='collapsed'))
 
         # Further information
         panels.append(
@@ -445,16 +458,10 @@ class IndicatorAdmin(AplansModelAdmin):
                     CustomizableBuiltInFieldPanel('description'),
                     CustomizableBuiltInFieldPanel('reference'),
                 ],
-                heading=_("Further information"),
+                heading=_("Description"),
                 classname='collapsed',
             ),
         )
-
-        # Categories
-        category_fields = _get_category_fields(plan, Indicator, instance, with_initial=True)
-        category_panels = [FieldPanel(key, heading=field.label) for key, field in category_fields.items()]
-        if category_panels:
-            panels.append(MultiFieldPanel(category_panels, heading=_('Categories'), classname='collapsed'))
 
         # Visualisation settings
         visualisation_settings_panels = [
@@ -463,19 +470,17 @@ class IndicatorAdmin(AplansModelAdmin):
                     CustomizableBuiltInFieldPanel('min_value'),
                     CustomizableBuiltInFieldPanel('max_value'),
                 ],
-                heading=_('Value bounds'),
             ),
-            CustomizableBuiltInFieldPanel('show_trendline'),
-            CustomizableBuiltInFieldPanel('desired_trend'),
-            CustomizableBuiltInFieldPanel('show_total_line'),
             FieldRowPanel(
                 children=[
                     CustomizableBuiltInFieldPanel('ticks_count'),
                     CustomizableBuiltInFieldPanel('ticks_rounding'),
                 ],
-                heading=_('Axis ticks'),
             ),
             CustomizableBuiltInFieldPanel('value_rounding'),
+            CustomizableBuiltInFieldPanel('show_total_line'),
+            CustomizableBuiltInFieldPanel('show_trendline'),
+            CustomizableBuiltInFieldPanel('desired_trend'),
             CustomizableBuiltInFieldPanel('data_categories_are_stackable'),
         ]
         panels.append(

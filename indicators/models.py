@@ -394,13 +394,11 @@ class Indicator(ClusterableModel, index.Indexed, ModificationTracking, PlanDefau
     )
     min_value = models.FloatField(
         null=True, blank=True, verbose_name=_('minimum value'),
-        help_text=_('What is the minimum value this indicator can reach? '
-                    'It is used in visualizations as the Y axis minimum.'),
+        help_text=_("Used in visualizations as the Y axis minimum"),
     )
     max_value = models.FloatField(
         null=True, blank=True, verbose_name=_('maximum value'),
-        help_text=_('What is the maximum value this indicator can reach? '
-                    'It is used in visualizations as the Y axis maximum.'),
+        help_text=_("Used in visualizations as the Y axis maximum"),
     )
     description = RichTextField[str | None, str | None](null=True, blank=True, verbose_name=_('description'))
     categories: M2M[Category, Any] = models.ManyToManyField(
@@ -448,7 +446,8 @@ class Indicator(ClusterableModel, index.Indexed, ModificationTracking, PlanDefau
     )
 
     show_trendline = models.BooleanField(
-        default=True, verbose_name=_('show trendline'),
+        default=True, verbose_name=_('show trend line'),
+        help_text=_("Automatically create a trend line for the indicator's total value"),
     )
 
     desired_trend = models.CharField(
@@ -459,13 +458,14 @@ class Indicator(ClusterableModel, index.Indexed, ModificationTracking, PlanDefau
             ('', _('attempt to detect automatically')),
         ),
         help_text=_(
-            "Which trend in the numerical values of this indicator's goals indicates improvement: when the values are increasing "
-            "or decreasing?",
+            "Which trend in the numerical values of this indicator's goals indicates improvement: when the values are "
+            "increasing or decreasing?",
         ),
     )
 
     show_total_line = models.BooleanField(
         default=True, verbose_name=_('show total line'),
+        help_text=_("Data categories can be summed to form total for the indicator (draw stacked chart as default)"),
     )
 
     ticks_count = models.PositiveIntegerField(blank=True, null=True, help_text=_("Number of steps on the y-axis"))
