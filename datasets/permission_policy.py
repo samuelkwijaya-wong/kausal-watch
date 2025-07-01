@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, override
 
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Q, QuerySet
@@ -8,6 +8,7 @@ from django.http import HttpRequest
 
 from kausal_common.datasets.models import (
     DataPoint,
+    DataSource,
     Dataset,
     DatasetQuerySet,
     DatasetSchema,
@@ -219,4 +220,34 @@ class DatasetSchemaPermissionPolicy(ModelPermissionPolicy[DatasetSchema, None, Q
         """
         if user.is_superuser:
             return True
+        return False
+
+
+class DataSourcePermissionPolicy(ModelPermissionPolicy[DataSource, None, QuerySet[DataSource]]):
+    # FIXME: This placeholder policy is there to prevent tests from blowing up as DataSourceViewSet, which will be
+    # instantiated, requires a permission policy. KW does not seem to use data sources yet, but once it does, we should
+    # implement this permission policy.
+
+    def __init__(self):
+        from kausal_common.datasets.models import DataSource
+        super().__init__(model=DataSource)
+
+    @override
+    def construct_perm_q(self, user: User, action: ObjectSpecificAction) -> Q | None:
+        return None
+
+    @override
+    def construct_perm_q_anon(self, action: ObjectSpecificAction) -> Q | None:
+        return None
+
+    @override
+    def user_has_perm(self, user: User, action: ObjectSpecificAction, obj: DataSource) -> bool:
+        return False
+
+    @override
+    def anon_has_perm(self, action: ObjectSpecificAction, obj: DataSource) -> bool:
+        return False
+
+    @override
+    def user_can_create(self, user: User, context: None) -> bool:
         return False

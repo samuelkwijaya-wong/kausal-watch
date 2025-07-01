@@ -30,3 +30,4 @@ SHOW_SCHEMAS_IN_MENU: bool = False
 SCHEMA_PERMISSION_POLICY = 'datasets.permission_policy.DatasetSchemaPermissionPolicy'
 DATASET_PERMISSION_POLICY = 'datasets.permission_policy.ActionOrCategoryInheritedDatasetPermissionPolicy'
 DATA_POINT_PERMISSION_POLICY = 'datasets.permission_policy.DataPointPermissionPolicy'
+DATA_SOURCE_PERMISSION_POLICY = 'datasets.permission_policy.DataSourcePermissionPolicy'
