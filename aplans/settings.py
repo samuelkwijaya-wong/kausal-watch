@@ -855,7 +855,7 @@ REQUEST_LOG_IGNORE_PATHS = env('REQUEST_LOG_IGNORE_PATHS')
 REQUEST_LOG_MAX_BODY_SIZE = 100 * 1024
 
 
-if SENTRY_DSN:
+if True:
     from kausal_common.sentry.init import init_sentry
     init_sentry(SENTRY_DSN, DEPLOYMENT_TYPE)
 
