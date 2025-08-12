@@ -10,6 +10,7 @@ from urllib.parse import urlparse
 
 import reversion
 from django.conf import settings
+from django.contrib import admin
 from django.contrib.auth.models import AnonymousUser, Group
 from django.contrib.contenttypes.fields import GenericRelation
 from django.contrib.postgres.fields import ArrayField
@@ -49,7 +50,7 @@ from aplans.utils import (
 )
 
 from actions.permission_policy import PlanPermissionPolicy
-from indicators.models import Indicator, IndicatorLevel, IndicatorLevelQuerySet, RelatedIndicator
+from indicators.models import IndicatorDimension, Indicator, IndicatorLevel, IndicatorLevelQuerySet, RelatedIndicator
 from orgs.models import Organization
 from people.models import Person
 
@@ -65,6 +66,7 @@ if TYPE_CHECKING:
     from kausal_common.users import UserOrAnon
 
     from aplans.graphql_types import WorkflowStateEnum
+    from aplans.schema_context import WatchGraphQLContext
     from aplans.types import WatchAPIRequest, WatchRequest
 
     from actions.models.action import ActionQuerySet
@@ -93,11 +95,16 @@ def get_timezones() -> list[tuple[str, str]]:
 
 
 def get_plan_identifier_from_wildcard_domain(
-    hostname: str, request: WatchRequest | None = None
+    hostname: str, request: WatchRequest | WatchGraphQLContext | None = None
 ) -> tuple[str, str] | tuple[None, None]:
+    from aplans.schema_context import WatchGraphQLContext
+
     # Get plan identifier from hostname for development and testing
     parts = hostname.split('.', maxsplit=1)
-    req_wildcards = getattr(request, 'wildcard_domains', None) or []
+    if isinstance(request, WatchGraphQLContext):
+        req_wildcards = request.wildcard_domains
+    else:
+        req_wildcards = getattr(request, 'wildcard_domains', None) or []
     wildcard_domains = (settings.HOSTNAME_PLAN_DOMAINS or []) + req_wildcards
     if len(parts) == 2 and parts[1].lower() in wildcard_domains:
         return (parts[0], parts[1])
@@ -117,7 +124,7 @@ def get_page_translation(page: Page, fallback=True) -> Page:
 
 
 class PlanQuerySet(MultilingualQuerySet['Plan']):
-    def for_hostname(self, hostname: str, request: WatchAPIRequest | None = None) -> Self:
+    def for_hostname(self, hostname: str, request: WatchAPIRequest | WatchGraphQLContext | None = None) -> Self:
         hostname = hostname.lower()
         plan_domains = PlanDomain.objects.filter(hostname=hostname)
         lookup = Q(id__in=plan_domains.values_list('plan'))
@@ -130,7 +137,7 @@ class PlanQuerySet(MultilingualQuerySet['Plan']):
     def live(self):
         return self.filter(published_at__isnull=False, archived_at__isnull=True)
 
-    def available_for_request(self, request: HttpRequest):
+    def available_for_request(self, request: HttpRequest | WatchGraphQLContext):
         # FIXME later: support for logged-in users
         return self.live()
 
@@ -151,7 +158,7 @@ class PlanQuerySet(MultilingualQuerySet['Plan']):
 
 if TYPE_CHECKING:
     _PlanManager = models.Manager.from_queryset(PlanQuerySet)
-    class PlanManager(MLModelManager['Plan', PlanQuerySet], _PlanManager): ...
+    class PlanManager(MLModelManager['Plan', PlanQuerySet], _PlanManager): ...  # pyright: ignore
     del _PlanManager
 else:
     PlanManager = MLModelManager.from_queryset(PlanQuerySet)
@@ -408,7 +415,7 @@ class Plan(ClusterableModel, ModelWithPrimaryLanguage, PermissionedModel):
         'kausal_paths_instance_uuid',
     ]
 
-    objects: ClassVar[PlanManager] = PlanManager()
+    objects: ClassVar[PlanManager] = PlanManager()  # pyright: ignore[reportIncompatibleVariableOverride]
 
     _site_created: bool
     wagtail_reference_index_ignore = True
@@ -434,6 +441,7 @@ class Plan(ClusterableModel, ModelWithPrimaryLanguage, PermissionedModel):
     indicators: RevManyToMany[Indicator, IndicatorLevel]
     indicator_levels: RevManyQS[IndicatorLevel, IndicatorLevelQuerySet]
     links: RevMany[PlanLink]
+    dimensions: RevMany[IndicatorDimension]
 
     organization_id: int
     id: int
@@ -441,7 +449,7 @@ class Plan(ClusterableModel, ModelWithPrimaryLanguage, PermissionedModel):
     parent_id: int | None
     name_i18n: str
 
-    class Meta:
+    class Meta:  # pyright: ignore[reportIncompatibleVariableOverride]
         verbose_name = _('plan')
         verbose_name_plural = _('plans')
         get_latest_by = 'created_at'
@@ -528,7 +536,7 @@ class Plan(ClusterableModel, ModelWithPrimaryLanguage, PermissionedModel):
         return page
 
     @classmethod
-    def permission_policy(cls) -> PlanPermissionPolicy:
+    def permission_policy(cls) -> PlanPermissionPolicy:  # pyright: ignore[reportIncompatibleMethodOverride]
         return PlanPermissionPolicy(cls)
 
     def get_translated_root_page(self, fallback=True) -> Page | None:
@@ -1024,10 +1032,9 @@ class Plan(ClusterableModel, ModelWithPrimaryLanguage, PermissionedModel):
             today = date_format(now.date(), format='SHORT_DATE_FORMAT', use_l10n=True)
             return _("Copy from %(date)s") % {'date': today}
 
+    @admin.display(description=_('Clients'), ordering='clients__client__name')
     def clients_as_string(self) -> str:
         return "; ".join(self.clients.values_list('client__name', flat=True))
-    clients_as_string.short_description = _('Clients')  # type: ignore
-    clients_as_string.admin_order_field = 'clients__client__name'  # type: ignore
 
     def delete(self, *args, **kwargs):
         if self.root_page:
@@ -1086,7 +1093,7 @@ class GeneralPlanAdmin(OrderedModel):
     person = models.ForeignKey(Person, on_delete=models.CASCADE, verbose_name=_('person'),
                                related_name='general_admin_plans_ordered')
 
-    class Meta:
+    class Meta:  # pyright: ignore[reportIncompatibleVariableOverride]
         ordering = ['plan', 'order']
         indexes = [
             models.Index(fields=['plan', 'order']),
@@ -1261,7 +1268,7 @@ class Scenario(PlanRelatedModel):
         'id', 'plan', 'name', 'identifier', 'description',
     ]
 
-    class Meta:
+    class Meta:  # pyright: ignore[reportIncompatibleVariableOverride]
         unique_together = (('plan', 'identifier'),)
         verbose_name = _('scenario')
         verbose_name_plural = _('scenarios')
@@ -1271,13 +1278,13 @@ class Scenario(PlanRelatedModel):
 
 
 class ImpactGroup(PlanRelatedModel):
-    plan = models.ForeignKey(
+    plan: FK[Plan] = models.ForeignKey(
         Plan, on_delete=models.CASCADE, related_name='impact_groups',
         verbose_name=_('plan'),
     )
-    name = models.CharField(verbose_name=_('name'), max_length=200)
+    name = models.CharField[str, str](verbose_name=_('name'), max_length=200)
     identifier = IdentifierField()
-    parent = models.ForeignKey(
+    parent: FK[ImpactGroup | None] = models.ForeignKey(
         'self', on_delete=models.SET_NULL, related_name='children', null=True, blank=True,
         verbose_name=pgettext_lazy('impact group', 'parent'),
     )
@@ -1290,7 +1297,7 @@ class ImpactGroup(PlanRelatedModel):
         'id', 'plan', 'identifier', 'parent', 'weight', 'name', 'color', 'actions',
     ]
 
-    class Meta:
+    class Meta:  # pyright: ignore[reportIncompatibleVariableOverride]
         unique_together = (('plan', 'identifier'),)
         verbose_name = _('impact group')
         verbose_name_plural = _('impact groups')
@@ -1326,7 +1333,7 @@ class MonitoringQualityPoint(PlanRelatedModel, OrderedModel):
         'id', 'name', 'description_yes', 'description_no', 'plan', 'identifier',
     ]
 
-    class Meta:
+    class Meta:  # pyright: ignore[reportIncompatibleVariableOverride]
         verbose_name = _('monitoring quality point')
         verbose_name_plural = _('monitoring quality points')
         unique_together = (('plan', 'order'),)

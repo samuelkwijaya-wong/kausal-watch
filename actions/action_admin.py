@@ -65,6 +65,7 @@ from admin_site.wagtail import (
     get_translation_tabs,
     insert_model_translation_panels,
 )
+from kausal_common.users import user_or_none
 from orgs.models import Organization
 from people.models import Person
 from reports.views import MarkActionAsCompleteView
@@ -662,8 +663,8 @@ class ActionButtonHelper(AplansButtonHelper):
 
     def get_buttons_for_obj(self, obj: Action, *args, **kwargs):
         buttons = super().get_buttons_for_obj(obj, *args, **kwargs)
-        user = self.request.user
-        if not self.permission_helper.user_can_edit_obj(user, obj):
+        user = user_or_none(self.request.user)
+        if not user or not self.permission_helper.user_can_edit_obj(user, obj):
             return buttons
 
         latest_reports = self.request.admin_cache.latest_reports
@@ -681,7 +682,9 @@ class ActionButtonHelper(AplansButtonHelper):
         return buttons
 
 
-class ActionEditView(InitializeFormWithInitialPlanMixin, SnippetsEditViewCompatibilityMixin, SingleObjectMixin, AplansEditView):
+class ActionEditView(
+    InitializeFormWithInitialPlanMixin, SnippetsEditViewCompatibilityMixin, SingleObjectMixin[Action], AplansEditView[Action]
+):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         if self.instance.plan.features.enable_moderation_workflow:
@@ -720,7 +723,7 @@ class ActionEditView(InitializeFormWithInitialPlanMixin, SnippetsEditViewCompati
 
 
 @modeladmin_register
-class ActionAdmin(AplansModelAdmin):
+class ActionAdmin(AplansModelAdmin[Action]):
     model = Action
     create_view_class = ActionCreateView
     edit_view_class = ActionEditView
