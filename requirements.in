@@ -96,3 +96,10 @@ strawberry-graphql
 strawberry-graphql-django
 channels
 wagtail-color-panel
+opentelemetry-exporter-otlp-proto-http
+opentelemetry-exporter-prometheus
+opentelemetry-instrumentation-django
+opentelemetry-instrumentation-psycopg
+opentelemetry-instrumentation-redis
+opentelemetry-instrumentation-threading
+opentelemetry-sdk
