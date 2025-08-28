@@ -369,7 +369,7 @@ class Plan(ClusterableModel, ModelWithPrimaryLanguage, PermissionedModel):
         related_name='copies', help_text=_('Set if this plan has been created by copying another plan'),
     )
     timezone = models.CharField[str, str](max_length=64, choices=get_timezones, default='UTC')  # type: ignore[arg-type]
-    country = CountryField(blank=True)
+    country = CountryField()
     daily_notifications_triggered_at = models.DateTimeField(blank=True, null=True)
 
     kausal_paths_instance_uuid = models.CharField(
