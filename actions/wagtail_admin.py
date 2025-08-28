@@ -272,9 +272,10 @@ class PlanAdmin(AplansModelAdmin):
         panels_enabled_when_creating = {
             'name',
             'identifier',
-            'primary_language',
             'short_name',
+            'primary_language',
             'other_languages',
+            'country',
         }
 
         panels = list(self.panels)
