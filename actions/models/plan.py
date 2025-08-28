@@ -1153,7 +1153,7 @@ class PlanDomain(models.Model):
         default=[],
         verbose_name='redirect aliases',
         help_text=_(
-            "Domain names that will we used to redirect to the main hostname. Multiple domains are separated by commas.",
+            "Domain names that will be used to redirect to the main hostname. Multiple domains are separated by commas.",
         ),
     )
     google_site_verification_tag = models.CharField(max_length=50, null=True, blank=True)
