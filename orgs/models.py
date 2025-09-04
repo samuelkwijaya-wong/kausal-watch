@@ -157,10 +157,10 @@ class Organization(BaseOrganization, PlanDefaultsModel, Node[OrganizationQuerySe
 
     objects: ClassVar[OrganizationManager] = OrganizationManager()  # type: ignore[assignment]
 
-
     def initialize_plan_defaults(self, plan):
         assert not self.primary_language
         self.primary_language = plan.primary_language
+        self.primary_language_lowercase = plan.primary_language.lower()
 
     @classmethod
     def get_parent_choices(cls, user: User, obj: Organization | None = None) -> OrganizationQuerySet:

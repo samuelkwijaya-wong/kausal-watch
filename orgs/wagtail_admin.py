@@ -171,7 +171,7 @@ class OrganizationViewSet(SnippetViewSet):
     menu_order = 220
     permission_policy = OrganizationPermissionPolicy(model)
     index_view_class = OrganizationIndexView
-    create_view_class = OrganizationCreateView
+    add_view_class = OrganizationCreateView
     edit_view_class = OrganizationEditView
     delete_view_class = OrganizationDeleteView
     search_fields = ['name', 'abbreviation']
