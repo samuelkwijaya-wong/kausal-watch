@@ -14,11 +14,11 @@ from django.views.generic import TemplateView
 from wagtail.admin import urls as wagtailadmin_urls
 from wagtail.admin.views.pages import search
 from wagtail.documents import urls as wagtaildocs_urls
-from wagtail.models import Page
 
 from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
 from wagtailautocomplete.urls.admin import urlpatterns as autocomplete_admin_urls
 
+from kausal_common.admin_site.views import RootRedirectView
 from kausal_common.datasets.api import all_routers as datasets_api_nested_routers, router as datasets_api_root_router
 from kausal_common.deployment.health_check_view import health_view
 
@@ -29,7 +29,6 @@ from actions.autocomplete import (
     CommonCategoryTypeAutocomplete,
 )
 from actions.models import PlanDomain
-from admin_site.views import RootRedirectView, WadminRedirectView
 from admin_site.wagtail_hooks import restrict_chooser_pages_to_plan
 from indicators.api import all_views as indicators_api_views
 from indicators.autocomplete import CommonIndicatorAutocomplete, IndicatorAutocomplete, QuantityAutocomplete, UnitAutocomplete
@@ -133,7 +132,6 @@ urlpatterns = [
     # FIXME: This overrides the URLs in Wagtail's admin/urls/pages.py to allow filtering the queryset
     path("admin/pages/search/", PageSearchView.as_view(), name="search"),
     re_path(r'^admin/', include(wagtailadmin_urls)),
-    re_path(r'^wadmin', WadminRedirectView.as_view(), name='wadmin-redirect'),
     re_path(r'^documents/', include(wagtaildocs_urls)),
     # re_path(r'^pages/', include(wagtail_urls)),
     re_path(r'^org-autocomplete/$', OrganizationAutocomplete.as_view(), name='organization-autocomplete'),
