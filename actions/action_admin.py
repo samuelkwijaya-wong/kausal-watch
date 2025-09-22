@@ -722,6 +722,7 @@ class ActionAdmin(AplansModelAdmin):
     edit_view_class = ActionEditView
     menu_icon = 'kausal-action'
     menu_order = 10
+    menu_label = _('Actions')
     list_display = ('identifier', 'name_link')
     list_display_add_buttons = 'name_link'
     search_fields = ('identifier', 'name')
