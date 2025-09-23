@@ -16,6 +16,7 @@ from environ.environ import ImproperlyConfigured
 
 from kausal_common import ENV_SCHEMA as COMMON_ENV_SCHEMA, register_settings as register_common_settings
 from kausal_common.deployment import set_secret_file_vars
+from kausal_common.deployment.http import get_allowed_cors_headers
 from kausal_common.sentry.init import init_sentry
 from kausal_common.storage import storage_settings_from_s3_url
 
@@ -430,11 +431,9 @@ REST_FRAMEWORK = {
 
 
 CORS_ALLOW_ALL_ORIGINS = True
-CORS_ALLOW_HEADERS = list(default_cors_headers) + [
-    'sentry-trace',
+CORS_ALLOW_HEADERS = list(default_cors_headers) + get_allowed_cors_headers() + [
     'x-cache-plan-identifier',
     'x-cache-plan-domain',
-    'x-wildcard-domains',
 ]
 
 #
