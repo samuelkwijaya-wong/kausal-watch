@@ -52,30 +52,41 @@ class temp_disconnect_signal:  # noqa: N801
         )
 
 
-def update_raw_data_element_at_content_path(
+def update_reference_in_raw_data(
     raw_data: Any,  # noqa: ANN401
     content_path: list[str],
-    new_value: Any,  # noqa: ANN401
+    old_object: Model,
+    new_object: Model,
 ) -> Any:  # noqa: ANN401
-    """Update the value at a certain path in raw data from a streamfield."""
+    """
+    Update a reference at a certain path in raw data from a streamfield.
+
+    Also see documentation of `update_streamfield_block()`.
+    """
     if not content_path:
-        return new_value
+        if raw_data in (old_object.pk, new_object.pk):  # perhaps it was updated already
+            return new_object.pk
+        assert isinstance(raw_data, str)
+        # Guess it's a rich-text HTML string
+        return update_reference_in_html(raw_data, old_object, new_object)
     path_element, *remaining_elements = content_path
     if isinstance(raw_data, list):
         for child in raw_data:
             # Depending on the type of the block, `path_element` can be either a UUID (for StreamBlock children) or
             # a block type name
             if child['id'] == path_element or child['type'] == path_element:
-                child['value'] = update_raw_data_element_at_content_path(
+                child['value'] = update_reference_in_raw_data(
                     child['value'],
                     remaining_elements,
-                    new_value
+                    old_object,
+                    new_object,
                 )
     elif isinstance(raw_data, dict):
-        raw_data[path_element] = update_raw_data_element_at_content_path(
+        raw_data[path_element] = update_reference_in_raw_data(
             raw_data[path_element],
             remaining_elements,
-            new_value
+                    old_object,
+                    new_object,
         )
     else:
         raise TypeError(f"raw_data has unexpected type {type(raw_data)}")
@@ -86,12 +97,22 @@ def update_streamfield_block(
     instance: Model,
     field_name: str,
     content_path: list[str],
-    new_value: Any,  # noqa: ANN401
+    old_object: Model,
+    new_object: Model,
 ) -> None:
-    """Update the value at a certain path in a given streamfield."""
+    """
+    Update a reference to an object at a certain path in a given streamfield.
+
+    Note that the content path may not be very precise. Indeed, the value pointed to by the content path might be
+    something that may still contain other things than just a pure reference; for example, the content path could point
+    to a rich-text block, which may contain an HTML string with all kinds of things besides the reference we're looking
+    for. In other cases, the situation is simpler, as often the value pointed to by the content path is simply a PK. But
+    in general, updating the reference is not as easy as just replacing whatever we find at the content path. This code
+    tries to do the right thing.
+    """
     stream_value = getattr(instance, field_name)
     raw_data = list(stream_value.raw_data)
-    update_raw_data_element_at_content_path(raw_data, content_path, new_value)
+    update_reference_in_raw_data(raw_data, content_path, old_object, new_object)
     stream_value.raw_data = raw_data
     # It's not enough to just change `raw_data`. We need to set the field itself too.
     # Comment from Wagtail's RawDataView:
@@ -100,13 +121,12 @@ def update_streamfield_block(
     setattr(instance, field_name, StreamValue(stream_value.stream_block, stream_value.raw_data, is_lazy=True))
 
 
-def update_rich_text_reference(
-    instance: Model,
-    field_name: str,
+def update_reference_in_html(
+    html: str,
     old_referenced_object: Model,
     new_referenced_object: Model,
-) -> None:
-    """Update a reference to an image or document in a given rich text field."""
+) -> str:
+    """Update a reference to an image or document in a given HTML string."""
     assert type(old_referenced_object) is type(new_referenced_object)
     if isinstance(old_referenced_object, AplansDocument):
         pattern = r'<a\s+[^>]*linktype="document"[^>]*>'
@@ -121,7 +141,18 @@ def update_rich_text_reference(
     def replace_id_in_html_tag(match: re.Match) -> str:
         return re.sub(rf'\bid="{old_id}"', f'id="{new_id}"', match.group(0))
 
+    new_html = re.sub(pattern, replace_id_in_html_tag, html)
+    assert new_html != html
+    return new_html
+
+
+def update_rich_text_reference_in_field(
+    instance: Model,
+    field_name: str,
+    old_referenced_object: Model,
+    new_referenced_object: Model,
+) -> None:
+    """Update a reference to an image or document in a given rich text field."""
     old_value: str = getattr(instance, field_name)
-    new_value = re.sub(pattern, replace_id_in_html_tag, old_value)
-    assert new_value != old_value
+    new_value = update_reference_in_html(old_value, old_referenced_object, new_referenced_object)
     setattr(instance, field_name, new_value)

@@ -34,7 +34,7 @@ from copying.utils import (
     get_foreign_keys,
     get_generic_foreign_keys,
     temp_disconnect_signal,
-    update_rich_text_reference,
+    update_rich_text_reference_in_field,
     update_streamfield_block,
 )
 from documentation.models import DocumentationRootPage
@@ -166,6 +166,12 @@ class CloneVisitor(AbstractVisitor):
         assert type(copy) is type(instance)
         assert isinstance(copy, type(instance))  # implied by previous line, but apparently mypy doesn't figure this out
         return copy
+
+    def _get_original_pk(self, copy: Model) -> Any:
+        """Get the PK of the original instance for the given copy."""
+        # This is inefficient, but for now we only call it in exceptional cases.
+        _, pk = list(self.copies.keys())[list(self.copies.values()).index(copy)]
+        return pk
 
     def register_copy[M: Model](self, original: M, copy: M):
         """
@@ -515,7 +521,7 @@ class UpdateReferencesVisitor(AbstractVisitor):
             # propagate changes to its value to the StreamField's value.
             field_name, *content_path_rest = content_path.split('.')
             assert field_name == source_field.name
-            update_streamfield_block(from_object, field_name, content_path_rest, copy.pk)
+            update_streamfield_block(from_object, field_name, content_path_rest, to_object, copy)
             return True
 
         if isinstance(source_field, ManyToOneRel):
@@ -538,7 +544,7 @@ class UpdateReferencesVisitor(AbstractVisitor):
             child_field_name, *child_content_path = content_path_rest
             child_field = referencing_object._meta.get_field(child_field_name)
             if isinstance(child_field, StreamField):
-                update_streamfield_block(referencing_object, child_field_name, child_content_path, copy.pk)
+                update_streamfield_block(referencing_object, child_field_name, child_content_path, to_object, copy)
                 assert field_name in from_object._cluster_related_objects
             else:
                 # Not sure if there are other cases, but I haven't accounted for any others...
@@ -556,7 +562,7 @@ class UpdateReferencesVisitor(AbstractVisitor):
             field_name, *content_path_rest = content_path.split('.')
             assert field_name == source_field.name
             assert content_path_rest == ['']
-            update_rich_text_reference(
+            update_rich_text_reference_in_field(
                 instance=from_object,
                 field_name=field_name,
                 old_referenced_object=to_object,
@@ -569,9 +575,22 @@ class UpdateReferencesVisitor(AbstractVisitor):
     def update_indexed_references(self, instance: Model) -> list[str]:
         update_fields = set()
         for ref in ReferenceIndex.get_references_for_object(instance):
+            to_model = ref.to_content_type.model_class()
+            try:
+                to_object = ref.to_content_type.get_object_for_this_type(id=ref.to_object_id)
+            except to_model.DoesNotExist:
+                from_model = ref.content_type.model_class()
+                from_object = from_model.objects.get(id=ref.object_id)
+                from_original_pk = self.clone_visitor._get_original_pk(from_object)
+                logger.warning(
+                    f"Cannot update reference: {from_model.__name__} {ref.object_id} (copy of {from_original_pk}) "
+                    f"references {to_model.__name__} {ref.to_object_id}, which does not exist. Keeping broken "
+                    "reference in place."
+                )
+                continue
             updated = self.update_reference(
                 from_object=instance,
-                to_object=ref.to_content_type.get_object_for_this_type(id=ref.to_object_id),
+                to_object=to_object,
                 source_field=ref.source_field,
                 content_path=ref.content_path,
             )

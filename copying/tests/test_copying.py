@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from wagtail.models import Revision
+from wagtail.rich_text import RichText
 
 import pytest
 
@@ -10,6 +11,7 @@ from documents.models import AplansDocument
 from documents.tests.factories import AplansDocumentFactory
 from images.models import AplansImage
 from images.tests.factories import AplansImageFactory
+from pages.models import StaticPage
 from pages.tests.factories import CategoryTypePageLevelLayoutFactory
 
 pytestmark = pytest.mark.django_db
@@ -21,16 +23,18 @@ def get_page_copy(page, plan_copy):
     return page_copy
 
 
-def html_with_references(doc1, doc2, image1, image2):
+def html_with_references(instances):
     """Return HTML with references as Wagtail would produce it in a rich-text field."""
-    return f"""
-<p data-block-key="foo">
-<a linktype="document" id="{doc1.pk}">doc1</a>
-<a linktype="document" id="{doc2.pk}">doc2</a>
-<embed embedtype="image" format="fullwidth-zoomable" id="{image1.pk}" alt="image1"/>
-<embed embedtype="image" format="fullwidth-zoomable" id="{image2.pk}" alt="image2"/>
-</p>'
-""".replace('\n', '')
+    html = '<p data-block-key="foo">'
+    for instance in instances:
+        if isinstance(instance, AplansDocument):
+            html += f'<a linktype="document" id="{instance.pk}">{instance.title}</a>'
+        elif isinstance(instance, AplansImage):
+            html += f'<embed embedtype="image" format="fullwidth-zoomable" id="{instance.pk}" alt="{instance.title}"/>'
+        else:
+            raise TypeError("Unexpected type for referenced instance")
+    html += '</p>'
+    return html
 
 
 def test_publish_copied_action_does_not_steal_contact_persons(plan_with_pages, action, user):
@@ -114,12 +118,31 @@ def test_update_references_in_page_draft(plan_with_pages, category_type_page, at
     assert block_copy_attribute_type.scope == category_type_copy
 
 
+def test_plan_copy_has_new_collection(plan_with_pages):
+    plan_copy = copy_plan(plan_with_pages)
+    assert plan_copy.root_collection != plan_with_pages.root_collection
+
+
+def test_image_copy_in_collection_copy(plan_with_pages):
+    image = AplansImageFactory(collection=plan_with_pages.root_collection, title='image')
+    plan_copy = copy_plan(plan_with_pages)
+    image_copy = AplansImage.objects.get(collection=plan_copy.root_collection, title=image.title)
+    assert image_copy.collection == plan_copy.root_collection
+
+
+def test_document_copy_in_collection_copy(plan_with_pages):
+    doc = AplansDocumentFactory(collection=plan_with_pages.root_collection, title='doc')
+    plan_copy = copy_plan(plan_with_pages)
+    doc_copy = AplansDocument.objects.get(collection=plan_copy.root_collection, title=doc.title)
+    assert doc_copy.collection == plan_copy.root_collection
+
+
 def test_rich_text_field_references(plan_with_pages, action):
     doc1 = AplansDocumentFactory(collection=plan_with_pages.root_collection, title='doc1')
     doc2 = AplansDocumentFactory(collection=plan_with_pages.root_collection, title='doc2')
     image1 = AplansImageFactory(collection=plan_with_pages.root_collection, title='image1')
     image2 = AplansImageFactory(collection=plan_with_pages.root_collection, title='image2')
-    action.description = html_with_references(doc1, doc2, image1, image2)
+    action.description = html_with_references([doc1, doc2, image1, image2])
     action.save(update_fields=['description'])
     plan_copy = copy_plan(plan_with_pages)
     doc1_copy = AplansDocument.objects.get(collection=plan_copy.root_collection, title=doc1.title)
@@ -127,4 +150,18 @@ def test_rich_text_field_references(plan_with_pages, action):
     image1_copy = AplansImage.objects.get(collection=plan_copy.root_collection, title=image1.title)
     image2_copy = AplansImage.objects.get(collection=plan_copy.root_collection, title=image2.title)
     action_copy = plan_copy.actions.get()
-    assert action_copy.description == html_with_references(doc1_copy, doc2_copy, image1_copy, image2_copy)
+    assert action_copy.description == html_with_references([doc1_copy, doc2_copy, image1_copy, image2_copy])
+
+
+def test_rich_text_block_references(plan_with_pages, static_page):
+    image = AplansImageFactory(collection=plan_with_pages.root_collection, title='image')
+    static_page.body = [
+        ('paragraph', RichText(html_with_references([image]))),
+    ]
+    static_page.save()
+    plan_copy = copy_plan(plan_with_pages)
+    image_copy = AplansImage.objects.get(collection=plan_copy.root_collection, title=image.title)
+    page_copy = plan_copy.root_page.get_children().type(StaticPage).get().specific
+    assert isinstance(page_copy, StaticPage)
+    assert page_copy.body is not None
+    assert page_copy.body[0].value.source == html_with_references([image_copy])
