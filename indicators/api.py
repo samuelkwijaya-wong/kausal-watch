@@ -15,6 +15,7 @@ from drf_spectacular.utils import OpenApiParameter, extend_schema, extend_schema
 
 from kausal_common.api.bulk import BulkListSerializer, BulkModelViewSet
 from kausal_common.api.utils import register_view_helper
+from kausal_common.users import user_or_none
 
 from actions.api import plan_router
 from actions.models import Plan
@@ -114,7 +115,8 @@ class IndicatorValueListSerializer(serializers.ListSerializer):
 
         for sample in data:
             date = sample['date']
-            categories = tuple(sorted([x.id for x in sample['categories']]))
+            cat_ids = sample.get('categories', [])
+            categories = tuple(sorted([x.id for x in cat_ids]))
             dd = data_by_date.setdefault(date, {})
             if categories in dd:
                 raise ValidationError("duplicate categories for %s: %s" % (date, categories))
@@ -423,9 +425,16 @@ class IndicatorSerializerMixin:
         self.initialize_cache_context()
 
     def initialize_cache_context(self) -> None:
-        plan = self.context['request'].user.get_active_admin_plan()
+        request = self.context['request']
+        if request is None:
+            return
+        user = user_or_none(request.user)
+        if user is None:
+            return
+        plan = user.get_active_admin_plan(required=False)
         if plan is None:
             return
+
         cache: dict[str, Any] = {}
 
         # Ensure fields is a dictionary
@@ -491,7 +500,7 @@ class IndicatorSerializer(IndicatorSerializerMixin, serializers.ModelSerializer)
             user = request.user
             plan = user.get_active_admin_plan()
 
-        if user is None or (not user.is_superuser and not user.is_general_admin_for_plan(plan)):
+        if user is None or not user.is_authenticated or (not user.is_superuser and not user.is_general_admin_for_plan(plan)):
             # Remove fields that are only for admins
             del fields['internal_notes']
         return fields
@@ -567,7 +576,7 @@ class IndicatorViewSet(BulkModelViewSet):
             )
 
     @action(detail=True, methods=['get'])
-    def values(self, request, pk=None):
+    def values(self, request, plan_pk : int | None = None, pk=None):
         indicator = self.get_object()
         objs = indicator.values.all().order_by('date').prefetch_related('categories')
         serializer = IndicatorValueSerializer(objs, many=True)
@@ -592,7 +601,9 @@ class IndicatorViewSet(BulkModelViewSet):
         return Response({})
 
     @values.mapping.post
-    def update_values(self, request, plan_pk, pk):
+    def update_values(self, request, plan_pk: int | None = None, pk: int | None = None):
+        assert plan_pk is not None
+        assert pk is not None
         indicator = Indicator.objects.prefetch_related(
             'dimensions', 'dimensions__dimension', 'dimensions__dimension__categories',
         ).get(pk=pk)
