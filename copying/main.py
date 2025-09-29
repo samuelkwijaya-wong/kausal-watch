@@ -687,9 +687,13 @@ def copy_collection_with_contents(collection: Collection, clone_visitor: CloneVi
         clone(image_or_document, {}, clone_visitor)
         image_or_document.collection = collection
         file = image_or_document.file
-        content_file = ContentFile(file.read(), name=file.name)
-        filename = file.name.split('/')[-1]
-        file.save(filename, content_file)
+        try:
+            content_file = ContentFile(file.read(), name=file.name)
+            filename = file.name.split('/')[-1]
+            file.save(filename, content_file)
+        except FileNotFoundError as e:
+            logger.warning(f"Could not copy file of collection item {image_or_document}: {e}")
+        image_or_document.save()
 
 
 def _new_site_hostname(old_plan: Plan, new_plan_identifier: str) -> str:
