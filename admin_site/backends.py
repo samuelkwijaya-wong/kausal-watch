@@ -4,8 +4,10 @@ from typing import override
 
 from django.conf import settings
 
+from jwt import DecodeError, ExpiredSignatureError, decode as jwt_decode, get_unverified_header
 from social_core.backends.azuread_tenant import AzureADTenantOAuth2
 from social_core.backends.open_id_connect import OpenIdConnectAuth
+from social_core.exceptions import AuthTokenError
 
 
 class AzureADAuth(AzureADTenantOAuth2):
@@ -67,6 +69,28 @@ class SingleTenantSpecificEntraAuth(AzureADAuth):
             settings.SINGLE_TENANT_SPECIFIC_ENTRA_KEY,
             settings.SINGLE_TENANT_SPECIFIC_ENTRA_SECRET
         )
+
+    @override
+    def user_data(self, access_token, *args, **kwargs):
+        response = kwargs.get("response")
+        id_token = response.get("id_token")
+
+        # get key id and algorithm
+        key_id = get_unverified_header(id_token)["kid"]
+
+        try:
+            # retrieve certificate for key_id
+            certificate = self.get_certificate(key_id)
+
+            return jwt_decode(
+                id_token,
+                key=certificate.public_key(),  # type: ignore[reportArgumentType]
+                algorithms=["RS256"],
+                audience=settings.SINGLE_TENANT_SPECIFIC_ENTRA_KEY,
+            )
+        except (DecodeError, ExpiredSignatureError) as error:
+            raise AuthTokenError(self) from error
+
 
 class ADFSOpenIDConnectAuth(OpenIdConnectAuth):
     """Integrate with an on-premises Microsoft ADFS implementation."""
