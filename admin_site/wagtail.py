@@ -439,6 +439,8 @@ class AplansButtonHelper(DatasetButtonMixin, ButtonHelper):
     def get_buttons_for_obj(
         self, obj, exclude=None, classnames_add=None, classnames_exclude=None
     ):
+        from actions.models import Action, Category
+
         buttons = super().get_buttons_for_obj(obj, exclude, classnames_add, classnames_exclude)
         view_live_button = self.view_live_button(
             obj,
@@ -447,8 +449,9 @@ class AplansButtonHelper(DatasetButtonMixin, ButtonHelper):
         )
         if view_live_button:
             buttons.append(view_live_button)
-        dataset_buttons = self.dataset_buttons(obj, classnames_add or [], classnames_exclude)
-        buttons.extend(dataset_buttons)
+        if isinstance(obj, (Action, Category)):
+            dataset_buttons = self.dataset_buttons(obj, classnames_add or [], classnames_exclude)
+            buttons.extend(dataset_buttons)
         return buttons
 
 
