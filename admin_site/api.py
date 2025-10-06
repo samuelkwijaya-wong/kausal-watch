@@ -73,7 +73,7 @@ def check_login_method(request):
         msg = _("Invalid email address")
         raise ValidationError({'detail': msg, 'code': 'invalid_email'})
 
-    user = User.objects.filter(email__iexact=email).first()
+    user = User.objects.filter(email__iexact=email, is_active=True).first()
     person = user.get_corresponding_person() if user else None
 
     if user is None or person is None:
