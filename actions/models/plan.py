@@ -56,10 +56,13 @@ from people.models import Person
 if TYPE_CHECKING:
     from django.http.request import HttpRequest
 
+    from rich.repr import RichReprResult
+
     from kausal_common.models.types import FK, M2M, RevMany, RevOne
+    from kausal_common.users import UserOrAnon
 
     from aplans.graphql_types import WorkflowStateEnum
-    from aplans.types import UserOrAnon, WatchAPIRequest, WatchRequest
+    from aplans.types import WatchAPIRequest, WatchRequest
 
     from actions.models.action_deps import ActionDependencyRole
     from actions.models.attributes import AttributeType
@@ -1127,15 +1130,15 @@ class PlanDomain(models.Model):
         PREVIEW = 'preview', _('Preview')
         DEVELOPMENT = 'development', _('Development')
 
-    plan: ParentalKey[Plan] = ParentalKey(  # pyright: ignore
+    plan: ParentalKey[Plan] = ParentalKey(
         Plan, on_delete=models.CASCADE, related_name='domains', verbose_name=_('plan'),
     )
-    hostname = models.CharField(  # pyright: ignore
+    hostname = models.CharField(
         max_length=200, verbose_name=_('host name'), db_index=True,
         validators=[is_valid_hostname],
         help_text=_('The fully qualified domain name, eg. climate.cityname.gov. Leave blank if not yet known.'),
     )
-    redirect_to_hostname = models.CharField(  # pyright: ignore
+    redirect_to_hostname = models.CharField(
         max_length=200, verbose_name=_('redirect to host name'),
         validators=[is_valid_hostname],
         null=True,
@@ -1190,6 +1193,14 @@ class PlanDomain(models.Model):
         if self.base_path:
             s += ':' + self.base_path
         return s
+
+    def __rich_repr__(self) -> RichReprResult:
+        hostpath = self.hostname
+        if self.base_path and self.base_path != '/':
+            hostpath += self.base_path
+        yield 'hostpath', hostpath
+        yield 'plan', self.plan.identifier
+        yield 'deployment_environment', self.deployment_environment
 
     @property
     def status(self) -> PublicationStatus:
