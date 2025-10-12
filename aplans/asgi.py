@@ -14,6 +14,7 @@ from typing import TYPE_CHECKING, Any, cast
 from django.core.asgi import get_asgi_application
 
 from channels.routing import ProtocolTypeRouter
+from starlette.routing import Mount
 from starlette.staticfiles import StaticFiles
 
 from kausal_common.asgi.middleware import HTTPMiddleware, WebSocketMiddleware
@@ -44,7 +45,7 @@ class AuthGraphQLProtocolTypeRouter(ProtocolTypeRouter):
         if not settings.ENABLE_DEBUG_TOOLBAR:
             graphql_asgi_app = HTTPMiddleware(WatchGraphQLHTTPConsumer.as_asgi(schema=schema))
             http_urls.append(re_path_any(gql_url_pattern, graphql_asgi_app))
-        http_urls.append(re_path_any(r"^static/", StaticFiles(directory=settings.STATIC_ROOT)))
+        http_urls.append(re_path_any(r"^static/", Mount(path='/static', app=StaticFiles(directory=settings.STATIC_ROOT))))
         http_urls.append(re_path_any(r"^", django_asgi_app))
 
         super().__init__(
