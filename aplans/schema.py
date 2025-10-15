@@ -96,7 +96,7 @@ class Query(
         include_related_plans=graphene.Boolean(default_value=False),
         required=False,
     )
-    person = graphene.Field(people_schema.PersonNode, id=graphene.ID(required=True))
+    person = graphene.Field(people_schema.PersonNode, id=graphene.ID(required=True), plan=graphene.ID(required=True))
 
     def resolve_plan_organizations(
         self, info: GQLInfo, plan: str | None, with_ancestors: bool, for_responsible_parties: bool, for_contact_persons: bool,
@@ -181,9 +181,12 @@ class Query(
 
         return qs
 
-    def resolve_person(self, info: GQLInfo, id: str) -> Person | None:
+    def resolve_person(self, info: GQLInfo, id: str, plan: str | None = None) -> Person | None:
         user = user_or_none(info.context.user)
-        qs = Person.objects.get_queryset().visible_for_user(user, plan=get_plan_from_context(info))
+        plan_obj = get_plan_from_context(info, plan)
+        if plan_obj is None:
+            return None
+        qs = Person.objects.get_queryset().available_for_plan(plan_obj).visible_for_user(user, plan=plan_obj)
         return qs.filter(id=id).first()
 
 

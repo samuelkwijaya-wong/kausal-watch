@@ -5,19 +5,37 @@ from django.utils import timezone
 
 import pytest
 
+from actions.models.features import PlanFeatures
 from actions.tests.factories import ActionContactFactory, ActionFactory, ActionResponsiblePartyFactory, PlanFactory
 from orgs.tests.factories import OrganizationClassFactory, OrganizationFactory
 from people.tests.factories import PersonFactory
+from users.models import User
 
 pytestmark = pytest.mark.django_db
 
 
-def test_person_node(graphql_client_query_data):
-    person = PersonFactory.create()
-    data = graphql_client_query_data(
-        """
-        query($person: ID!) {
-          person(id: $person) {
+def test_person_node(action_contact_person_user: User, graphql_client_query_data):
+    person = action_contact_person_user.get_corresponding_person()
+    assert person is not None
+
+    action = person.contact_for_actions.first()
+    assert action is not None
+    plan = action.plan
+
+    features = plan.features
+    features.contact_persons_public_data = PlanFeatures.ContactPersonsPublicData.ALL
+    features.save()
+
+    other_plan = PlanFactory.create()
+    features = other_plan.features
+    features.contact_persons_public_data = PlanFeatures.ContactPersonsPublicData.NONE
+    features.save()
+
+    person = PersonFactory.create(organization=plan.organization)
+    other_person = PersonFactory.create(organization=other_plan.organization)
+    person_query = """#graphql
+        query($person: ID!, $plan: ID!) {
+          person(plan: $plan, id: $person) {
             __typename
             id
             firstName
@@ -30,9 +48,9 @@ def test_person_node(graphql_client_query_data):
             }
           }
         }
-        """,
-        variables=dict(person=person.pk),
-    )
+    """
+
+    data = graphql_client_query_data(person_query, variables=dict(person=person.pk, plan=plan.identifier))
     expected = {
         'person': {
             '__typename': 'Person',
@@ -48,6 +66,11 @@ def test_person_node(graphql_client_query_data):
         },
     }
     assert data == expected
+
+    data = graphql_client_query_data(person_query, variables=dict(person=other_person.pk, plan=plan.identifier))
+    assert data == {
+        'person': None,
+    }
 
 
 @pytest.mark.parametrize('published', [False, True])

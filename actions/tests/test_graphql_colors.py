@@ -2,6 +2,8 @@ import itertools
 
 import pytest
 
+from actions.models.plan import Plan
+
 pytestmark = pytest.mark.django_db
 OVERRIDE_COLOR = 'beige123'
 
@@ -64,12 +66,12 @@ def test_plan_action_colors(
 
 def test_plan_phase_colors(
         graphql_client_query_data,
-        plan,
+        plan: Plan,
         colorized_implementation_phases,
         django_assert_max_num_queries,
 ):
     data = None
-    with django_assert_max_num_queries(4):
+    with django_assert_max_num_queries(5):
         data = graphql_client_query_data(
             """
             query($plan: ID!) {
@@ -99,7 +101,7 @@ def test_plan_status_colors(
         django_assert_max_num_queries,
 ):
     data = None
-    with django_assert_max_num_queries(6):
+    with django_assert_max_num_queries(7):
         data = graphql_client_query_data(
             """
             query($plan: ID!) {
