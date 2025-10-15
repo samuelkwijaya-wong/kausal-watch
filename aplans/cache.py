@@ -68,9 +68,22 @@ class PlanSpecificCache:
     def visible_pages(self) -> list[AplansPage]:
         if self.translated_root_page is None:
             return []
-        return cast(
-            'list[AplansPage]', list(self.translated_root_page.get_descendants(inclusive=True).live().public().specific())
-        )
+        pages = self.translated_root_page.get_descendants(inclusive=True).live().public().specific()
+
+        # We store the parent object in the page object itself to avoid extra DB hits.
+        # MP_Node.get_parent() will use this cached parent object if it exists.
+        # Also, we filter out pages that don't have a visible parent.
+        pages_by_path = {page.path: page for page in pages}
+        visible_pages = []
+        for page in pages:
+            parent_path = page._get_basepath(page.path, depth=page.depth - 1)
+            parent = pages_by_path.get(parent_path)
+            setattr(page, '_cached_parent_obj', parent)  # noqa: B010
+            if page != self.translated_root_page and parent is None:
+                continue
+            visible_pages.append(page)
+
+        return cast('list[AplansPage]', visible_pages)
 
     @cached_property
     def action_dataset_schemas(self) -> DatasetSchemaQuerySet:
