@@ -22,9 +22,11 @@ from django.utils.translation import gettext_lazy as _
 from wagtail.admin.panels import FieldPanel, ObjectList, TabbedInterface
 
 from dal import autocomplete
-from wagtail_modeladmin.helpers import ButtonHelper
+from wagtail_modeladmin.helpers.button import ButtonHelper
 from wagtail_modeladmin.options import modeladmin_register
 from wagtail_modeladmin.views import DeleteView
+
+from kausal_common.users import user_or_bust
 
 from aplans.context_vars import ctx_instance, ctx_request
 from aplans.utils import naturaltime
@@ -346,7 +348,7 @@ class PersonButtonHelper(ButtonHelper):
 
     def get_buttons_for_obj(self, obj, *args, **kwargs):
         buttons = super().get_buttons_for_obj(obj, *args, **kwargs)
-        user = self.request.user
+        user = user_or_bust(self.request.user)
         plan = user.get_active_admin_plan()
         assert isinstance(obj, Person)
         # Only display a password reset button if the user has a usable password. This prevents showing the button for
@@ -577,7 +579,7 @@ class PersonAdmin(AplansModelAdmin):
         request = ctx_request.get()
         instance = ctx_instance.get()
         basic_panels = list(self.basic_panels)
-        user = request.user
+        user = user_or_bust(request.user)
         plan = user.get_active_admin_plan()
         if user.is_general_admin_for_plan(plan):
             form_class = PersonFormForGeneralAdmin

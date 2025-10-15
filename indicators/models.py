@@ -1155,7 +1155,7 @@ class IndicatorContactPerson(OrderedModel):
     indicator = ParentalKey(
         Indicator, on_delete=models.CASCADE, verbose_name=_('indicator'), related_name='contact_persons',
     )
-    person = ParentalKey(
+    person: PK[Person] = ParentalKey(
         'people.Person', on_delete=models.CASCADE, verbose_name=_('person'),
     )
 

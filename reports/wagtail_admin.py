@@ -1,12 +1,13 @@
+from __future__ import annotations
+
 from django.contrib import admin
 from django.contrib.admin.utils import quote
 from django.http import HttpResponse
 from django.urls import re_path
-from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 from wagtail.admin.panels import FieldPanel
 
-from wagtail_modeladmin.helpers import ButtonHelper
+from wagtail_modeladmin.helpers.button import ButtonHelper
 from wagtail_modeladmin.menus import ModelAdminMenuItem
 from wagtail_modeladmin.options import modeladmin_register
 from wagtail_modeladmin.views import DeleteView

@@ -15,10 +15,13 @@ if typing.TYPE_CHECKING:
 
     from django.db.models import Model
 
+    from aplans.types import WatchAdminRequest
+
 def schema_default_scope():
     # Only call in view contexts where the context has been initialized
     from aplans.context_vars import ctx_request
-    return ctx_request.get().get_admin_request().get_active_admin_plan()
+    request = typing.cast('WatchAdminRequest', ctx_request.get())
+    return request.get_active_admin_plan()
 
 
 DATA_SOURCE_DEFAULT_SCOPE_CONTENT_TYPE = ('actions', 'plan')

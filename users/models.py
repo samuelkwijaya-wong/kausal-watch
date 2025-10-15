@@ -90,6 +90,26 @@ class UserPermissionCache:
             return set()
         return {ind.id for ind in person.contact_for_indicators.all()}
 
+    @cached_property
+    def admin_for_organizations(self) -> list[Organization]:
+        person = self.corresponding_person
+        if not person:
+            return []
+        opas = Organization.objects.filter(organization_plan_admins__person=person).distinct()
+        return list(opas)
+
+    @cached_property
+    def admin_for_organization_ids(self) -> set[int]:
+        return {org.id for org in self.admin_for_organizations}
+
+    @cached_property
+    def general_admin_for_plans(self) -> set[int]:
+        from actions.models import Plan
+        person = self.corresponding_person
+        if not person:
+            return set()
+        return set(Plan.objects.filter(general_admins__person=self.corresponding_person).values_list('id', flat=True))
+
 
 class UserRelatedModelsCache:
     _corresponding_person: Person | None

@@ -1712,7 +1712,7 @@ class Query:
                 actions_without_revision = action_queryset.exclude(pk__in=[int(pk) for pk in actions_with_revision_pks])
                 revision_pks = list(workflowstates.values_list('current_task_state__revision_id', flat=True))
         revision_qs = Revision.objects.filter(pk__in=revision_pks).prefetch_related('content_object__plan')
-        actions = []
+        actions: list[Action] = []
         for rev in revision_qs:
             content = SerializedDictWithRelatedObjectCache[str, Any](rev.content, cache=cache)
             action = Action.from_serializable_data(content, check_fks=False, strict_fks=False)
@@ -1725,7 +1725,9 @@ class Query:
             'indicators__goals',
             'categories',
         )
-        actions.extend(actions_without_revision)
+        for action in actions_without_revision:
+            cache.enrich_action(action)
+            actions.append(action)
         return sorted(actions, key=lambda o: o.order)
 
     @staticmethod
@@ -1747,7 +1749,7 @@ class Query:
         if not plan_obj.is_visible_for_user(user):
             return None
 
-        workflow_state = info.context.watch_cache.query_workflow_state
+        workflow_state = info.context.cache.query_workflow_state
         qs = gql_optimizer.query(
             plans_actions_queryset(
                 [plan_obj],
@@ -1759,7 +1761,7 @@ class Query:
             info,
         )
 
-        cache = info.context.watch_cache.for_plan(plan_obj)
+        cache = info.context.cache.for_plan(plan_obj)
         persons_queryset = Person.objects.get_queryset().filter(actioncontactperson__action__plan=plan_obj).distinct()
         cache.populate_persons(persons_queryset)
         cache.populate_organizations(
@@ -1773,8 +1775,13 @@ class Query:
         elif not user.can_access_public_site(plan=plan_obj):
             workflow_state = WorkflowStateEnum.PUBLISHED
         if workflow_state == WorkflowStateEnum.PUBLISHED:
-            return qs
-        return Query._resolve_plan_action_revisions(plan_obj, workflow_state, qs, cache=cache)
+            actions = []
+            for act in qs:
+                cache.enrich_action(act)
+                actions.append(act)
+            return actions
+        ret = Query._resolve_plan_action_revisions(plan_obj, workflow_state, qs, cache=cache)
+        return ret
 
     @staticmethod
     def resolve_related_plan_actions(root, info, plan, first=None, category=None, order_by=None, **kwargs):

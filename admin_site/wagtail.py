@@ -31,7 +31,8 @@ from wagtail.admin.panels import (
 )
 from wagtail.admin.panels.field_panel import FieldPanel
 
-from wagtail_modeladmin.helpers import ButtonHelper, PermissionHelper
+from wagtail_modeladmin.helpers.button import ButtonHelper
+from wagtail_modeladmin.helpers.permission import PermissionHelper
 from wagtail_modeladmin.options import ModelAdmin
 from wagtail_modeladmin.views import CreateView, EditView, IndexView
 from wagtailautocomplete.edit_handlers import AutocompletePanel as WagtailAutocompletePanel
@@ -67,7 +68,7 @@ if TYPE_CHECKING:
 def insert_model_translation_panels[M: Model](
     model: type[M],
     panels: Sequence[Panel[M]],
-    request: WatchAdminRequest,
+    request: HttpRequest,
     plan: Plan | None = None,
 ) -> Sequence[Panel[M]]:
     """Return a list of panels containing all of `panels` and language-specific panels for fields with i18n."""
@@ -77,7 +78,8 @@ def insert_model_translation_panels[M: Model](
 
     out = []
     if plan is None:
-        plan = request.user.get_active_admin_plan()
+        user = user_or_bust(request.user)
+        plan = user.get_active_admin_plan()
 
     field_map: dict[str, dict[str | None, TranslatedVirtualField]] = {}
     for f in i18n_field.get_translated_fields():
@@ -303,8 +305,8 @@ class BuiltInFieldCustomizationAwareEditHandlerMixin(FieldPanelMixinBase):
         form_class = super().get_form_class()
         request = ctx_request.get()
         instance = ctx_instance.get()
-        user = request.user
-        plan = request.get_active_admin_plan()
+        user = user_or_bust(request.user)
+        plan = user.get_active_admin_plan()
 
         def change_base_fields(form_class: type[WagtailAdminModelForm], model: type[Model]) -> None:
             customizations_qs = BuiltInFieldCustomization.objects.filter(
@@ -330,78 +332,71 @@ class BuiltInFieldCustomizationAwareEditHandlerMixin(FieldPanelMixinBase):
         return form_class
 
 
-class ButtonHelperProtocol(Protocol):
-    finalise_classname: Callable[..., Any]
-    model: Model
-    request: HttpRequest
-
-
-class DatasetButtonMixin:
-    def dataset_buttons(
-        self: ButtonHelperProtocol,
-        obj: DatasetScopeType | None,
-        classnames_add: list[str] | None = None,
-        classnames_exclude: list[str] | None = None,
-        cache: PlanSpecificCache | None = None,
-    ) -> list[dict[str, Any]]:
-        buttons: list[dict[str, Any]] = []
-        if classnames_add is None:
-            classnames_add = []
-        if find_spec('kausal_watch_extensions') is not None:
-            from kausal_watch_extensions.dataset_editor import DatasetViewSet
-        else:
-            return buttons
-
-        if obj is None:
-            return buttons
-
-        cache = cache or getattr(self.request, 'admin_cache')  # noqa: B009
-        assert cache is not None
-        schemas = cache.get_dataset_schemas_for_object(obj)
-        for schema in schemas:
-            dataset_cache = cache.datasets_by_scope_by_schema
-            matching_dataset = (
-                dataset_cache.get(
-                    self.model._meta.label,
-                    {},
-                )
-                .get(
-                    obj.pk,
-                    {},
-                )
-                .get(
-                    str(schema.uuid),
-                    None,
-                )
-            )
-            classname = self.finalise_classname(
-                classnames_add=classnames_add,
-                classnames_exclude=classnames_exclude,
-            )
-            if matching_dataset:
-                edit_url = reverse(DatasetViewSet().get_url_name('edit'), args=[matching_dataset.pk])
-                label = _('Edit %(schema_name)s') % {'schema_name': schema.name}
-                button = {
-                    'url': edit_url,
-                    'label': label,
-                    'classname': classname,
-                    'icon': 'edit',
-                }
-            else:
-                add_url = reverse(DatasetViewSet().get_url_name('add'))
-                add_url += f'?dataset_schema_uuid={schema.uuid}&model={self.model._meta.label}&object_id={obj.pk}'
-                label = _('Add %(schema_name)s') % {'schema_name': schema.name}
-                button = {
-                    'url': add_url,
-                    'label': label,
-                    'classname': classname,
-                    'icon': 'plus',
-                }
-            buttons.append(button)
+def get_dataset_buttons(
+    self: ButtonHelper,
+    obj: DatasetScopeType | None,
+    classnames_add: list[str] | None = None,
+    classnames_exclude: list[str] | None = None,
+    cache: PlanSpecificCache | None = None,
+):
+    buttons: list[dict[str, Any]] = []
+    if classnames_add is None:
+        classnames_add = []
+    if find_spec('kausal_watch_extensions') is not None:
+        from kausal_watch_extensions.dataset_editor import DatasetViewSet
+    else:
         return buttons
 
+    if obj is None:
+        return buttons
 
-class AplansButtonHelper(DatasetButtonMixin, ButtonHelper):
+    cache = cache or getattr(self.request, 'admin_cache')  # noqa: B009
+    assert cache is not None
+    schemas = cache.get_dataset_schemas_for_object(obj)
+    for schema in schemas:
+        dataset_cache = cache.datasets_by_scope_by_schema
+        matching_dataset = (
+            dataset_cache.get(
+                self.model._meta.label,
+                {},
+            )
+            .get(
+                obj.pk,
+                {},
+            )
+            .get(
+                str(schema.uuid),
+                None,
+            )
+        )
+        classname = self.finalise_classname(
+            classnames_add=classnames_add,
+            classnames_exclude=classnames_exclude,
+        )
+        if matching_dataset:
+            edit_url = reverse(DatasetViewSet().get_url_name('edit'), args=[matching_dataset.pk])
+            label = _('Edit %(schema_name)s') % {'schema_name': schema.name}
+            button = {
+                'url': edit_url,
+                'label': label,
+                'classname': classname,
+                'icon': 'edit',
+            }
+        else:
+            add_url = reverse(DatasetViewSet().get_url_name('add'))
+            add_url += f'?dataset_schema_uuid={schema.uuid}&model={self.model._meta.label}&object_id={obj.pk}'
+            label = _('Add %(schema_name)s') % {'schema_name': schema.name}
+            button = {
+                'url': add_url,
+                'label': label,
+                'classname': classname,
+                'icon': 'plus',
+            }
+        buttons.append(button)
+    return buttons
+
+
+class AplansButtonHelper(ButtonHelper):
     request: HttpRequest
     edit_button_classnames = ['button-primary']
 
@@ -450,7 +445,7 @@ class AplansButtonHelper(DatasetButtonMixin, ButtonHelper):
         if view_live_button:
             buttons.append(view_live_button)
         if isinstance(obj, (Action, Category)):
-            dataset_buttons = self.dataset_buttons(obj, classnames_add or [], classnames_exclude)
+            dataset_buttons = get_dataset_buttons(self, obj, classnames_add or [], classnames_exclude)
             buttons.extend(dataset_buttons)
         return buttons
 
@@ -482,8 +477,7 @@ class AplansTabbedInterface[M: Model, F: ModelForm[Any]](TabbedInterface[M, F]):
 
 
 if TYPE_CHECKING:
-
-    class PersistFiltersBase(Protocol):
+    class PersistFiltersBase:
         continue_editing_active: Callable[[], bool]
         get_success_url: Callable[[], str | None]
         model_name: str
@@ -497,10 +491,10 @@ else:
 # ModelAdmin. Remove this class when ModelAdmin migration is finished.
 class PersistFiltersEditingModelAdminMixin(PersistFiltersBase):
     def get_success_url(self: PersistFiltersBase):
-        if hasattr(super(), 'continue_editing_active') and super().continue_editing_active():
-            return super().get_success_url()
+        if hasattr(super(), 'continue_editing_active') and super().continue_editing_active():  # type: ignore[misc]
+            return super().get_success_url()  # type: ignore[misc]
         model = self.model_name
-        url = super().get_success_url()
+        url = super().get_success_url()  # type: ignore[misc]
         if model is None:
             return url
         filter_qs = self.request.session.get(f'{model}_filter_querystring')
@@ -720,7 +714,7 @@ class AplansCreateView[M: Model](
         return ret
 
 
-class AplansIndexView(ActivatePermissionHelperPlanContextModelAdminMixin, IndexView):
+class AplansIndexView[M: Model](ActivatePermissionHelperPlanContextModelAdminMixin, IndexView):
     pass
 
 
@@ -732,7 +726,7 @@ class AplansModelAdmin[M: Model](ModelAdmin):
     edit_view_class = AplansEditView
     create_view_class = AplansCreateView
     index_view_class = AplansIndexView
-    button_helper_class = AplansButtonHelper
+    button_helper_class: type[ButtonHelper] = AplansButtonHelper
     permission_helper_class: type[PermissionHelper] | None
 
     def __init__(self, *args, **kwargs):

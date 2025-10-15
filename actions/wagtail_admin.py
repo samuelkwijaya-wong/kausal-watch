@@ -26,7 +26,7 @@ from wagtail.snippets.views.snippets import IndexView, SnippetViewSet
 from dal import autocomplete
 from django_filters import filters
 from wagtail_color_panel.edit_handlers import NativeColorPanel
-from wagtail_modeladmin.helpers import PermissionHelper
+from wagtail_modeladmin.helpers.permission import PermissionHelper
 from wagtail_modeladmin.options import ModelAdminMenuItem, modeladmin_register
 
 from kausal_common.people.chooser import PersonChooser
@@ -293,15 +293,16 @@ class PlanAdmin(AplansModelAdmin[Plan]):
             ]
             panels = create_panels + [p for p in panels if getattr(p, 'field_name', None) in panels_enabled_when_creating]
 
+        user = user_or_bust(request.user)
         action_status_panels = insert_model_translation_panels(
             ActionStatus,
-            self.get_action_status_panels(request.user),
+            self.get_action_status_panels(user),
             request,
             instance,
         )
         action_implementation_phase_panels = insert_model_translation_panels(
             ActionStatus,
-            self.get_action_implementation_phase_panels(request.user),
+            self.get_action_implementation_phase_panels(user),
             request,
             instance,
         )
@@ -326,7 +327,7 @@ class PlanAdmin(AplansModelAdmin[Plan]):
                 instance,
             )
         )
-        if request.user.is_superuser:
+        if user.is_superuser:
             panels.append(
                 InlinePanel(
                     'clients',
@@ -339,7 +340,7 @@ class PlanAdmin(AplansModelAdmin[Plan]):
             )
             panels.append(FieldPanel('usage_status'))
             panels.append(FieldPanel('kausal_paths_instance_uuid'))
-        if not creating and request.user.is_superuser:
+        if not creating and user.is_superuser:
             panels.append(FieldPanel('theme_identifier'))
             panels.append(InlinePanel('domains', panels=[
                 FieldPanel('hostname'),
@@ -351,7 +352,7 @@ class PlanAdmin(AplansModelAdmin[Plan]):
                 FieldPanel('matomo_analytics_url'),
             ], heading=_('Domains')))
 
-        links_panel = CondensedInlinePanel[Plan, PlanLink](
+        links_panel = CondensedInlinePanel[Plan, PlanLink](  # type: ignore[assignment]
             'links',
             panels=(
                 FieldPanel('url'),
@@ -714,7 +715,7 @@ class ActivePlanMenuItem(PlanSpecificSingletonModelAdminMenuItem):
 
 class ActivePlanAdmin(PlanAdmin):
     edit_view_class = ActivePlanEditView
-    permission_helper_class = ActivePlanModelAdminPermissionHelper
+    permission_helper_class = ActivePlanModelAdminPermissionHelper  # type: ignore[assignment]
     menu_label = _('Plan')
     menu_icon = 'kausal-plan'
     add_to_settings_menu = True

@@ -76,7 +76,7 @@ class AdminMiddleware(MiddlewareMixin):
 
         if not plan.site_id:
             return
-        request._wagtail_site = plan.site  # type: ignore[attr-defined]
+        setattr(request, '_wagtail_site', plan.site)  # noqa: B010
 
         # If it's an admin method that changes something, invalidate Plan-related
         # GraphQL cache.

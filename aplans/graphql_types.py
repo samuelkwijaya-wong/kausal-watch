@@ -117,6 +117,7 @@ class DjangoNode[M: Model = Model](DjangoObjectType[M]):
 
 def set_active_plan(info: GQLInfo, plan: Plan):
     info.context.active_plan = plan
+    assert plan.is_visible_for_user(info.context.user), 'Plan is not visible for user'
 
 
 @typing.overload
@@ -132,10 +133,13 @@ def get_plan_from_context(info: GQLInfo, plan_identifier: str | None = None) -> 
         plan = info.context.active_plan
         if not plan:
             raise Exception('No plan in context')
+        assert plan.is_visible_for_user(info.context.user), 'Plan is not visible for user'
         return plan
 
     plan_cache = info.context.cache.for_plan_identifier(plan_identifier=plan_identifier)
     plan = plan_cache.plan
+    if not plan.is_visible_for_user(info.context.user):
+        return None
     set_active_plan(info, plan)
     return plan
 

@@ -415,7 +415,7 @@ class Plan(ClusterableModel, ModelWithPrimaryLanguage, PermissionedModel):
         'kausal_paths_instance_uuid',
     ]
 
-    objects: ClassVar[PlanManager] = PlanManager()  # pyright: ignore[reportIncompatibleVariableOverride]
+    objects: ClassVar[PlanManager] = PlanManager()
 
     _site_created: bool
     wagtail_reference_index_ignore = True

@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Any, cast
 
 from django import forms
-from django.contrib import messages
+from django.contrib import admin, messages
 from django.contrib.admin import SimpleListFilter
 from django.core.exceptions import ValidationError
 from django.shortcuts import redirect
@@ -22,13 +22,14 @@ from dal import autocomplete, forward as dal_forward
 from generic_chooser.views import ModelChooserViewSet
 from generic_chooser.widgets import AdminChooser
 from wagtail_color_panel.edit_handlers import NativeColorPanel
-from wagtail_modeladmin.helpers import PermissionHelper
+from wagtail_modeladmin.helpers.permission import PermissionHelper
 from wagtail_modeladmin.options import ModelAdminGroup
 from wagtail_modeladmin.views import DeleteView
 
 from kausal_common.people.chooser import PersonChooser
+from kausal_common.users import user_or_bust
 
-from aplans.context_vars import ctx_instance, ctx_request
+from aplans.context_vars import ctx_instance, ctx_request, get_admin_cache
 from aplans.extensions import modeladmin_register
 from aplans.wagtail_utils import _get_category_fields
 
@@ -38,6 +39,7 @@ from admin_site.wagtail import (
     AplansAdminModelForm,
     AplansCreateView,
     AplansEditView,
+    AplansIndexView,
     AplansModelAdmin,
     AplansTabbedInterface,
     BuiltInFieldCustomizationAwareEditHandlerMixin,
@@ -53,6 +55,7 @@ from orgs.models import Organization
 from .models import CommonIndicator, Dimension, Indicator, IndicatorLevel, Quantity, Unit
 
 if TYPE_CHECKING:
+    from django.http import HttpRequest
     from wagtail.admin.panels.base import Panel
 
     from users.models import User
@@ -80,6 +83,7 @@ class DisconnectedIndicatorFilter(SimpleListFilter):
         return queryset
 
     def choices(self, changelist):
+        assert self.parameter_name is not None
         for lookup, title in self.lookup_choices:
             if lookup is not None:
                 lookup = str(lookup)
@@ -90,8 +94,8 @@ class DisconnectedIndicatorFilter(SimpleListFilter):
             }
 
 
-class IndicatorPermissionHelper(PermissionHelper):
-    def user_can_inspect_obj(self, user, obj) -> bool:
+class IndicatorPermissionHelper(PermissionHelper[Indicator]):
+    def user_can_inspect_obj(self, user: User, obj: Indicator) -> bool:
         if not super().user_can_inspect_obj(user, obj):
             return False
 
@@ -103,11 +107,7 @@ class IndicatorPermissionHelper(PermissionHelper):
 
         adminable_plans = user.get_adminable_plans()
         obj_plans = obj.plans.all()
-        for plan in adminable_plans:
-            if plan in obj_plans:
-                return True
-
-        return False
+        return any(plan in obj_plans for plan in adminable_plans)
 
     def user_can_edit_obj(self, user: User, obj: Indicator):
         if not super().user_can_edit_obj(user, obj):
@@ -129,7 +129,7 @@ class IndicatorPermissionHelper(PermissionHelper):
             return False
 
         obj_plans = obj.plans.all()
-        admin_for_all = all([user.is_general_admin_for_plan(plan) for plan in obj_plans])
+        admin_for_all = all(user.is_general_admin_for_plan(plan) for plan in obj_plans)
         if not admin_for_all:
             return False
 
@@ -145,7 +145,7 @@ class IndicatorPermissionHelper(PermissionHelper):
         return False
 
 
-class QuantityChooserViewSet(ModelChooserViewSet):
+class QuantityChooserViewSet(ModelChooserViewSet[Quantity]):
     icon = 'kausal-dimension'  # FIXME
     model = Quantity
     page_title = _("Choose a quantity")
@@ -167,11 +167,11 @@ def register_quantity_chooser_viewset():
     return QuantityChooserViewSet('quantity_chooser', url_prefix='quantity-chooser')
 
 
-class DimensionCreateView(AplansCreateView):
+class DimensionCreateView(AplansCreateView[Dimension]):
     def form_valid(self, form, *args, **kwargs):
         response = super().form_valid(form, *args, **kwargs)
-
-        plan = self.request.user.get_active_admin_plan() # type: ignore
+        user = user_or_bust(self.request.user)
+        plan = user.get_active_admin_plan()
         dimension = form.instance
 
         if plan:
@@ -188,7 +188,7 @@ class DimensionDeleteView(DeleteView):
     def post(self, request, *args, **kwargs):
         dimension = self.instance
         current_plan = request.user.get_active_admin_plan()
-
+        assert dimension is not None
         other_plans = dimension.plans.exclude(plan=current_plan)
         if other_plans.exists():
             messages.error(
@@ -202,7 +202,7 @@ class DimensionDeleteView(DeleteView):
         return super().post(request, *args, **kwargs)
 
 
-class DimensionAdmin(AplansModelAdmin):
+class DimensionAdmin(AplansModelAdmin[Dimension]):
     model = Dimension
     menu_order = 4
     menu_icon = 'kausal-dimension'
@@ -228,7 +228,7 @@ class QuantityForm(AplansAdminModelForm[Quantity]):
     pass
 
 
-class QuantityAdmin(AplansModelAdmin):
+class QuantityAdmin(AplansModelAdmin[Quantity]):
     model = Quantity
     menu_icon = 'kausal-dimension'  # FIXME
     menu_order = 6
@@ -252,11 +252,11 @@ class QuantityAdmin(AplansModelAdmin):
         return super().get_queryset(request).order_by('name_i18n')
 
 
-class UnitForm(AplansAdminModelForm):
+class UnitForm(AplansAdminModelForm[Unit]):
     pass
 
 
-class UnitAdmin(AplansModelAdmin):
+class UnitAdmin(AplansModelAdmin[Unit]):
     model = Unit
     menu_icon = 'kausal-dimension'  # FIXME
     menu_order = 5
@@ -280,7 +280,7 @@ class UnitAdmin(AplansModelAdmin):
         return AplansTabbedInterface(tabs, base_form_class=UnitForm)
 
 
-class IndicatorForm(AplansAdminModelForm):
+class IndicatorForm(AplansAdminModelForm[Indicator]):
     LEVEL_CHOICES = (('', _('[not in active plan]')),) + Indicator.LEVELS
 
     level = forms.ChoiceField(choices=LEVEL_CHOICES, required=False)
@@ -399,10 +399,10 @@ class IndicatorAdminOrganizationFilter(SimpleListFilter):
     title = _('Organization')
     parameter_name = 'organization'
 
-    def lookups(self, request, model_admin):
+    def lookups(self, request: HttpRequest, model_admin):
         # Only show organizations that have indicators and are related to the current plan
         orgs_with_indicators = Indicator.objects.values_list('organization')
-        plan = request.user.get_active_admin_plan()
+        plan = get_admin_cache(request).plan
         filtered_orgs = plan.related_organizations.filter(id__in=orgs_with_indicators)
         return [(org.id, org.name) for org in filtered_orgs]
 
@@ -412,13 +412,21 @@ class IndicatorAdminOrganizationFilter(SimpleListFilter):
         return queryset
 
 
-class IndicatorCreateView(InitializeFormWithPlanMixin, InitializeFormWithInitialPlanMixin, AplansCreateView):
+class IndicatorCreateView(InitializeFormWithPlanMixin, InitializeFormWithInitialPlanMixin, AplansCreateView[Indicator]):
     pass
 
-class IndicatorEditView(InitializeFormWithPlanMixin, InitializeFormWithInitialPlanMixin, AplansEditView):
+class IndicatorEditView(InitializeFormWithPlanMixin, InitializeFormWithInitialPlanMixin, AplansEditView[Indicator]):
     pass
 
-class IndicatorEditHandler(BuiltInFieldCustomizationAwareEditHandlerMixin, AplansTabbedInterface[Indicator]):
+
+class IndicatorIndexView(AplansIndexView[Indicator]):
+    def get_queryset(self, request: HttpRequest | None = None):
+        qs = super().get_queryset(request)
+        qs = qs.prefetch_related('organization').prefetch_related('plans').prefetch_related('levels')
+        return qs
+
+
+class IndicatorEditHandler(BuiltInFieldCustomizationAwareEditHandlerMixin, AplansTabbedInterface[Indicator, IndicatorForm]):  # type: ignore[misc]
     def get_form_class(self):
         request = ctx_request.get_admin_request()
         instance = ctx_instance.get_as_type(Indicator)
@@ -436,10 +444,11 @@ class IndicatorEditHandler(BuiltInFieldCustomizationAwareEditHandlerMixin, Aplan
         return form_class
 
 
-class IndicatorAdmin(AplansModelAdmin):
+class IndicatorAdmin(AplansModelAdmin[Indicator]):
     model = Indicator
     create_view_class = IndicatorCreateView
     edit_view_class = IndicatorEditView
+    index_view_class = IndicatorIndexView
     menu_icon = 'kausal-indicator'
     menu_order = 3
     menu_label = _('Indicators')
@@ -661,26 +670,27 @@ class IndicatorAdmin(AplansModelAdmin):
 
         return list_filter
 
+    @admin.display(description=_('Unit'))
     def unit_display(self, obj):
         unit = obj.unit
         if not unit:
             return ''
         return unit.short_name or unit.name
-    unit_display.short_description = _('Unit')
 
-    def get_queryset(self, request):
+    def get_queryset(self, request: HttpRequest):
         qs = super().get_queryset(request)
-        plan = request.user.get_active_admin_plan()
-        if request.user.is_superuser:
-            qs = qs.filter(organization__in=Organization.objects.available_for_plan(plan))
+        user = user_or_bust(request.user)
+        plan = get_admin_cache(request).plan
+        if user.is_superuser:
+            qs = qs.filter(organization__in=Organization.objects.qs.available_for_plan(plan))
         else:
             orgs = [plan.organization.id]
-            orgs.extend(Organization.objects.user_is_plan_admin_for(request.user, plan).values_list("id", flat=True))
+            orgs.extend(Organization.objects.qs.user_is_plan_admin_for(user, plan).values_list("id", flat=True))
             qs = qs.filter(organization_id__in=orgs)
         return qs.select_related('unit', 'quantity')
 
 
-class CommonIndicatorForm(AplansAdminModelForm):
+class CommonIndicatorForm(AplansAdminModelForm[CommonIndicator]):
     def clean(self):
         if self.instance.pk and 'dimensions' in self.formsets:
             # Dimensions cannot be accessed from self.instance.dimensions yet

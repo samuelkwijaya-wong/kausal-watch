@@ -15,12 +15,18 @@ from wagtail.admin.ui.components import Component
 from wagtail.snippets.models import register_snippet
 from wagtail.snippets.views.snippets import SnippetViewSet
 
+from kausal_common.users import user_or_bust
+
+from aplans.context_vars import get_admin_cache
+
 from actions.models import CommonCategoryType
 
 from .models import Client
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
+
+    from laces.typing import RenderContext
 
     from aplans.types import WatchAdminRequest
 
@@ -35,18 +41,18 @@ class CategoryMenuItem(MenuItem):
         super().__init__(label, url, icon_name='kausal-category', **kwargs)
 
     def is_active(self, request):
-        path, _ = self.url.split('?', maxsplit=1)
         category_type = request.GET.get('category_type')
         return request.path.startswith(self.base_url) and category_type == str(self.category_type.pk)
 
 
 class CategoryMenu(Menu):
     def menu_items_for_request(self, request):
-        user = request.user
-        plan = user.get_active_admin_plan()
+        user = user_or_bust(request.user)
+        cache = get_admin_cache(request)
+        plan = cache.plan
         items = []
         if user.is_general_admin_for_plan(plan):
-            for category_type in plan.category_types.all():
+            for category_type in cache.category_types:
                 item = CategoryMenuItem(category_type)
                 items.append(item)
         return items
@@ -81,7 +87,8 @@ class CommonCategoryMenuItem(MenuItem):
 
 class CommonCategoryMenu(Menu):
     def menu_items_for_request(self, request):
-        if request.user.is_superuser:
+        user = user_or_bust(request.user)
+        if user.is_superuser:
             return [CommonCategoryMenuItem(cct) for cct in CommonCategoryType.objects.all()]
         return []
 
@@ -108,15 +115,15 @@ class ReportMenuItem(MenuItem):
         super().__init__(label, url, **kwargs)
 
     def is_active(self, request):
-        path, _ = self.url.split('?', maxsplit=1)
         report_type = request.GET.get('report_type')
         return request.path.startswith(self.base_url) and report_type == str(self.report_type.pk)
 
 
 class ReportMenu(Menu):
     def menu_items_for_request(self, request):
-        user = request.user
-        plan = user.get_active_admin_plan()
+        user = user_or_bust(request.user)
+        cache = get_admin_cache(request)
+        plan = cache.plan
         items = []
         if user.is_general_admin_for_plan(plan):
             for report_type in plan.report_types.all():
@@ -143,9 +150,10 @@ class OwnIndicatorsPanel(Component):
     order = 102
     template_name = 'admin_site/own_indicators_panel.html'
 
-    def get_context_data(self, parent_context: dict[str, Any]) -> dict[str, Any]:
+    def get_context_data(self, parent_context: RenderContext) -> RenderContext:  # type: ignore[override]
         request: WatchAdminRequest = parent_context['request']
         ctx = super().get_context_data(parent_context)
+        assert ctx is not None
         user = request.user
         plan = request.get_active_admin_plan()
         ctx['own_indicators'] = plan.indicators.filter(contact_persons__person__user=user).distinct()
@@ -168,7 +176,7 @@ def construct_homepage_panels(request, panels):
 
 
 @hooks.register('construct_homepage_summary_items', order=1000)
-def remove_default_site_summary_items(request, items: list):
+def remove_default_site_summary_items(request, items: list[MenuItem]):
     items.clear()
 
 
@@ -258,7 +266,7 @@ def remove_menu_items(
 
 
 @hooks.register('construct_settings_menu')
-def remove_settings_menu_items(request, items: list):
+def remove_settings_menu_items(request, items: list[MenuItem]):
     from wagtail.contrib.redirects.wagtail_hooks import (
         RedirectsMenuItem,
     )
@@ -277,7 +285,7 @@ def remove_settings_menu_items(request, items: list):
 
 
 @hooks.register('construct_main_menu')
-def remove_main_menu_items(request, items: list):
+def remove_main_menu_items(request, items: list[MenuItem]):
     from wagtail.snippets.wagtail_hooks import (
         SnippetsMenuItem,
     )
@@ -306,12 +314,12 @@ def should_remove_help_menu_item(item):
 
 
 @hooks.register('construct_help_menu')
-def remove_help_menu_items(request, items: list):
+def remove_help_menu_items(request, items: list[MenuItem]):
     items[:] = [item for item in items if not should_remove_help_menu_item(item)]
 
 
 @hooks.register('construct_help_menu')
-def add_documentation_to_help_menu(request, items: list):
+def add_documentation_to_help_menu(request, items: list[MenuItem]):
     # Add an item for each documentation page
     plan = request.user.get_active_admin_plan()
     documentation_root = plan.get_translated_documentation_root_page()

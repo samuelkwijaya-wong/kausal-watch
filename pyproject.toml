@@ -86,7 +86,7 @@ dependencies = [
     "rich",
     "s3cmd",
     "sentry-sdk[opentelemetry]",
-    "setuptools",
+    "setuptools<80",
     "social-auth-app-django",
     "starlette",
     "strawberry-graphql",
@@ -296,6 +296,7 @@ dev = [
     "pdbpp",
     "pre-commit",
     "uv",
+    "virtualenvwrapper>=6.1.1",
     "viztracer",
     "watchfiles",
 ]

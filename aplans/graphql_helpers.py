@@ -105,7 +105,7 @@ class ModelAdminAdminButtonsMixin:
         if not info.context.user.is_staff:
             return []
         adm = ModelAdmin()
-        index_view = adm.index_view_class(adm)
+        index_view = adm.index_view_class(adm)  # type: ignore[var-annotated]
         helper_class = adm.get_button_helper_class()
         helper = helper_class(index_view, info.context)
         if isinstance(helper.permission_helper, PlanRelatedModelAdminPermissionHelper):

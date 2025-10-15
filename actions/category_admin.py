@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any, cast
 
-from django.contrib import messages
+from django.contrib import admin, messages
 from django.contrib.admin import SimpleListFilter
 from django.core.exceptions import ValidationError
 from django.db import transaction
@@ -16,16 +16,18 @@ from wagtail.admin.panels import (
     MultiFieldPanel,
     ObjectList,
 )
-from wagtail.admin.panels.base import Panel
 
 from wagtail_color_panel.edit_handlers import NativeColorPanel
-from wagtail_modeladmin.helpers import ButtonHelper, PermissionHelper
+from wagtail_modeladmin.helpers.button import ButtonHelper
+from wagtail_modeladmin.helpers.permission import PermissionHelper
 from wagtail_modeladmin.menus import ModelAdminMenuItem
 from wagtail_modeladmin.options import modeladmin_register
 from wagtail_modeladmin.views import DeleteView
 from wagtailorderable.modeladmin.mixins import OrderableMixin
 
-from aplans.context_vars import ctx_instance, ctx_request
+from kausal_common.users import user_or_bust
+
+from aplans.context_vars import ctx_instance, ctx_request, get_admin_cache
 from aplans.utils import append_query_parameter
 
 from actions.blocks.mixins import ActionListPageBlockFormMixin
@@ -35,13 +37,14 @@ from admin_site.wagtail import (
     AplansAdminModelForm,
     AplansCreateView,
     AplansEditView,
+    AplansIndexView,
     AplansModelAdmin,
     AplansTabbedInterface,
     CondensedInlinePanel,
-    DatasetButtonMixin,
     InitializeFormWithInitialPlanMixin,
     InitializeFormWithPlanMixin,
     PlanFilteredFieldPanel,
+    get_dataset_buttons,
     get_translation_tabs,
     insert_model_translation_panels,
 )
@@ -49,8 +52,10 @@ from admin_site.wagtail import (
 from .models import Category, CategoryLevel, CategoryType, CommonCategory, CommonCategoryType
 
 if TYPE_CHECKING:
+    from django.db.models import QuerySet
     from django.forms import ModelChoiceField
     from django.http.request import HttpRequest
+    from wagtail.admin.panels.base import Panel
 
 
 class CategoryTypeFilter(SimpleListFilter):
@@ -86,11 +91,11 @@ class CommonCategoryTypeFilter(SimpleListFilter):
         return queryset
 
 
-class CategoryTypeCreateView(InitializeFormWithPlanMixin, InitializeFormWithInitialPlanMixin, AplansCreateView):
+class CategoryTypeCreateView(InitializeFormWithPlanMixin, InitializeFormWithInitialPlanMixin, AplansCreateView[CategoryType]):
     pass
 
 
-class CategoryTypeEditView(InitializeFormWithPlanMixin, InitializeFormWithInitialPlanMixin, AplansEditView):
+class CategoryTypeEditView(InitializeFormWithPlanMixin, InitializeFormWithInitialPlanMixin, AplansEditView[CategoryType]):
     pass
 
 
@@ -344,15 +349,16 @@ class CategoryCreateView(CategoryTypeQueryParameterMixin, AplansCreateView):
                 self.instance.generate_identifier()
 
 
-class CategoryEditView(CategoryTypeQueryParameterMixin, AplansEditView):
+class CategoryEditView(CategoryTypeQueryParameterMixin, AplansEditView[Category]):
     pass
+
 
 
 class CategoryDeleteView(CategoryTypeQueryParameterMixin, DeleteView):
     pass
 
 
-class CategoryAdminButtonHelper(DatasetButtonMixin, ButtonHelper):
+class CategoryAdminButtonHelper(ButtonHelper):
     request: HttpRequest
 
     # TODO: duplicated as AttributeTypeAdminButtonHelper
@@ -385,7 +391,7 @@ class CategoryAdminButtonHelper(DatasetButtonMixin, ButtonHelper):
 
     def get_buttons_for_obj(self, obj: Category, exclude=None, classnames_add=None, classnames_exclude=None):
         buttons = super().get_buttons_for_obj(obj, exclude, classnames_add, classnames_exclude)
-        dataset_buttons = self.dataset_buttons(obj, classnames_add or [], classnames_exclude)
+        dataset_buttons = get_dataset_buttons(self, obj, classnames_add or [], classnames_exclude)
         buttons.extend(dataset_buttons)
         return buttons
 
@@ -407,8 +413,19 @@ class CategoryPermissionHelper(PermissionHelper):
         return obj.type.is_instance_editable_by(user, obj.type.plan, None) and super().user_can_delete_obj(user, obj)
 
 
+class CategoryIndexView(AplansIndexView[Category]):
+    def get_queryset(self, request: HttpRequest | None = None) -> None:
+        qs = super().get_queryset(self.request)
+        cache = get_admin_cache(self.request)
+        for obj in qs:
+            ct = cache.category_types_by_id.get(obj.type_id)
+            if ct is not None:
+                obj.type = ct
+        return qs
+
+
 @modeladmin_register
-class CategoryAdmin(OrderableMixin, AplansModelAdmin):
+class CategoryAdmin(OrderableMixin, AplansModelAdmin[Category]):
     menu_label = _('Categories')
     menu_icon = 'kausal-category'
     list_display = ('__str__', 'parent', 'type')
@@ -429,11 +446,13 @@ class CategoryAdmin(OrderableMixin, AplansModelAdmin):
     edit_view_class = CategoryEditView
     # Do we need to create a view for inspect_view?
     delete_view_class = CategoryDeleteView
-    button_helper_class = CategoryAdminButtonHelper
+    button_helper_class = CategoryAdminButtonHelper  # type: ignore[assignment]
+    index_view_class = CategoryIndexView
     permission_helper_class = CategoryPermissionHelper
 
     # Fix index_order method added by OrderableMixinMetaClass because the way Wagtail handles icons has changed and
     # wagtailorderable hasn't accounted for this.
+    @admin.display(ordering='order', description=_('Order'))
     def index_order(self, obj):
         return mark_safe(
             '<div class="w-orderable__item__handle button button-small button--icon handle text-replace">'
@@ -442,16 +461,14 @@ class CategoryAdmin(OrderableMixin, AplansModelAdmin):
             '</svg>'
             '</div>',
         )
-    index_order.admin_order_field = 'order'
-    index_order.short_description = _('Order')
 
     def get_menu_item(self, order=None):
         return CategoryAdminMenuItem(self, order or self.get_menu_order())
 
-    def get_queryset(self, request):
-        qs = super().get_queryset(request)
-        user = request.user
-        plan = user.get_active_admin_plan()
+    def get_queryset(self, request: HttpRequest):
+        qs = cast('QuerySet[Category]', super().get_queryset(request))
+        cache = get_admin_cache(request)
+        plan = cache.plan
         return qs.filter(type__plan=plan).distinct()
 
     def get_edit_handler(self):
@@ -469,9 +486,10 @@ class CategoryAdmin(OrderableMixin, AplansModelAdmin):
         main_attribute_panels, i18n_attribute_panels = instance.get_attribute_panels(request.user)
         panels += main_attribute_panels
 
-        all_panels = cast(list[Panel[Any]], panels)
+        all_panels = cast('list[Panel[Any]]', panels)
 
-        if request.user.is_superuser:
+        user = user_or_bust(request.user)
+        if user.is_superuser:
             # Didn't use CondensedInlinePanel for the following because there is a bug:
             # When editing a CommonCategory that already has an icon, clicking "save" will yield a validation error if
             # and only if the inline instance is collapsed.
@@ -507,7 +525,7 @@ class CommonCategoryTypePermissionHelper(PermissionHelper):
 
 
 @modeladmin_register
-class CommonCategoryTypeAdmin(AplansModelAdmin):
+class CommonCategoryTypeAdmin(AplansModelAdmin[CommonCategoryType]):
     model = CommonCategoryType
     menu_icon = 'kausal-category'
     menu_label = _('Common category types')
@@ -665,7 +683,7 @@ class CommonCategoryAdmin(OrderableMixin, AplansModelAdmin):
     edit_view_class = CommonCategoryEditView
     # Do we need to create a view for inspect_view?
     delete_view_class = CommonCategoryDeleteView
-    button_helper_class = CommonCategoryAdminButtonHelper
+    button_helper_class = CommonCategoryAdminButtonHelper  # type: ignore[assignment]
 
     # Fix index_order method added by OrderableMixinMetaClass because the way Wagtail handles icons has changed and
     # wagtailorderable hasn't accounted for this.

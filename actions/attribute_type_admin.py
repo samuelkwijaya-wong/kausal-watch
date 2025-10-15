@@ -15,7 +15,7 @@ from wagtail import hooks
 from wagtail.admin.menu import MenuItem
 from wagtail.admin.panels import FieldPanel, ObjectList
 
-from wagtail_modeladmin.helpers import ButtonHelper
+from wagtail_modeladmin.helpers.button import ButtonHelper
 from wagtail_modeladmin.menus import ModelAdminMenuItem
 from wagtail_modeladmin.options import modeladmin_register
 from wagtail_modeladmin.views import DeleteView, IndexView
@@ -49,8 +49,8 @@ class AttributeTypeFilter(SimpleListFilter):
     parameter_name = 'content_type'
 
     def lookups(self, request, model_admin):
-        action_ct_id = ContentType.objects.get(app_label='actions', model='action').id
-        category_ct_id = ContentType.objects.get(app_label='actions', model='category').id
+        action_ct_id = ContentType.objects.get_for_model(Action).id
+        category_ct_id = ContentType.objects.get_for_model(Category).id
         return (
             (action_ct_id, Action._meta.verbose_name),
             (category_ct_id, Category._meta.verbose_name),
@@ -205,8 +205,8 @@ def add_attribute_types_to_settings_menu(request, items: list):
     user = request.user
     plan = user.get_active_admin_plan()
     if user.is_general_admin_for_plan(plan):
-        action_ct = ContentType.objects.get(app_label='actions', model='action')
-        category_ct = ContentType.objects.get(app_label='actions', model='category')
+        action_ct = ContentType.objects.get_for_model(Action)
+        category_ct = ContentType.objects.get_for_model(Category)
         items.append(AttributeTypeMenuItem(action_ct, icon_name='kausal-attribute'))
         items.append(AttributeTypeMenuItem(category_ct, icon_name='kausal-attribute'))
 

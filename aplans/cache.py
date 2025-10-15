@@ -46,6 +46,17 @@ class PlanSpecificCache:
     schemas_by_model: dict[type[Model], DatasetSchemaQuerySet] = field(default_factory=dict)
 
     @cached_property
+    def category_types(self) -> list[CategoryType]:
+        cts = list(self.plan.category_types.all())
+        for ct in cts:
+            ct.plan = self.plan
+        return cts
+
+    @cached_property
+    def category_types_by_id(self) -> dict[int, CategoryType]:
+        return {ct.id: ct for ct in self.category_types}
+
+    @cached_property
     def action_statuses(self) -> list[ActionStatus]:
         return list(self.plan.action_statuses.all())
 
@@ -89,13 +100,26 @@ class PlanSpecificCache:
     def action_dataset_schemas(self) -> DatasetSchemaQuerySet:
         return DatasetSchema.objects.get_queryset().for_scope(self.plan)
 
-    def get_dataset_schemas_for_object(self, instance: DatasetScopeType) -> DatasetSchemaQuerySet:
+    @cached_property
+    def category_type_dataset_schemas_by_id(self) -> dict[int, list[DatasetSchema]]:
+        qs = (
+            DatasetSchema.objects.get_queryset()
+            .for_model(CategoryType)
+            .filter(scopes__scope_id__in=self.plan.category_types.values_list('id', flat=True))
+        )
+        by_id: dict[int, list[DatasetSchema]] = {}
+        for ds in qs:
+            by_id.setdefault(ds.pk, []).append(ds)
+        return by_id
+
+    def get_dataset_schemas_for_object(self, instance: DatasetScopeType) -> list[DatasetSchema]:
         if isinstance(instance, Action):
             assert instance.plan_id == self.plan.id
-            return self.action_dataset_schemas
+            return list(self.action_dataset_schemas)
 
         assert isinstance(instance, Category)
-        return DatasetSchema.get_for_model(instance)
+        schemas = self.category_type_dataset_schemas_by_id.get(instance.type_id, [])
+        return schemas
 
     @cached_property
     def datasets_by_scope_by_schema(self) -> dict[str, dict[int, dict[str, Dataset]]]:
@@ -199,7 +223,8 @@ class PlanSpecificCache:
         return plan
 
     def enrich_action(self, action: Action) -> None:
-        action.plan = self.plan
+        if action.plan_id == self.plan.id:
+            action.plan = self.plan
         if action.status_id is not None:
             action.status = self.get_action_status(id=action.status_id)
         if action.implementation_phase_id is not None:

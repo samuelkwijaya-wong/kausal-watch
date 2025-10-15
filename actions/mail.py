@@ -8,7 +8,7 @@ from django.utils.translation import override
 from wagtail.admin.mail import EmailNotificationMixin, Notifier, WorkflowStateApprovalEmailNotifier
 from wagtail.models import TaskState
 
-from wagtail_modeladmin.helpers import ModelAdminURLFinder
+from wagtail_modeladmin.helpers.url import ModelAdminURLFinder
 
 from aplans.email_sender import EmailSender
 

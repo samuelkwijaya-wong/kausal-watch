@@ -36,7 +36,7 @@ from wagtail.snippets.views.snippets import (
 from dal import autocomplete, forward as dal_forward
 
 from kausal_common.people.chooser import PersonChooser
-from kausal_common.users import user_or_none
+from kausal_common.users import user_or_bust, user_or_none
 
 from aplans.context_vars import ctx_instance, ctx_request
 from aplans.extensions import modeladmin_register
@@ -75,6 +75,7 @@ if typing.TYPE_CHECKING:
     from collections.abc import Iterable, Sequence
 
     from django.db.models import Model
+    from django.http import HttpRequest
     from django.utils.functional import Promise
     from django.utils.safestring import SafeString
     from django_stubs_ext import StrOrPromise
@@ -505,7 +506,7 @@ class RelatedModelWithRolePanel(MultiFieldPanel):
         return kwargs
 
 
-class ActionEditHandler(BuiltInFieldCustomizationAwareEditHandlerMixin, AplansTabbedInterface):
+class ActionEditHandler(BuiltInFieldCustomizationAwareEditHandlerMixin, AplansTabbedInterface[Action, ActionAdminForm]):  # type: ignore[misc]
     def __init__(self, *args, draft_attributes: DraftAttributes | None = None, **kwargs):
         super().__init__(*args, **kwargs)
         self.draft_attributes = draft_attributes
@@ -518,8 +519,8 @@ class ActionEditHandler(BuiltInFieldCustomizationAwareEditHandlerMixin, AplansTa
     def get_form_class(self):
         request = ctx_request.get()
         instance = ctx_instance.get_as_type(Action)
-        user = request.user
-        plan = request.get_active_admin_plan()
+        user = user_or_bust(request.user)
+        plan = user.get_active_admin_plan()
         if user.is_general_admin_for_plan(plan):
             cat_fields = _get_category_fields(plan, Action, instance, with_initial=True)
         else:
@@ -902,19 +903,20 @@ class ActionAdmin(AplansModelAdmin[Action]):
         # be needed.
 
         assert isinstance(instance, Action)
-        plan = request.user.get_active_admin_plan()
+        user = user_or_bust(request.user)
+        plan = user.get_active_admin_plan()
         assert plan is not None
 
         render_field_label = FieldLabelRenderer(plan)
 
         task_panels: list[Panel[Any]] = list(insert_model_translation_panels(ActionTask, self.task_panels, request, plan))
         draft_attributes = instance_being_edited.draft_attributes if instance_being_edited else None
-        attribute_panels = instance.get_attribute_panels(request.user, draft_attributes)
+        attribute_panels = instance.get_attribute_panels(user, draft_attributes)
         main_attribute_panels, reporting_attribute_panels, i18n_attribute_panels = attribute_panels
 
         all_tabs = []
 
-        is_general_admin = request.user.is_general_admin_for_plan(plan)
+        is_general_admin = user.is_general_admin_for_plan(plan)
         panels: list[Panel[Action]] = list(self.basic_panels)
         for panel in list(panels):
             field_name = getattr(panel, 'field_name', None)
@@ -1174,7 +1176,7 @@ class ActionAdmin(AplansModelAdmin[Action]):
 
     def _get_field_customization_panels(
         self,
-        request: WatchAdminRequest,
+        request: HttpRequest,
         instance: Action,
         field_name: str,
         relation_name: str,
@@ -1187,7 +1189,8 @@ class ActionAdmin(AplansModelAdmin[Action]):
 
         This method creates appropriate panels based on user permissions and field customizations.
         """
-        plan = request.user.get_active_admin_plan()
+        user = user_or_bust(request.user)
+        plan = user.get_active_admin_plan()
         ct = ContentType.objects.get_for_model(Action)
 
         try:
@@ -1197,8 +1200,8 @@ class ActionAdmin(AplansModelAdmin[Action]):
                 field_name=field_name
             )
 
-            is_visible = customization.is_instance_visible_for(request.user, plan, instance)
-            is_editable = customization.is_instance_editable_by(request.user, plan, instance)
+            is_visible = customization.is_instance_visible_for(user, plan, instance)
+            is_editable = customization.is_instance_editable_by(user, plan, instance)
         except BuiltInFieldCustomization.DoesNotExist:
             is_visible = True
             is_editable = True
@@ -1225,7 +1228,7 @@ class ActionAdmin(AplansModelAdmin[Action]):
 
         return [panel]
 
-    def get_contact_persons_panels(self, request: WatchAdminRequest, instance: Action):
+    def get_contact_persons_panels(self, request: HttpRequest, instance: Action):
         return self._get_field_customization_panels(
             request=request,
             instance=instance,
@@ -1236,7 +1239,7 @@ class ActionAdmin(AplansModelAdmin[Action]):
             get_editable_roles_method='get_editable_contact_person_roles'
         )
 
-    def get_responsible_parties_panels(self, request, instance: Action):
+    def get_responsible_parties_panels(self, request: HttpRequest, instance: Action):
         return self._get_field_customization_panels(
             request=request,
             instance=instance,
