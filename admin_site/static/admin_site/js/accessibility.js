@@ -53,8 +53,8 @@
     });
   }
 
-  function addAttributesToPublishActions() {
-    const actionsBar = document.querySelector('.actions');
+  function createPublishActionsStatus() {
+    const actionsBar = document.querySelector('nav.actions');
 
     if (actionsBar == null) {
       return;
@@ -64,24 +64,13 @@
 
     actionsStatus.classList.add(ACTIONS_STATUS_CLASS, 'screen-reader-only');
     actionsStatus.setAttribute('aria-live', 'assertive');
-    actionsStatus.setAttribute('role', 'status');
     actionsStatus.setAttribute('aria-atomic', 'true');
     actionsStatus.innerText = '';
 
     actionsBar.appendChild(actionsStatus);
   }
 
-  function setupAriaBusyForProgressButtons() {
-    setTimeout(() => {
-      const status = document.querySelector(`.${ACTIONS_STATUS_CLASS}`);
-      status.textContent = 'Saving...';
-      console.log('Testing Saving alert after 5 seconds');
-
-      setTimeout(() => {
-        status.textContent = '';
-      }, 1000);
-    }, 5000);
-
+  function createListenersForProgressButtons() {
     const observer = new MutationObserver((mutations) => {
       mutations.forEach((mutation) => {
         if (
@@ -96,11 +85,8 @@
 
           if (isLoading) {
             const label = button.getAttribute(WAGTAIL_LOADING_TEXT_ATTRIBUTE);
-
-            setTimeout(() => {
-              status.textContent = label || '';
-              status.setAttribute('aria-label', label || '');
-            }, 100);
+            button.setAttribute('aria-busy', 'true');
+            status.textContent = label || '';
           }
         }
       });
@@ -135,8 +121,8 @@
     addActivePlanAccessibilityFlagToBodyClass(accessibilityLevel);
     addAttributesToNotificationMessages();
     fixDraftailDescribedByElements();
-    addAttributesToPublishActions();
-    setupAriaBusyForProgressButtons();
+    createPublishActionsStatus();
+    createListenersForProgressButtons();
   }
 
   const accessibilityScript = document.currentScript;
