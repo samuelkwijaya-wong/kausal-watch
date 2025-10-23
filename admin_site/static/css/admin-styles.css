@@ -1,7 +1,7 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700;800&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700;800&display=swap');
 
 :root {
-  --w-font-sans: "Inter";
+  --w-font-sans: 'Inter';
   /*--w-font-mono: Inconsolata;*/
   --w-color-primary-hue: 160;
   --w-color-secondary-hue: 160;
@@ -111,7 +111,7 @@
   color: var(--w-color-grey-800);
 }
 
-section[role="tabpanel"] .help-block {
+section[role='tabpanel'] .help-block {
   background-color: inherit;
   padding-left: 0;
   span.field-visibility-label.w-status--primary {
@@ -175,7 +175,7 @@ section[role="tabpanel"] .help-block {
 }
 /* Fix space between action buttons */
 .listing .actions > li {
-  margin: 0 0 .5em;
+  margin: 0 0 0.5em;
 }
 /* Fix text being cropped when action buttons have long texts */
 .actions .button {
@@ -183,10 +183,27 @@ section[role="tabpanel"] .help-block {
   min-height: 2em; /* adding this to make sure things don't change for short texts */
 }
 /* Fix weird inline block issues on, e.g., category list (unfiltered by category type) */
-.listing .title .title-wrapper, .listing .title h2 {
+.listing .title .title-wrapper,
+.listing .title h2 {
   display: block;
 }
 
+.screen-reader-only {
+  /* Temporary debug style */
+  background-color: yellow;
+  color: red;
+  border: 2px solid red;
+
+  /* position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important; */
+}
 
 /* Intrusive accessibility fixes for customers with plan.features.admin_accessibility_conformance_level == 'high'
 
