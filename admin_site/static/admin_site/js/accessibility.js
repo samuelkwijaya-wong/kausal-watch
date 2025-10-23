@@ -94,7 +94,7 @@
 
     // Observe all buttons with w-progress controller, for example the save and publish buttons
     const progressButtons = document.querySelectorAll(
-      "[data-controller*='w-progress']",
+      "nav.actions [data-controller*='w-progress']",
     );
 
     progressButtons.forEach((button) => {
