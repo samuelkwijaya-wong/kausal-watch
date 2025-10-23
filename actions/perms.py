@@ -337,12 +337,10 @@ def _sync_plan_admin_group_permissions() -> None:
 def _sync_contact_person_group_permissions() -> None:
     wagtail_perms = Permission.objects.filter(get_wagtail_contact_person_q())
 
-    for plan in Plan.objects.all():
-        if plan.contact_person_group is None:
-            continue
+    for plan in Plan.objects.filter(contact_person_group__isnull=False, root_collection__isnull=False):
+        assert plan.contact_person_group is not None
         group = plan.contact_person_group
-        if plan.root_collection is None:
-            continue
+        assert plan.root_collection is not None
         _sync_group_collection_perms(plan.root_collection, group, wagtail_perms)
 
 
