@@ -35,6 +35,7 @@ env = environ.FileAwareEnv(
     KUBERNETES_MODE=(bool, False),
     ENABLE_WAGTAIL_STYLEGUIDE=(bool, False),
     SECRET_KEY=(str, ''),
+    SECRET_KEY_FALLBACKS=(list, []),
     ALLOWED_HOSTS=(list, []),
     CONFIGURE_LOGGING=(bool, True),
     DATABASE_URL=(str, 'sqlite:///db.sqlite3'),
@@ -105,7 +106,7 @@ env = environ.FileAwareEnv(
 
 BASE_DIR = root()
 
-ENV_FILE = env.str('ENV_FILE', None)  # pyright: ignore[reportArgumentType]
+ENV_FILE = cast('str | None', env.str('ENV_FILE', None))  # pyright: ignore[reportArgumentType]
 if ENV_FILE:
     if not Path(ENV_FILE).exists():
         raise ImproperlyConfigured(f'File {ENV_FILE} specified in ENV_FILE does not exist')
@@ -154,6 +155,7 @@ if 'KEY_PREFIX' not in CACHES['default']:
 ELASTICSEARCH_URL = env('ELASTICSEARCH_URL')
 
 SECRET_KEY = env('SECRET_KEY')
+SECRET_KEY_FALLBACKS = cast('list[str]', env('SECRET_KEY_FALLBACKS'))
 
 ADMIN_BASE_URL = env('ADMIN_BASE_URL')
 WAGTAILADMIN_BASE_URL = ADMIN_BASE_URL
