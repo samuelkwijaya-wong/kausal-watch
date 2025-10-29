@@ -697,7 +697,10 @@ class Category(ModelWithAttributes, CategoryBase, ClusterableModel, PlanRelatedM
             if level > 50:
                 raise Exception("Maximum category hierarchy depth exceeded")
             c = c.parent
-        return self.type.levels.filter(order=level).first()
+        levels = list(self.type.levels.all())
+        if len(levels) <= level:
+            return None
+        return levels[level]
 
     @classmethod
     def get_attribute_types_for_plan(
