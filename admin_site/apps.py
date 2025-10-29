@@ -63,7 +63,7 @@ class AdminSiteConfig(AdminConfig):
         # Monkey-patch Wagtail's _get_language_choices to transform language codes to lower case. See the comment above
         # LANGUAGES in settings.py for details about this.
         from wagtail.admin.forms import account
-        account.LocalePreferencesForm.base_fields['preferred_language']._choices.choices_func = _get_language_choices
+        account.LocalePreferencesForm.base_fields['preferred_language']._choices.func = _get_language_choices
 
         # Remove the ThemeSettingsPanel
         from wagtail.admin.views.account import ThemeSettingsPanel
