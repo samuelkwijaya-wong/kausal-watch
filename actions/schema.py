@@ -1289,7 +1289,11 @@ class ActionNode(ModelAdminAdminButtonsMixin, AttributesMixin, DjangoNode):
     def resolve_categories(root: Action, info: GQLInfo, category_type=None):
         qs = root.categories.all()
         if category_type is not None:
-            qs = qs.filter(type__identifier=category_type)
+            # Filter the materialized queryset instead of `qs.filter()` because a bug in modelcluster would load to
+            # wrong results.
+            # https://github.com/wagtail/django-modelcluster/issues/170
+            # The categories and their types should all be cached.
+            return [cat for cat in qs if cat.type.identifier == category_type]
         return qs
 
     @staticmethod
