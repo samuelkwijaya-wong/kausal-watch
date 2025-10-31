@@ -3,24 +3,32 @@
   const WAGTAIL_IS_LOADING_ATTRIBUTE = 'data-w-progress-loading-value';
   const WAGTAIL_LOADING_TEXT_ATTRIBUTE = 'data-w-progress-active-value';
 
-  function waitForElements(selector) {
+  function waitForElement(selector, all = true, parent = document.body) {
     return new Promise((resolve) => {
-      if (document.querySelector(selector)) {
-        return resolve(document.querySelectorAll(selector));
+      const element = document.querySelector(selector);
+
+      if (element) {
+        return resolve(all ? document.querySelectorAll(selector) : element);
       }
 
       const observer = new MutationObserver((mutations) => {
-        if (document.querySelector(selector)) {
+        const element = document.querySelector(selector);
+
+        if (element) {
           observer.disconnect();
-          resolve(document.querySelectorAll(selector));
+          resolve(all ? document.querySelectorAll(selector) : element);
         }
       });
 
-      observer.observe(document.body, {
+      observer.observe(parent, {
         childList: true,
         subtree: true,
       });
     });
+  }
+
+  function waitForElements(selector) {
+    return waitForElement(selector, true);
   }
 
   async function fixDraftailDescribedByElements() {
@@ -51,6 +59,41 @@
         container.setAttribute('aria-label', container.innerText);
       }
     });
+  }
+
+  /**
+   * Reorders the search input and button so that the input is before the button.
+   * This is the natural order for screen readers, since the button is used to submit the search.
+   */
+  async function fixSearchInputAccessibility() {
+    const searchForm = await waitForElement(
+      '#wagtail-sidebar form[role="search"]',
+      false,
+      document.getElementById('wagtail-sidebar'),
+    );
+
+    if (!searchForm) {
+      return;
+    }
+
+    const searchButton = searchForm.querySelector('button');
+    const searchInput = searchForm.querySelector('input#menu-search-q');
+    const wrapper = searchInput.parentNode;
+
+    if (searchInput) {
+      searchInput.setAttribute('autocomplete', 'on');
+      // TODO: Localize this
+      searchInput.setAttribute(
+        'aria-description',
+        'Please enter a search term',
+      );
+    }
+
+    if (!searchButton || !searchInput || !wrapper) {
+      return;
+    }
+
+    wrapper.insertBefore(searchInput, searchButton);
   }
 
   function createPublishActionsStatus() {
@@ -123,6 +166,7 @@
     fixDraftailDescribedByElements();
     createPublishActionsStatus();
     createListenersForProgressButtons();
+    fixSearchInputAccessibility();
   }
 
   const accessibilityScript = document.currentScript;
@@ -133,6 +177,7 @@
     document.addEventListener('DOMContentLoaded', (e) =>
       injectAccessibilityFixes(accessibilityLevel),
     );
+
     return;
   }
   injectAccessibilityFixes(activePlan);
