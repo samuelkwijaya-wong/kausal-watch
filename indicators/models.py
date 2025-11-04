@@ -163,14 +163,14 @@ class Dataset(ClusterableModel):
         null=True, blank=True, verbose_name=_('last retrieved at'),
     )
     owner = models.ForeignKey(
-        Organization, null=True, blank=True, verbose_name=_('owner'), on_delete=models.SET_NULL,
+        'orgs.Organization', null=True, blank=True, verbose_name=_('owner'), on_delete=models.SET_NULL,
     )
     owner_name = models.CharField(
         max_length=100, null=True, blank=True, verbose_name=_('owner name'),
         help_text=_('Set if owner organization is not available'),
     )
     license = models.ForeignKey(
-        DatasetLicense, null=True, blank=True, verbose_name=_('license'),
+        'indicators.DatasetLicense', null=True, blank=True, verbose_name=_('license'),
         on_delete=models.SET_NULL,
     )
 
@@ -231,11 +231,11 @@ class CommonIndicator(ClusterableModel):
     description = RichTextField[str | None, str | None](null=True, blank=True, verbose_name=_('description'))
 
     quantity = ParentalKey(
-        Quantity, related_name='common_indicators', on_delete=models.PROTECT,
+        'indicators.Quantity', related_name='common_indicators', on_delete=models.PROTECT,
         verbose_name=pgettext_lazy('physical', 'quantity'),
     )
     unit = ParentalKey(
-        Unit, related_name='common_indicators', on_delete=models.PROTECT,
+        'indicators.Unit', related_name='common_indicators', on_delete=models.PROTECT,
         verbose_name=_('unit'),
     )
     plans: M2M[Plan, PlanCommonIndicator] = models.ManyToManyField(
@@ -272,9 +272,9 @@ class CommonIndicator(ClusterableModel):
 
 
 class CommonIndicatorNormalizator(models.Model):
-    normalizable = models.ForeignKey(CommonIndicator, on_delete=models.CASCADE, related_name='normalizations')
-    normalizer = models.ForeignKey(CommonIndicator, on_delete=models.CASCADE, related_name='+')
-    unit = models.ForeignKey(Unit, on_delete=models.PROTECT, related_name='+')
+    normalizable = models.ForeignKey('indicators.CommonIndicator', on_delete=models.CASCADE, related_name='normalizations')
+    normalizer = models.ForeignKey('indicators.CommonIndicator', on_delete=models.CASCADE, related_name='+')
+    unit = models.ForeignKey('indicators.Unit', on_delete=models.PROTECT, related_name='+')
     unit_multiplier = models.FloatField()
 
     class Meta:
@@ -285,7 +285,7 @@ class CommonIndicatorNormalizator(models.Model):
 
 
 class PlanCommonIndicator(models.Model):
-    common_indicator = models.ForeignKey(CommonIndicator, on_delete=models.CASCADE, related_name='+')
+    common_indicator = models.ForeignKey('indicators.CommonIndicator', on_delete=models.CASCADE, related_name='+')
     plan = models.ForeignKey('actions.Plan', on_delete=models.CASCADE, related_name='+')
 
     def __str__(self):
@@ -294,11 +294,11 @@ class PlanCommonIndicator(models.Model):
 
 class RelatedCommonIndicator(IndicatorRelationship):
     causal_indicator = models.ForeignKey(
-        CommonIndicator, related_name='related_effects', on_delete=models.CASCADE,
+        'indicators.CommonIndicator', related_name='related_effects', on_delete=models.CASCADE,
         verbose_name=_('causal indicator'),
     )
     effect_indicator = models.ForeignKey(
-        CommonIndicator, related_name='related_causes', on_delete=models.CASCADE,
+        'indicators.CommonIndicator', related_name='related_causes', on_delete=models.CASCADE,
         verbose_name=_('effect indicator'),
     )
 
@@ -313,11 +313,11 @@ class RelatedCommonIndicator(IndicatorRelationship):
 class FrameworkIndicator(models.Model):
     identifier = IdentifierField[str | None](null=True, blank=True, max_length=70)
     common_indicator = ParentalKey(
-        CommonIndicator, related_name='frameworks', on_delete=models.CASCADE,
+        'indicators.CommonIndicator', related_name='frameworks', on_delete=models.CASCADE,
         verbose_name=_('common indicator'),
     )
     framework = ParentalKey(
-        Framework, related_name='common_indicators', on_delete=models.CASCADE,
+        'indicators.Framework', related_name='common_indicators', on_delete=models.CASCADE,
         verbose_name=_('framework'),
     )
 
@@ -374,11 +374,11 @@ class Indicator(ClusterableModel, index.Indexed, ModificationTracking, PlanDefau
 
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     common = models.ForeignKey(
-        CommonIndicator, null=True, blank=True, related_name='indicators',
+        'indicators.CommonIndicator', null=True, blank=True, related_name='indicators',
         on_delete=models.PROTECT, verbose_name=_('common indicator'),
     )
     organization = models.ForeignKey(
-        Organization, related_name='indicators', on_delete=models.CASCADE,
+        'orgs.Organization', related_name='indicators', on_delete=models.CASCADE,
         verbose_name=_('organization'),
     )
     plans: M2M[Plan, IndicatorLevel] = models.ManyToManyField(
@@ -388,11 +388,11 @@ class Indicator(ClusterableModel, index.Indexed, ModificationTracking, PlanDefau
     identifier = IdentifierField[str | None](null=True, blank=True, max_length=70)
     name = models.CharField(max_length=200, verbose_name=_('name'))
     quantity = ParentalKey(
-        Quantity, related_name='indicators', on_delete=models.PROTECT,
+        'indicators.Quantity', related_name='indicators', on_delete=models.PROTECT,
         verbose_name=pgettext_lazy('physical', 'quantity'), null=True, blank=True,
     )
     unit = ParentalKey(
-        Unit, related_name='indicators', on_delete=models.PROTECT,
+        'indicators.Unit', related_name='indicators', on_delete=models.PROTECT,
         verbose_name=_('unit'),
     )
     min_value = models.FloatField(
@@ -414,15 +414,15 @@ class Indicator(ClusterableModel, index.Indexed, ModificationTracking, PlanDefau
     )
     updated_values_due_at = models.DateField(null=True, blank=True, verbose_name=_('updated values due at'))
     latest_graph = models.ForeignKey(
-        'IndicatorGraph', null=True, blank=True, related_name='+',
+        'indicators.IndicatorGraph', null=True, blank=True, related_name='+',
         on_delete=models.SET_NULL, editable=False,
     )
     latest_value = models.ForeignKey(
-        'IndicatorValue', null=True, blank=True, related_name='+',
+        'indicators.IndicatorValue', null=True, blank=True, related_name='+',
         on_delete=models.SET_NULL, editable=False,
     )
     datasets: M2M[Dataset, Any] = models.ManyToManyField(
-        Dataset, blank=True, verbose_name=_('datasets'),
+        'indicators.Dataset', blank=True, verbose_name=_('datasets'),
     )
 
     # summaries = models.JSONField(null=True)
@@ -773,7 +773,7 @@ class Indicator(ClusterableModel, index.Indexed, ModificationTracking, PlanDefau
 
 
 class IndicatorCategoryThrough(models.Model):
-    indicator = models.ForeignKey(Indicator, on_delete=models.CASCADE, related_name='indicator_category_through')
+    indicator = models.ForeignKey('indicators.Indicator', on_delete=models.CASCADE, related_name='indicator_category_through')
     category = models.ForeignKey('actions.Category', on_delete=models.CASCADE)
 
     class Meta:
@@ -829,7 +829,7 @@ class DimensionCategory(OrderedModel):
     Indicator values are grouped with this.
     """
 
-    dimension = ParentalKey(Dimension, on_delete=models.CASCADE, related_name='categories')
+    dimension = ParentalKey('indicators.Dimension', on_delete=models.CASCADE, related_name='categories')
     name = models.CharField(max_length=100, verbose_name=_('name'))
     default_color = ColorField(
         max_length=50, blank=True, default='', verbose_name=_('default color'),
@@ -852,7 +852,7 @@ class DimensionCategory(OrderedModel):
 class PlanDimension(models.Model):
     """Mapping of which dimensions a plan is using."""
 
-    dimension = ParentalKey(Dimension, on_delete=models.CASCADE, related_name='plans')
+    dimension = ParentalKey('indicators.Dimension', on_delete=models.CASCADE, related_name='plans')
     plan: ParentalKey[Plan] = ParentalKey('actions.Plan', on_delete=models.CASCADE, related_name='dimensions')
 
     class Meta:
@@ -866,8 +866,8 @@ class PlanDimension(models.Model):
 class IndicatorDimension(OrderedModel):
     """Mapping of which dimensions an indicator has."""
 
-    dimension: PK[Dimension] = ParentalKey(Dimension, on_delete=models.CASCADE, related_name='instances')
-    indicator: PK[Indicator] = ParentalKey(Indicator, on_delete=models.CASCADE, related_name='dimensions')
+    dimension: PK[Dimension] = ParentalKey('indicators.Dimension', on_delete=models.CASCADE, related_name='instances')
+    indicator: PK[Indicator] = ParentalKey('indicators.Indicator', on_delete=models.CASCADE, related_name='dimensions')
 
     public_fields: ClassVar = ['id', 'dimension', 'indicator', 'order']
 
@@ -887,8 +887,8 @@ class IndicatorDimension(OrderedModel):
 class CommonIndicatorDimension(OrderedModel):
     """Mapping of which dimensions a common indicator has."""
 
-    dimension = ParentalKey(Dimension, on_delete=models.CASCADE, related_name='common_indicators')
-    common_indicator = ParentalKey(CommonIndicator, on_delete=models.CASCADE, related_name='dimensions')
+    dimension = ParentalKey('indicators.Dimension', on_delete=models.CASCADE, related_name='common_indicators')
+    common_indicator = ParentalKey('indicators.CommonIndicator', on_delete=models.CASCADE, related_name='dimensions')
 
     public_fields: ClassVar = ['id', 'dimension', 'common_indicator', 'order']
 
@@ -942,7 +942,7 @@ class IndicatorLevel(ClusterableModel):
     """
 
     indicator: FK[Indicator] = models.ForeignKey(
-        Indicator, related_name='levels', verbose_name=_('indicator'), on_delete=models.CASCADE,
+        'indicators.Indicator', related_name='levels', verbose_name=_('indicator'), on_delete=models.CASCADE,
     )
     plan: FK[Plan] = models.ForeignKey(
         'actions.Plan', related_name='indicator_levels', verbose_name=_('plan'), on_delete=models.CASCADE,
@@ -963,7 +963,7 @@ class IndicatorLevel(ClusterableModel):
 
 
 class IndicatorGraph(models.Model):
-    indicator = models.ForeignKey(Indicator, related_name='graphs', on_delete=models.CASCADE)
+    indicator = models.ForeignKey('indicators.Indicator', related_name='graphs', on_delete=models.CASCADE)
     data = models.JSONField()
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -980,11 +980,11 @@ class IndicatorValue(ClusterableModel):
     """One measurement of an indicator for a certain date/month/year."""
 
     indicator = ParentalKey(
-        Indicator, related_name='values', on_delete=models.CASCADE,
+        'indicators.Indicator', related_name='values', on_delete=models.CASCADE,
         verbose_name=_('indicator'),
     )
     categories = models.ManyToManyField(
-        DimensionCategory, related_name='values', blank=True, verbose_name=_('categories'),
+        'indicators.DimensionCategory', related_name='values', blank=True, verbose_name=_('categories'),
     )
     value = models.FloatField(verbose_name=_('value'))
     date = models.DateField(verbose_name=_('date'))
@@ -1019,7 +1019,7 @@ class IndicatorGoal(models.Model):
     """The numeric goal which the organization has set for an indicator."""
 
     indicator = models.ForeignKey(
-        Indicator, related_name='goals', on_delete=models.CASCADE,
+        'indicators.Indicator', related_name='goals', on_delete=models.CASCADE,
         verbose_name=_('indicator'),
     )
     value = models.FloatField()
@@ -1057,11 +1057,11 @@ class RelatedIndicator(IndicatorRelationship):
     )
 
     causal_indicator = ParentalKey(
-        Indicator, related_name='related_effects', on_delete=models.CASCADE,
+        'indicators.Indicator', related_name='related_effects', on_delete=models.CASCADE,
         verbose_name=_('causal indicator'),
     )
     effect_indicator = ParentalKey(
-        Indicator, related_name='related_causes', on_delete=models.CASCADE,
+        'indicators.Indicator', related_name='related_causes', on_delete=models.CASCADE,
         verbose_name=_('effect indicator'),
     )
     confidence_level = models.CharField(
@@ -1121,7 +1121,7 @@ class ActionIndicator(models.Model):
         verbose_name=_('action'),
     )
     indicator: ParentalKey[Indicator, Indicator] = ParentalKey(
-        Indicator, related_name='related_actions', on_delete=models.CASCADE,
+        'indicators.Indicator', related_name='related_actions', on_delete=models.CASCADE,
         verbose_name=_('indicator'),
     )
     effect_type = models.CharField(
@@ -1153,7 +1153,7 @@ class IndicatorContactPerson(OrderedModel):
     """Contact person for an indicator."""
 
     indicator = ParentalKey(
-        Indicator, on_delete=models.CASCADE, verbose_name=_('indicator'), related_name='contact_persons',
+        'indicators.Indicator', on_delete=models.CASCADE, verbose_name=_('indicator'), related_name='contact_persons',
     )
     person: PK[Person] = ParentalKey(
         'people.Person', on_delete=models.CASCADE, verbose_name=_('person'),
