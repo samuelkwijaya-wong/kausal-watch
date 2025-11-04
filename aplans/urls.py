@@ -10,6 +10,7 @@ from django.contrib.auth.views import LogoutView
 from django.urls import include, path, re_path
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView
+from django.views.i18n import JavaScriptCatalog
 from wagtail.admin import urls as wagtailadmin_urls
 from wagtail.admin.views.pages import search
 from wagtail.documents import urls as wagtaildocs_urls
@@ -117,6 +118,7 @@ api_urlconf = [
 urlpatterns = [
     re_path(r'^admin/change-admin-plan/(?:(?P<plan_id>\d+)/)?$', change_admin_plan, name='change-admin-plan'),
     *api_urlconf,
+    path("jsi18n/", JavaScriptCatalog.as_view(), name="javascript-catalog"),
     path('v1/docs/', TemplateView.as_view(
         template_name='swagger-ui.html',
         extra_context={'schema_url': 'openapi-schema'},

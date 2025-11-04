@@ -85,7 +85,7 @@
       // TODO: Localize this
       searchInput.setAttribute(
         'aria-description',
-        'Please enter a search term',
+        gettext('Please enter a search term'),
       );
     }
 
