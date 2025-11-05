@@ -200,6 +200,11 @@ section[role='tabpanel'] .help-block {
   border: 0 !important;
 }
 
+/* Accessibility: Ensure form fields wrap on narrow or zoomed in screens */
+.w-slim-header__search-form {
+  flex-wrap: wrap;
+}
+
 /* Intrusive accessibility fixes for customers with plan.features.admin_accessibility_conformance_level == 'high'
 
 In the end, we would like to move away from these and provide fixes compatible

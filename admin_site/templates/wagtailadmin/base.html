@@ -55,6 +55,7 @@
         The more intrusive of the fixes required for some customers are only enabled
         if plan.features.admin_accessibility_conformance_level is "high"
     {% endcomment %}
+    <script src="{% url 'javascript-catalog' %}"></script>
     <script
       src="{% static 'admin_site/js/accessibility.js' %}"
       data-active-plan-accessibility-level="{{ active_plan.features.admin_accessibility_conformance_level|default:"default" }}">
