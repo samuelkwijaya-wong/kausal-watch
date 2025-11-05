@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, ClassVar
+from typing import TYPE_CHECKING, Any, ClassVar, override
 
 import reversion
 from django.db import models
@@ -45,7 +45,12 @@ class Dimension(ClusterableModel):
     def __str__(self):
         return self.name
 
-    def delete(self, *args, **kwargs):
+    @override
+    def delete(
+        self, using: Any | None = None,
+        keep_parents: bool = False,
+        **kwargs: dict[str, Any]
+    ) -> tuple[int, dict[str, int]]:
         # Check if dimension is used by multiple plans
         if self.plans.count() > 1:
             from django.core.exceptions import ValidationError
@@ -56,8 +61,7 @@ class Dimension(ClusterableModel):
                     'plans': ', '.join(plan_names)
                 }
             )
-
-        super().delete(*args, **kwargs)
+        return super().delete(using=using, keep_parents=keep_parents, **kwargs)
 
 
 class DimensionCategory(OrderedModel):
