@@ -65,13 +65,6 @@ if typing.TYPE_CHECKING:
 User = get_user_model()
 
 
-def latest_plan():
-    PlanModel = cast('Plan', apps.get_model('actions', 'Plan'))
-    if PlanModel.objects.exists():
-        return PlanModel.objects.latest()
-    return None
-
-
 @reversion.register
 class Quantity(ClusterableModel, TranslatedModelMixin, ModificationTracking):
     """The quantity that an indicator measures."""
