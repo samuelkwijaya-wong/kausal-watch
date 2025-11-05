@@ -1,19 +1,15 @@
 from __future__ import annotations
 
-import datetime
 import typing
 import uuid
-from typing import TYPE_CHECKING, Any, Callable, ClassVar, Self, cast
+from typing import TYPE_CHECKING, Any, ClassVar, Self, cast
 
 import reversion
-from django.apps import apps
 from django.contrib.admin import display
-from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.fields import GenericRelation
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Q, QuerySet
-from django.db.models.functions import Collate
 from django.urls import reverse
 from django.utils import timezone, translation
 from django.utils.translation import gettext_lazy as _, pgettext_lazy
@@ -26,302 +22,36 @@ from wagtail.search import index
 from wagtail.search.queryset import SearchableQuerySetMixin
 
 from dateutil.relativedelta import relativedelta
-from wagtail_color_panel.fields import ColorField
 
-from kausal_common.models.types import (
-    MLModelManager,
-    ModelManager,
-    manager_from_mlqs,
-)
+from kausal_common.models.types import MLModelManager, ModelManager
 
-from aplans import utils
 from aplans.utils import (
     AdminSaveContext,
     IdentifierField,
     ModificationTracking,
-    OrderedModel,
     PlanDefaultsModel,
     RestrictedVisibilityModel,
-    TranslatedModelMixin,
     get_available_variants_for_language,
 )
 
-from actions.models.features import OrderBy
+from indicators.models.common_indicator import CommonIndicatorNormalizator
 from orgs.models import Organization
 from search.backends import TranslatedAutocompleteField, TranslatedSearchField
 
 if typing.TYPE_CHECKING:
-    from modelcluster.fields import PK
-
-    from kausal_common.models.types import FK, M2M, MLMM, RevMany
+    from kausal_common.models.types import FK, M2M, RevMany
     from kausal_common.users import UserOrAnon
 
     from actions.models import Action
     from actions.models.category import Category, CategoryType
     from actions.models.plan import Plan, PlanQuerySet
+    from indicators.models.action_links import ActionIndicator
+    from indicators.models.contact_persons import IndicatorContactPerson
+    from indicators.models.dimensions import IndicatorDimension
+    from indicators.models.metadata import Dataset
+    from indicators.models.relationships import RelatedIndicator
+    from indicators.models.values import IndicatorGoal, IndicatorValue
     from people.models import Person
-
-
-User = get_user_model()
-
-
-@reversion.register
-class Quantity(ClusterableModel, TranslatedModelMixin, ModificationTracking):
-    """The quantity that an indicator measures."""
-
-    name = models.CharField(max_length=40, verbose_name=_('name'), unique=True)
-
-    i18n = TranslationField(fields=['name'])
-
-    autocomplete_search_field = 'name'
-
-    objects: ClassVar[MLMM[Self, MultilingualQuerySet[Self]]] = manager_from_mlqs(MultilingualQuerySet[Self])
-
-    # type annotations
-    indicators: RevMany[Indicator]
-    common_indicators: RevMany[CommonIndicator]
-
-    class Meta:
-        verbose_name = pgettext_lazy('physical', 'quantity')
-        verbose_name_plural = pgettext_lazy('physical', 'quantities')
-        ordering = ('name',)
-
-    def __str__(self):
-        return self.get_i18n_value('name')
-
-    def autocomplete_label(self):
-        return str(self)
-
-
-@reversion.register()
-class Unit(ClusterableModel, ModificationTracking):
-    name = models.CharField(max_length=40, verbose_name=_('name'), unique=True)
-    short_name = models.CharField(
-        max_length=40, null=True, blank=True,
-        verbose_name=_('short name'),
-    )
-    verbose_name = models.CharField(
-        max_length=100, null=True, blank=True,
-        verbose_name=_('verbose name'),
-    )
-    verbose_name_plural = models.CharField(
-        max_length=100, null=True, blank=True,
-        verbose_name=_('verbose name plural'),
-    )
-
-    i18n = TranslationField(
-        fields=['name', 'short_name', 'verbose_name', 'verbose_name_plural'],
-    )
-
-    objects: ClassVar[MLMM[Self, MultilingualQuerySet[Self]]] = manager_from_mlqs(MultilingualQuerySet[Self])
-
-    autocomplete_search_field = 'name'
-
-    # type annotations
-    indicators: RevMany[Indicator]
-    common_indicators: RevMany[CommonIndicator]
-    name_i18n: str
-    short_name_i18n: str
-    verbose_name_i18n: str
-    verbose_name_plural_i18n: str
-
-    class Meta:
-        verbose_name = _('unit')
-        verbose_name_plural = _('units')
-        ordering = ('name',)
-
-    def __str__(self):
-        return self.name
-
-    def autocomplete_label(self):
-        return str(self)
-
-
-class DatasetLicense(models.Model):
-    name = models.CharField(max_length=50, verbose_name=_('name'), unique=True)
-
-    class Meta:
-        verbose_name = _('dataset license')
-        verbose_name_plural = _('dataset licenses')
-
-    def __str__(self):
-        return self.name
-
-
-class Dataset(ClusterableModel):
-    name = models.CharField(max_length=100, verbose_name=_('name'))
-    description = models.TextField(blank=True, verbose_name=_('description'))
-    url = models.URLField(null=True, blank=True, verbose_name=_('URL'))
-    last_retrieved_at = models.DateField(
-        null=True, blank=True, verbose_name=_('last retrieved at'),
-    )
-    owner = models.ForeignKey(
-        'orgs.Organization', null=True, blank=True, verbose_name=_('owner'), on_delete=models.SET_NULL,
-    )
-    owner_name = models.CharField(
-        max_length=100, null=True, blank=True, verbose_name=_('owner name'),
-        help_text=_('Set if owner organization is not available'),
-    )
-    license = models.ForeignKey(
-        'indicators.DatasetLicense', null=True, blank=True, verbose_name=_('license'),
-        on_delete=models.SET_NULL,
-    )
-
-    class Meta:
-        verbose_name = _('dataset')
-        verbose_name_plural = _('datasets')
-
-    def __str__(self):
-        return self.name
-
-
-class Framework(ClusterableModel):
-    identifier = IdentifierField(unique=True)
-    name = models.CharField(max_length=200, verbose_name=_('name'))
-
-    i18n = TranslationField(fields=['name'])
-
-    public_fields: ClassVar = ['id', 'name']
-
-    class Meta:
-        verbose_name = _('framework')
-        verbose_name_plural = _('frameworks')
-
-    def __str__(self):
-        return self.name
-
-
-class IndicatorRelationship(models.Model):
-    """A causal relationship between two indicators."""
-
-    INCREASES = 'increases'
-    DECREASES = 'decreases'
-    PART_OF = 'part_of'
-
-    EFFECT_TYPES = (
-        (INCREASES, _('increases')),
-        (DECREASES, _('decreases')),
-        (PART_OF, _('is a part of')),
-    )
-    effect_type = models.CharField(
-        max_length=40, choices=EFFECT_TYPES,
-        verbose_name=_('effect type'), help_text=_('What type of causal effect is there between the indicators'))
-
-    class Meta:
-        abstract = True
-
-    causal_indicator: Any
-    effect_indicator: Any
-
-    def __str__(self):
-        return "%s %s %s" % (self.causal_indicator, self.effect_type, self.effect_indicator)  # type: ignore
-
-
-@reversion.register()
-class CommonIndicator(ClusterableModel):
-    identifier = IdentifierField[str | None](null=True, blank=True, max_length=70)
-    name = models.CharField(max_length=200, verbose_name=_('name'))
-    description = RichTextField[str | None, str | None](null=True, blank=True, verbose_name=_('description'))
-
-    quantity = ParentalKey(
-        'indicators.Quantity', related_name='common_indicators', on_delete=models.PROTECT,
-        verbose_name=pgettext_lazy('physical', 'quantity'),
-    )
-    unit = ParentalKey(
-        'indicators.Unit', related_name='common_indicators', on_delete=models.PROTECT,
-        verbose_name=_('unit'),
-    )
-    plans: M2M[Plan, PlanCommonIndicator] = models.ManyToManyField(
-        'actions.Plan', blank=True, related_name='common_indicators', through='PlanCommonIndicator',
-    )
-    normalization_indicators: M2M[Self, CommonIndicatorNormalizator] = models.ManyToManyField(
-        'self', blank=True, related_name='normalizable_indicators', symmetrical=False,
-        through='CommonIndicatorNormalizator', through_fields=('normalizable', 'normalizer'),
-    )
-    normalize_by_label = models.CharField(
-        max_length=200, verbose_name=_('normalize by label'), null=True, blank=True,
-    )
-
-    i18n = TranslationField(fields=['name', 'description', 'normalize_by_label'])
-
-    public_fields: ClassVar = [
-        'id', 'identifier', 'name', 'description', 'quantity', 'unit',
-        'indicators', 'dimensions', 'related_causes', 'related_effects',
-        'normalization_indicators', 'normalize_by_label', 'normalizations',
-    ]
-
-    normalizations: RevMany[CommonIndicatorNormalizator]
-    indicators: RevMany[Indicator]
-
-    class Meta:
-        verbose_name = _('common indicator')
-        verbose_name_plural = _('common indicators')
-
-    def __str__(self):
-        return self.name
-
-    def autocomplete_label(self):
-        return str(self)
-
-
-class CommonIndicatorNormalizator(models.Model):
-    normalizable = models.ForeignKey('indicators.CommonIndicator', on_delete=models.CASCADE, related_name='normalizations')
-    normalizer = models.ForeignKey('indicators.CommonIndicator', on_delete=models.CASCADE, related_name='+')
-    unit = models.ForeignKey('indicators.Unit', on_delete=models.PROTECT, related_name='+')
-    unit_multiplier = models.FloatField()
-
-    class Meta:
-        unique_together = (('normalizable', 'normalizer'),)
-
-    def __str__(self) -> str:
-        return "'%s' normalized by '%s'" % (self.normalizable, self.normalizer)
-
-
-class PlanCommonIndicator(models.Model):
-    common_indicator = models.ForeignKey('indicators.CommonIndicator', on_delete=models.CASCADE, related_name='+')
-    plan = models.ForeignKey('actions.Plan', on_delete=models.CASCADE, related_name='+')
-
-    def __str__(self):
-        return '%s in %s' % (self.common_indicator, self.plan)
-
-
-class RelatedCommonIndicator(IndicatorRelationship):
-    causal_indicator = models.ForeignKey(
-        'indicators.CommonIndicator', related_name='related_effects', on_delete=models.CASCADE,
-        verbose_name=_('causal indicator'),
-    )
-    effect_indicator = models.ForeignKey(
-        'indicators.CommonIndicator', related_name='related_causes', on_delete=models.CASCADE,
-        verbose_name=_('effect indicator'),
-    )
-
-    public_fields: typing.ClassVar = ['id', 'causal_indicator', 'effect_indicator', 'effect_type']
-
-    class Meta:
-        unique_together = (('causal_indicator', 'effect_indicator'),)
-        verbose_name = _('related indicator')
-        verbose_name_plural = _('related indicators')
-
-
-class FrameworkIndicator(models.Model):
-    identifier = IdentifierField[str | None](null=True, blank=True, max_length=70)
-    common_indicator = ParentalKey(
-        'indicators.CommonIndicator', related_name='frameworks', on_delete=models.CASCADE,
-        verbose_name=_('common indicator'),
-    )
-    framework = ParentalKey(
-        'indicators.Framework', related_name='common_indicators', on_delete=models.CASCADE,
-        verbose_name=_('framework'),
-    )
-
-    public_fields: ClassVar = ['id', 'identifier', 'common_indicator', 'framework']
-
-    class Meta:
-        verbose_name = _('framework indicator')
-        verbose_name_plural = _('framework indicators')
-
-    def __str__(self):
-        return '%s ∈ %s' % (str(self.common_indicator), str(self.framework))
 
 
 class IndicatorQuerySet(SearchableQuerySetMixin, MultilingualQuerySet['Indicator']):
@@ -543,6 +273,8 @@ class Indicator(ClusterableModel, index.Indexed, ModificationTracking, PlanDefau
         self.organization = plan.organization
 
     def handle_values_update(self):
+        from indicators.models.values import IndicatorValue
+
         update_fields = []
 
         try:
@@ -655,6 +387,8 @@ class Indicator(ClusterableModel, index.Indexed, ModificationTracking, PlanDefau
             self.categories.add(cat)
 
     def set_contact_persons(self, data: list[dict[str, Any]]):
+        from indicators.models.contact_persons import IndicatorContactPerson
+
         existing_persons = {p.person for p in self.contact_persons.all()}
         new_persons = {d['person'] for d in data}
         IndicatorContactPerson.objects.filter(
@@ -777,126 +511,6 @@ class IndicatorCategoryThrough(models.Model):
         return f'{self.indicator}: {self.category}'
 
 
-@reversion.register()
-class Dimension(ClusterableModel):
-    """
-    A dimension for indicators.
-
-    Dimensions will have several dimension categories.
-    """
-
-    name = models.CharField(max_length=100, verbose_name=_('name'))
-
-    public_fields: ClassVar = ['id', 'name', 'categories']
-
-    # type annotations
-    categories: RevMany[DimensionCategory]
-    plans: RevMany[PlanDimension]
-
-    class Meta:
-        verbose_name = _('dimension')
-        verbose_name_plural = _('dimensions')
-
-    def __str__(self):
-        return self.name
-
-    def delete(self, *args, **kwargs):
-        # Check if dimension is used by multiple plans
-        if self.plans.count() > 1:
-            from django.core.exceptions import ValidationError
-            plan_names = [str(pd.plan) for pd in self.plans.all()]
-            raise ValidationError(
-                _('Cannot delete dimension "%(dimension)s" because it is linked to multiple plans: %(plans)s') % {
-                    'dimension': self.name,
-                    'plans': ', '.join(plan_names)
-                }
-            )
-
-        super().delete(*args, **kwargs)
-
-
-class DimensionCategory(OrderedModel):
-    """
-    A category in a dimension.
-
-    Indicator values are grouped with this.
-    """
-
-    dimension = ParentalKey('indicators.Dimension', on_delete=models.CASCADE, related_name='categories')
-    name = models.CharField(max_length=100, verbose_name=_('name'))
-    default_color = ColorField(
-        max_length=50, blank=True, default='', verbose_name=_('default color'),
-        help_text=_('Default color for this dimension category in charts'),
-    )
-
-    public_fields: ClassVar = ['id', 'dimension', 'name', 'default_color', 'order']
-
-    # type annotations
-    values: RevMany[IndicatorValue]
-
-    class Meta:
-        verbose_name = _('dimension category')
-        verbose_name_plural = _('dimension categories')
-        ordering = ['dimension', 'order']
-
-    def __str__(self):
-        return self.name
-
-class PlanDimension(models.Model):
-    """Mapping of which dimensions a plan is using."""
-
-    dimension = ParentalKey('indicators.Dimension', on_delete=models.CASCADE, related_name='plans')
-    plan: ParentalKey[Plan] = ParentalKey('actions.Plan', on_delete=models.CASCADE, related_name='dimensions')
-
-    class Meta:
-        verbose_name = _('plan dimension')
-        verbose_name_plural = _('plan dimensions')
-        unique_together = (('plan', 'dimension'),)
-
-    def __str__(self):
-        return "%s ∈ %s" % (str(self.dimension), str(self.plan))
-
-class IndicatorDimension(OrderedModel):
-    """Mapping of which dimensions an indicator has."""
-
-    dimension: PK[Dimension] = ParentalKey('indicators.Dimension', on_delete=models.CASCADE, related_name='instances')
-    indicator: PK[Indicator] = ParentalKey('indicators.Indicator', on_delete=models.CASCADE, related_name='dimensions')
-
-    public_fields: ClassVar = ['id', 'dimension', 'indicator', 'order']
-
-    class Meta:
-        verbose_name = _('indicator dimension')
-        verbose_name_plural = _('indicator dimensions')
-        ordering = ['indicator', 'order']
-        indexes = [
-            models.Index(fields=['indicator', 'order']),
-        ]
-        unique_together = (('indicator', 'dimension'),)
-
-    def __str__(self):
-        return "%s ∈ %s" % (str(self.dimension), str(self.indicator))
-
-
-class CommonIndicatorDimension(OrderedModel):
-    """Mapping of which dimensions a common indicator has."""
-
-    dimension = ParentalKey('indicators.Dimension', on_delete=models.CASCADE, related_name='common_indicators')
-    common_indicator = ParentalKey('indicators.CommonIndicator', on_delete=models.CASCADE, related_name='dimensions')
-
-    public_fields: ClassVar = ['id', 'dimension', 'common_indicator', 'order']
-
-    class Meta:
-        verbose_name = _('common indicator dimension')
-        verbose_name_plural = _('common indicator dimensions')
-        ordering = ['common_indicator', 'order']
-        indexes = [
-            models.Index(fields=['common_indicator', 'order']),
-        ]
-        unique_together = (('common_indicator', 'dimension'),)
-
-    def __str__(self):
-        return "%s ∈ %s" % (str(self.dimension), str(self.common_indicator))
-
 class IndicatorLevelQuerySet(SearchableQuerySetMixin, models.QuerySet['IndicatorLevel']):
     def visible_for_user(self, user: UserOrAnon | None, plan: Plan | str | None = None) -> Self:
         """
@@ -953,213 +567,3 @@ class IndicatorLevel(ClusterableModel):
 
     def __str__(self):
         return "%s in %s (%s)" % (self.indicator, self.plan, self.level)
-
-
-class IndicatorGraph(models.Model):
-    indicator = models.ForeignKey('indicators.Indicator', related_name='graphs', on_delete=models.CASCADE)
-    data = models.JSONField()
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    public_fields: ClassVar = ['id', 'indicator', 'data', 'created_at']
-
-    class Meta:
-        get_latest_by = 'created_at'
-
-    def __str__(self):
-        return "%s (%s)" % (self.indicator, self.created_at)
-
-
-class IndicatorValue(ClusterableModel):
-    """One measurement of an indicator for a certain date/month/year."""
-
-    indicator = ParentalKey(
-        'indicators.Indicator', related_name='values', on_delete=models.CASCADE,
-        verbose_name=_('indicator'),
-    )
-    categories = models.ManyToManyField(
-        'indicators.DimensionCategory', related_name='values', blank=True, verbose_name=_('categories'),
-    )
-    value = models.FloatField(verbose_name=_('value'))
-    date = models.DateField(verbose_name=_('date'))
-
-    # Cached here for performance reasons
-    normalized_values: models.JSONField[dict[str, float]] = models.JSONField(null=True, blank=True)
-
-    public_fields: ClassVar = ['id', 'indicator', 'categories', 'value', 'date']
-
-    class Meta:
-        verbose_name = _('indicator value')
-        verbose_name_plural = _('indicator values')
-        ordering = ('indicator', 'date')
-        get_latest_by = 'date'
-
-    def clean(self):
-        super().clean()
-        # FIXME: Check for duplicates on categories
-
-    def __str__(self):
-        indicator = self.indicator
-        if isinstance(self.date, datetime.date):
-            date_str = self.date.isoformat()
-        else:
-            date_str = self.date
-
-        return f"{indicator} {date_str} {self.value}"
-
-
-@reversion.register()
-class IndicatorGoal(models.Model):
-    """The numeric goal which the organization has set for an indicator."""
-
-    indicator = models.ForeignKey(
-        'indicators.Indicator', related_name='goals', on_delete=models.CASCADE,
-        verbose_name=_('indicator'),
-    )
-    value = models.FloatField()
-    date = models.DateField(verbose_name=_('date'))
-
-    # Cached here for performance reasons
-    normalized_values: models.JSONField[dict[str, float] | None] = models.JSONField(null=True, blank=True)
-
-    public_fields: ClassVar = ['id', 'indicator', 'value', 'date']
-
-    class Meta:
-        verbose_name = _('indicator goal')
-        verbose_name_plural = _('indicator goals')
-        ordering = ('indicator', 'date')
-        get_latest_by = 'date'
-        unique_together = (('indicator', 'date'),)
-
-    def __str__(self):
-        indicator = self.indicator
-        date = self.date.isoformat()
-
-        return f"{indicator} {date} {self.value}"
-
-
-class RelatedIndicator(IndicatorRelationship):
-    """A causal relationship between two indicators."""
-
-    HIGH_CONFIDENCE = 'high'
-    MEDIUM_CONFIDENCE = 'medium'
-    LOW_CONFIDENCE = 'low'
-    CONFIDENCE_LEVELS = (
-        (HIGH_CONFIDENCE, _('high')),
-        (MEDIUM_CONFIDENCE, _('medium')),
-        (LOW_CONFIDENCE, _('low')),
-    )
-
-    causal_indicator = ParentalKey(
-        'indicators.Indicator', related_name='related_effects', on_delete=models.CASCADE,
-        verbose_name=_('causal indicator'),
-    )
-    effect_indicator = ParentalKey(
-        'indicators.Indicator', related_name='related_causes', on_delete=models.CASCADE,
-        verbose_name=_('effect indicator'),
-    )
-    confidence_level = models.CharField(
-        max_length=20, choices=CONFIDENCE_LEVELS,
-        verbose_name=_('confidence level'), help_text=_('How confident we are that the causal effect is present'),
-    )
-
-    public_fields: ClassVar = ['id', 'effect_type', 'causal_indicator', 'effect_indicator', 'confidence_level']
-
-    class Meta:
-        unique_together = (('causal_indicator', 'effect_indicator'),)
-        verbose_name = _('related indicator')
-        verbose_name_plural = _('related indicators')
-
-    def __str__(self):
-        return "%s %s %s" % (self.causal_indicator, self.effect_type, self.effect_indicator)
-
-class ActionIndicatorQuerySet(models.QuerySet['ActionIndicator']):
-    def visible_for_user(self, user: UserOrAnon | None) -> Self:
-        """
-        Filter by visibility for a specific user.
-
-        A None value is interpreted identically to a non-authenticated user
-        """
-        if user is None or not user.is_authenticated:
-            return self.filter(indicator__visibility=RestrictedVisibilityModel.VisibilityState.PUBLIC)
-        return self
-
-    def visible_for_public(self) -> Self:
-        return self.visible_for_user(None)
-
-    def order_by_setting(self, plan: Plan):
-        indicator_ordering = plan.features.indicator_ordering
-        if indicator_ordering == OrderBy.NAME:
-            lang = plan.primary_language
-            collator = utils.get_collator(lang)
-
-            return self.order_by(
-                Collate("indicator__name", collator),
-            )
-
-        return self
-
-
-if TYPE_CHECKING:
-    class ActionIndicatorManager(ModelManager['ActionIndicator', ActionIndicatorQuerySet]): ...
-else:
-    ActionIndicatorManager = ModelManager.from_queryset(ActionIndicatorQuerySet)
-
-
-@reversion.register(follow=['indicator'])
-class ActionIndicator(models.Model):
-    """Link between an action and an indicator."""
-
-    action: ParentalKey[Action, Action] = ParentalKey(
-        'actions.Action', related_name='related_indicators', on_delete=models.CASCADE,
-        verbose_name=_('action'),
-    )
-    indicator: ParentalKey[Indicator, Indicator] = ParentalKey(
-        'indicators.Indicator', related_name='related_actions', on_delete=models.CASCADE,
-        verbose_name=_('indicator'),
-    )
-    effect_type = models.CharField(
-        max_length=40, choices=[(val, name) for val, name in IndicatorRelationship.EFFECT_TYPES if val != 'part_of'],
-        verbose_name=_('effect type'), help_text=_('What type of effect should the action cause?'),
-    )
-    indicates_action_progress = models.BooleanField(
-        default=False, verbose_name=_('indicates action progress'),
-        help_text=_('Set if the indicator should be used to determine action progress'),
-    )
-
-    public_fields: ClassVar = ['id', 'action', 'indicator', 'effect_type', 'indicates_action_progress']
-
-    objects: ActionIndicatorManager = ActionIndicatorManager()
-
-    class Meta:
-        unique_together = (('action', 'indicator'),)
-        verbose_name = _('action indicator')
-        verbose_name_plural = _('action indicators')
-        ordering = ["indicator"]
-
-    get_effect_type_display: Callable[[], str]
-
-    def __str__(self):
-        return "%s ➜ %s ➜ %s" % (self.action, self.get_effect_type_display(), self.indicator)
-
-
-class IndicatorContactPerson(OrderedModel):
-    """Contact person for an indicator."""
-
-    indicator = ParentalKey(
-        'indicators.Indicator', on_delete=models.CASCADE, verbose_name=_('indicator'), related_name='contact_persons',
-    )
-    person: PK[Person] = ParentalKey(
-        'people.Person', on_delete=models.CASCADE, verbose_name=_('person'),
-    )
-
-    class Meta:
-        ordering = ['indicator', 'order']
-        indexes = [
-            models.Index(fields=['indicator', 'order']),
-        ]
-        unique_together = (('indicator', 'person'),)
-        verbose_name = _('indicator contact person')
-        verbose_name_plural = _('indicator contact persons')
-
-    def __str__(self):
-        return str(self.person)
