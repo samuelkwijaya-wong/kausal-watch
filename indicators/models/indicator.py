@@ -17,7 +17,8 @@ from modelcluster.fields import ParentalKey
 from modelcluster.models import ClusterableModel
 from modeltrans.fields import TranslationField
 from modeltrans.manager import MultilingualQuerySet
-from wagtail.fields import RichTextField
+from wagtail.blocks import TextBlock
+from wagtail.fields import RichTextField, StreamField
 from wagtail.search import index
 from wagtail.search.queryset import SearchableQuerySetMixin
 
@@ -127,6 +128,13 @@ class Indicator(ClusterableModel, index.Indexed, ModificationTracking, PlanDefau
         help_text=_("Used in visualizations as the Y axis maximum"),
     )
     description = RichTextField[str | None, str | None](null=True, blank=True, verbose_name=_('description'))
+    visualizations: StreamField = StreamField([
+        ('raw_visualization', TextBlock())],
+        null=True,
+        blank=True,
+        verbose_name=_('visualizations')
+    )
+
     categories: M2M[Category, Any] = models.ManyToManyField(
         'actions.Category', blank=True, related_name='indicators',
         through='indicators.IndicatorCategoryThrough',
