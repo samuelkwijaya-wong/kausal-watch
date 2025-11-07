@@ -47,8 +47,17 @@ class CategoryLevelChooserBlock(blocks.ChooserBlock[CategoryLevel]):
     class Meta:
         label = CategoryLevel._meta.verbose_name
 
+    def __init__(self, match: str | None = None, append: str | None = None, **kwargs):
+        if match is None:
+            match = r'^fields-\d+-value-'
+        if append is None:
+            append = 'category_type'
+        self._match = match
+        self._append = append
+        super().__init__(**kwargs)
+
     @cached_property
-    def target_model(self):
+    def target_model(self) -> type[CategoryLevel]:
         return CategoryLevel
 
     @cached_property
@@ -56,8 +65,8 @@ class CategoryLevelChooserBlock(blocks.ChooserBlock[CategoryLevel]):
         from actions.chooser import CategoryLevelChooser
         linked_fields = {
             'type': {
-                'match': r'^fields-\d+-value-',
-                'append': 'category_type',
+                'match': self._match,
+                'append': self._append,
             },
         }
         return CategoryLevelChooser(linked_fields=linked_fields)

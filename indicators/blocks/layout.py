@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import Any
 
+from django.core.exceptions import ValidationError
 import graphene
 from django.db.models.enums import TextChoices
 from django.utils.translation import gettext_lazy as _
@@ -9,6 +10,7 @@ from wagtail import blocks
 
 from grapple.helpers import register_streamfield_block
 from grapple.models import GraphQLBoolean, GraphQLField, GraphQLForeignKey
+from wagtail.blocks.struct_block import StructBlockValidationError
 
 from kausal_common.blocks.base import (
     ColumnBlockBase,
@@ -22,9 +24,9 @@ from kausal_common.blocks.fields import FieldBlockMetaInterface
 from kausal_common.blocks.registry import FieldBlockContext, FieldContextConfig, ModelFieldProperties, ModelFieldRegistry
 from kausal_common.blocks.stream_block import generate_stream_block
 
-from actions.blocks.choosers import CategoryTypeChooserBlock
+from actions.blocks.choosers import CategoryLevelChooserBlock, CategoryTypeChooserBlock
 from actions.blocks.filters import CategoryTypeFilterBlock
-from actions.models.category import CategoryType
+from actions.models.category import CategoryLevel, CategoryType
 from indicators.models import Indicator
 
 from . import generated
@@ -37,6 +39,7 @@ class IndicatorListColumnInterface(DashboardColumnInterface):
         lambda: indicator_registry.get_field_enum_for_context(FieldBlockContext.DASHBOARD), required=False
     )
 
+
 @register_streamfield_block
 class IndicatorListColumn(ColumnBlockBase):
     graphql_interfaces = [*ColumnBlockBase.graphql_interfaces, IndicatorListColumnInterface]
@@ -47,6 +50,7 @@ class IndicatorContentBlockInterface(GeneralFieldBlockInterface):
         lambda: indicator_registry.get_field_enum_for_context(FieldBlockContext.DETAILS), required=False
     )
 
+
 @register_streamfield_block
 class IndicatorContentBlock(GeneralFieldBlockBase):
     graphql_interfaces = [FieldBlockMetaInterface, IndicatorContentBlockInterface]
@@ -56,6 +60,7 @@ class IndicatorFilterBlockInterface(FilterBlockInterface):
     source_field = graphene.Field(
         lambda: indicator_registry.get_field_enum_for_context(FieldBlockContext.LIST_FILTERS), required=False
     )
+
 
 @register_streamfield_block
 class IndicatorFilterBlock(FilterBlockBase):
@@ -132,10 +137,21 @@ initialize()
 @register_streamfield_block
 class IndicatorCategoryColumn(ColumnBlockBase):
     category_type = CategoryTypeChooserBlock(required=True)
+    category_level = CategoryLevelChooserBlock(
+        required=False, label=_('Category level'), match=r'^list_columns-\d+', append='-value-category_type'
+    )
 
     graphql_fields = ColumnBlockBase.graphql_fields + [
         GraphQLForeignKey('category_type', CategoryType, required=True),
+        GraphQLForeignKey('category_level', CategoryLevel, required=False),
     ]
+
+    def clean(self, value):
+        ct = value.get('category_type')
+        level = value.get('category_level')
+        if level is not None and level.type != ct:
+            raise StructBlockValidationError({'category_level': ValidationError(_('Invalid category level'))})
+        return super().clean(value)
 
 
 @register_streamfield_block
