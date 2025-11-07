@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import typing
 import uuid
 from typing import TYPE_CHECKING, Any, ClassVar, Self, cast
@@ -81,6 +82,12 @@ else:
     IndicatorManager = MLModelManager.from_queryset(IndicatorQuerySet)
 
 
+def validate_json(value: str) -> None:
+    try:
+        json.loads(value)
+    except json.JSONDecodeError as e:
+        raise ValidationError(_('Invalid JSON value')) from e
+
 @reversion.register(follow=('goals',))
 class Indicator(ClusterableModel, index.Indexed, ModificationTracking, PlanDefaultsModel, RestrictedVisibilityModel):
     """An indicator with which to measure actions and progress towards strategic goals."""
@@ -128,8 +135,8 @@ class Indicator(ClusterableModel, index.Indexed, ModificationTracking, PlanDefau
         help_text=_("Used in visualizations as the Y axis maximum"),
     )
     description = RichTextField[str | None, str | None](null=True, blank=True, verbose_name=_('description'))
-    visualizations: StreamField = StreamField([
-        ('raw_visualization', TextBlock())],
+    visualizations: StreamField = StreamField([  # type:ignore
+        ('raw_visualization', TextBlock(validators=(validate_json,)))],
         null=True,
         blank=True,
         verbose_name=_('visualizations')
