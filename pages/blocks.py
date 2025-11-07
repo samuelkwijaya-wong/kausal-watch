@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import re
-from typing import TYPE_CHECKING, Any, cast
+from typing import TYPE_CHECKING, Any, Callable, cast
 from uuid import UUID
 
 import graphene
@@ -22,6 +22,7 @@ from grapple.models import (
 from grapple.registry import registry
 from grapple.types.streamfield import ListBlock as GrappleListBlock, StructBlockItem
 
+from aplans.utils import validate_json
 from kausal_common.graphene.grapple import make_grapple_field
 
 from actions.blocks.choosers import CategoryChooserBlock
@@ -129,6 +130,29 @@ class AdaptiveEmbedBlock(blocks.StructBlock):
         GraphQLField('embed', EmbedHTMLValue),
         GraphQLBoolean('full_width'),
     ]
+
+@register_streamfield_block
+class RawVisualizationBlock(blocks.TextBlock):
+    def __init__(self,
+        required: bool = True,
+        help_text: str | None = None,
+        rows: int = 1,
+        max_length: int | None = None,
+        min_length: int | None = None,
+        search_index: bool = True,
+        validators: tuple[Callable[[str], None]] = (validate_json,),
+        **kwargs: dict[str, Any],
+    ):
+        super().__init__(
+            required=required,
+            help_text=help_text,
+            rows=rows,
+            max_length=max_length,
+            min_length=min_length,
+            search_index=search_index,
+            validators=validators,
+            **kwargs,
+        )
 
 
 @register_streamfield_block
