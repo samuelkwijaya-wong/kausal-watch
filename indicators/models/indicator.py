@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import json
 import typing
 import uuid
 from typing import TYPE_CHECKING, Any, ClassVar, Self, cast
@@ -34,6 +33,7 @@ from aplans.utils import (
     PlanDefaultsModel,
     RestrictedVisibilityModel,
     get_available_variants_for_language,
+    validate_json,
 )
 
 from indicators.models.common_indicator import CommonIndicatorNormalizator
@@ -81,12 +81,6 @@ if TYPE_CHECKING:
 else:
     IndicatorManager = MLModelManager.from_queryset(IndicatorQuerySet)
 
-
-def validate_json(value: str) -> None:
-    try:
-        json.loads(value)
-    except json.JSONDecodeError as e:
-        raise ValidationError(_('Invalid JSON value')) from e
 
 @reversion.register(follow=('goals',))
 class Indicator(ClusterableModel, index.Indexed, ModificationTracking, PlanDefaultsModel, RestrictedVisibilityModel):

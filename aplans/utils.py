@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import abc
+import json
 import logging
 import random
 import re
@@ -556,6 +557,13 @@ def validate_css_color(s):
             _('%(color)s is not a CSS color (e.g., "#112233", "red" or "rgb(0, 255, 127)")'),
             params={'color': s},
         )
+
+
+def validate_json(value: str) -> None:
+    try:
+        json.loads(value)
+    except json.JSONDecodeError as e:
+        raise ValidationError(_('Invalid JSON value')) from e
 
 
 class HasI18n(Protocol):
