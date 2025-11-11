@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from .action import (
     Action,
     ActionContactPerson,
@@ -36,6 +38,7 @@ from .category import (
     CommonCategory,
     CommonCategoryIcon,
     CommonCategoryType,
+    IndicatorCategoryRelationship,
 )
 from .features import PlanFeatures
 from .plan import (
@@ -53,6 +56,8 @@ __all__ = [
     'Action',
     'ActionContactPerson',
     'ActionDecisionLevel',
+    'ActionDependencyRelationship',
+    'ActionDependencyRole',
     'ActionImpact',
     'ActionImplementationPhase',
     'ActionLink',
@@ -77,18 +82,17 @@ __all__ = [
     'CommonCategory',
     'CommonCategoryIcon',
     'CommonCategoryType',
-    'RestrictedVisibilityModel',
     'GeneralPlanAdmin',
     'ImpactGroup',
     'ImpactGroupAction',
+    'IndicatorCategoryRelationship',
+    'ModelWithRole',
     'MonitoringQualityPoint',
     'Plan',
     'PlanDomain',
     'PlanFeatures',
     'PlanPublicSiteViewer',
     'PublicationStatus',
+    'RestrictedVisibilityModel',
     'Scenario',
-    'ModelWithRole',
-    'ActionDependencyRole',
-    'ActionDependencyRelationship',
 ]

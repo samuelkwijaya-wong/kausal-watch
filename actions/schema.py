@@ -4,10 +4,12 @@ from __future__ import annotations
 import logging
 import uuid
 from itertools import chain
-from typing import TYPE_CHECKING, Any, ClassVar, Generic, Protocol, TypeVar
+from typing import TYPE_CHECKING, Annotated, Any, ClassVar, Generic, Protocol, TypeVar
 from urllib.parse import urlparse
 
 import graphene
+import strawberry
+import strawberry_django
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Prefetch, Q, QuerySet, prefetch_related_objects
 from django.forms import ModelForm
@@ -85,11 +87,14 @@ from actions.models import (
 from actions.models.action import ActionQuerySet
 from actions.models.action_deps import ActionDependencyRelationship, ActionDependencyRole
 from actions.models.attributes import ModelWithAttributes
+from actions.models.category import IndicatorCategoryRelationshipType  # noqa: TC001
 from orgs.models import Organization, OrganizationQuerySet
 from pages import schema as pages_schema
 from pages.models import ActionListPage, AplansPage, CategoryPage
 from people.models import Person
 from search.backends import get_search_backend
+
+from .models import IndicatorCategoryRelationship as IndicatorCategoryRelationshipModel
 
 if TYPE_CHECKING:
     from collections.abc import Iterable, Mapping, Sequence
@@ -103,6 +108,7 @@ if TYPE_CHECKING:
     from actions.models.attributes import Attribute
     from actions.models.plan import PlanQuerySet
     from indicators.models import ActionIndicator, IndicatorLevelQuerySet
+    from indicators.schema import IndicatorNode
     from users.models import User
 
 
@@ -809,6 +815,17 @@ class AttributesMixin:
         return sorted(attributes, key=lambda a: a.type.order)
 
 
+def indicators_schema():
+    from indicators import schema
+    return schema
+
+
+@strawberry_django.type(IndicatorCategoryRelationshipModel)
+class IndicatorCategoryRelationship:
+    indicator: Annotated[IndicatorNode, strawberry.lazy('indicators.schema')]
+    type: IndicatorCategoryRelationshipType
+
+
 @register_django_node
 class CategoryNode(ResolveShortDescriptionFromLeadParagraphShim, AttributesMixin, DjangoNode[Category]):
     image = graphene.Field('images.schema.ImageNode')
@@ -818,6 +835,7 @@ class CategoryNode(ResolveShortDescriptionFromLeadParagraphShim, AttributesMixin
     icon_svg_url = graphene.String()
     category_page = graphene.Field(grapple_registry.pages[CategoryPage])
     datasets = graphene.List(graphene.NonNull('datasets.schema.DatasetNode'), required=True)
+    indicator_relationships = graphene.List(graphene.NonNull(IndicatorCategoryRelationship), required=True)
 
     @staticmethod
     def _resolve_field_with_fallback_to_common(root: Category, field_name: str):
@@ -849,6 +867,10 @@ class CategoryNode(ResolveShortDescriptionFromLeadParagraphShim, AttributesMixin
     @staticmethod
     def resolve_actions(root: Category, info: GQLInfo) -> ActionQuerySet:
         return root.actions.get_queryset().visible_for_user(info.context.user)
+
+    @staticmethod
+    def resolve_indicator_relationships(root: Category, info: GQLInfo) -> list[IndicatorCategoryRelationshipModel]:
+        return list(root.indicator_relationships.all())
 
     @staticmethod
     @gql_optimizer.resolver_hints(

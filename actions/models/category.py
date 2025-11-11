@@ -752,3 +752,26 @@ class CategoryIcon(Icon):
 
     def __str__(self):
         return '%s [%s]' % (self.category, self.language)
+
+
+class IndicatorCategoryRelationshipType(models.TextChoices):
+    MAIN_GOAL = 'main_goal', _('Main goal')
+    SECONDARY_GOAL = 'secondary_goal', _('Secondary goal')
+
+
+class IndicatorCategoryRelationship(models.Model):
+    indicator: FK[Indicator] = models.ForeignKey(
+        'indicators.Indicator', on_delete=models.CASCADE, related_name='category_relationships'
+    )
+    category: ParentalKey[Category, Category] = ParentalKey(
+        Category, on_delete=models.CASCADE, related_name='indicator_relationships'
+    )
+    type = models.CharField(max_length=50, choices=IndicatorCategoryRelationshipType.choices)
+
+    class Meta:
+        unique_together = ('indicator', 'category')
+        verbose_name = _('indicator category relationship')
+        verbose_name_plural = _('indicator category relationships')
+
+    def __str__(self) -> str:
+        return f'{self.indicator}: {self.category} {self.type}'

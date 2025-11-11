@@ -17,6 +17,7 @@ from wagtail.admin.panels import (
     ObjectList,
 )
 
+from dal import autocomplete
 from wagtail_color_panel.edit_handlers import NativeColorPanel
 from wagtail_modeladmin.helpers.button import ButtonHelper
 from wagtail_modeladmin.helpers.permission import PermissionHelper
@@ -498,6 +499,11 @@ class CategoryAdmin(OrderableMixin, AplansModelAdmin[Category]):
                 FieldPanel('image'),
             ]))
             all_panels.append(FieldPanel('kausal_paths_node_uuid'))
+
+        all_panels.append(InlinePanel('indicator_relationships', heading=_('Indicators'), panels=[
+            FieldPanel('indicator', widget=autocomplete.ModelSelect2(url='indicator-autocomplete')),
+            FieldPanel('type', heading=_('Type')),
+        ]))
 
         tabs = [ObjectList(panels, heading=_('Basic information'))]
 
