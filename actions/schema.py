@@ -18,6 +18,7 @@ from django.utils.translation import get_language, gettext, override
 from graphene_django import DjangoObjectType
 from graphene_django.converter import convert_django_field_with_choices
 from graphql.error import GraphQLError
+from strawberry import auto
 from wagtail.models import Page, Revision, WorkflowState
 from wagtail.rich_text import RichText
 
@@ -839,6 +840,7 @@ def indicators_schema():
 
 @strawberry_django.type(IndicatorCategoryRelationshipModel)
 class IndicatorCategoryRelationship:
+    id: auto
     indicator: Annotated[IndicatorNode, strawberry.lazy('indicators.schema')]
     type: IndicatorCategoryRelationshipType
 
