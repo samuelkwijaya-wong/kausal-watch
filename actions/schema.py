@@ -90,7 +90,7 @@ from actions.models.attributes import ModelWithAttributes
 from actions.models.category import IndicatorCategoryRelationshipType  # noqa: TC001
 from orgs.models import Organization, OrganizationQuerySet
 from pages import schema as pages_schema
-from pages.models import ActionListPage, AplansPage, CategoryPage
+from pages.models import ActionListPage, AplansPage, CategoryPage, IndicatorListPage
 from people.models import Person
 from search.backends import get_search_backend
 
@@ -155,6 +155,14 @@ def get_action_list_page_node():
     from pages.models import ActionListPage
 
     return registry.pages[ActionListPage]
+
+
+def get_indicator_list_page_node():
+    from grapple.registry import registry
+
+    from pages.models import IndicatorListPage
+
+    return registry.pages[IndicatorListPage]
 
 
 T = TypeVar('T', bound=Plan)
@@ -254,6 +262,7 @@ class PlanNode(DjangoNode[Plan]):
     serve_file_base_url = graphene.String(required=True)
     pages = graphene.List(graphene.NonNull(get_page_interface))
     action_list_page = graphene.Field(get_action_list_page_node)
+    indicator_list_page = graphene.Field(get_indicator_list_page_node)
     category_type = graphene.Field('actions.schema.CategoryTypeNode', id=graphene.ID(required=True))
     category_types = graphene.List(
         graphene.NonNull('actions.schema.CategoryTypeNode'),
@@ -388,6 +397,14 @@ class PlanNode(DjangoNode[Plan]):
         cache = info.context.cache.for_plan(root)
         for page in cache.visible_pages:
             if type(page) is ActionListPage:
+                return page
+        return None
+
+    @staticmethod
+    def resolve_indicator_list_page(root: Plan, info: GQLInfo) -> IndicatorListPage | None:
+        cache = info.context.cache.for_plan(root)
+        for page in cache.visible_pages:
+            if type(page) is IndicatorListPage:
                 return page
         return None
 
