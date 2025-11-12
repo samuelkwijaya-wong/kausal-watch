@@ -2,15 +2,15 @@ from __future__ import annotations
 
 from typing import Any
 
-from django.core.exceptions import ValidationError
 import graphene
+from django.core.exceptions import ValidationError
 from django.db.models.enums import TextChoices
 from django.utils.translation import gettext_lazy as _
 from wagtail import blocks
+from wagtail.blocks.struct_block import StructBlockValidationError
 
 from grapple.helpers import register_streamfield_block
-from grapple.models import GraphQLBoolean, GraphQLField, GraphQLForeignKey
-from wagtail.blocks.struct_block import StructBlockValidationError
+from grapple.models import GraphQLBoolean, GraphQLField, GraphQLForeignKey, GraphQLInt
 
 from kausal_common.blocks.base import (
     ColumnBlockBase,
@@ -106,6 +106,7 @@ def initialize():
         Field(field_name='organization'),
         Field(field_name='updated_at'),
         Field(field_name='level'),
+        Field(field_name='unit'),
         Field(
             field_name='causality_nav',
             has_details_block=True,
@@ -159,15 +160,38 @@ class IndicatorValueColumn(IndicatorListColumn):
     class IndicatorColumnValueType(TextChoices):
         LATEST = 'latest', _('Latest value')
         EARLIEST = 'earliest', _('Earliest value')
+        REFERENCE = 'reference', _('Reference value')
         GOAL = 'goal', _('Goal value')
 
     is_normalized = blocks.BooleanBlock(required=False)
     value_type = blocks.ChoiceBlock(choices=IndicatorColumnValueType.choices, required=True)
+    reference_year = blocks.IntegerBlock(required=False, help_text=_('Default reference year for reference value type'))
+    hide_unit = blocks.BooleanBlock(default=False, required=False)
 
     graphql_fields = IndicatorListColumn.graphql_fields + [
         GraphQLBoolean('is_normalized', required=True),
         GraphQLField('value_type', graphene.Enum.from_enum(IndicatorColumnValueType), required=True),
+        GraphQLInt('reference_year', required=False),
+        GraphQLField('hide_unit', graphene.Boolean, required=True),
     ]
+
+    def clean(self, value):
+        result = []
+        try:
+            result = super().clean(value)
+        except StructBlockValidationError as e:
+            errors = e.block_errors
+        else:
+            errors = {}
+
+        type = value.get('value_type')
+        ref_year = value.get('reference_year')
+        if ref_year is not None and type != self.IndicatorColumnValueType.REFERENCE:
+            errors['reference_year'] = ValidationError(_('Reference year is only allowed for reference value type'))
+        if errors:
+            raise StructBlockValidationError(errors)
+
+        return result
 
 
 IndicatorListColumnsStream = generate_stream_block(
@@ -178,6 +202,7 @@ IndicatorListColumnsStream = generate_stream_block(
         'level',
         ('category', IndicatorCategoryColumn()),
         ('value', IndicatorValueColumn()),
+        'unit',
         'updated_at',
     ),
     block_context=FieldBlockContext.DASHBOARD,

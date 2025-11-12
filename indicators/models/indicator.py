@@ -9,7 +9,7 @@ from django.contrib.admin import display
 from django.contrib.contenttypes.fields import GenericRelation
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.db.models import Q, QuerySet
+from django.db.models import OneToOneField, Q, QuerySet
 from django.urls import reverse
 from django.utils import timezone, translation
 from django.utils.translation import gettext_lazy as _, pgettext_lazy
@@ -24,7 +24,7 @@ from wagtail.search.queryset import SearchableQuerySetMixin
 
 from dateutil.relativedelta import relativedelta
 
-from kausal_common.models.types import MLModelManager, ModelManager
+from kausal_common.models.types import MLModelManager, ModelManager, OneToOne
 
 from aplans.utils import (
     AdminSaveContext,
@@ -41,6 +41,8 @@ from orgs.models import Organization
 from search.backends import TranslatedAutocompleteField, TranslatedSearchField
 
 if typing.TYPE_CHECKING:
+    from wagtail.blocks.stream_block import StreamValue
+
     from kausal_common.models.types import FK, M2M, RevMany
     from kausal_common.users import UserOrAnon
 
@@ -50,7 +52,7 @@ if typing.TYPE_CHECKING:
     from indicators.models.action_links import ActionIndicator
     from indicators.models.contact_persons import IndicatorContactPerson
     from indicators.models.dimensions import IndicatorDimension
-    from indicators.models.metadata import Dataset
+    from indicators.models.metadata import Dataset, Unit
     from indicators.models.relationships import RelatedIndicator
     from indicators.models.values import IndicatorGoal, IndicatorValue
     from people.models import Person
@@ -99,62 +101,105 @@ class Indicator(ClusterableModel, index.Indexed, ModificationTracking, PlanDefau
 
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     common = models.ForeignKey(
-        'indicators.CommonIndicator', null=True, blank=True, related_name='indicators',
-        on_delete=models.PROTECT, verbose_name=_('common indicator'),
+        'indicators.CommonIndicator',
+        null=True,
+        blank=True,
+        related_name='indicators',
+        on_delete=models.PROTECT,
+        verbose_name=_('common indicator'),
     )
     organization = models.ForeignKey(
-        'orgs.Organization', related_name='indicators', on_delete=models.CASCADE,
+        'orgs.Organization',
+        related_name='indicators',
+        on_delete=models.CASCADE,
         verbose_name=_('organization'),
     )
     plans: M2M[Plan, IndicatorLevel] = models.ManyToManyField(
-        'actions.Plan', through='indicators.IndicatorLevel', blank=True,
-        verbose_name=_('plans'), related_name='indicators',
+        'actions.Plan',
+        through='indicators.IndicatorLevel',
+        blank=True,
+        verbose_name=_('plans'),
+        related_name='indicators',
     )
     identifier = IdentifierField[str | None](null=True, blank=True, max_length=70)
     name = models.CharField(max_length=200, verbose_name=_('name'))
     quantity = ParentalKey(
-        'indicators.Quantity', related_name='indicators', on_delete=models.PROTECT,
-        verbose_name=pgettext_lazy('physical', 'quantity'), null=True, blank=True,
+        'indicators.Quantity',
+        related_name='indicators',
+        on_delete=models.PROTECT,
+        verbose_name=pgettext_lazy('physical', 'quantity'),
+        null=True,
+        blank=True,
     )
-    unit = ParentalKey(
-        'indicators.Unit', related_name='indicators', on_delete=models.PROTECT,
+    unit: ParentalKey[Unit] = ParentalKey(
+        'indicators.Unit',
+        related_name='indicators',
+        on_delete=models.PROTECT,
         verbose_name=_('unit'),
     )
     min_value = models.FloatField(
-        null=True, blank=True, verbose_name=_('minimum value'),
-        help_text=_("Used in visualizations as the Y axis minimum"),
-    )
-    max_value = models.FloatField(
-        null=True, blank=True, verbose_name=_('maximum value'),
-        help_text=_("Used in visualizations as the Y axis maximum"),
-    )
-    description = RichTextField[str | None, str | None](null=True, blank=True, verbose_name=_('description'))
-    visualizations: StreamField = StreamField([  # type:ignore
-        ('raw_visualization', TextBlock(validators=(validate_json,)))],
         null=True,
         blank=True,
-        verbose_name=_('visualizations')
+        verbose_name=_('minimum value'),
+        help_text=_('Used in visualizations as the Y axis minimum'),
+    )
+    max_value = models.FloatField(
+        null=True,
+        blank=True,
+        verbose_name=_('maximum value'),
+        help_text=_('Used in visualizations as the Y axis maximum'),
+    )
+    description = RichTextField[str | None, str | None](null=True, blank=True, verbose_name=_('description'))
+    visualizations: StreamField[StreamValue | None] = StreamField(
+        [
+            ('raw_visualization', TextBlock(validators=(validate_json,)))
+        ],
+        null=True,
+        blank=True,
+        verbose_name=_('visualizations'),
     )
 
     categories: M2M[Category, Any] = models.ManyToManyField(
-        'actions.Category', blank=True, related_name='indicators',
+        'actions.Category',
+        blank=True,
+        related_name='indicators',
         through='indicators.IndicatorCategoryThrough',
     )
     time_resolution = models.CharField(
-        max_length=50, choices=TIME_RESOLUTIONS, default=TIME_RESOLUTIONS[0][0],
+        max_length=50,
+        choices=TIME_RESOLUTIONS,
+        default=TIME_RESOLUTIONS[0][0],
         verbose_name=_('time resolution'),
     )
     updated_values_due_at = models.DateField(null=True, blank=True, verbose_name=_('updated values due at'))
     latest_graph = models.ForeignKey(
-        'indicators.IndicatorGraph', null=True, blank=True, related_name='+',
-        on_delete=models.SET_NULL, editable=False,
+        'indicators.IndicatorGraph',
+        null=True,
+        blank=True,
+        related_name='+',
+        on_delete=models.SET_NULL,
+        editable=False,
     )
     latest_value = models.ForeignKey(
-        'indicators.IndicatorValue', null=True, blank=True, related_name='+',
-        on_delete=models.SET_NULL, editable=False,
+        'indicators.IndicatorValue',
+        null=True,
+        blank=True,
+        related_name='+',
+        on_delete=models.SET_NULL,
+        editable=False,
+    )
+    reference_value: OneToOne[IndicatorValue] = OneToOneField(
+        'indicators.IndicatorValue',
+        null=True,
+        blank=True,
+        related_name='reference_for_indicator',
+        verbose_name=_('reference value'),
+        on_delete=models.SET_NULL,
     )
     datasets: M2M[Dataset, Any] = models.ManyToManyField(
-        'indicators.Dataset', blank=True, verbose_name=_('datasets'),
+        'indicators.Dataset',
+        blank=True,
+        verbose_name=_('datasets'),
     )
 
     # summaries = models.JSONField(null=True)
@@ -165,28 +210,41 @@ class Indicator(ClusterableModel, index.Indexed, ModificationTracking, PlanDefau
     # }
 
     contact_persons_unordered: M2M[Person, Any] = models.ManyToManyField(
-        'people.Person', through='indicators.IndicatorContactPerson', blank=True,
-        related_name='contact_for_indicators', verbose_name=_('contact persons'),
+        'people.Person',
+        through='indicators.IndicatorContactPerson',
+        blank=True,
+        related_name='contact_for_indicators',
+        verbose_name=_('contact persons'),
     )
     contact_persons: RevMany[IndicatorContactPerson]
 
     internal_notes = models.TextField(
-        blank=True, null=True, verbose_name=_('internal notes'),
+        blank=True,
+        null=True,
+        verbose_name=_('internal notes'),
     )
 
     reference = RichTextField[str | None, str | None](
-        blank=True, null=True, verbose_name=_('reference'), max_length=255,
-        help_text=_("What is the reference or source for this indicator?"),
+        blank=True,
+        null=True,
+        verbose_name=_('reference'),
+        max_length=255,
+        help_text=_('What is the reference or source for this indicator?'),
         features=['link'],
     )
 
     show_trendline = models.BooleanField(
-        default=True, verbose_name=_('show trend line'),
+        default=True,
+        verbose_name=_('show trend line'),
         help_text=_("Automatically create a trend line for the indicator's total value"),
     )
 
     desired_trend = models.CharField(
-        blank=True, null=False, verbose_name=_('desired trend'), max_length=20, default='',
+        blank=True,
+        null=False,
+        verbose_name=_('desired trend'),
+        max_length=20,
+        default='',
         choices=(
             ('increasing', _('increasing')),
             ('decreasing', _('decreasing')),
@@ -194,25 +252,26 @@ class Indicator(ClusterableModel, index.Indexed, ModificationTracking, PlanDefau
         ),
         help_text=_(
             "Which trend in the numerical values of this indicator's goals indicates improvement: when the values are "
-            "increasing or decreasing?",
+            'increasing or decreasing?',
         ),
     )
 
     show_total_line = models.BooleanField(
-        default=True, verbose_name=_('show total line'),
-        help_text=_("Data categories can be summed to form total for the indicator (draw stacked chart as default)"),
+        default=True,
+        verbose_name=_('show total line'),
+        help_text=_('Data categories can be summed to form total for the indicator (draw stacked chart as default)'),
     )
 
-    ticks_count = models.PositiveIntegerField(blank=True, null=True, help_text=_("Number of steps on the y-axis"))
+    ticks_count = models.PositiveIntegerField(blank=True, null=True, help_text=_('Number of steps on the y-axis'))
     ticks_rounding = models.PositiveIntegerField(
-        blank=True, null=True, help_text=_("Number of significant digits on y-axis ticks")
+        blank=True, null=True, help_text=_('Number of significant digits on y-axis ticks')
     )
     value_rounding = models.PositiveIntegerField(
-        blank=True, null=True, help_text=_("Number of significant digits when displaying indicator values")
+        blank=True, null=True, help_text=_('Number of significant digits when displaying indicator values')
     )
     data_categories_are_stackable = models.BooleanField(
         default=False,
-        help_text=_("Data categories can be summed to form a total for the indicator (draw a stacked chart as default)"),
+        help_text=_('Data categories can be summed to form a total for the indicator (draw a stacked chart as default)'),
     )
 
     sent_notifications = GenericRelation('notifications.SentNotification', related_query_name='indicator')
@@ -228,11 +287,41 @@ class Indicator(ClusterableModel, index.Indexed, ModificationTracking, PlanDefau
     ]
 
     public_fields: ClassVar = [
-        'id', 'uuid', 'common', 'organization', 'identifier', 'name', 'quantity', 'unit', 'description',
-        'min_value', 'max_value', 'categories', 'time_resolution', 'latest_value', 'latest_graph',
-        'datasets', 'updated_at', 'created_at', 'values', 'plans', 'goals', 'related_actions', 'actions',
-        'related_causes', 'related_effects', 'dimensions', 'reference', 'show_trendline', 'desired_trend',
-        'show_total_line', 'ticks_count', 'ticks_rounding', 'value_rounding', 'data_categories_are_stackable',
+        'id',
+        'uuid',
+        'common',
+        'organization',
+        'identifier',
+        'name',
+        'quantity',
+        'unit',
+        'description',
+        'min_value',
+        'max_value',
+        'categories',
+        'time_resolution',
+        'latest_value',
+        'latest_graph',
+        'datasets',
+        'updated_at',
+        'created_at',
+        'values',
+        'plans',
+        'goals',
+        'related_actions',
+        'actions',
+        'related_causes',
+        'related_effects',
+        'dimensions',
+        'reference',
+        'show_trendline',
+        'desired_trend',
+        'show_total_line',
+        'ticks_count',
+        'ticks_rounding',
+        'value_rounding',
+        'data_categories_are_stackable',
+        'reference_value',
     ]
 
     wagtail_reference_index_ignore = True
@@ -265,9 +354,11 @@ class Indicator(ClusterableModel, index.Indexed, ModificationTracking, PlanDefau
 
     def get_plans_with_access(self):
         from actions.models import Plan
+
         plan_qs = self.plans.all()
         return (
-            plan_qs |
+            plan_qs
+            |
             # For unconnected indicators, allow seeing and
             # connecting them for plan admins for plans
             # with same organization as indicator organization
@@ -360,27 +451,39 @@ class Indicator(ClusterableModel, index.Indexed, ModificationTracking, PlanDefau
     def clean(self):
         if self.updated_values_due_at:
             if self.time_resolution != 'year':
-                raise ValidationError({'updated_values_due_at':
-                                       _('Deadlines for value updates are currently only possible for yearly '
-                                         'indicators')})
-            if (self.latest_value is not None
-                    and self.updated_values_due_at <= self.latest_value.date + relativedelta(years=1)):
-                raise ValidationError({'updated_values_due_at':
-                                       _('There is already an indicator value for the year preceding the deadline')})
+                raise ValidationError(
+                    {'updated_values_due_at': _('Deadlines for value updates are currently only possible for yearly indicators')}
+                )
+            if self.latest_value is not None and self.updated_values_due_at <= self.latest_value.date + relativedelta(years=1):
+                raise ValidationError(
+                    {'updated_values_due_at': _('There is already an indicator value for the year preceding the deadline')}
+                )
 
         if self.common:
             if self.common.quantity != self.quantity:
-                raise ValidationError({'quantity': _("Quantity must be the same as in common indicator (%s)"  # noqa: INT003
-                                                     % self.common.quantity)})
+                raise ValidationError(
+                    {
+                        'quantity': _(
+                            'Quantity must be the same as in common indicator (%s)'  # noqa: INT003
+                            % self.common.quantity
+                        )
+                    }
+                )
             if self.common.unit != self.unit:
-                raise ValidationError({'unit': _("Unit must be the same as in common indicator (%s)"  # noqa: INT003
-                                                 % self.common.unit)})
+                raise ValidationError(
+                    {
+                        'unit': _(
+                            'Unit must be the same as in common indicator (%s)'  # noqa: INT003
+                            % self.common.unit
+                        )
+                    }
+                )
             # Unfortunately it seems we need to check whether dimensions are equal in the form
 
     def set_categories(self, ctype: CategoryType | str, categories: list[int | Category], plan: Plan | None = None):
         if plan is None:
             plan = self.plans.first()
-        assert plan, "No default plan found."
+        assert plan, 'No default plan found.'
         if isinstance(ctype, str):
             ctype = plan.category_types.get(identifier=ctype)
         all_cats = {x.id: x for x in ctype.categories.all()}
@@ -401,14 +504,14 @@ class Indicator(ClusterableModel, index.Indexed, ModificationTracking, PlanDefau
         existing_persons = {p.person for p in self.contact_persons.all()}
         new_persons = {d['person'] for d in data}
         IndicatorContactPerson.objects.filter(
-            indicator=self, person__in=(existing_persons - new_persons),
+            indicator=self,
+            person__in=(existing_persons - new_persons),
         ).delete()
         for d in data:
             IndicatorContactPerson.objects.update_or_create(
                 indicator=self,
                 person_id=d['person'],
             )
-
 
     def generate_normalized_values(self, cin: CommonIndicatorNormalizator):
         assert cin.normalizable == self.common
@@ -466,9 +569,11 @@ class Indicator(ClusterableModel, index.Indexed, ModificationTracking, PlanDefau
         A None value is interpreted identically to a non-authenticated user.
         """
 
-        if (user is None or not user.is_authenticated) and \
-            self.visibility != RestrictedVisibilityModel.VisibilityState.PUBLIC and \
-                not cast('PlanQuerySet', self.plans.get_queryset()).visible_for_user(user).exists():
+        if (
+            (user is None or not user.is_authenticated)
+            and self.visibility != RestrictedVisibilityModel.VisibilityState.PUBLIC
+            and not cast('PlanQuerySet', self.plans.get_queryset()).visible_for_user(user).exists()
+        ):
             return False
         return True
 
@@ -529,6 +634,7 @@ class IndicatorLevelQuerySet(SearchableQuerySetMixin, models.QuerySet['Indicator
 
         """
         from actions.models import Plan
+
         if plan:
             if isinstance(plan, str):
                 plan = Plan.objects.get(identifier=plan)
@@ -536,8 +642,7 @@ class IndicatorLevelQuerySet(SearchableQuerySetMixin, models.QuerySet['Indicator
         else:
             plans = list(Plan.objects.qs.visible_for_user(user))
         if user is None or not user.is_authenticated:
-            return self.filter(indicator__visibility=RestrictedVisibilityModel.VisibilityState.PUBLIC,
-                               plan__in=plans)
+            return self.filter(indicator__visibility=RestrictedVisibilityModel.VisibilityState.PUBLIC, plan__in=plans)
         return self
 
     def visible_for_public(self) -> Self:
@@ -558,10 +663,16 @@ class IndicatorLevel(ClusterableModel):
     """
 
     indicator: FK[Indicator] = models.ForeignKey(
-        'indicators.Indicator', related_name='levels', verbose_name=_('indicator'), on_delete=models.CASCADE,
+        'indicators.Indicator',
+        related_name='levels',
+        verbose_name=_('indicator'),
+        on_delete=models.CASCADE,
     )
     plan: FK[Plan] = models.ForeignKey(
-        'actions.Plan', related_name='indicator_levels', verbose_name=_('plan'), on_delete=models.CASCADE,
+        'actions.Plan',
+        related_name='indicator_levels',
+        verbose_name=_('plan'),
+        on_delete=models.CASCADE,
     )
     level = models.CharField(max_length=30, verbose_name=_('level'), choices=Indicator.LEVELS)
 
@@ -575,4 +686,4 @@ class IndicatorLevel(ClusterableModel):
         verbose_name_plural = _('indicator levels')
 
     def __str__(self):
-        return "%s in %s (%s)" % (self.indicator, self.plan, self.level)
+        return '%s in %s (%s)' % (self.indicator, self.plan, self.level)

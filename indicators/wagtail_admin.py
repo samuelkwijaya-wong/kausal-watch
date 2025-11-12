@@ -49,7 +49,7 @@ from admin_site.wagtail import (
     InitializeFormWithPlanMixin,
     get_translation_tabs,
 )
-from indicators.chooser import DimensionChooser
+from indicators.chooser import DimensionChooser, IndicatorValueChooser
 from orgs.models import Organization
 
 from .models import CommonIndicator, Dimension, Indicator, IndicatorLevel, Quantity, Unit
@@ -554,6 +554,10 @@ class IndicatorAdmin(AplansModelAdmin[Indicator]):
         advanced_panels: list[Panel] = [
             FieldPanel('organization', widget=autocomplete.ModelSelect2(url='organization-autocomplete')),
         ]
+        if instance and instance.pk and not instance.dimensions.exists():
+            advanced_panels.append(
+                FieldPanel('reference_value', widget=IndicatorValueChooser(indicator_id=instance.id))
+            )
 
         if not is_linked_to_common_indicator and is_general_admin:
             advanced_panels.append(
