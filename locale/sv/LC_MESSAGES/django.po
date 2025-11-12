@@ -10,11 +10,10 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-03-27 13:34+0200\n"
+"POT-Creation-Date: 2025-11-12 17:57+0100\n"
 "PO-Revision-Date: 2025-04-02 12:20+0000\n"
 "Last-Translator: Matias Wargelin <matias.wargelin@kausal.tech>\n"
-"Language-Team: Swedish <https://weblate.kausal.tech/projects/watch/django/sv/"
-">\n"
+"Language-Team: Swedish <https://weblate.kausal.tech/projects/watch/django/sv/>\n"
 "Language: sv\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -70,6 +69,13 @@ msgstr "Ångra markering som slutförd för rapport %s"
 msgid "Undo marking this action as complete for the report %s"
 msgstr "Ångra markeringen av denna åtgärd som slutförd för rapporten %s"
 
+#: actions/action_admin.py actions/apps.py actions/models/plan.py
+#: content/models.py indicators/wagtail_admin.py
+#: reports/spreadsheets/excel_report.py reports/tests/test_excel_roundtrip.py
+#: templates/modeladmin/create.html
+msgid "Actions"
+msgstr "Åtgärder"
+
 #: actions/action_admin.py
 msgid "Last updated"
 msgstr "Senast uppdaterad"
@@ -77,8 +83,8 @@ msgstr "Senast uppdaterad"
 #: actions/action_admin.py actions/templates/actions/chooser_results.html
 #: admin_site/models.py
 #: admin_site/templates/admin_site/own_indicators_panel.html copying/views.py
-#: kausal_common/datasets/models.py orgs/models.py orgs/wagtail_admin.py
-#: people/templates/people/chooser_results.html
+#: kausal_common/datasets/models.py
+#: kausal_common/templates/kausal_common/people/chooser_results.html
 msgid "Name"
 msgstr "Namn"
 
@@ -98,7 +104,7 @@ msgid "Basic information"
 msgstr "Grundläggande information"
 
 #: actions/action_admin.py actions/blocks/category_page_layout.py
-#: indicators/blocks.py
+#: indicators/blocks/__init__.py
 msgid "Progress"
 msgstr "Framsteg"
 
@@ -201,7 +207,7 @@ msgstr "Avbryt planerad publicering"
 
 #: actions/action_admin_mixins.py
 #: admin_site/templates/admin_site/own_indicators_panel.html
-#: admin_site/wagtail.py
+#: admin_site/wagtail.py orgs/wagtail_admin.py
 msgid "Edit"
 msgstr "Redigera"
 
@@ -282,23 +288,6 @@ msgstr "Identifierare måste anges"
 msgid "Identifier already exists"
 msgstr "Identifieraren finns redan"
 
-#: actions/api.py people/models.py
-msgid "Person with this email already exists"
-msgstr "Personen med det här e-postmeddelandet finns redan"
-
-#: actions/api.py
-msgid "Not all objects have an email address"
-msgstr "Alla objekt har inte en e-postadress"
-
-#: actions/api.py
-#, python-format
-msgid "Duplicate email addresses: %s"
-msgstr "Duplicera e-postadresser:%s"
-
-#: actions/apps.py
-msgid "collection"
-msgstr "samling"
-
 #: actions/apps.py
 msgid "Resubmit for moderation"
 msgstr "Skicka på nytt för moderering"
@@ -306,12 +295,6 @@ msgstr "Skicka på nytt för moderering"
 #: actions/apps.py
 msgid "Cancel moderation"
 msgstr "Avbryt moderering"
-
-#: actions/apps.py actions/models/plan.py content/models.py
-#: indicators/wagtail_admin.py reports/spreadsheets/excel_report.py
-#: reports/tests/test_excel_roundtrip.py templates/modeladmin/create.html
-msgid "Actions"
-msgstr "Åtgärder"
 
 #: actions/attribute_type_admin.py
 msgid "Object type"
@@ -399,7 +382,8 @@ msgstr "Rubrik"
 
 #: actions/blocks/action_content.py actions/blocks/action_content_blocks.py
 #: actions/blocks/action_list.py actions/blocks/category_list.py
-#: actions/blocks/paths_content.py aplans/dynamic_blocks.py
+#: actions/blocks/paths_content.py kausal_common/blocks/base.py
+#: kausal_common/blocks/fields.py
 msgid "Help text"
 msgstr "Hjälptext"
 
@@ -419,15 +403,16 @@ msgstr "Fält"
 
 #: actions/blocks/action_content_blocks.py actions/blocks/choosers.py
 #: actions/blocks/filters.py actions/models/attributes.py feedback/models.py
-#: pages/models.py
+#: indicators/blocks/layout.py pages/models.py
 msgid "Category"
 msgstr "Kategori"
 
-#: actions/blocks/action_content_blocks.py aplans/dynamic_blocks.py
+#: actions/blocks/action_content_blocks.py kausal_common/blocks/base.py
+#: kausal_common/blocks/fields.py
 msgid "Heading to show instead of the default"
 msgstr "Rubrik som ska visas istället för standardrubriken"
 
-#: actions/blocks/action_content_blocks.py actions/blocks/column_block_base.py
+#: actions/blocks/action_content_blocks.py kausal_common/blocks/base.py
 msgid "Label"
 msgstr "Etikett"
 
@@ -492,7 +477,8 @@ msgstr ""
 msgid "Form Field"
 msgstr "Fält"
 
-#: actions/blocks/action_content_blocks.py kausal_common/datasets/models.py
+#: actions/blocks/action_content_blocks.py indicators/wagtail_admin.py
+#: kausal_common/datasets/models.py
 msgid "Description"
 msgstr "Beskrivning"
 
@@ -580,7 +566,8 @@ msgstr "datauppsättningar"
 msgid "What label should be used in the public UI for the official name?"
 msgstr "Vilken etikett ska användas i den offentliga användargränssnittet för det officiella namnet?"
 
-#: actions/blocks/action_content_blocks.py aplans/dynamic_blocks.py
+#: actions/blocks/action_content_blocks.py kausal_common/blocks/base.py
+#: kausal_common/blocks/fields.py
 msgid "Field label"
 msgstr "Fältetikett"
 
@@ -704,11 +691,7 @@ msgstr "Status"
 msgid "Dataset Schema"
 msgstr "dataset-licens"
 
-#: actions/blocks/column_block_base.py
-msgid "Label for the column to be used instead of the default"
-msgstr "Etikett för kolumnen som ska användas istället för standardkolumnen"
-
-#: actions/blocks/filters.py
+#: actions/blocks/filters.py kausal_common/blocks/base.py
 msgid "Label for 'show all'"
 msgstr "Etikett för 'visa alla'"
 
@@ -723,11 +706,6 @@ msgstr "Hur många nivåer av kategorihierarkin som ska visas"
 #: actions/blocks/filters.py
 msgid "Depth"
 msgstr "Djup"
-
-#: actions/blocks/filters.py
-#, python-format
-msgid "Filter: %(filter_label)s"
-msgstr "Filter: %(filter_label)s"
 
 #: actions/blocks/filters.py
 msgid "Responsible party"
@@ -834,6 +812,16 @@ msgstr ""
 msgid "Icons"
 msgstr "Ikoner"
 
+#: actions/category_admin.py actions/models/plan.py indicators/apps.py
+#: indicators/blocks/__init__.py indicators/wagtail_admin.py
+#: reports/report_formatters.py
+msgid "Indicators"
+msgstr "Indikatorer"
+
+#: actions/category_admin.py
+msgid "Type"
+msgstr ""
+
 #: actions/category_admin.py
 msgid "Common category types"
 msgstr "Gemensamma kategorityper"
@@ -917,8 +905,11 @@ msgstr "identifierare"
 
 #: actions/export.py actions/models/action.py actions/models/action_deps.py
 #: actions/models/attributes.py actions/models/category.py
-#: actions/models/plan.py feedback/models.py indicators/models.py
-#: kausal_common/datasets/models.py orgs/models.py reports/models.py
+#: actions/models/plan.py feedback/models.py
+#: indicators/models/common_indicator.py indicators/models/dimensions.py
+#: indicators/models/indicator.py indicators/models/metadata.py
+#: kausal_common/datasets/models.py kausal_common/organizations/models.py
+#: reports/models.py
 msgid "name"
 msgstr "namn"
 
@@ -939,12 +930,12 @@ msgstr "framstegsindikatorer"
 msgid "other indicators"
 msgstr "andra indikatorer"
 
-#: actions/export.py actions/models/action.py indicators/models.py
+#: actions/export.py actions/models/action.py indicators/models/indicator.py
 msgid "contact persons"
 msgstr "kontaktpersoner"
 
 #: actions/models/action.py actions/models/plan.py content/models.py
-#: feedback/models.py indicators/models.py notifications/models.py
+#: feedback/models.py indicators/models/indicator.py notifications/models.py
 #: orgs/models.py pages/models.py
 msgid "plan"
 msgstr "planen"
@@ -974,8 +965,10 @@ msgstr "Bild"
 msgid "Lead paragraph"
 msgstr "Ingress"
 
-#: actions/models/action.py actions/models/plan.py indicators/models.py
-#: kausal_common/datasets/models.py orgs/models.py
+#: actions/models/action.py actions/models/plan.py
+#: indicators/models/common_indicator.py indicators/models/indicator.py
+#: indicators/models/metadata.py kausal_common/datasets/models.py
+#: kausal_common/organizations/models.py
 msgid "description"
 msgstr "beskrivning"
 
@@ -995,7 +988,7 @@ msgstr "intern prioritering"
 msgid "internal notes for plan administrators"
 msgstr "interna anteckningar för planadministratörer"
 
-#: actions/models/action.py indicators/models.py
+#: actions/models/action.py indicators/models/indicator.py
 msgid "internal notes"
 msgstr "interna anteckningar"
 
@@ -1053,11 +1046,12 @@ msgstr "Sätts om åtgärden inte har ett start- eller slutdatum"
 msgid "decision-making level"
 msgstr "beslutsnivå"
 
-#: actions/models/action.py actions/models/category.py indicators/models.py
+#: actions/models/action.py actions/models/category.py
+#: indicators/models/values.py
 msgid "categories"
 msgstr "kategorier"
 
-#: actions/models/action.py indicators/models.py
+#: actions/models/action.py indicators/models/indicator.py
 msgid "indicators"
 msgstr "indikatorer"
 
@@ -1136,7 +1130,8 @@ msgctxt "partitive"
 msgid "action"
 msgstr "åtgärd"
 
-#: actions/models/action.py feedback/models.py indicators/models.py
+#: actions/models/action.py feedback/models.py
+#: indicators/models/action_links.py
 msgid "action"
 msgstr "åtgärd"
 
@@ -1189,8 +1184,9 @@ msgstr "Primärt ansvarig part"
 msgid "Collaborator"
 msgstr "Samarbetspartner"
 
-#: actions/models/action.py actions/models/plan.py indicators/models.py
-#: orgs/models.py people/models.py people/wagtail_admin.py
+#: actions/models/action.py actions/models/plan.py
+#: indicators/models/indicator.py kausal_common/organizations/models.py
+#: kausal_common/people/models.py orgs/models.py people/wagtail_admin.py
 msgid "organization"
 msgstr "organisation"
 
@@ -1222,8 +1218,9 @@ msgstr "Redaktör"
 msgid "Moderator"
 msgstr "Moderator"
 
-#: actions/models/action.py actions/models/plan.py indicators/models.py
-#: orgs/models.py people/models.py
+#: actions/models/action.py actions/models/plan.py
+#: indicators/models/contact_persons.py kausal_common/people/models.py
+#: orgs/models.py
 msgid "person"
 msgstr "person"
 
@@ -1299,7 +1296,7 @@ msgstr "stat"
 msgid "comment"
 msgstr "kommentar"
 
-#: actions/models/action.py
+#: actions/models/action.py reports/report_formatters.py
 msgid "due date"
 msgstr "förfallodatum"
 
@@ -1365,9 +1362,9 @@ msgstr "åtgärdseffektklass"
 msgid "action impact classes"
 msgstr "åtgärder påverkan klasser"
 
-#: actions/models/action.py feedback/models.py indicators/models.py
-#: kausal_common/datasets/models.py orgs/models.py pages/blocks.py
-#: pages/models.py
+#: actions/models/action.py feedback/models.py indicators/models/metadata.py
+#: kausal_common/datasets/models.py kausal_common/organizations/models.py
+#: pages/blocks.py pages/models.py
 msgid "URL"
 msgstr "URL"
 
@@ -1383,7 +1380,7 @@ msgstr "åtgärdslänk"
 msgid "action links"
 msgstr "åtgärdslänkar"
 
-#: actions/models/action.py indicators/models.py
+#: actions/models/action.py indicators/models/values.py
 #: kausal_common/datasets/models.py
 msgid "date"
 msgstr "datum"
@@ -1396,7 +1393,7 @@ msgstr "författare"
 msgid "content"
 msgstr "innehåll"
 
-#: actions/models/action.py aplans/utils.py people/models.py
+#: actions/models/action.py aplans/utils.py kausal_common/people/models.py
 msgid "created by"
 msgstr "skapad av"
 
@@ -1584,7 +1581,7 @@ msgstr "Visa alla åtgärder"
 msgid "Set if this category type should have its own collection for images"
 msgstr "Ställ in om indikatorn ska användas för att bestämma framsteg"
 
-#: actions/models/category.py orgs/models.py
+#: actions/models/category.py kausal_common/organizations/models.py
 #, fuzzy
 msgid "primary language"
 msgstr "Primärspråk får inte väljas"
@@ -1684,6 +1681,30 @@ msgstr "Föräldern måste vara av samma typ"
 msgid "Subcategories"
 msgstr "kategorier"
 
+#: actions/models/category.py
+#, fuzzy
+#| msgid "Has goals"
+msgid "Main goal"
+msgstr "Har målsättningar"
+
+#: actions/models/category.py
+#, fuzzy
+#| msgid "indicator goal"
+msgid "Secondary goal"
+msgstr "indikatormål"
+
+#: actions/models/category.py
+#, fuzzy
+#| msgid "Indicator for actions"
+msgid "indicator category relationship"
+msgstr "Indikator för åtgärder"
+
+#: actions/models/category.py
+#, fuzzy
+#| msgid "Indicator for actions"
+msgid "indicator category relationships"
+msgstr "Indikator för åtgärder"
+
 #: actions/models/features.py
 msgid "No ordering"
 msgstr "Ingen sortering"
@@ -1738,6 +1759,16 @@ msgstr "Tillåt inloggning på den offentliga webbplatsen"
 #: actions/models/features.py
 #, fuzzy
 msgid "Should users be able to have authenticated sessions in the public UI?"
+msgstr "Ska användare kunna ha autentiserade sessioner i det publika användargränssnittet?"
+
+#: actions/models/features.py
+#, fuzzy
+msgid "Expose unpublished plan only to authenticated users"
+msgstr "Visa all information, men endast för autentiserade användare"
+
+#: actions/models/features.py
+#, fuzzy
+msgid "Should the plan be exposed only to authenticated users if not published?"
 msgstr "Ska användare kunna ha autentiserade sessioner i det publika användargränssnittet?"
 
 #: actions/models/features.py
@@ -1904,6 +1935,16 @@ msgid "Is this plan password protected?"
 msgstr "Är den här planen lösenordsskyddad?"
 
 #: actions/models/features.py
+#, fuzzy
+msgid "Indicators open in modal"
+msgstr "Indikator dimensioner"
+
+#: actions/models/features.py
+#, fuzzy
+msgid "Should indicators open only in a modal dialog in the public UI."
+msgstr "Ange om kontaktpersonerna inte ska vara synliga i det offentliga användargränssnittet"
+
+#: actions/models/features.py
 msgid "plan feature"
 msgstr "plan funktion"
 
@@ -1955,7 +1996,7 @@ msgstr "Dölj officiellt namn"
 msgid "A unique identifier for the plan used internally to distinguish between plans. This becomes part of the test site URL: https://[identifier].watch-test.kausal.tech. Use lowercase letters and dashes."
 msgstr "En unik identifierare för planen som används internt för att skilja mellan olika planer. Detta blir en del av testplatsens URL: https://&lt;plan-identifier&gt;.test.kausal.tech. Använd små bokstäver och bindestreck."
 
-#: actions/models/plan.py indicators/models.py
+#: actions/models/plan.py indicators/models/metadata.py
 msgid "short name"
 msgstr "kort namn"
 
@@ -2134,7 +2175,7 @@ msgstr ""
 msgid "UUID of the corresponding Kausal Paths instance for Kausal Paths integration"
 msgstr ""
 
-#: actions/models/plan.py indicators/models.py
+#: actions/models/plan.py indicators/models/indicator.py
 msgid "plans"
 msgstr "planer"
 
@@ -2163,11 +2204,6 @@ msgstr "Organisationen är redan inkluderad i planen"
 #: actions/models/plan.py
 msgid "This short identifier is already in use for a top-level plan within this organization."
 msgstr ""
-
-#: actions/models/plan.py indicators/apps.py indicators/blocks.py
-#: indicators/wagtail_admin.py reports/report_formatters.py
-msgid "Indicators"
-msgstr "Indikatorer"
 
 #: actions/models/plan.py
 msgid "Privacy"
@@ -2247,6 +2283,16 @@ msgstr "Det fullständigt kvalificerade domännamnet, t.ex. climate.cityname.gov
 
 #: actions/models/plan.py
 #, fuzzy
+#| msgid "Admin hostnames"
+msgid "redirect to host name"
+msgstr "Admin värdnamn"
+
+#: actions/models/plan.py
+msgid "The UI will redirect to this hostname if set."
+msgstr ""
+
+#: actions/models/plan.py
+#, fuzzy
 msgid "base path"
 msgstr "basmall"
 
@@ -2263,7 +2309,7 @@ msgid "deployment environment"
 msgstr ""
 
 #: actions/models/plan.py
-msgid "Domain names that will we used to redirect to the main hostname. Multiple domains are separated by commas."
+msgid "Domain names that will be used to redirect to the main hostname. Multiple domains are separated by commas."
 msgstr ""
 
 #: actions/models/plan.py
@@ -2275,20 +2321,20 @@ msgid "Only set this if you are sure you want to override the publication time s
 msgstr "Ange endast detta om du är säker på att du vill åsidosätta den publiceringstid som anges i planen. Var medveten om att detta omedelbart kommer att ändra planens publiceringsstatus på denna domän!"
 
 #: actions/models/plan.py
-msgid "The site is not public at this time."
-msgstr "Webbplatsen är för närvarande inte offentlig."
-
-#: actions/models/plan.py
-msgid "Hostname must be a fully qualified domain name in lower-case only"
-msgstr "Värdnamn måste endast vara ett fullständigt kvalificerat domännamn i gemener"
-
-#: actions/models/plan.py
 msgid "plan domain"
 msgstr "plandomän"
 
 #: actions/models/plan.py
 msgid "plan domains"
 msgstr "planera domäner"
+
+#: actions/models/plan.py actions/schema.py
+msgid "The site is not public at this time."
+msgstr "Webbplatsen är för närvarande inte offentlig."
+
+#: actions/models/plan.py
+msgid "Hostname must be a fully qualified domain name in lower-case only"
+msgstr "Värdnamn måste endast vara ett fullständigt kvalificerat domännamn i gemener"
 
 #: actions/models/plan.py
 msgid "scenario"
@@ -2392,14 +2438,10 @@ msgid "The %(model_name)s \"%(title)s\" has been withdrawn from moderation."
 msgstr "%(model_name)s '%(object)s' har skickats in för moderering."
 
 #: actions/templates/wagtailadmin/notifications/workflow_state_approved_comment.html
+#: actions/templates/wagtailadmin/notifications/workflow_state_approved_comment.txt
 #, fuzzy, python-format
-msgid "The page \"%(title)s\" has been approved in workflow \"%(workflow)s\" with comment."
+msgid "The page \"%(title)s\" has been approved in workflow \"%(workflow)s\" with a comment."
 msgstr "%(model_name)s '%(object)s' har skickats in för moderering."
-
-#: actions/templates/wagtailadmin/notifications/workflow_state_approved_comment.html
-#, python-format
-msgid "Comment: \"%(comment)s\""
-msgstr ""
 
 #: actions/templates/wagtailadmin/notifications/workflow_state_approved_comment.html
 #: actions/templates/wagtailadmin/notifications/workflow_state_approved_comment.txt
@@ -2408,28 +2450,19 @@ msgid "You can view the page here:"
 msgstr "Du kan förhandsgranska sidan här:"
 
 #: actions/templates/wagtailadmin/notifications/workflow_state_approved_comment.html
-#, fuzzy, python-format
-msgid "The %(model_name)s \"%(title)s\" has been approved in workflow \"%(workflow)s\" with comment: \"%(comment)s\"."
-msgstr "%(model_name)s '%(object)s' har skickats in för moderering."
-
 #: actions/templates/wagtailadmin/notifications/workflow_state_approved_comment.txt
 #, fuzzy, python-format
-msgid "The page \"%(title)s\" has been approved in workflow \"%(workflow)s\" with comment: \"%(comment)s\"."
-msgstr "%(model_name)s '%(object)s' har skickats in för moderering."
-
-#: actions/templates/wagtailadmin/notifications/workflow_state_approved_comment.txt
-#, fuzzy, python-format
-msgid "The %(model_name)s \"%(title)s\" has been approved in workflow \"%(workflow)s\" with comment: \"%(comment)s\""
+msgid "The %(model_name)s \"%(title)s\" has been approved in workflow \"%(workflow)s\" with a comment."
 msgstr "%(model_name)s '%(object)s' har skickats in för moderering."
 
 #: actions/templates/wagtailadmin/notifications/workflow_state_approved_comment_subject.txt
 #, fuzzy, python-format
-msgid "The page \"%(title)s\" has been approved in \"%(workflow)s with comment."
+msgid "The page \"%(title)s\" has been approved in \"%(workflow)s with a comment."
 msgstr "%(model_name)s '%(object)s' har skickats in för moderering."
 
 #: actions/templates/wagtailadmin/notifications/workflow_state_approved_comment_subject.txt
 #, fuzzy, python-format
-msgid "The %(model_name)s \"%(title)s\" has been approved in \"%(workflow)s\" with comment."
+msgid "The %(model_name)s \"%(title)s\" has been approved in \"%(workflow)s\" with a comment."
 msgstr "%(model_name)s '%(object)s' har skickats in för moderering."
 
 #: actions/wagtail_admin.py
@@ -2624,10 +2657,6 @@ msgid "Google"
 msgstr "Google"
 
 #: admin_site/models.py
-msgid "Tunnistamo"
-msgstr "Tunnistamo"
-
-#: admin_site/models.py
 msgid "OKTA"
 msgstr "OKTA"
 
@@ -2671,6 +2700,10 @@ msgstr "Vill du verkligen inkludera organisationen '%(org)s' i planen '%(plan)s'
 #: admin_site/signals.py
 #, python-format
 msgid "You have stopped viewing the site as %(user)s and have returned to your original account."
+msgstr ""
+
+#: admin_site/templates/admin_site/chooser_results_empty.html
+msgid "There are no objects to choose from."
 msgstr ""
 
 #: admin_site/templates/admin_site/own_indicators_panel.html
@@ -2732,6 +2765,29 @@ msgstr "Interna anteckningar"
 #, fuzzy
 msgid "Sign in to Kausal Watch admin"
 msgstr "Logga in på Kausal Watch"
+
+#: admin_site/templates/wagtailadmin/login.html
+msgid "Your Kausal Watch admin portal has moved."
+msgstr ""
+
+#: admin_site/templates/wagtailadmin/login.html
+#, python-brace-format
+msgid "Redirecting to {url} in {count}&nbsp;seconds..."
+msgstr ""
+
+#: admin_site/templates/wagtailadmin/login.html
+msgid "Go Now"
+msgstr ""
+
+#: admin_site/templates/wagtailadmin/login.html
+#, fuzzy
+#| msgid "You have been successfully logged out."
+msgid "You were successfully redirected"
+msgstr "Du har loggat ut."
+
+#: admin_site/templates/wagtailadmin/login.html
+msgid "Please bookmark this page for future use."
+msgstr ""
 
 #: admin_site/templates/wagtailadmin/login.html
 msgid "Our apologies, the server is temporarily experiencing difficulties."
@@ -2798,16 +2854,6 @@ msgstr "Videohandledning"
 msgid "https://kausal.gitbook.io/watch"
 msgstr "https://kausal.gitbook.io/watch"
 
-#: aplans/dynamic_blocks.py
-#, fuzzy
-msgid "Help text for the field to be shown in the UI"
-msgstr "Hjälptext för fältet som ska visas i användargränssnittet"
-
-#: aplans/dynamic_blocks.py
-#, python-format
-msgid "Content block: %(label)s"
-msgstr "Innehållsblock:%(label)s"
-
 #: aplans/fields.py
 msgid "Enter a valid hostname."
 msgstr "Ange ett giltigt värdnamn."
@@ -2828,15 +2874,6 @@ msgstr "Utkast"
 #: aplans/middleware.py
 msgid "Login was unsuccessful."
 msgstr "Inloggningen misslyckades."
-
-#: aplans/rest_api.py
-msgid "Cannot delete instance because other objects reference it."
-msgstr "Kan inte ta bort instans eftersom andra objekt refererar till den."
-
-#: aplans/rest_api.py
-#, fuzzy, python-format
-msgid "Cannot delete \"%s\" because it is connected to other objects such as plans, persons or actions."
-msgstr "Kan inte ta bort \"%s\" eftersom det är kopplat till andra objekt som planer, personer eller åtgärder. "
 
 #: aplans/settings.py
 #, fuzzy
@@ -2962,6 +2999,10 @@ msgid "%(color)s is not a CSS color (e.g., \"#112233\", \"red\" or \"rgb(0, 255,
 msgstr "%(color)s är inte en CSS -färg (t.ex. \"#112233\", \"röd\" eller \"rgb (0, 255, 127)\")"
 
 #: aplans/utils.py
+msgid "Invalid JSON value"
+msgstr ""
+
+#: aplans/utils.py
 #, fuzzy
 msgid "updated by"
 msgstr "uppdaterad kl"
@@ -3015,7 +3056,7 @@ msgid "Milestones"
 msgstr "Milstolpar"
 
 #: content/models.py indicators/wagtail_admin.py
-#: people/templates/people/chooser_results.html
+#: kausal_common/templates/kausal_common/people/chooser_results.html
 msgid "Organization"
 msgstr "Organisation"
 
@@ -3223,8 +3264,8 @@ msgstr "dokumentera"
 msgid "documents"
 msgstr "dokument"
 
-#: feedback/models.py kausal_common/users/models.py orgs/models.py
-#: people/models.py users/models.py
+#: feedback/models.py kausal_common/organizations/models.py
+#: kausal_common/people/models.py kausal_common/users/models.py users/models.py
 msgid "email address"
 msgstr "e-postadress"
 
@@ -3337,7 +3378,7 @@ msgstr "Bild byline/credits"
 msgid "Alt text"
 msgstr "Alt text"
 
-#: images/models.py people/models.py
+#: images/models.py kausal_common/people/models.py
 msgid "image"
 msgstr "bild"
 
@@ -3345,26 +3386,196 @@ msgstr "bild"
 msgid "images"
 msgstr "bilder"
 
-#: indicators/blocks.py
+#: indicators/blocks/__init__.py
 msgid "Indicator"
 msgstr "Indikator"
 
-#: indicators/blocks.py
+#: indicators/blocks/__init__.py
+#, fuzzy
+msgid "Dimension"
+msgstr "mått"
+
+#: indicators/blocks/__init__.py
 msgid "Indicator highlights"
 msgstr "Indikatorhöjdpunkter"
 
-#: indicators/blocks.py
+#: indicators/blocks/__init__.py
 msgid "Graph"
 msgstr "Graf"
 
-#: indicators/blocks.py
+#: indicators/blocks/__init__.py
 msgid "Animated"
 msgstr "Animerad"
 
-#: indicators/blocks.py
+#: indicators/blocks/__init__.py
 #, fuzzy
 msgid "Indicator showcase"
 msgstr "indikatormål"
+
+#: indicators/blocks/__init__.py kausal_common/blocks/base.py
+#: kausal_common/blocks/fields.py
+#, fuzzy
+msgid "Help text for the field to be shown in the UI"
+msgstr "Hjälptext för fältet som ska visas i användargränssnittet"
+
+#: indicators/blocks/__init__.py
+#, fuzzy
+msgid "Choose the indicator for data visualization"
+msgstr "Välj en annan åtgärd"
+
+#: indicators/blocks/__init__.py
+msgid "Choose the indicator dimension that will be used for categories in the visualization"
+msgstr ""
+
+#: indicators/blocks/__init__.py
+#, python-format
+msgid "Dimension '%(dimension)s' is not valid for indicator '%(indicator)s'. Please choose a dimension that belongs to the indicator."
+msgstr ""
+
+#: indicators/blocks/__init__.py
+msgid "Stacked bars"
+msgstr ""
+
+#: indicators/blocks/__init__.py
+msgid "Grouped bars"
+msgstr ""
+
+#: indicators/blocks/__init__.py
+#, fuzzy
+#| msgid "Indicator action"
+msgid "Indicator: Bar Chart"
+msgstr "Indikatoråtgärd"
+
+#: indicators/blocks/__init__.py
+msgid "Indicator visualization as a bar chart"
+msgstr ""
+
+#: indicators/blocks/__init__.py
+#, fuzzy
+#| msgid "show total line"
+msgid "Show total line"
+msgstr "visa total linje"
+
+#: indicators/blocks/__init__.py
+#, fuzzy
+#| msgid "Indicator order"
+msgid "Indicator: Line Chart"
+msgstr "Sortering av indikatorer"
+
+#: indicators/blocks/__init__.py
+msgid "Indicator visualization as a line chart"
+msgstr ""
+
+#: indicators/blocks/__init__.py
+#, fuzzy
+#| msgid "Indicator order"
+msgid "Indicator: Area Chart"
+msgstr "Sortering av indikatorer"
+
+#: indicators/blocks/__init__.py
+msgid "Indicator visualization as an area chart"
+msgstr ""
+
+#: indicators/blocks/__init__.py
+msgid "Enter the year you want to visualize"
+msgstr ""
+
+#: indicators/blocks/__init__.py
+#, fuzzy
+#| msgid "Indicator order"
+msgid "Indicator: Pie Chart"
+msgstr "Sortering av indikatorer"
+
+#: indicators/blocks/__init__.py
+msgid "Indicator visualization as a pie chart"
+msgstr ""
+
+#: indicators/blocks/__init__.py
+#, python-format
+msgid "The selected year (%(selected_year)s) has no data for this indicator. Available years are: %(available_years)s"
+msgstr ""
+
+#: indicators/blocks/__init__.py
+#, fuzzy
+#| msgid "Indicator order"
+msgid "Indicator: Summary"
+msgstr "Sortering av indikatorer"
+
+#: indicators/blocks/__init__.py
+#, fuzzy
+msgid "Indicator key figures"
+msgstr "Indikatordata"
+
+#: indicators/blocks/__init__.py pages/models.py
+msgid "Paragraph"
+msgstr "Paragraf"
+
+#: indicators/blocks/__init__.py
+#, fuzzy
+#| msgid "Dashboard"
+msgid "Dashboard Row"
+msgstr "Instrumentbräda"
+
+#: indicators/blocks/__init__.py
+msgid "Dashboard row with 1-3 content blocks"
+msgstr ""
+
+#: indicators/blocks/layout.py
+#, fuzzy
+#| msgid "causal indicator"
+msgid "Causality navigation"
+msgstr "kausal indikator"
+
+#: indicators/blocks/layout.py
+#, fuzzy
+#| msgid "Indicator actions"
+msgid "Indicator visualization"
+msgstr "Indikatoråtgärder"
+
+#: indicators/blocks/layout.py
+#, fuzzy
+#| msgid "related actions"
+msgid "Connected actions"
+msgstr "relaterade åtgärder"
+
+#: indicators/blocks/layout.py
+#, fuzzy
+#| msgid "Category levels"
+msgid "Category level"
+msgstr "Kategorinivåer"
+
+#: indicators/blocks/layout.py
+#, fuzzy
+#| msgid "category level"
+msgid "Invalid category level"
+msgstr "kategorinivå"
+
+#: indicators/blocks/layout.py
+msgid "Latest value"
+msgstr ""
+
+#: indicators/blocks/layout.py
+msgid "Earliest value"
+msgstr ""
+
+#: indicators/blocks/layout.py
+#, fuzzy
+msgid "Reference value"
+msgstr "referens"
+
+#: indicators/blocks/layout.py
+#, fuzzy
+#| msgid "value"
+msgid "Goal value"
+msgstr "värde"
+
+#: indicators/blocks/layout.py
+msgid "Default reference year for reference value type"
+msgstr ""
+
+#: indicators/blocks/layout.py
+msgid "Reference year is only allowed for reference value type"
+msgstr ""
 
 #: indicators/chooser.py
 msgid "Choose an indicator"
@@ -3374,365 +3585,452 @@ msgstr "Välj en indikator"
 msgid "Choose another indicator"
 msgstr "Välj en annan indikator"
 
-#: indicators/models.py
+#: indicators/chooser.py
+#, fuzzy
+#| msgid "Choose a person"
+msgid "Choose a dimension"
+msgstr "Välj en person"
+
+#: indicators/chooser.py
+#, fuzzy
+#| msgid "Choose another person"
+msgid "Choose another dimension"
+msgstr "Välj en annan person"
+
+#: indicators/chooser.py
+#, fuzzy
+msgid "Choose a value"
+msgstr "Välj ett dokument"
+
+#: indicators/chooser.py
+#, fuzzy
+msgid "Choose another value"
+msgstr "Välj en annan åtgärd"
+
+#: indicators/models/action_links.py indicators/models/contact_persons.py
+#: indicators/models/indicator.py indicators/models/values.py
+msgid "indicator"
+msgstr "indikator"
+
+#: indicators/models/action_links.py indicators/models/relationships.py
+msgid "effect type"
+msgstr "effekttyp"
+
+#: indicators/models/action_links.py
+msgid "What type of effect should the action cause?"
+msgstr "Vilken typ av effekt ska åtgärden orsaka?"
+
+#: indicators/models/action_links.py
+msgid "indicates action progress"
+msgstr "indikerar åtgärdens framsteg"
+
+#: indicators/models/action_links.py
+msgid "Set if the indicator should be used to determine action progress"
+msgstr "Ställ in om indikatorn ska användas för att bestämma framsteg"
+
+#: indicators/models/action_links.py
+msgid "action indicator"
+msgstr "åtgärdsindikator"
+
+#: indicators/models/action_links.py
+msgid "action indicators"
+msgstr "åtgärdsindikatorer"
+
+#: indicators/models/common_indicator.py indicators/models/indicator.py
+#: indicators/models/metadata.py
 msgctxt "physical"
 msgid "quantity"
 msgstr "kvantitet"
 
-#: indicators/models.py
-msgctxt "physical"
-msgid "quantities"
-msgstr "kvantiteter"
-
-#: indicators/models.py
-msgid "verbose name"
-msgstr "detaljerat namn"
-
-#: indicators/models.py
-msgid "verbose name plural"
-msgstr "omfattande namn plural"
-
-#: indicators/models.py kausal_common/datasets/models.py
+#: indicators/models/common_indicator.py indicators/models/indicator.py
+#: indicators/models/metadata.py kausal_common/datasets/models.py
 msgid "unit"
 msgstr "enhet"
 
-#: indicators/models.py
-msgid "units"
-msgstr "enheter"
-
-#: indicators/models.py
-msgid "dataset license"
-msgstr "dataset-licens"
-
-#: indicators/models.py
-msgid "dataset licenses"
-msgstr "datasetlicenser"
-
-#: indicators/models.py
-msgid "last retrieved at"
-msgstr "senast hämtad kl"
-
-#: indicators/models.py
-msgid "owner"
-msgstr "ägare"
-
-#: indicators/models.py
-msgid "owner name"
-msgstr "ägarnamn"
-
-#: indicators/models.py
-msgid "Set if owner organization is not available"
-msgstr "Ange om ägareorganisation inte är tillgänglig"
-
-#: indicators/models.py
-msgid "license"
-msgstr "licens"
-
-#: indicators/models.py kausal_common/datasets/models.py
-msgid "dataset"
-msgstr "dataset"
-
-#: indicators/models.py kausal_common/datasets/models.py
-msgid "datasets"
-msgstr "datauppsättningar"
-
-#: indicators/models.py
-msgid "framework"
-msgstr "ramverk"
-
-#: indicators/models.py
-msgid "frameworks"
-msgstr "ramar"
-
-#: indicators/models.py
-msgid "increases"
-msgstr "ökar"
-
-#: indicators/models.py
-msgid "decreases"
-msgstr "minskar"
-
-#: indicators/models.py
-msgid "is a part of"
-msgstr "är en del av"
-
-#: indicators/models.py
-msgid "effect type"
-msgstr "effekttyp"
-
-#: indicators/models.py
-msgid "What type of causal effect is there between the indicators"
-msgstr "Vilken typ av kausal effekt finns det mellan indikatorerna"
-
-#: indicators/models.py
+#: indicators/models/common_indicator.py
 msgid "normalize by label"
 msgstr "normalisera efter etikett"
 
-#: indicators/models.py
+#: indicators/models/common_indicator.py indicators/models/indicator.py
 msgid "common indicator"
 msgstr "gemensam indikator"
 
-#: indicators/models.py
+#: indicators/models/common_indicator.py
 msgid "common indicators"
 msgstr "gemensamma indikatorer"
 
-#: indicators/models.py
+#: indicators/models/common_indicator.py indicators/models/relationships.py
 msgid "causal indicator"
 msgstr "kausal indikator"
 
-#: indicators/models.py
+#: indicators/models/common_indicator.py indicators/models/relationships.py
 msgid "effect indicator"
 msgstr "effektindikator"
 
-#: indicators/models.py
+#: indicators/models/common_indicator.py indicators/models/relationships.py
 msgid "related indicator"
 msgstr "relaterad indikator"
 
-#: indicators/models.py
+#: indicators/models/common_indicator.py indicators/models/relationships.py
 msgid "related indicators"
 msgstr "relaterade indikatorer"
 
-#: indicators/models.py
+#: indicators/models/common_indicator.py indicators/models/metadata.py
+msgid "framework"
+msgstr "ramverk"
+
+#: indicators/models/common_indicator.py
 msgid "framework indicator"
 msgstr "ramindikator"
 
-#: indicators/models.py
+#: indicators/models/common_indicator.py
 msgid "framework indicators"
 msgstr "ramindikatorer"
 
-#: indicators/models.py
+#: indicators/models/contact_persons.py
+msgid "indicator contact person"
+msgstr "indikator kontaktperson"
+
+#: indicators/models/contact_persons.py
+msgid "indicator contact persons"
+msgstr "indikator kontaktpersoner"
+
+#: indicators/models/dimensions.py kausal_common/datasets/models.py
+msgid "dimension"
+msgstr "dimensionera"
+
+#: indicators/models/dimensions.py kausal_common/datasets/models.py
+msgid "dimensions"
+msgstr "mått"
+
+#: indicators/models/dimensions.py
+#, python-format
+msgid "Cannot delete dimension \"%(dimension)s\" because it is linked to multiple plans: %(plans)s"
+msgstr ""
+
+#: indicators/models/dimensions.py
+#, fuzzy
+#| msgid "default view"
+msgid "default color"
+msgstr "standardvy"
+
+#: indicators/models/dimensions.py
+msgid "Default color for this dimension category in charts"
+msgstr ""
+
+#: indicators/models/dimensions.py kausal_common/datasets/models.py
+msgid "dimension category"
+msgstr "dimensionskategori"
+
+#: indicators/models/dimensions.py kausal_common/datasets/models.py
+msgid "dimension categories"
+msgstr "dimensionskategorier"
+
+#: indicators/models/dimensions.py
+#, fuzzy
+#| msgid "dimension"
+msgid "plan dimension"
+msgstr "dimensionera"
+
+#: indicators/models/dimensions.py
+#, fuzzy
+#| msgid "dimensions"
+msgid "plan dimensions"
+msgstr "mått"
+
+#: indicators/models/dimensions.py
+msgid "indicator dimension"
+msgstr "indikator dimension"
+
+#: indicators/models/dimensions.py
+msgid "indicator dimensions"
+msgstr "indikator dimensioner"
+
+#: indicators/models/dimensions.py
+#, fuzzy
+msgid "common indicator dimension"
+msgstr "indikator dimension"
+
+#: indicators/models/dimensions.py
+#, fuzzy
+msgid "common indicator dimensions"
+msgstr "indikator dimensioner"
+
+#: indicators/models/indicator.py
 msgid "year"
 msgstr "år"
 
-#: indicators/models.py
+#: indicators/models/indicator.py
 msgid "month"
 msgstr "månad"
 
-#: indicators/models.py
+#: indicators/models/indicator.py
 msgid "day"
 msgstr "dag"
 
-#: indicators/models.py
+#: indicators/models/indicator.py
 msgid "strategic"
 msgstr "strategisk"
 
-#: indicators/models.py
+#: indicators/models/indicator.py
 msgid "tactical"
 msgstr "taktisk"
 
-#: indicators/models.py
+#: indicators/models/indicator.py
 msgid "operational"
 msgstr "operativ"
 
-#: indicators/models.py
+#: indicators/models/indicator.py
 msgid "minimum value"
 msgstr "minimivärde"
 
-#: indicators/models.py
-msgid "What is the minimum value this indicator can reach? It is used in visualizations as the Y axis minimum."
-msgstr "Vad är det minsta värde som denna indikator kan nå? Det används i visualiseringar som Y -axelminimum."
+#: indicators/models/indicator.py
+msgid "Used in visualizations as the Y axis minimum"
+msgstr ""
 
-#: indicators/models.py
+#: indicators/models/indicator.py
 msgid "maximum value"
 msgstr "maximalt värde"
 
-#: indicators/models.py
-msgid "What is the maximum value this indicator can reach? It is used in visualizations as the Y axis maximum."
-msgstr "Vad är det maximala värdet som denna indikator kan nå? Det används i visualiseringar som Y -axelns maximala."
+#: indicators/models/indicator.py
+msgid "Used in visualizations as the Y axis maximum"
+msgstr ""
 
-#: indicators/models.py
+#: indicators/models/indicator.py
+#, fuzzy
+msgid "visualizations"
+msgstr "anmälningsmallar"
+
+#: indicators/models/indicator.py
 msgid "time resolution"
 msgstr "tidsupplösning"
 
-#: indicators/models.py
+#: indicators/models/indicator.py
 msgid "updated values due at"
 msgstr "uppdaterade värden betalas kl"
 
-#: indicators/models.py
+#: indicators/models/indicator.py
+#, fuzzy
+msgid "reference value"
+msgstr "referens"
+
+#: indicators/models/indicator.py indicators/models/metadata.py
+#: kausal_common/datasets/models.py
+msgid "datasets"
+msgstr "datauppsättningar"
+
+#: indicators/models/indicator.py
 #, fuzzy
 msgid "reference"
 msgstr "referens"
 
-#: indicators/models.py
+#: indicators/models/indicator.py
 #, fuzzy
 msgid "What is the reference or source for this indicator?"
 msgstr "Vilken är referensen eller källan för denna indikator?"
 
-#: indicators/models.py
-msgid "show trendline"
+#: indicators/models/indicator.py
+#, fuzzy
+#| msgid "show trendline"
+msgid "show trend line"
 msgstr "visa trendlinje"
 
-#: indicators/models.py
+#: indicators/models/indicator.py
+msgid "Automatically create a trend line for the indicator's total value"
+msgstr ""
+
+#: indicators/models/indicator.py
 msgid "desired trend"
 msgstr ""
 
-#: indicators/models.py
+#: indicators/models/indicator.py
 #, fuzzy
 #| msgid "increases"
 msgid "increasing"
 msgstr "ökar"
 
-#: indicators/models.py
+#: indicators/models/indicator.py
 #, fuzzy
 #| msgid "decreases"
 msgid "decreasing"
 msgstr "minskar"
 
-#: indicators/models.py
+#: indicators/models/indicator.py
 msgid "attempt to detect automatically"
 msgstr ""
 
-#: indicators/models.py
+#: indicators/models/indicator.py
 msgid "Which trend in the numerical values of this indicator's goals indicates improvement: when the values are increasing or decreasing?"
 msgstr ""
 
-#: indicators/models.py
+#: indicators/models/indicator.py
 msgid "show total line"
 msgstr "visa total linje"
 
-#: indicators/models.py
-msgid "indicator"
-msgstr "indikator"
+#: indicators/models/indicator.py
+msgid "Data categories can be summed to form total for the indicator (draw stacked chart as default)"
+msgstr ""
 
-#: indicators/models.py
+#: indicators/models/indicator.py
+#, fuzzy
+#| msgid "Name of the owner of the site"
+msgid "Number of steps on the y-axis"
+msgstr "Namnet på webbplatsens ägare"
+
+#: indicators/models/indicator.py
+msgid "Number of significant digits on y-axis ticks"
+msgstr ""
+
+#: indicators/models/indicator.py
+msgid "Number of significant digits when displaying indicator values"
+msgstr ""
+
+#: indicators/models/indicator.py
+msgid "Data categories can be summed to form a total for the indicator (draw a stacked chart as default)"
+msgstr ""
+
+#: indicators/models/indicator.py
 msgid "Has datasets"
 msgstr "Har datamängder"
 
-#: indicators/models.py
+#: indicators/models/indicator.py
 msgid "Has data"
 msgstr "Har data"
 
-#: indicators/models.py
-msgid "Has a graph"
-msgstr "Har en graf"
-
-#: indicators/models.py
+#: indicators/models/indicator.py
 msgid "Deadlines for value updates are currently only possible for yearly indicators"
 msgstr "Tidsfrister för värdeuppdateringar är för närvarande endast möjliga för årliga indikatorer"
 
-#: indicators/models.py
+#: indicators/models/indicator.py
 msgid "There is already an indicator value for the year preceding the deadline"
 msgstr "Det finns redan ett indikatorvärde för året före deadline"
 
-#: indicators/models.py
+#: indicators/models/indicator.py
 #, python-format
 msgid "Quantity must be the same as in common indicator (%s)"
 msgstr "Kvantiteten måste vara densamma som i den gemensamma indikatorn (%s)"
 
-#: indicators/models.py
+#: indicators/models/indicator.py
 #, python-format
 msgid "Unit must be the same as in common indicator (%s)"
 msgstr "Enheten måste vara densamma som i den gemensamma indikatorn (%s)"
 
-#: indicators/models.py kausal_common/datasets/models.py
-msgid "dimension"
-msgstr "dimensionera"
-
-#: indicators/models.py kausal_common/datasets/models.py
-msgid "dimensions"
-msgstr "mått"
-
-#: indicators/models.py kausal_common/datasets/models.py
-msgid "dimension category"
-msgstr "dimensionskategori"
-
-#: indicators/models.py kausal_common/datasets/models.py
-msgid "dimension categories"
-msgstr "dimensionskategorier"
-
-#: indicators/models.py
-msgid "indicator dimension"
-msgstr "indikator dimension"
-
-#: indicators/models.py
-msgid "indicator dimensions"
-msgstr "indikator dimensioner"
-
-#: indicators/models.py
-#, fuzzy
-msgid "common indicator dimension"
-msgstr "indikator dimension"
-
-#: indicators/models.py
-#, fuzzy
-msgid "common indicator dimensions"
-msgstr "indikator dimensioner"
-
-#: indicators/models.py pages/models.py
+#: indicators/models/indicator.py pages/models.py
 msgid "level"
 msgstr "nivå"
 
-#: indicators/models.py
+#: indicators/models/indicator.py
 msgid "indicator levels"
 msgstr "indikatornivåer"
 
-#: indicators/models.py kausal_common/datasets/models.py
-msgid "value"
-msgstr "värde"
+#: indicators/models/metadata.py
+msgctxt "physical"
+msgid "quantities"
+msgstr "kvantiteter"
 
-#: indicators/models.py
-msgid "indicator value"
-msgstr "indikatorvärde"
+#: indicators/models/metadata.py
+msgid "verbose name"
+msgstr "detaljerat namn"
 
-#: indicators/models.py
-msgid "indicator values"
-msgstr "indikatorvärden"
+#: indicators/models/metadata.py
+msgid "verbose name plural"
+msgstr "omfattande namn plural"
 
-#: indicators/models.py
-msgid "indicator goal"
-msgstr "indikatormål"
+#: indicators/models/metadata.py
+msgid "units"
+msgstr "enheter"
 
-#: indicators/models.py
-msgid "indicator goals"
-msgstr "indikatormål"
+#: indicators/models/metadata.py
+msgid "dataset license"
+msgstr "dataset-licens"
 
-#: indicators/models.py
+#: indicators/models/metadata.py
+msgid "dataset licenses"
+msgstr "datasetlicenser"
+
+#: indicators/models/metadata.py
+msgid "last retrieved at"
+msgstr "senast hämtad kl"
+
+#: indicators/models/metadata.py
+msgid "owner"
+msgstr "ägare"
+
+#: indicators/models/metadata.py
+msgid "owner name"
+msgstr "ägarnamn"
+
+#: indicators/models/metadata.py
+msgid "Set if owner organization is not available"
+msgstr "Ange om ägareorganisation inte är tillgänglig"
+
+#: indicators/models/metadata.py
+msgid "license"
+msgstr "licens"
+
+#: indicators/models/metadata.py kausal_common/datasets/models.py
+msgid "dataset"
+msgstr "dataset"
+
+#: indicators/models/metadata.py
+msgid "frameworks"
+msgstr "ramar"
+
+#: indicators/models/relationships.py
+msgid "increases"
+msgstr "ökar"
+
+#: indicators/models/relationships.py
+msgid "decreases"
+msgstr "minskar"
+
+#: indicators/models/relationships.py
+msgid "is a part of"
+msgstr "är en del av"
+
+#: indicators/models/relationships.py
+msgid "What type of causal effect is there between the indicators"
+msgstr "Vilken typ av kausal effekt finns det mellan indikatorerna"
+
+#: indicators/models/relationships.py
 msgid "high"
 msgstr "hög"
 
-#: indicators/models.py pages/blocks.py
+#: indicators/models/relationships.py pages/blocks.py
 msgid "medium"
 msgstr "medium"
 
-#: indicators/models.py
+#: indicators/models/relationships.py
 msgid "low"
 msgstr "låg"
 
-#: indicators/models.py
+#: indicators/models/relationships.py
 msgid "confidence level"
 msgstr "självförtroendenivå"
 
-#: indicators/models.py
+#: indicators/models/relationships.py
 msgid "How confident we are that the causal effect is present"
 msgstr "Hur säker vi är på att kausaleffekten är närvarande"
 
-#: indicators/models.py
-msgid "What type of effect should the action cause?"
-msgstr "Vilken typ av effekt ska åtgärden orsaka?"
+#: indicators/models/values.py kausal_common/datasets/models.py
+msgid "value"
+msgstr "värde"
 
-#: indicators/models.py
-msgid "indicates action progress"
-msgstr "indikerar åtgärdens framsteg"
+#: indicators/models/values.py
+msgid "indicator value"
+msgstr "indikatorvärde"
 
-#: indicators/models.py
-msgid "Set if the indicator should be used to determine action progress"
-msgstr "Ställ in om indikatorn ska användas för att bestämma framsteg"
+#: indicators/models/values.py
+msgid "indicator values"
+msgstr "indikatorvärden"
 
-#: indicators/models.py
-msgid "action indicator"
-msgstr "åtgärdsindikator"
+#: indicators/models/values.py
+msgid "indicator goal"
+msgstr "indikatormål"
 
-#: indicators/models.py
-msgid "action indicators"
-msgstr "åtgärdsindikatorer"
-
-#: indicators/models.py
-msgid "indicator contact person"
-msgstr "indikator kontaktperson"
-
-#: indicators/models.py
-msgid "indicator contact persons"
-msgstr "indikator kontaktpersoner"
+#: indicators/models/values.py
+msgid "indicator goals"
+msgstr "indikatormål"
 
 #: indicators/resources.py
 msgid "Creating new indicators is not allowed"
@@ -3791,6 +4089,11 @@ msgid "Edit this quantity"
 msgstr "Redigera denna kvantitet"
 
 #: indicators/wagtail_admin.py
+#, python-format
+msgid "Cannot delete dimension \"%(dimension)s\" at this time, please contact support."
+msgstr ""
+
+#: indicators/wagtail_admin.py
 #, fuzzy
 msgid "Indicator dimensions"
 msgstr "Indikator dimensioner"
@@ -3832,15 +4135,18 @@ msgstr "Denna indikator är kopplad till en gemensam indikator, så kvantitet, e
 
 #: indicators/wagtail_admin.py
 #, fuzzy
-#| msgid "Basic information"
-msgid "Further information"
-msgstr "Grundläggande information"
+#| msgid "Indicator actions"
+msgid "Indicator settings"
+msgstr "Indikatoråtgärder"
+
+#: indicators/wagtail_admin.py kausal_common/organizations/models.py
+#, fuzzy
+msgid "Classification"
+msgstr "Actionklassificeringar"
 
 #: indicators/wagtail_admin.py
-#, fuzzy
-#| msgid "Value field"
-msgid "Value bounds"
-msgstr "Värde fält"
+msgid "Only used for raw visualization data exported from Plotly"
+msgstr ""
 
 #: indicators/wagtail_admin.py
 #, fuzzy
@@ -3906,6 +4212,53 @@ msgstr "gemensamma indikatorer"
 msgid "This common indicator has indicators linked to it, so quantity, unit and dimensions cannot be edited. Current quantity: %(quantity)s; unit: %(unit)s; dimensions: %(dimensions)s"
 msgstr "Denna gemensamma indikator har indikatorer kopplade till sig, så kvantitet, enhet och mått kan inte redigeras. Aktuell kvantitet: %(quantity)s; enhet: %(unit)s; dimensioner: %(dimensions)s"
 
+#: kausal_common/admin_site/tables.py
+#: kausal_common/models/modification_tracking.py
+#, fuzzy
+#| msgid "Last modified"
+msgid "Last modified at"
+msgstr "Senast ändrad"
+
+#: kausal_common/api/exceptions.py
+msgid "Cannot delete instance because other objects reference it."
+msgstr "Kan inte ta bort instans eftersom andra objekt refererar till den."
+
+#: kausal_common/api/exceptions.py
+#, fuzzy, python-format
+msgid "Cannot delete \"%s\" because it is connected to other objects such as instances, persons or actions."
+msgstr "Kan inte ta bort \"%s\" eftersom det är kopplat till andra objekt som planer, personer eller åtgärder. "
+
+#: kausal_common/blocks/base.py
+msgid "Label for the column to be used instead of the default"
+msgstr "Etikett för kolumnen som ska användas istället för standardkolumnen"
+
+#: kausal_common/blocks/base.py
+#, fuzzy
+msgid "Help text for the column to be shown in the UI"
+msgstr "Hjälptext för fältet som ska visas i användargränssnittet"
+
+#: kausal_common/blocks/base.py kausal_common/blocks/fields.py
+#, python-format
+msgid "Content block: %(label)s"
+msgstr "Innehållsblock:%(label)s"
+
+#: kausal_common/blocks/base.py
+#, python-format
+msgid "Filter: %(filter_label)s"
+msgstr "Filter: %(filter_label)s"
+
+#: kausal_common/datasets/chooser.py
+#, fuzzy
+#| msgid "Choose a category type"
+msgid "Choose a dataset"
+msgstr "Välj en typ av kategori"
+
+#: kausal_common/datasets/chooser.py
+#, fuzzy
+#| msgid "Choose another category type"
+msgid "Choose another dataset"
+msgstr "Välj en annan typ av kategori"
+
 #: kausal_common/datasets/models.py
 msgid "Optional identifier that, if set, must be unique within the dimension"
 msgstr ""
@@ -3934,6 +4287,10 @@ msgstr "År"
 
 #: kausal_common/datasets/models.py
 msgid "Time resolution of the time stamps of data points in this dataset"
+msgstr ""
+
+#: kausal_common/datasets/models.py
+msgid "For a newly created dataset, start entering values from this year"
 msgstr ""
 
 #: kausal_common/datasets/models.py
@@ -3972,6 +4329,30 @@ msgstr ""
 
 #: kausal_common/datasets/models.py
 #, fuzzy
+#| msgid "Permissions"
+msgid "Person permissions"
+msgstr "Behörigheter"
+
+#: kausal_common/datasets/models.py
+msgid "Grants permissions on datasets of this schema to certain persons"
+msgstr ""
+
+#: kausal_common/datasets/models.py
+#, fuzzy
+#| msgid "Permissions"
+msgid "Group permissions"
+msgstr "Behörigheter"
+
+#: kausal_common/datasets/models.py
+msgid "Grants permissions on datasets of this schema to certain person groups"
+msgstr ""
+
+#: kausal_common/datasets/models.py orgs/wagtail_admin.py
+msgid "Permissions"
+msgstr "Behörigheter"
+
+#: kausal_common/datasets/models.py
+#, fuzzy
 #| msgid "dataset license"
 msgid "dataset schema"
 msgstr "dataset-licens"
@@ -3980,6 +4361,18 @@ msgstr "dataset-licens"
 #, fuzzy
 #| msgid "dataset license"
 msgid "dataset schemas"
+msgstr "dataset-licens"
+
+#: kausal_common/datasets/models.py
+#, fuzzy
+#| msgid "dataset license"
+msgid "dataset metric"
+msgstr "dataset-licens"
+
+#: kausal_common/datasets/models.py
+#, fuzzy
+#| msgid "dataset license"
+msgid "dataset metrics"
 msgstr "dataset-licens"
 
 #: kausal_common/datasets/models.py
@@ -4036,9 +4429,23 @@ msgstr "Sista datapunkten"
 
 #: kausal_common/datasets/models.py
 #, fuzzy
-#| msgid "comment"
-msgid "Review comment"
-msgstr "kommentar"
+#| msgid "dimension category"
+msgid "data point dimension category"
+msgstr "dimensionskategori"
+
+#: kausal_common/datasets/models.py
+#, fuzzy
+#| msgid "dimension categories"
+msgid "data point dimension categories"
+msgstr "dimensionskategorier"
+
+#: kausal_common/datasets/models.py
+msgid "Resolved"
+msgstr ""
+
+#: kausal_common/datasets/models.py
+msgid "Unresolved"
+msgstr ""
 
 #: kausal_common/datasets/models.py
 #, fuzzy
@@ -4049,16 +4456,8 @@ msgstr "kommentar"
 #: kausal_common/datasets/models.py
 #, fuzzy
 #| msgid "comment"
-msgid "Comment"
+msgid "Review comment"
 msgstr "kommentar"
-
-#: kausal_common/datasets/models.py
-msgid "Resolved"
-msgstr ""
-
-#: kausal_common/datasets/models.py
-msgid "Unresolved"
-msgstr ""
 
 #: kausal_common/datasets/models.py
 #, fuzzy
@@ -4104,6 +4503,22 @@ msgstr "datauppsättningar"
 
 #: kausal_common/datasets/models.py
 #, fuzzy
+#| msgid "Unknown"
+msgid "Unknown schema"
+msgstr "Okänd"
+
+#: kausal_common/datasets/models.py
+#, fuzzy, python-format
+msgid "Data source reference in: %(schema)s"
+msgstr "Meddelanden"
+
+#: kausal_common/datasets/models.py
+#, fuzzy
+msgid "Data source reference"
+msgstr "referens"
+
+#: kausal_common/datasets/models.py
+#, fuzzy
 msgid "data source reference"
 msgstr "referens"
 
@@ -4111,6 +4526,23 @@ msgstr "referens"
 #, fuzzy
 msgid "data source references"
 msgstr "Meddelanden"
+
+#: kausal_common/datasets/wagtail_hooks.py
+#, fuzzy
+#| msgid "Edit data"
+msgid "Edit dataset"
+msgstr "Redigera data"
+
+#: kausal_common/datasets/wagtail_hooks.py
+#, python-format
+msgid "(Private %(object)s)"
+msgstr ""
+
+#: kausal_common/datasets/wagtail_hooks.py
+#, fuzzy, python-format
+#| msgid "Edit this person"
+msgid "Edit this %(object)s"
+msgstr "Redigera den här personen"
 
 #: kausal_common/models/modification_tracking.py
 #, fuzzy
@@ -4124,15 +4556,145 @@ msgstr "skapad vid"
 msgid "Last modified by"
 msgstr "Senast ändrad"
 
-#: kausal_common/models/modification_tracking.py
-#, fuzzy
-#| msgid "Last modified"
-msgid "Last modified at"
-msgstr "Senast ändrad"
-
 #: kausal_common/models/uuid.py
 msgid "UUID"
 msgstr ""
+
+#: kausal_common/organizations/forms.py
+msgid "A node cannot be moved under itself in the hierarchy."
+msgstr "En nod kan inte flyttas under sig själv i hierarkin."
+
+#: kausal_common/organizations/models.py
+#, fuzzy
+msgctxt "node"
+msgid "Parent"
+msgstr "förälder"
+
+#: kausal_common/organizations/models.py
+#, fuzzy
+msgid "The time at which the resource was created"
+msgstr "Datumet då uppgiften slutfördes"
+
+#: kausal_common/organizations/models.py
+#, fuzzy
+msgid "The time at which the resource was updated"
+msgstr "Datumet då uppgiften slutfördes"
+
+#: kausal_common/organizations/models.py
+msgid "An organization category, e.g. committee"
+msgstr "En organisationskategori, t.ex. kommitté"
+
+#: kausal_common/organizations/models.py
+msgid "A primary name, e.g. a legally recognized name"
+msgstr "Ett primärt namn, t.ex. ett juridiskt erkänt namn"
+
+#: kausal_common/organizations/models.py
+#, fuzzy
+msgid "Short name"
+msgstr "kort namn"
+
+#: kausal_common/organizations/models.py
+msgid "A simplified short version of name for the general public"
+msgstr "En förenklad kortversion av namnet för allmänheten"
+
+#: kausal_common/organizations/models.py
+msgid "A distinct name for this organization (generated automatically)"
+msgstr "Ett tydligt namn för denna organisation (genereras automatiskt)"
+
+#: kausal_common/organizations/models.py
+msgid "A date of founding"
+msgstr "Datum för grundandet"
+
+#: kausal_common/organizations/models.py
+#, fuzzy
+msgid "A date of dissolution"
+msgstr "tidsupplösning"
+
+#: kausal_common/organizations/models.py
+#, fuzzy
+msgid "Location"
+msgstr "åtgärd"
+
+#: kausal_common/organizations/models.py
+msgid "organizations"
+msgstr "organisationer"
+
+#: kausal_common/organizations/views.py
+#, python-format
+msgid "New child %(model)s for %(parent)s"
+msgstr ""
+
+#: kausal_common/organizations/views.py
+#, fuzzy
+#| msgid "This will mark the following actions as complete:"
+msgid "This will delete the following objects:"
+msgstr "Detta kommer att markera följande åtgärder som slutförda:"
+
+#: kausal_common/people/api.py kausal_common/people/models.py
+msgid "Person with this email already exists"
+msgstr "Personen med det här e-postmeddelandet finns redan"
+
+#: kausal_common/people/api.py
+msgid "Not all objects have an email address"
+msgstr "Alla objekt har inte en e-postadress"
+
+#: kausal_common/people/api.py
+#, python-format
+msgid "Duplicate email addresses: %s"
+msgstr "Duplicera e-postadresser:%s"
+
+#: kausal_common/people/chooser.py
+msgid "Create new"
+msgstr "Skapa ny"
+
+#: kausal_common/people/chooser.py
+msgid "Choose person"
+msgstr "Välj person"
+
+#: kausal_common/people/chooser.py
+msgid "Choose a person"
+msgstr "Välj en person"
+
+#: kausal_common/people/chooser.py
+msgid "Choose another person"
+msgstr "Välj en annan person"
+
+#: kausal_common/people/chooser.py
+msgid "Edit this person"
+msgstr "Redigera den här personen"
+
+#: kausal_common/people/models.py people/wagtail_admin.py
+msgid "first name"
+msgstr "förnamn"
+
+#: kausal_common/people/models.py people/wagtail_admin.py
+msgid "last name"
+msgstr "efternamn"
+
+#: kausal_common/people/models.py
+msgctxt "person's role"
+msgid "title"
+msgstr "titel"
+
+#: kausal_common/people/models.py
+msgid "postal address"
+msgstr "postadress"
+
+#: kausal_common/people/models.py
+msgid "user"
+msgstr "användare"
+
+#: kausal_common/people/models.py
+msgid "Set if the person has an user account"
+msgstr "Ange om personen har ett användarkonto"
+
+#: kausal_common/people/models.py
+msgid "image cropping"
+msgstr "bildbeskärning"
+
+#: kausal_common/people/models.py
+msgid "people"
+msgstr "personer"
 
 #: notifications/apps.py notifications/wagtail_admin.py
 msgid "Notifications"
@@ -4539,52 +5101,6 @@ msgstr "Välj en åtgärd"
 msgid "Choose another organization"
 msgstr "Välj en annan åtgärd"
 
-#: orgs/forms.py
-msgid "A node cannot be moved under itself in the hierarchy."
-msgstr "En nod kan inte flyttas under sig själv i hierarkin."
-
-#: orgs/models.py
-#, fuzzy
-msgctxt "node"
-msgid "Parent"
-msgstr "förälder"
-
-#: orgs/models.py
-#, fuzzy
-msgid "The time at which the resource was created"
-msgstr "Datumet då uppgiften slutfördes"
-
-#: orgs/models.py
-#, fuzzy
-msgid "The time at which the resource was updated"
-msgstr "Datumet då uppgiften slutfördes"
-
-#: orgs/models.py
-msgid "organizations"
-msgstr "organisationer"
-
-#: orgs/models.py
-#, fuzzy
-msgid "Classification"
-msgstr "Actionklassificeringar"
-
-#: orgs/models.py
-msgid "An organization category, e.g. committee"
-msgstr "En organisationskategori, t.ex. kommitté"
-
-#: orgs/models.py
-msgid "A primary name, e.g. a legally recognized name"
-msgstr "Ett primärt namn, t.ex. ett juridiskt erkänt namn"
-
-#: orgs/models.py
-#, fuzzy
-msgid "Short name"
-msgstr "kort namn"
-
-#: orgs/models.py
-msgid "A simplified short version of name for the general public"
-msgstr "En förenklad kortversion av namnet för allmänheten"
-
 #: orgs/models.py
 #, fuzzy
 msgid "Internal abbreviation"
@@ -4593,28 +5109,6 @@ msgstr "Intern information"
 #: orgs/models.py
 msgid "An internally used abbreviation"
 msgstr "En internt använd förkortning"
-
-#: orgs/models.py
-msgid "A distinct name for this organization (generated automatically)"
-msgstr "Ett tydligt namn för denna organisation (genereras automatiskt)"
-
-#: orgs/models.py
-msgid "Organization logo. Please provide a square image (min. 250x250px). The logo used for the organization's social media often works best."
-msgstr "Organisationens logotyp. Vänligen ge en kvadratisk bild (minst 250x250px). Den logotyp som används för organisationens sociala medier fungerar ofta bäst."
-
-#: orgs/models.py
-msgid "A date of founding"
-msgstr "Datum för grundandet"
-
-#: orgs/models.py
-#, fuzzy
-msgid "A date of dissolution"
-msgstr "tidsupplösning"
-
-#: orgs/models.py
-#, fuzzy
-msgid "Location"
-msgstr "åtgärd"
 
 #: orgs/models.py
 #, fuzzy
@@ -4637,14 +5131,14 @@ msgid "metadata admins"
 msgstr "metadata_choices"
 
 #: orgs/views.py
-#, fuzzy
-#| msgid "This will mark the following actions as complete:"
-msgid "This will delete the following objects:"
-msgstr "Detta kommer att markera följande åtgärder som slutförda:"
-
-#: orgs/views.py
 msgid "Add organization to active plan"
 msgstr "Lägg till organisation i aktiv plan"
+
+#: orgs/views.py
+#, fuzzy
+#| msgid "Exclude this organization from the active plan"
+msgid "Exclude organization from active plan"
+msgstr "Utesluta denna organisation från den aktiva planen"
 
 #: orgs/views.py
 #, python-format
@@ -4685,49 +5179,8 @@ msgid "Organization '%(org)s' has been excluded from plan '%(plan)s'."
 msgstr "Organisationen '%(org)s' har uteslutits från planen '%(plan)s'."
 
 #: orgs/wagtail_admin.py
-msgid "Add child"
-msgstr "Lägg till barn"
-
-#: orgs/wagtail_admin.py
-msgid "Add child under this node"
-msgstr "Lägg till barn under denna nod"
-
-#: orgs/wagtail_admin.py
-msgid "Edit subtree"
-msgstr "Redigera underträd"
-
-#: orgs/wagtail_admin.py
-#, python-format
-msgid "Edit subtree rooted at this %s"
-msgstr "Redigera subträd med rötter i detta %s"
-
-#: orgs/wagtail_admin.py
 msgid "Creating organizations without a parent not allowed."
 msgstr "Att skapa organisationer utan en förälder är inte tillåtet."
-
-#: orgs/wagtail_admin.py
-msgid "Add suborganization"
-msgstr "Lägg till underorganisation"
-
-#: orgs/wagtail_admin.py
-msgid "Add suborganization under this organization"
-msgstr "Lägg till underorganisation under denna organisation"
-
-#: orgs/wagtail_admin.py
-msgid "Include in plan"
-msgstr "Inkludera i planen"
-
-#: orgs/wagtail_admin.py
-msgid "Include this organization in the active plan"
-msgstr "Inkludera denna organisation i den aktiva planen"
-
-#: orgs/wagtail_admin.py
-msgid "Exclude from plan"
-msgstr "Utesluta från planen"
-
-#: orgs/wagtail_admin.py
-msgid "Exclude this organization from the active plan"
-msgstr "Utesluta denna organisation från den aktiva planen"
 
 #: orgs/wagtail_admin.py reports/report_formatters.py
 #: reports/spreadsheets/excel_report.py
@@ -4748,12 +5201,54 @@ msgid "People who can edit data of this organization and suborganizations but no
 msgstr "Personer som kan redigera data för denna organisation och underorganisationer men inget planspecifikt innehåll"
 
 #: orgs/wagtail_admin.py
-msgid "Is in plan"
-msgstr "Är i plan"
+#, fuzzy, python-format
+#| msgid "site title"
+msgid "Edit '%(title)s'"
+msgstr "Sidans Titel"
 
 #: orgs/wagtail_admin.py
-msgid "Permissions"
-msgstr "Behörigheter"
+#, fuzzy
+#| msgid "Choose plan"
+msgid "Copy"
+msgstr "Välj plan"
+
+#: orgs/wagtail_admin.py
+#, python-format
+msgid "Copy '%(title)s'"
+msgstr ""
+
+#: orgs/wagtail_admin.py templates/modeladmin/edit.html
+msgid "Delete"
+msgstr "Radera"
+
+#: orgs/wagtail_admin.py
+#, python-format
+msgid "Delete '%(title)s'"
+msgstr ""
+
+#: orgs/wagtail_admin.py
+msgid "Add suborganization"
+msgstr "Lägg till underorganisation"
+
+#: orgs/wagtail_admin.py
+#, fuzzy
+#| msgid "Include in plan"
+msgid "Include in active plan"
+msgstr "Inkludera i planen"
+
+#: orgs/wagtail_admin.py
+msgid "Include this organization in the active plan"
+msgstr "Inkludera denna organisation i den aktiva planen"
+
+#: orgs/wagtail_admin.py
+#, fuzzy
+#| msgid "Exclude from plan"
+msgid "Exclude from active plan"
+msgstr "Utesluta från planen"
+
+#: orgs/wagtail_admin.py
+msgid "Exclude this organization from the active plan"
+msgstr "Utesluta denna organisation från den aktiva planen"
 
 #: pages/blocks.py
 msgid "Question"
@@ -4954,10 +5449,6 @@ msgid "Lead paragraph right under the heading"
 msgstr "Led punkt direkt under rubriken"
 
 #: pages/models.py
-msgid "Paragraph"
-msgstr "Paragraf"
-
-#: pages/models.py
 msgid "Content page"
 msgstr "Innehållssida"
 
@@ -5148,6 +5639,21 @@ msgstr "Möjliggör att denna sida inkluderar åtgärder från relaterade planer
 
 #: pages/models.py
 #, fuzzy
+msgid "Indicator list filters"
+msgstr "Indikatordata"
+
+#: pages/models.py
+#, fuzzy
+msgid "Indicator list columns"
+msgstr "Indikatordata"
+
+#: pages/models.py
+#, fuzzy
+msgid "Indicator details view"
+msgstr "Indikatordata"
+
+#: pages/models.py
+#, fuzzy
 msgid "Indicator list page"
 msgstr "Indikatordata"
 
@@ -5202,55 +5708,6 @@ msgstr "Mer"
 msgid "People"
 msgstr "Personer"
 
-#: people/chooser.py
-msgid "Create new"
-msgstr "Skapa ny"
-
-#: people/chooser.py
-msgid "Choose person"
-msgstr "Välj person"
-
-#: people/chooser.py
-msgid "Choose a person"
-msgstr "Välj en person"
-
-#: people/chooser.py
-msgid "Choose another person"
-msgstr "Välj en annan person"
-
-#: people/chooser.py
-msgid "Edit this person"
-msgstr "Redigera den här personen"
-
-#: people/models.py people/wagtail_admin.py
-msgid "first name"
-msgstr "förnamn"
-
-#: people/models.py people/wagtail_admin.py
-msgid "last name"
-msgstr "efternamn"
-
-#: people/models.py
-msgctxt "person's role"
-msgid "title"
-msgstr "titel"
-
-#: people/models.py
-msgid "postal address"
-msgstr "postadress"
-
-#: people/models.py
-msgid "What is this person's organization"
-msgstr "Vad är den här personens organisation"
-
-#: people/models.py
-msgid "user"
-msgstr "användare"
-
-#: people/models.py
-msgid "Set if the person has an user account"
-msgstr "Ange om personen har ett användarkonto"
-
 #: people/models.py
 msgid "participated in training"
 msgstr "deltog i träning"
@@ -5259,17 +5716,9 @@ msgstr "deltog i träning"
 msgid "Set to keep track who have attended training sessions"
 msgstr "Ställ in för att hålla reda på vilka som har deltagit i träningspass"
 
-#: people/models.py
-msgid "image cropping"
-msgstr "bildbeskärning"
-
 #: people/models.py people/wagtail_admin.py
 msgid "contact for actions"
 msgstr "kontakt för åtgärder"
-
-#: people/models.py
-msgid "people"
-msgstr "personer"
 
 #: people/override_django_translations.py
 #, python-format
@@ -5554,6 +6003,12 @@ msgstr "Andra ansvariga"
 
 #: reports/spreadsheets/action_print_layout.py
 #, fuzzy
+#| msgid "Page link"
+msgid "Page"
+msgstr "Sidolänk"
+
+#: reports/spreadsheets/action_print_layout.py
+#, fuzzy
 msgid "Profiles"
 msgstr "Profiler"
 
@@ -5709,10 +6164,6 @@ msgstr "Sparar…"
 msgid "Save"
 msgstr "Spara"
 
-#: templates/modeladmin/edit.html
-msgid "Delete"
-msgstr "Radera"
-
 #: users/apps.py
 msgid "Users"
 msgstr "Användare"
@@ -5720,6 +6171,73 @@ msgstr "Användare"
 #: users/models.py
 msgid "No permission to remove the user belonging to plans you are not managing."
 msgstr "Inget tillstånd att ta bort användaren som tillhör planer som du inte hanterar."
+
+#~ msgid "collection"
+#~ msgstr "samling"
+
+#, fuzzy, python-format
+#~ msgid "The %(model_name)s \"%(title)s\" has been approved in workflow \"%(workflow)s\" with comment: \"%(comment)s\"."
+#~ msgstr "%(model_name)s '%(object)s' har skickats in för moderering."
+
+#, fuzzy, python-format
+#~ msgid "The page \"%(title)s\" has been approved in workflow \"%(workflow)s\" with comment: \"%(comment)s\"."
+#~ msgstr "%(model_name)s '%(object)s' har skickats in för moderering."
+
+#, fuzzy, python-format
+#~ msgid "The %(model_name)s \"%(title)s\" has been approved in workflow \"%(workflow)s\" with comment: \"%(comment)s\""
+#~ msgstr "%(model_name)s '%(object)s' har skickats in för moderering."
+
+#~ msgid "Tunnistamo"
+#~ msgstr "Tunnistamo"
+
+#~ msgid "What is the minimum value this indicator can reach? It is used in visualizations as the Y axis minimum."
+#~ msgstr "Vad är det minsta värde som denna indikator kan nå? Det används i visualiseringar som Y -axelminimum."
+
+#~ msgid "What is the maximum value this indicator can reach? It is used in visualizations as the Y axis maximum."
+#~ msgstr "Vad är det maximala värdet som denna indikator kan nå? Det används i visualiseringar som Y -axelns maximala."
+
+#~ msgid "Has a graph"
+#~ msgstr "Har en graf"
+
+#, fuzzy
+#~| msgid "Basic information"
+#~ msgid "Further information"
+#~ msgstr "Grundläggande information"
+
+#, fuzzy
+#~| msgid "Value field"
+#~ msgid "Value bounds"
+#~ msgstr "Värde fält"
+
+#, fuzzy
+#~| msgid "comment"
+#~ msgid "Comment"
+#~ msgstr "kommentar"
+
+#~ msgid "Organization logo. Please provide a square image (min. 250x250px). The logo used for the organization's social media often works best."
+#~ msgstr "Organisationens logotyp. Vänligen ge en kvadratisk bild (minst 250x250px). Den logotyp som används för organisationens sociala medier fungerar ofta bäst."
+
+#~ msgid "Add child"
+#~ msgstr "Lägg till barn"
+
+#~ msgid "Add child under this node"
+#~ msgstr "Lägg till barn under denna nod"
+
+#~ msgid "Edit subtree"
+#~ msgstr "Redigera underträd"
+
+#, python-format
+#~ msgid "Edit subtree rooted at this %s"
+#~ msgstr "Redigera subträd med rötter i detta %s"
+
+#~ msgid "Add suborganization under this organization"
+#~ msgstr "Lägg till underorganisation under denna organisation"
+
+#~ msgid "Is in plan"
+#~ msgstr "Är i plan"
+
+#~ msgid "What is this person's organization"
+#~ msgstr "Vad är den här personens organisation"
 
 #~ msgid "Related actions"
 #~ msgstr "Relaterade åtgärder"
@@ -5804,9 +6322,6 @@ msgstr "Inget tillstånd att ta bort användaren som tillhör planer som du inte
 #, fuzzy
 #~ msgid "Internal field"
 #~ msgstr "Interna fält"
-
-#~ msgid "Admin hostnames"
-#~ msgstr "Admin värdnamn"
 
 #~ msgid "Show only organizations in active plan"
 #~ msgstr "Visa endast organisationer i aktiv plan"
@@ -6001,9 +6516,6 @@ msgstr "Inget tillstånd att ta bort användaren som tillhör planer som du inte
 #~ msgid "login button text"
 #~ msgstr "inloggningsknappstext"
 
-#~ msgid "You have been successfully logged out."
-#~ msgstr "Du har loggat ut."
-
 #, python-format
 #~ msgid "New %(related_verbose_name)s"
 #~ msgstr "Ny %(related_verbose_name)s"
@@ -6037,9 +6549,6 @@ msgstr "Inget tillstånd att ta bort användaren som tillhör planer som du inte
 
 #~ msgid "Upstream indicators"
 #~ msgstr "Uppströms indikatorer"
-
-#~ msgid "Indicator actions"
-#~ msgstr "Indikatoråtgärder"
 
 #~ msgid "week"
 #~ msgstr "vecka"
