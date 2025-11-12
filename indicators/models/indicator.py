@@ -188,7 +188,7 @@ class Indicator(ClusterableModel, index.Indexed, ModificationTracking, PlanDefau
         on_delete=models.SET_NULL,
         editable=False,
     )
-    reference_value: OneToOne[IndicatorValue] = OneToOneField(
+    reference_value: OneToOne[IndicatorValue | None] = OneToOneField(
         'indicators.IndicatorValue',
         null=True,
         blank=True,
