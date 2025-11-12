@@ -186,7 +186,7 @@ class IndicatorValueColumn(IndicatorListColumn):
 
         type = value.get('value_type')
         ref_year = value.get('reference_year')
-        if ref_year is not None and type != self.IndicatorColumnValueType.REFERENCE:
+        if ref_year and type != self.IndicatorColumnValueType.REFERENCE:
             errors['reference_year'] = ValidationError(_('Reference year is only allowed for reference value type'))
         if errors:
             raise StructBlockValidationError(errors)
