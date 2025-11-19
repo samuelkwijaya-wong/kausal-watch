@@ -260,7 +260,7 @@ def remove_contact_person_perms(user: UserModel, model: type[Action | Indicator]
 
 
 PLAN_ADMIN_PERMS: tuple[tuple[type[Model], tuple[str, ...]], ...] = (
-    (Plan, ('view', 'change', 'publish', 'add')),
+    (Plan, ('view', 'change', 'publish')),
     (Action, ALL_PERMS),
     (ActionStatus, ALL_PERMS),
     (ActionSchedule, ALL_PERMS),
