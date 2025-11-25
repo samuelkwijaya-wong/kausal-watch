@@ -565,6 +565,11 @@ class IndicatorAdmin(AplansModelAdmin[Indicator]):
                 FieldPanel('reference_value', widget=IndicatorValueChooser(indicator_id=instance.id))
             )
 
+        advanced_panels.extend([
+            FieldPanel('non_quantified_goal'),
+            FieldPanel('non_quantified_goal_date'),
+        ])
+
         if not is_linked_to_common_indicator and is_general_admin:
             advanced_panels.append(
                 CondensedInlinePanel('dimensions', panels=[

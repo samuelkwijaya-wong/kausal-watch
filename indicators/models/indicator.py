@@ -87,6 +87,11 @@ else:
     IndicatorManager = MLModelManager.from_queryset(IndicatorQuerySet)
 
 
+class IndicatorNonQuantifiedGoalTarget(models.TextChoices):
+    INCREASE = 'increase', _('Increase')
+    DECREASE = 'decrease', _('Decrease')
+
+
 @reversion.register(follow=('goals',))
 class Indicator(ClusterableModel, index.Indexed, ModificationTracking, PlanDefaultsModel, RestrictedVisibilityModel):
     """An indicator with which to measure actions and progress towards strategic goals."""
@@ -277,6 +282,11 @@ class Indicator(ClusterableModel, index.Indexed, ModificationTracking, PlanDefau
         help_text=_('Data categories can be summed to form a total for the indicator (draw a stacked chart as default)'),
     )
 
+    non_quantified_goal = models.CharField(
+        choices=IndicatorNonQuantifiedGoalTarget.choices, null=True, blank=True, verbose_name=_('non-quantified goal')
+    )
+    non_quantified_goal_date = models.DateField(null=True, blank=True, verbose_name=_('non-quantified goal date'))
+
     sent_notifications = GenericRelation('notifications.SentNotification', related_query_name='indicator')
 
     i18n = TranslationField(fields=['name', 'description'], default_language_field='organization__primary_language_lowercase')
@@ -299,6 +309,8 @@ class Indicator(ClusterableModel, index.Indexed, ModificationTracking, PlanDefau
         'quantity',
         'unit',
         'description',
+        'non_quantified_goal',
+        'non_quantified_goal_date',
         'min_value',
         'max_value',
         'categories',
