@@ -22,7 +22,7 @@ from wagtail.blocks import (
 from grapple.helpers import register_streamfield_block
 from grapple.models import GraphQLBoolean, GraphQLField, GraphQLForeignKey, GraphQLInt, GraphQLStreamfield, GraphQLString
 
-from indicators.chooser import DimensionChooser, IndicatorChooser
+from indicators.chooser import DimensionChooser, indicator_chooser_viewset
 from indicators.models import Dimension, Indicator
 from pages.blocks import PageLinkBlock
 
@@ -39,7 +39,7 @@ class IndicatorChooserBlock(ChooserBlock[Indicator]):
 
     @cached_property
     def widget(self):
-        return IndicatorChooser()
+        return indicator_chooser_viewset.widget_class()
 
     def get_form_state(self, value):
         return self.widget.get_value_data(value)

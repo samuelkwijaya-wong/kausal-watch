@@ -36,3 +36,6 @@ def editor_js():
         '<script src="{}"></script>',
         static('indicators/js/dashboard_blocks.js')
     )
+
+
+from . import rich_text  # noqa: E402, F401

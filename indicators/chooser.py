@@ -1,57 +1,48 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING, Any
+
 from django.db.models.query import QuerySet
 from django.utils.translation import gettext_lazy as _
 from wagtail import hooks
-from wagtail.search.backends import get_search_backend
 
 from generic_chooser.views import ModelChooserMixin, ModelChooserViewSet
 from generic_chooser.widgets import AdminChooser
 
+from kausal_common.admin_site.choosers import ChooserViewSet
 from kausal_common.users import user_or_bust
 
 from admin_site.utils import ChooserListingTabMixinWithEmptyResultsMessage
 
 from .models import Dimension, Indicator, IndicatorDimension, IndicatorQuerySet, IndicatorValue
 
-
-class IndicatorChooserMixin(ModelChooserMixin[Indicator, IndicatorQuerySet]):
-    def get_unfiltered_object_list(self):
-        user = user_or_bust(self.request.user)
-        plan = user.get_active_admin_plan()
-        objs = Indicator.objects.filter(plans=plan).distinct()
-        return objs
-
-    def get_object_list(self, search_term=None, **kwargs):
-        objs = self.get_unfiltered_object_list()
-
-        if search_term:
-            search_backend = get_search_backend()
-            objs = search_backend.autocomplete(search_term, objs)
-
-        return objs
+if TYPE_CHECKING:
+    from wagtail.admin.views.generic.chooser import ChooseResultsView, ChooseView, ChosenView
 
 
-class IndicatorChooserViewSet(ModelChooserViewSet[Indicator]):
-    chooser_mixin_class = IndicatorChooserMixin
-
+class IndicatorChooserViewSet(ChooserViewSet[Indicator]):
     icon = 'kausal-indicator'
     model = Indicator
-    page_title = _("Choose an indicator")
-    per_page = 30
-    fields = ['identifier', 'name']
-
-
-class IndicatorChooser(AdminChooser):
     choose_one_text = _('Choose an indicator')
     choose_another_text = _('Choose another indicator')
-    model = Indicator
-    choose_modal_url_name = 'indicator_chooser:choose'
+
+    def get_object_list(self, view: ChooseView | ChooseResultsView) -> IndicatorQuerySet:
+        user = user_or_bust(view.request.user)
+        plan = user.get_active_admin_plan()
+        objs = Indicator.objects.qs.filter(plans=plan).visible_for_user(user).distinct()
+        return objs
+
+    def get_chosen_response_data(self, view: ChosenView, item: Indicator) -> dict[str, Any]:
+        data = super(type(view), view).get_chosen_response_data(item)  # type: ignore[call-arg]
+        data['uuid'] = str(item.uuid)
+        return data
 
 
-@hooks.register('register_admin_viewset')
+indicator_chooser_viewset = IndicatorChooserViewSet('indicator_chooser', url_prefix='indicator-chooser')
+
+@hooks.register("register_admin_viewset")
 def register_indicator_chooser_viewset():
-    return IndicatorChooserViewSet('indicator_chooser', url_prefix='indicator-chooser')
+    return indicator_chooser_viewset
 
 
 class DimensionChooserMixin(ModelChooserMixin[Dimension, QuerySet[Dimension]]):
