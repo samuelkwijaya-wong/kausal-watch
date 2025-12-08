@@ -121,6 +121,13 @@ def initialize():
             has_list_filters_block=False,
         ),
         Field(
+            field_name='goal_description',
+            has_details_block=True,
+            has_report_block=False,
+            has_list_filters_block=False,
+            has_dashboard_column_block=False,
+        ),
+        Field(
             field_name='causality_nav',
             has_details_block=True,
             has_report_block=False,
@@ -301,6 +308,7 @@ CONTENT_BLOCK_FIELDS: tuple[str | tuple[str, blocks.Block[Any]], ...] = (
     'visualization',
     'connected_actions',
     'causality_nav',
+    'goal_description',
 )
 
 IndicatorAsideContentStream = generate_stream_block(
