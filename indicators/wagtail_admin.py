@@ -565,7 +565,12 @@ class IndicatorAdmin(AplansModelAdmin[Indicator]):
                 FieldPanel('reference_value', widget=IndicatorValueChooser(indicator_id=instance.id))
             )
 
+        advanced_panels.append(
+            FieldPanel('sort_key'),
+        )
+
         advanced_panels.extend([
+            FieldPanel('goal_description'),
             FieldPanel('non_quantified_goal'),
             FieldPanel('non_quantified_goal_date'),
         ])

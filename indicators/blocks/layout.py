@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import graphene
 from django.core.exceptions import ValidationError
@@ -23,6 +23,7 @@ from kausal_common.blocks.base import (
 from kausal_common.blocks.fields import FieldBlockMetaInterface
 from kausal_common.blocks.registry import FieldBlockContext, FieldContextConfig, ModelFieldProperties, ModelFieldRegistry
 from kausal_common.blocks.stream_block import generate_stream_block
+from kausal_common.graphene.grapple import grapple_field
 
 from actions.blocks.choosers import CategoryLevelChooserBlock, CategoryTypeChooserBlock
 from actions.blocks.filters import CategoryTypeFilterBlock
@@ -30,6 +31,9 @@ from actions.models.category import CategoryLevel, CategoryType
 from indicators.models import Indicator
 
 from . import generated
+
+if TYPE_CHECKING:
+    from wagtail.blocks.stream_block import StreamValue
 
 indicator_registry: ModelFieldRegistry[Indicator]
 
@@ -174,33 +178,22 @@ class IndicatorValueColumn(IndicatorListColumn):
 
     is_normalized = blocks.BooleanBlock(required=False)
     value_type = blocks.ChoiceBlock(choices=IndicatorColumnValueType.choices, required=True)
-    reference_year = blocks.IntegerBlock(required=False, help_text=_('Default reference year for reference value type'))
+    reference_year = blocks.IntegerBlock(
+        required=False, label=_('Default year'), help_text=_('Default value year to pick for this column')
+    )
     hide_unit = blocks.BooleanBlock(default=False, required=False)
+
+    @staticmethod
+    def resolve_default_year(root: StreamValue.StreamChild, info) -> int | None:
+        return root.value.get('reference_year', None)
 
     graphql_fields = IndicatorListColumn.graphql_fields + [
         GraphQLBoolean('is_normalized', required=True),
         GraphQLField('value_type', graphene.Enum.from_enum(IndicatorColumnValueType), required=True),
-        GraphQLInt('reference_year', required=False),
+        GraphQLInt('reference_year', required=False, deprecation_reason='Use defaultYear instead'),
+        grapple_field('default_year', field_type=graphene.Int, resolver=resolve_default_year, required=False),
         GraphQLField('hide_unit', graphene.Boolean, required=True),
     ]
-
-    def clean(self, value):
-        result = []
-        try:
-            result = super().clean(value)
-        except StructBlockValidationError as e:
-            errors = e.block_errors
-        else:
-            errors = {}
-
-        type = value.get('value_type')
-        ref_year = value.get('reference_year')
-        if ref_year and type != self.IndicatorColumnValueType.REFERENCE:
-            errors['reference_year'] = ValidationError(_('Reference year is only allowed for reference value type'))
-        if errors:
-            raise StructBlockValidationError(errors)
-
-        return result
 
 
 IndicatorListColumnsStream = generate_stream_block(
@@ -272,6 +265,10 @@ class IndicatorValueSummaryContentBlock(IndicatorContentBlock):
         required=False,
         label=_("Show goal value"),
     )
+    default_goal_year = blocks.IntegerBlock(
+        required=False,
+        help_text=_("Default year to pick for the goal value."),
+    )
     show_goal_gap = blocks.BooleanBlock(
         default=True,
         required=False,
@@ -284,9 +281,10 @@ class IndicatorValueSummaryContentBlock(IndicatorContentBlock):
 
     graphql_fields = [
         GraphQLBoolean('show_reference_value'),
-        GraphQLInt('reference_year'),
+        GraphQLInt('reference_year', required=False),
         GraphQLBoolean('show_current_value'),
         GraphQLBoolean('show_goal_value'),
+        GraphQLInt('default_goal_year', required=False),
         GraphQLBoolean('show_goal_gap'),
     ]
 

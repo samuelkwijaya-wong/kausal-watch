@@ -171,6 +171,14 @@ class Indicator(ClusterableModel, index.Indexed, ModificationTracking, PlanDefau
         verbose_name=_('visualizations'),
     )
 
+    sort_key = models.CharField(
+        verbose_name=_('sort key'),
+        max_length=200,
+        help_text=_('If set, this will be used as the primary criterion for sorting indicators.'),
+        blank=True,
+        null=True,
+    )
+
     categories: M2M[Category, Any] = ParentalManyToManyField(
         'actions.Category',
         blank=True,
@@ -290,6 +298,7 @@ class Indicator(ClusterableModel, index.Indexed, ModificationTracking, PlanDefau
         choices=IndicatorNonQuantifiedGoalTarget.choices, null=True, blank=True, verbose_name=_('non-quantified goal')
     )
     non_quantified_goal_date = models.DateField(null=True, blank=True, verbose_name=_('non-quantified goal date'))
+    goal_description = models.TextField(null=True, blank=True, verbose_name=_('goal description'))
 
     # We are anticipating that this will actually be a UUID although currently it is not
     kausal_paths_node_uuid = models.CharField(
@@ -339,6 +348,7 @@ class Indicator(ClusterableModel, index.Indexed, ModificationTracking, PlanDefau
         'values',
         'plans',
         'goals',
+        'goal_description',
         'related_actions',
         'actions',
         'related_causes',
@@ -353,6 +363,7 @@ class Indicator(ClusterableModel, index.Indexed, ModificationTracking, PlanDefau
         'value_rounding',
         'data_categories_are_stackable',
         'reference_value',
+        'sort_key',
     ]
 
     wagtail_reference_index_ignore = True
