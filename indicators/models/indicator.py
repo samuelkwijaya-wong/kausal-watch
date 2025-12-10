@@ -248,7 +248,7 @@ class Indicator(ClusterableModel, index.Indexed, ModificationTracking, PlanDefau
         blank=True,
         null=True,
         verbose_name=_('reference'),
-        max_length=255,
+        max_length=4000,
         help_text=_('What is the reference or source for this indicator?'),
         features=['link'],
     )
