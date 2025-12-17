@@ -1602,7 +1602,10 @@ class PersonViewSet(ModelWithImageViewMixin, BulkModelViewSet[Person]):
         return (
             user is not None
             and user.is_authenticated
-            and user.is_general_admin_for_plan(plan)
+            and (
+                user.is_general_admin_for_plan(plan)
+                or user.is_contact_person_in_plan(plan)
+            )
         )
 
     def get_serializer_context(self):
