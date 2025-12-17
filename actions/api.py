@@ -31,7 +31,7 @@ from aplans.permissions import AnonReadOnly
 from aplans.rest_api import PlanRelatedModelSerializer
 from aplans.utils import generate_identifier, public_fields
 
-from actions.models.action import ActionContactPerson, ActionImplementationPhase
+from actions.models.action import ActionContactPerson, ActionImplementationPhase, ActionQuerySet
 from actions.models.attributes import Attribute, AttributeType, ModelWithAttributes
 from orgs.models import Organization
 from pages.apps import post_reorder_categories
@@ -969,6 +969,8 @@ class ActionSerializer(
     BulkSerializerValidationInstanceMixin,
     PlanRelatedModelSerializer,
 ):
+    _modifiable_actions_cache: ActionQuerySet
+
     uuid = serializers.UUIDField(required=False)
     categories = ActionCategoriesSerializer(required=False)
     responsible_parties = ActionResponsiblePartySerializer(required=False, label=_('Responsible parties'))
@@ -998,7 +1000,24 @@ class ActionSerializer(
             # Remove fields that are only for admins
             del fields['internal_notes']
             del fields['internal_admin_notes']
+
+        if user is not None:
+            fields['modifiable_by_user'] = serializers.SerializerMethodField()
+
         return fields
+
+    def get_modifiable_by_user(self, action: Action):
+        if hasattr(self, '_modifiable_actions_cache'):
+            return action in self._modifiable_actions_cache
+        request: Request | None = self.context.get('request')
+        if request is None:
+            return False
+        user = user_or_none(request.user)
+        view = self.context.get('view')
+        if user is None or view is None:
+            return False
+        self._modifiable_actions_cache = view.get_queryset().modifiable_by(user)
+        return action in self._modifiable_actions_cache
 
     def to_representation(self, value):
         self.context['_current_instance'] = value
