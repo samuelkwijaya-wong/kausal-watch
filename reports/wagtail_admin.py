@@ -145,6 +145,7 @@ class ReportTypeAdmin(AplansModelAdmin):
     menu_icon = 'doc-full'
     menu_order = 1200
     add_to_settings_menu = True
+    base_url_path = 'plan_reports/report_type'
 
     panels = [
         FieldPanel('name'),
@@ -205,6 +206,7 @@ class ReportAdmin(AplansModelAdmin):
     menu_label = _('Reports')
     list_display= ('name', 'is_complete', 'is_public')
     list_filter = (ReportTypeFilter,)
+    base_url_path = 'plan_reports/report'
 
     panels = [
         FieldPanel('name'),
