@@ -79,6 +79,12 @@ class CategoryTypeLevelListBlock(blocks.StructBlock):
     group_by_category_level = CategoryLevelChooserBlock(
         required=False, label= _("Group by level"),
         help_text=_("Use category level for tabbed grouping in the public UI"))
+    paths_target_node_id = blocks.CharBlock(
+        max_length=200,
+        required=False,
+        verbose_name=_('Kausal Paths target node ID'),
+        help_text=_('Kausal Paths target node ID used to calculate action impacts. If not set, the default outcome node will be used.'),
+    )
 
     class Meta:
         label = _("Category level list")
@@ -89,4 +95,5 @@ class CategoryTypeLevelListBlock(blocks.StructBlock):
         GraphQLForeignKey('category_type', CategoryType, required=True),
         GraphQLForeignKey('category_level', CategoryLevel, required=True),
         GraphQLForeignKey('group_by_category_level', CategoryLevel, required=False),
+        GraphQLString('paths_target_node_id', required=False),
     ]
