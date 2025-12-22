@@ -11,15 +11,16 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-11-12 17:57+0100\n"
-"PO-Revision-Date: 2025-04-02 07:20+0000\n"
-"Last-Translator: Matias Wargelin <matias.wargelin@kausal.tech>\n"
-"Language-Team: German <https://weblate.kausal.tech/projects/watch/django/de/>\n"
+"PO-Revision-Date: 2025-12-22 17:21+0000\n"
+"Last-Translator: Bernhard Bliem <bernhard.bliem@kausal.tech>\n"
+"Language-Team: German <https://weblate.kausal.tech/projects/watch/django/de/>"
+"\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.4.2\n"
+"X-Generator: Weblate 5.12.2\n"
 
 #: actions/action_admin.py
 msgid "There is already an action with this identifier."
@@ -34,6 +35,9 @@ msgstr "%s wird mehrfach in der Maßnahme aufgeführt."
 #, python-format
 msgid "While editing this action you have switched to a different plan. This action was still saved with the original plan \"%s\"."
 msgstr ""
+"Während der Bearbeitung dieser Maßnahme haben Sie zu einem anderen Plan "
+"gewechselt. Diese Maßnahme wurde noch mit dem ursprünglichen Plan \"%s\" "
+"gespeichert."
 
 #: actions/action_admin.py actions/models/action.py
 msgid "Unspecified"
@@ -755,6 +759,9 @@ msgstr "Es gibt bereits eine Kategorie mit dieser Kennung."
 #, python-format
 msgid "While editing this category type you have switched to a different plan. This category type was still saved with the original plan \"%s\"."
 msgstr ""
+"Während der Bearbeitung dieses Kategorietyps haben Sie zu einem anderen Plan "
+"gewechselt. Dieser Kategorietyp wurde noch mit dem ursprünglichen Plan \"%s\""
+" gespeichert."
 
 #: actions/category_admin.py
 msgid "Icons"
@@ -768,7 +775,7 @@ msgstr "Indikatoren"
 
 #: actions/category_admin.py
 msgid "Type"
-msgstr ""
+msgstr "Typ"
 
 #: actions/category_admin.py
 msgid "Common category types"
@@ -1601,28 +1608,20 @@ msgid "Subcategories"
 msgstr "Unterkategorien"
 
 #: actions/models/category.py
-#, fuzzy
-#| msgid "Has goals"
 msgid "Main goal"
-msgstr "Hat Ziele"
+msgstr "Hauptziel"
 
 #: actions/models/category.py
-#, fuzzy
-#| msgid "indicator goal"
 msgid "Secondary goal"
-msgstr "Indikatorziel"
+msgstr "Sekundärziel"
 
 #: actions/models/category.py
-#, fuzzy
-#| msgid "Indicator for actions"
 msgid "indicator category relationship"
-msgstr "Indikator für Maßnahmen"
+msgstr "Indikatorkategoriebeziehung"
 
 #: actions/models/category.py
-#, fuzzy
-#| msgid "Indicator for actions"
 msgid "indicator category relationships"
-msgstr "Indikator für Maßnahmen"
+msgstr "Indikatorkategoriebeziehungen"
 
 #: actions/models/features.py
 msgid "No ordering"
