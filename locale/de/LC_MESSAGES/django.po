@@ -19,7 +19,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.12.2\n"
+"X-Generator: Weblate 5.15.1\n"
 
 #: actions/action_admin.py
 msgid "There is already an action with this identifier."
@@ -1663,16 +1663,15 @@ msgid "Should users be able to have authenticated sessions in the public UI?"
 msgstr "Sollen Benutzer authentifizierte Sitzungen in der öffentlichen Oberfläche haben können?"
 
 #: actions/models/features.py
-#, fuzzy
-#| msgid "Show all information but only for authenticated users"
 msgid "Expose unpublished plan only to authenticated users"
-msgstr "Alle Informationen anzeigen, aber nur für authentifizierte Benutzer"
+msgstr ""
+"Veröffentliche unveröffentlichten Plan nur für authentifizierte Benutzer"
 
 #: actions/models/features.py
-#, fuzzy
-#| msgid "Should users be able to have authenticated sessions in the public UI?"
 msgid "Should the plan be exposed only to authenticated users if not published?"
-msgstr "Sollen Benutzer authentifizierte Sitzungen in der öffentlichen Oberfläche haben können?"
+msgstr ""
+"Sollte der Plan nur authentifizierten Benutzern zugänglich sein, wenn er "
+"nicht veröffentlicht ist?"
 
 #: actions/models/features.py
 msgid "Publicly visible data about contact persons"
@@ -1815,10 +1814,8 @@ msgid "Is this plan password protected?"
 msgstr "Ist dieser Plan passwortgeschützt?"
 
 #: actions/models/features.py
-#, fuzzy
-#| msgid "Indicator dimensions"
 msgid "Indicators open in modal"
-msgstr "Indikatordimensionen"
+msgstr "Indikatoren öffnen sich in einem Modalfenster"
 
 #: actions/models/features.py
 #, fuzzy
@@ -1911,14 +1908,14 @@ msgid "If unsure, use the default value representing customer use. For statistic
 msgstr "Wenn Sie sich nicht sicher sind, verwenden Sie den Standardwert für die Nutzung durch Kunden. Geben Sie für statistische Zwecke an, wofür der Plan verwendet wird, um zwischen Plänen, die tatsächlich von Kunden genutzt werden, und solchen, die aus einem anderen Grund erstellt wurden, zu unterscheiden."
 
 #: actions/models/plan.py
-#, fuzzy
-#| msgid "Exclude from plan"
 msgid "exclude from search"
-msgstr "Aus Plan ausschließen"
+msgstr "von Suche ausschließen"
 
 #: actions/models/plan.py
 msgid "Should information related to the plan be excluded from search results?"
 msgstr ""
+"Sollen Informationen, die sich auf den Plan beziehen, von den "
+"Suchergebnissen ausgeschlossen werden?"
 
 #: actions/models/plan.py
 msgid "site URL"
@@ -2130,14 +2127,14 @@ msgid "The fully qualified domain name, eg. climate.cityname.gov. Leave blank if
 msgstr "Der vollständig qualifizierte Domänenname, z. B. klima.stadtname.gov. Leerlassen wenn noch unbekannt."
 
 #: actions/models/plan.py
-#, fuzzy
-#| msgid "Admin hostnames"
 msgid "redirect to host name"
-msgstr "Admin-Hostnamen"
+msgstr "Weiterleitung zum Hostnamen"
 
 #: actions/models/plan.py
 msgid "The UI will redirect to this hostname if set."
 msgstr ""
+"Die Benutzeroberfläche leitet zu diesem Hostnamen weiter, sofern einer "
+"festgelegt ist."
 
 #: actions/models/plan.py
 msgid "base path"
@@ -2156,10 +2153,10 @@ msgid "deployment environment"
 msgstr "Bereitstellungsumgebung"
 
 #: actions/models/plan.py
-#, fuzzy
-#| msgid "Domain names that will we used to redirect to the main hostname. Multiple domains are separated by commas."
 msgid "Domain names that will be used to redirect to the main hostname. Multiple domains are separated by commas."
-msgstr "Domänennamen, die zur Umleitung auf den Haupthostnamen verwendet werden sollen. Mehrere Domains werden durch Kommas getrennt."
+msgstr ""
+"Domänennamen, die zur Umleitung auf den Haupthostnamen verwendet werden "
+"sollen. Mehrere Domains werden durch Kommas getrennt."
 
 #: actions/models/plan.py
 msgid "Immediate override of publishing status"
@@ -2308,17 +2305,16 @@ msgstr "%(model_name)s \"%(title)s\" wurde aus der Moderation zurückgezogen."
 
 #: actions/templates/wagtailadmin/notifications/workflow_state_approved_comment.html
 #: actions/templates/wagtailadmin/notifications/workflow_state_approved_comment.txt
-#, fuzzy, python-format
-#| msgid "The page \"%(title)s\" has been submitted for approval in moderation stage \"%(task)s\"."
+#, python-format
 msgid "The page \"%(title)s\" has been approved in workflow \"%(workflow)s\" with a comment."
-msgstr "Die Seite „%(title)s“ wurde zur Freigabe in Moderationsphase „%(task)s“ eingereicht."
+msgstr ""
+"Die Seite \"%(title)s\" wurde im Workflow \"%(workflow)s\" mit Kommentar "
+"genehmigt."
 
 #: actions/templates/wagtailadmin/notifications/workflow_state_approved_comment.html
 #: actions/templates/wagtailadmin/notifications/workflow_state_approved_comment.txt
-#, fuzzy
-#| msgid "You can preview the page here:"
 msgid "You can view the page here:"
-msgstr "Eine Vorschau der Seite finden Sie hier:"
+msgstr "Sie können die Seite hier aufrufen:"
 
 #: actions/templates/wagtailadmin/notifications/workflow_state_approved_comment.html
 #: actions/templates/wagtailadmin/notifications/workflow_state_approved_comment.txt
