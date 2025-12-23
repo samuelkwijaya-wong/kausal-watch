@@ -1,11 +1,37 @@
 from __future__ import annotations
 
+from django.forms import CheckboxSelectMultiple
 from django.utils.translation import gettext_lazy as _
-from wagtail.admin.views.reports.audit_logging import LogEntriesView
+from wagtail.admin.filters import ContentTypeFilter, MultipleUserFilter
+from wagtail.admin.views.reports.audit_logging import (
+    LogEntriesView,
+    SiteHistoryReportFilterSet,
+    get_content_types_for_filter,
+)
 from wagtail.models import ModelLogEntry, PageLogEntry
 from wagtail.permissions import ModelPermissionPolicy
 
+import django_filters
+
 from audit_logging.models import PlanScopedModelLogEntry
+
+
+class CustomSiteHistoryReportFilterSet(SiteHistoryReportFilterSet):
+    """Subclassed simply to change terminology."""
+
+    action = django_filters.MultipleChoiceFilter(
+        label=_('Change'),
+        widget=CheckboxSelectMultiple,
+    )
+    user = MultipleUserFilter(
+        label=_('Changed by'),
+        widget=CheckboxSelectMultiple,
+    )
+    object_type = ContentTypeFilter(
+        label=_('Item type'),
+        method='filter_object_type',
+        queryset=lambda request: get_content_types_for_filter(request.user),
+    )
 
 
 class PlanScopedLogEntriesView(LogEntriesView):
@@ -13,6 +39,7 @@ class PlanScopedLogEntriesView(LogEntriesView):
     page_title = _("Change history")
     LOG_MODELS_TO_EXCLUDE = ModelLogEntry, PageLogEntry
     permission_policy: ModelPermissionPolicy = ModelPermissionPolicy(PlanScopedModelLogEntry)
+    filterset_class = CustomSiteHistoryReportFilterSet
     permission_required = 'view'
 
     # We want to show only PlanScopedModelEntries
