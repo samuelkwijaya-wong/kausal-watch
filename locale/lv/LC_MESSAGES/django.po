@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-12-23 15:14+0200\n"
+"POT-Creation-Date: 2025-12-23 16:43+0100\n"
 "PO-Revision-Date: 2025-04-02 07:20+0000\n"
 "Last-Translator: Matias Wargelin <matias.wargelin@kausal.tech>\n"
 "Language-Team: Latvian <https://weblate.kausal.tech/projects/watch/django/lv/>\n"
@@ -1294,7 +1294,7 @@ msgstr "statuss"
 msgid "comment"
 msgstr "komentārs"
 
-#: actions/models/action.py
+#: actions/models/action.py reports/report_formatters.py
 msgid "due date"
 msgstr "termiņš"
 
@@ -1916,7 +1916,7 @@ msgstr "Indikatoru izmēri"
 #: actions/models/features.py
 #, fuzzy
 #| msgid "Choose which information about contact persons is visible in the public UI"
-msgid "Should indicators open only in a modal dialog in the public UI."
+msgid "Should indicators open only in a modal dialog in the public UI?"
 msgstr "Izvēlieties, kura informācija par kontaktpersonām ir redzama publiskajā lietotāja saskarnē"
 
 #: actions/models/features.py
@@ -2351,33 +2351,56 @@ msgstr[0] ""
 msgstr[1] ""
 msgstr[2] ""
 
+#: actions/templates/wagtailadmin/notifications/action_moderator_approval_task_state_submitted.txt
 #: actions/templates/wagtailadmin/notifications/task_state_cancelled.txt
 #, fuzzy, python-format
 #| msgid "%(model_name)s '%(object)s' has been submitted for moderation."
 msgid "The page \"%(title)s\" has been submitted for approval to moderation stage \"%(task)s\"."
 msgstr "%(model_name)s '%(object)s' ir iesniegts rediģēšanai."
 
+#: actions/templates/wagtailadmin/notifications/action_moderator_approval_task_state_submitted.txt
 #: actions/templates/wagtailadmin/notifications/task_state_cancelled.txt
 msgid "You can preview the page here:"
 msgstr ""
 
+#: actions/templates/wagtailadmin/notifications/action_moderator_approval_task_state_submitted.txt
 #: actions/templates/wagtailadmin/notifications/task_state_cancelled.txt
 msgid "You can edit the page here:"
 msgstr ""
 
-#: actions/templates/wagtailadmin/notifications/task_state_cancelled.txt
-#, python-format
-msgid "The %(model_name)s \"%(title)s\" has been withdrawn from the moderation stage \"%(task)s\". It does not require approval until it has been resubmitted for moderation again."
-msgstr ""
+#: actions/templates/wagtailadmin/notifications/action_moderator_approval_task_state_submitted.txt
+#, fuzzy, python-format
+#| msgid "%(model_name)s '%(object)s' has been submitted for moderation."
+msgid "The %(model_name)s \"%(title)s\" has been submitted for approval to moderation stage \"%(task)s\"."
+msgstr "%(model_name)s '%(object)s' ir iesniegts rediģēšanai."
 
+#: actions/templates/wagtailadmin/notifications/action_moderator_approval_task_state_submitted.txt
 #: actions/templates/wagtailadmin/notifications/task_state_cancelled.txt
 #, python-format
 msgid "You can preview the %(model_name)s here:"
 msgstr ""
 
+#: actions/templates/wagtailadmin/notifications/action_moderator_approval_task_state_submitted.txt
 #: actions/templates/wagtailadmin/notifications/task_state_cancelled.txt
 #, python-format
 msgid "You can edit the %(model_name)s here:"
+msgstr ""
+
+#: actions/templates/wagtailadmin/notifications/action_moderator_approval_task_state_submitted_subject.txt
+#, fuzzy, python-format
+#| msgid "%(model_name)s '%(object)s' has been submitted for moderation."
+msgid "The page \"%(title)s\" has been submitted for approval in moderation stage \"%(task)s\""
+msgstr "%(model_name)s '%(object)s' ir iesniegts rediģēšanai."
+
+#: actions/templates/wagtailadmin/notifications/action_moderator_approval_task_state_submitted_subject.txt
+#, fuzzy, python-format
+#| msgid "%(model_name)s '%(object)s' has been submitted for moderation."
+msgid "The %(model_name)s \"%(title)s\" has been submitted for approval in moderation stage \"%(task)s\""
+msgstr "%(model_name)s '%(object)s' ir iesniegts rediģēšanai."
+
+#: actions/templates/wagtailadmin/notifications/task_state_cancelled.txt
+#, python-format
+msgid "The %(model_name)s \"%(title)s\" has been withdrawn from the moderation stage \"%(task)s\". It does not require approval until it has been resubmitted for moderation again."
 msgstr ""
 
 #: actions/templates/wagtailadmin/notifications/task_state_cancelled_subject.txt
@@ -2943,17 +2966,17 @@ msgstr ""
 msgid "updated by"
 msgstr "atjaunināja"
 
-#: audit_logging/templates/site_history_results.html
+#: audit_logging/templates/site_history_results.html audit_logging/views.py
 #, fuzzy
 #| msgid "Category type"
 msgid "Item type"
 msgstr "Kategorijas veids"
 
-#: audit_logging/templates/site_history_results.html
+#: audit_logging/templates/site_history_results.html audit_logging/views.py
 msgid "Change"
 msgstr ""
 
-#: audit_logging/templates/site_history_results.html
+#: audit_logging/templates/site_history_results.html audit_logging/views.py
 #, fuzzy
 #| msgid "created by"
 msgid "Changed by"
@@ -6084,6 +6107,12 @@ msgid "Other responsible parties"
 msgstr "Citi atbildīgie"
 
 #: reports/spreadsheets/action_print_layout.py
+#, fuzzy
+#| msgid "Page link"
+msgid "Page"
+msgstr "Lapas saite"
+
+#: reports/spreadsheets/action_print_layout.py
 msgid "Profiles"
 msgstr ""
 
@@ -6274,11 +6303,6 @@ msgstr "Nav atļauts noņemt lietotājus, kas pieder pie plāniem, kurus jūs ne
 
 #~ msgid "Permission denied"
 #~ msgstr "Atļauja liegta"
-
-#, fuzzy
-#~| msgid "Page link"
-#~ msgid "Page"
-#~ msgstr "Lapas saite"
 
 #~ msgid "collection"
 #~ msgstr "kolekcija"

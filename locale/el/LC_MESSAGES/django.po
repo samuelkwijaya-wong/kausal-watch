@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-12-23 15:14+0200\n"
+"POT-Creation-Date: 2025-12-23 16:43+0100\n"
 "PO-Revision-Date: 2025-04-02 07:20+0000\n"
 "Last-Translator: Matias Wargelin <matias.wargelin@kausal.tech>\n"
 "Language-Team: Greek <https://weblate.kausal.tech/projects/watch/django/el/>\n"
@@ -1277,7 +1277,7 @@ msgstr "κράτος"
 msgid "comment"
 msgstr "σχόλιο"
 
-#: actions/models/action.py
+#: actions/models/action.py reports/report_formatters.py
 msgid "due date"
 msgstr "ημερομηνία λήξης"
 
@@ -1879,7 +1879,7 @@ msgstr "Διαστάσεις δείκτη"
 #: actions/models/features.py
 #, fuzzy
 #| msgid "Should profile pictures be shown for contact persons in the public UI?"
-msgid "Should indicators open only in a modal dialog in the public UI."
+msgid "Should indicators open only in a modal dialog in the public UI?"
 msgstr "Θα πρέπει να εμφανίζονται φωτογραφίες προφίλ για τα πρόσωπα επαφής στο δημόσιο περιβάλλον εργασίας;"
 
 #: actions/models/features.py
@@ -2313,33 +2313,56 @@ msgstr[1] ""
 "        <span>%(n)s</span> ενεργές δράσεις <span class=\"w-sr-only\">που παρακολουθούνται στο %(plan)s</span>\n"
 "    "
 
+#: actions/templates/wagtailadmin/notifications/action_moderator_approval_task_state_submitted.txt
 #: actions/templates/wagtailadmin/notifications/task_state_cancelled.txt
 #, python-format
 msgid "The page \"%(title)s\" has been submitted for approval to moderation stage \"%(task)s\"."
 msgstr "Η σελίδα \"%(title)s\" έχει υποβληθεί για έγκριση στο στάδιο μετριοπάθειας \"%(task)s\"."
 
+#: actions/templates/wagtailadmin/notifications/action_moderator_approval_task_state_submitted.txt
 #: actions/templates/wagtailadmin/notifications/task_state_cancelled.txt
 msgid "You can preview the page here:"
 msgstr "Μπορείτε να κάνετε προεπισκόπηση της σελίδας εδώ:"
 
+#: actions/templates/wagtailadmin/notifications/action_moderator_approval_task_state_submitted.txt
 #: actions/templates/wagtailadmin/notifications/task_state_cancelled.txt
 msgid "You can edit the page here:"
 msgstr "Μπορείτε να επεξεργαστείτε τη σελίδα εδώ:"
 
-#: actions/templates/wagtailadmin/notifications/task_state_cancelled.txt
-#, python-format
-msgid "The %(model_name)s \"%(title)s\" has been withdrawn from the moderation stage \"%(task)s\". It does not require approval until it has been resubmitted for moderation again."
-msgstr "Το %(model_name)s \"%(title)s\" έχει αποσυρθεί από το στάδιο της μετριοπάθειας \"%(task)s\". Δεν απαιτεί έγκριση μέχρι να υποβληθεί εκ νέου για συντονισμό."
+#: actions/templates/wagtailadmin/notifications/action_moderator_approval_task_state_submitted.txt
+#, fuzzy, python-format
+#| msgid "The page \"%(title)s\" has been submitted for approval to moderation stage \"%(task)s\"."
+msgid "The %(model_name)s \"%(title)s\" has been submitted for approval to moderation stage \"%(task)s\"."
+msgstr "Η σελίδα \"%(title)s\" έχει υποβληθεί για έγκριση στο στάδιο μετριοπάθειας \"%(task)s\"."
 
+#: actions/templates/wagtailadmin/notifications/action_moderator_approval_task_state_submitted.txt
 #: actions/templates/wagtailadmin/notifications/task_state_cancelled.txt
 #, python-format
 msgid "You can preview the %(model_name)s here:"
 msgstr "Μπορείτε να κάνετε προεπισκόπηση του %(model_name)s εδώ:"
 
+#: actions/templates/wagtailadmin/notifications/action_moderator_approval_task_state_submitted.txt
 #: actions/templates/wagtailadmin/notifications/task_state_cancelled.txt
 #, python-format
 msgid "You can edit the %(model_name)s here:"
 msgstr "Μπορείτε να επεξεργαστείτε το %(model_name)s εδώ:"
+
+#: actions/templates/wagtailadmin/notifications/action_moderator_approval_task_state_submitted_subject.txt
+#, fuzzy, python-format
+#| msgid "The page \"%(title)s\" has been submitted for approval in moderation stage \"%(task)s\"."
+msgid "The page \"%(title)s\" has been submitted for approval in moderation stage \"%(task)s\""
+msgstr "Η σελίδα \"%(title)s\" έχει υποβληθεί για έγκριση στο στάδιο της μετριοπάθειας \"%(task)s\"."
+
+#: actions/templates/wagtailadmin/notifications/action_moderator_approval_task_state_submitted_subject.txt
+#, fuzzy, python-format
+#| msgid "The page \"%(title)s\" has been submitted for approval in moderation stage \"%(task)s\"."
+msgid "The %(model_name)s \"%(title)s\" has been submitted for approval in moderation stage \"%(task)s\""
+msgstr "Η σελίδα \"%(title)s\" έχει υποβληθεί για έγκριση στο στάδιο της μετριοπάθειας \"%(task)s\"."
+
+#: actions/templates/wagtailadmin/notifications/task_state_cancelled.txt
+#, python-format
+msgid "The %(model_name)s \"%(title)s\" has been withdrawn from the moderation stage \"%(task)s\". It does not require approval until it has been resubmitted for moderation again."
+msgstr "Το %(model_name)s \"%(title)s\" έχει αποσυρθεί από το στάδιο της μετριοπάθειας \"%(task)s\". Δεν απαιτεί έγκριση μέχρι να υποβληθεί εκ νέου για συντονισμό."
 
 #: actions/templates/wagtailadmin/notifications/task_state_cancelled_subject.txt
 #, python-format
@@ -2893,17 +2916,17 @@ msgstr ""
 msgid "updated by"
 msgstr "ενημερώθηκε από"
 
-#: audit_logging/templates/site_history_results.html
+#: audit_logging/templates/site_history_results.html audit_logging/views.py
 #, fuzzy
 #| msgid "Category type"
 msgid "Item type"
 msgstr "Τύπος κατηγορίας"
 
-#: audit_logging/templates/site_history_results.html
+#: audit_logging/templates/site_history_results.html audit_logging/views.py
 msgid "Change"
 msgstr ""
 
-#: audit_logging/templates/site_history_results.html
+#: audit_logging/templates/site_history_results.html audit_logging/views.py
 #, fuzzy
 #| msgid "created by"
 msgid "Changed by"
@@ -6003,6 +6026,12 @@ msgid "Other responsible parties"
 msgstr "Άλλοι υπεύθυνοι"
 
 #: reports/spreadsheets/action_print_layout.py
+#, fuzzy
+#| msgid "Page link"
+msgid "Page"
+msgstr "Σύνδεσμος σελίδας"
+
+#: reports/spreadsheets/action_print_layout.py
 msgid "Profiles"
 msgstr "Προφίλ"
 
@@ -6197,11 +6226,6 @@ msgstr "Δεν έχετε δικαίωμα να καταργήσετε τον χ
 
 #~ msgid "Permission denied"
 #~ msgstr "Άδεια απορριφθεί"
-
-#, fuzzy
-#~| msgid "Page link"
-#~ msgid "Page"
-#~ msgstr "Σύνδεσμος σελίδας"
 
 #~ msgid "collection"
 #~ msgstr "συλλογή"

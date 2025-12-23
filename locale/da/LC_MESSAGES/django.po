@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-12-23 15:14+0200\n"
+"POT-Creation-Date: 2025-12-23 16:43+0100\n"
 "PO-Revision-Date: 2025-04-02 07:20+0000\n"
 "Last-Translator: Matias Wargelin <matias.wargelin@kausal.tech>\n"
 "Language-Team: Danish <https://weblate.kausal.tech/projects/watch/django/da/>\n"
@@ -1362,7 +1362,7 @@ msgstr "stat"
 msgid "comment"
 msgstr "kommentar"
 
-#: actions/models/action.py
+#: actions/models/action.py reports/report_formatters.py
 msgid "due date"
 msgstr "Afleveringsdato"
 
@@ -2028,7 +2028,7 @@ msgstr "Indikator dimensioner"
 #: actions/models/features.py
 #, fuzzy
 #| msgid "Set if the contact persons should be visible in the public UI"
-msgid "Should indicators open only in a modal dialog in the public UI."
+msgid "Should indicators open only in a modal dialog in the public UI?"
 msgstr "Indstil om kontaktpersonerne skal være synlige i den offentlige brugergrænseflade"
 
 #: actions/models/features.py
@@ -2486,33 +2486,56 @@ msgstr[1] ""
 "         <span> %(total)s </span> handlinger <span class=\"visuallyhidden\"> overvåget i %(plan.name)s </span>\n"
 "    "
 
+#: actions/templates/wagtailadmin/notifications/action_moderator_approval_task_state_submitted.txt
 #: actions/templates/wagtailadmin/notifications/task_state_cancelled.txt
 #, fuzzy, python-format
 #| msgid "%(model_name)s '%(object)s' has been submitted for moderation."
 msgid "The page \"%(title)s\" has been submitted for approval to moderation stage \"%(task)s\"."
 msgstr "%(model_name)s '%(object)s' er blevet sendt til moderation."
 
+#: actions/templates/wagtailadmin/notifications/action_moderator_approval_task_state_submitted.txt
 #: actions/templates/wagtailadmin/notifications/task_state_cancelled.txt
 msgid "You can preview the page here:"
 msgstr ""
 
+#: actions/templates/wagtailadmin/notifications/action_moderator_approval_task_state_submitted.txt
 #: actions/templates/wagtailadmin/notifications/task_state_cancelled.txt
 msgid "You can edit the page here:"
 msgstr ""
 
-#: actions/templates/wagtailadmin/notifications/task_state_cancelled.txt
-#, python-format
-msgid "The %(model_name)s \"%(title)s\" has been withdrawn from the moderation stage \"%(task)s\". It does not require approval until it has been resubmitted for moderation again."
-msgstr ""
+#: actions/templates/wagtailadmin/notifications/action_moderator_approval_task_state_submitted.txt
+#, fuzzy, python-format
+#| msgid "%(model_name)s '%(object)s' has been submitted for moderation."
+msgid "The %(model_name)s \"%(title)s\" has been submitted for approval to moderation stage \"%(task)s\"."
+msgstr "%(model_name)s '%(object)s' er blevet sendt til moderation."
 
+#: actions/templates/wagtailadmin/notifications/action_moderator_approval_task_state_submitted.txt
 #: actions/templates/wagtailadmin/notifications/task_state_cancelled.txt
 #, python-format
 msgid "You can preview the %(model_name)s here:"
 msgstr ""
 
+#: actions/templates/wagtailadmin/notifications/action_moderator_approval_task_state_submitted.txt
 #: actions/templates/wagtailadmin/notifications/task_state_cancelled.txt
 #, python-format
 msgid "You can edit the %(model_name)s here:"
+msgstr ""
+
+#: actions/templates/wagtailadmin/notifications/action_moderator_approval_task_state_submitted_subject.txt
+#, fuzzy, python-format
+#| msgid "%(model_name)s '%(object)s' has been submitted for moderation."
+msgid "The page \"%(title)s\" has been submitted for approval in moderation stage \"%(task)s\""
+msgstr "%(model_name)s '%(object)s' er blevet sendt til moderation."
+
+#: actions/templates/wagtailadmin/notifications/action_moderator_approval_task_state_submitted_subject.txt
+#, fuzzy, python-format
+#| msgid "%(model_name)s '%(object)s' has been submitted for moderation."
+msgid "The %(model_name)s \"%(title)s\" has been submitted for approval in moderation stage \"%(task)s\""
+msgstr "%(model_name)s '%(object)s' er blevet sendt til moderation."
+
+#: actions/templates/wagtailadmin/notifications/task_state_cancelled.txt
+#, python-format
+msgid "The %(model_name)s \"%(title)s\" has been withdrawn from the moderation stage \"%(task)s\". It does not require approval until it has been resubmitted for moderation again."
 msgstr ""
 
 #: actions/templates/wagtailadmin/notifications/task_state_cancelled_subject.txt
@@ -3126,17 +3149,17 @@ msgstr ""
 msgid "updated by"
 msgstr "opdateret af"
 
-#: audit_logging/templates/site_history_results.html
+#: audit_logging/templates/site_history_results.html audit_logging/views.py
 #, fuzzy
 #| msgid "Category type"
 msgid "Item type"
 msgstr "Kategoritype"
 
-#: audit_logging/templates/site_history_results.html
+#: audit_logging/templates/site_history_results.html audit_logging/views.py
 msgid "Change"
 msgstr ""
 
-#: audit_logging/templates/site_history_results.html
+#: audit_logging/templates/site_history_results.html audit_logging/views.py
 #, fuzzy
 #| msgid "created by"
 msgid "Changed by"
@@ -6426,6 +6449,12 @@ msgstr "Andre ansvarlige"
 
 #: reports/spreadsheets/action_print_layout.py
 #, fuzzy
+#| msgid "action link"
+msgid "Page"
+msgstr "handlingslink"
+
+#: reports/spreadsheets/action_print_layout.py
+#, fuzzy
 msgid "Profiles"
 msgstr "Profiler"
 
@@ -6634,11 +6663,6 @@ msgstr "Ingen tilladelse til at fjerne den bruger, der tilhører planer, du ikke
 
 #~ msgid "Permission denied"
 #~ msgstr "Adgang nægtet"
-
-#, fuzzy
-#~| msgid "action link"
-#~ msgid "Page"
-#~ msgstr "handlingslink"
 
 #~ msgid "collection"
 #~ msgstr "kollektion"

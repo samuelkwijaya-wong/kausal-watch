@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-12-23 15:14+0200\n"
+"POT-Creation-Date: 2025-12-23 16:43+0100\n"
 "PO-Revision-Date: 2025-12-22 17:21+0000\n"
 "Last-Translator: Bernhard Bliem <bernhard.bliem@kausal.tech>\n"
 "Language-Team: German <https://weblate.kausal.tech/projects/watch/django/de/>\n"
@@ -1229,7 +1229,7 @@ msgstr "Status"
 msgid "comment"
 msgstr "Kommentar"
 
-#: actions/models/action.py
+#: actions/models/action.py reports/report_formatters.py
 msgid "due date"
 msgstr "Frist"
 
@@ -1823,7 +1823,7 @@ msgstr "Indikatordimensionen"
 #: actions/models/features.py
 #, fuzzy
 #| msgid "Should profile pictures be shown for contact persons in the public UI?"
-msgid "Should indicators open only in a modal dialog in the public UI."
+msgid "Should indicators open only in a modal dialog in the public UI?"
 msgstr "Sollen Profilbilder für Ansprechpersonen in der öffentlichen Benutzeroberfläche angezeigt werden?"
 
 #: actions/models/features.py
@@ -2245,33 +2245,56 @@ msgstr[1] ""
 "        <span> %(n)s </span> aktive Maßnahmen <span class=\"w-sr-only\"> überwacht in %(plan)s </span>\n"
 "    "
 
+#: actions/templates/wagtailadmin/notifications/action_moderator_approval_task_state_submitted.txt
 #: actions/templates/wagtailadmin/notifications/task_state_cancelled.txt
 #, python-format
 msgid "The page \"%(title)s\" has been submitted for approval to moderation stage \"%(task)s\"."
 msgstr "Die Seite \"%(title)s\" wurde zur Freigabe in Moderationsphase \"%(task)s\" eingereicht."
 
+#: actions/templates/wagtailadmin/notifications/action_moderator_approval_task_state_submitted.txt
 #: actions/templates/wagtailadmin/notifications/task_state_cancelled.txt
 msgid "You can preview the page here:"
 msgstr "Eine Vorschau der Seite finden Sie hier:"
 
+#: actions/templates/wagtailadmin/notifications/action_moderator_approval_task_state_submitted.txt
 #: actions/templates/wagtailadmin/notifications/task_state_cancelled.txt
 msgid "You can edit the page here:"
 msgstr "Sie können die Seite hier bearbeiten:"
 
-#: actions/templates/wagtailadmin/notifications/task_state_cancelled.txt
-#, python-format
-msgid "The %(model_name)s \"%(title)s\" has been withdrawn from the moderation stage \"%(task)s\". It does not require approval until it has been resubmitted for moderation again."
-msgstr "%(model_name)s \"%(title)s\" wurde aus Moderationsphase \"%(task)s\" zurückgezogen. Eine Genehmigung ist bis zur nächsten Einreichung zur Moderation nicht mehr nötig."
+#: actions/templates/wagtailadmin/notifications/action_moderator_approval_task_state_submitted.txt
+#, fuzzy, python-format
+#| msgid "The page \"%(title)s\" has been submitted for approval to moderation stage \"%(task)s\"."
+msgid "The %(model_name)s \"%(title)s\" has been submitted for approval to moderation stage \"%(task)s\"."
+msgstr "Die Seite \"%(title)s\" wurde zur Freigabe in Moderationsphase \"%(task)s\" eingereicht."
 
+#: actions/templates/wagtailadmin/notifications/action_moderator_approval_task_state_submitted.txt
 #: actions/templates/wagtailadmin/notifications/task_state_cancelled.txt
 #, python-format
 msgid "You can preview the %(model_name)s here:"
 msgstr "Sie können hier die Vorschau des %(model_name)s-Objekts anzeigen:"
 
+#: actions/templates/wagtailadmin/notifications/action_moderator_approval_task_state_submitted.txt
 #: actions/templates/wagtailadmin/notifications/task_state_cancelled.txt
 #, python-format
 msgid "You can edit the %(model_name)s here:"
 msgstr "Sie können das %(model_name)s-Objekt hier bearbeiten:"
+
+#: actions/templates/wagtailadmin/notifications/action_moderator_approval_task_state_submitted_subject.txt
+#, fuzzy, python-format
+#| msgid "The page \"%(title)s\" has been submitted for approval in moderation stage \"%(task)s\"."
+msgid "The page \"%(title)s\" has been submitted for approval in moderation stage \"%(task)s\""
+msgstr "Die Seite „%(title)s“ wurde zur Freigabe in Moderationsphase „%(task)s“ eingereicht."
+
+#: actions/templates/wagtailadmin/notifications/action_moderator_approval_task_state_submitted_subject.txt
+#, fuzzy, python-format
+#| msgid "The page \"%(title)s\" has been submitted for approval in moderation stage \"%(task)s\"."
+msgid "The %(model_name)s \"%(title)s\" has been submitted for approval in moderation stage \"%(task)s\""
+msgstr "Die Seite „%(title)s“ wurde zur Freigabe in Moderationsphase „%(task)s“ eingereicht."
+
+#: actions/templates/wagtailadmin/notifications/task_state_cancelled.txt
+#, python-format
+msgid "The %(model_name)s \"%(title)s\" has been withdrawn from the moderation stage \"%(task)s\". It does not require approval until it has been resubmitted for moderation again."
+msgstr "%(model_name)s \"%(title)s\" wurde aus Moderationsphase \"%(task)s\" zurückgezogen. Eine Genehmigung ist bis zur nächsten Einreichung zur Moderation nicht mehr nötig."
 
 #: actions/templates/wagtailadmin/notifications/task_state_cancelled_subject.txt
 #, python-format
@@ -2821,17 +2844,17 @@ msgstr ""
 msgid "updated by"
 msgstr "aktualisiert von"
 
-#: audit_logging/templates/site_history_results.html
+#: audit_logging/templates/site_history_results.html audit_logging/views.py
 #, fuzzy
 #| msgid "Category type"
 msgid "Item type"
 msgstr "Kategorietyp"
 
-#: audit_logging/templates/site_history_results.html
+#: audit_logging/templates/site_history_results.html audit_logging/views.py
 msgid "Change"
 msgstr ""
 
-#: audit_logging/templates/site_history_results.html
+#: audit_logging/templates/site_history_results.html audit_logging/views.py
 #, fuzzy
 #| msgid "created by"
 msgid "Changed by"
@@ -5887,6 +5910,12 @@ msgid "Other responsible parties"
 msgstr "Andere Verantwortliche"
 
 #: reports/spreadsheets/action_print_layout.py
+#, fuzzy
+#| msgid "Page link"
+msgid "Page"
+msgstr "Link zur Seite"
+
+#: reports/spreadsheets/action_print_layout.py
 msgid "Profiles"
 msgstr "Steckbriefe"
 
@@ -6081,11 +6110,6 @@ msgstr "Keine Berechtigung zum Entfernen von Benutzern, die zu Plänen gehören,
 
 #~ msgid "Permission denied"
 #~ msgstr "Zugriff verweigert"
-
-#, fuzzy
-#~| msgid "Page link"
-#~ msgid "Page"
-#~ msgstr "Link zur Seite"
 
 #~ msgid "collection"
 #~ msgstr "Sammlung"

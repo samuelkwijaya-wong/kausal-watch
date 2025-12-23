@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-12-23 15:14+0200\n"
+"POT-Creation-Date: 2025-12-23 16:43+0100\n"
 "PO-Revision-Date: 2025-04-02 07:20+0000\n"
 "Last-Translator: Matias Wargelin <matias.wargelin@kausal.tech>\n"
 "Language-Team: Portuguese (Brazil) <https://weblate.kausal.tech/projects/watch/django/pt_BR/>\n"
@@ -1440,7 +1440,7 @@ msgstr "estado"
 msgid "comment"
 msgstr "comentário"
 
-#: actions/models/action.py
+#: actions/models/action.py reports/report_formatters.py
 #, fuzzy
 msgid "due date"
 msgstr "data de vencimento"
@@ -2161,7 +2161,7 @@ msgstr "Dimensões do indicador"
 
 #: actions/models/features.py
 #, fuzzy
-msgid "Should indicators open only in a modal dialog in the public UI."
+msgid "Should indicators open only in a modal dialog in the public UI?"
 msgstr "Os moderadores devem ser ocultados das pessoas de contato visíveis na interface de usuário pública?"
 
 #: actions/models/features.py
@@ -2650,35 +2650,55 @@ msgid_plural ""
 msgstr[0] ""
 msgstr[1] ""
 
+#: actions/templates/wagtailadmin/notifications/action_moderator_approval_task_state_submitted.txt
 #: actions/templates/wagtailadmin/notifications/task_state_cancelled.txt
 #, fuzzy, python-format
 msgid "The page \"%(title)s\" has been submitted for approval to moderation stage \"%(task)s\"."
 msgstr "A página \"%(title)s\" foi enviada para aprovação no estágio de moderação \"%(task)s\"."
 
+#: actions/templates/wagtailadmin/notifications/action_moderator_approval_task_state_submitted.txt
 #: actions/templates/wagtailadmin/notifications/task_state_cancelled.txt
 #, fuzzy
 msgid "You can preview the page here:"
 msgstr "Você pode visualizar a página aqui:"
 
+#: actions/templates/wagtailadmin/notifications/action_moderator_approval_task_state_submitted.txt
 #: actions/templates/wagtailadmin/notifications/task_state_cancelled.txt
 #, fuzzy
 msgid "You can edit the page here:"
 msgstr "Você pode editar a página aqui:"
 
-#: actions/templates/wagtailadmin/notifications/task_state_cancelled.txt
+#: actions/templates/wagtailadmin/notifications/action_moderator_approval_task_state_submitted.txt
 #, fuzzy, python-format
-msgid "The %(model_name)s \"%(title)s\" has been withdrawn from the moderation stage \"%(task)s\". It does not require approval until it has been resubmitted for moderation again."
-msgstr "O %(model_name)s \"%(title)s\" foi retirado do estágio de moderação \"%(task)s\". Ele não precisa de aprovação até que seja reenviado para moderação novamente."
+msgid "The %(model_name)s \"%(title)s\" has been submitted for approval to moderation stage \"%(task)s\"."
+msgstr "A página \"%(title)s\" foi enviada para aprovação no estágio de moderação \"%(task)s\"."
 
+#: actions/templates/wagtailadmin/notifications/action_moderator_approval_task_state_submitted.txt
 #: actions/templates/wagtailadmin/notifications/task_state_cancelled.txt
 #, fuzzy, python-format
 msgid "You can preview the %(model_name)s here:"
 msgstr "Você pode visualizar o site %(model_name)s aqui:"
 
+#: actions/templates/wagtailadmin/notifications/action_moderator_approval_task_state_submitted.txt
 #: actions/templates/wagtailadmin/notifications/task_state_cancelled.txt
 #, fuzzy, python-format
 msgid "You can edit the %(model_name)s here:"
 msgstr "Você pode editar o site %(model_name)s aqui:"
+
+#: actions/templates/wagtailadmin/notifications/action_moderator_approval_task_state_submitted_subject.txt
+#, fuzzy, python-format
+msgid "The page \"%(title)s\" has been submitted for approval in moderation stage \"%(task)s\""
+msgstr "A página \"%(title)s\" foi enviada para aprovação no estágio de moderação \"%(task)s\"."
+
+#: actions/templates/wagtailadmin/notifications/action_moderator_approval_task_state_submitted_subject.txt
+#, fuzzy, python-format
+msgid "The %(model_name)s \"%(title)s\" has been submitted for approval in moderation stage \"%(task)s\""
+msgstr "A página \"%(title)s\" foi enviada para aprovação no estágio de moderação \"%(task)s\"."
+
+#: actions/templates/wagtailadmin/notifications/task_state_cancelled.txt
+#, fuzzy, python-format
+msgid "The %(model_name)s \"%(title)s\" has been withdrawn from the moderation stage \"%(task)s\". It does not require approval until it has been resubmitted for moderation again."
+msgstr "O %(model_name)s \"%(title)s\" foi retirado do estágio de moderação \"%(task)s\". Ele não precisa de aprovação até que seja reenviado para moderação novamente."
 
 #: actions/templates/wagtailadmin/notifications/task_state_cancelled_subject.txt
 #, fuzzy, python-format
@@ -3321,16 +3341,16 @@ msgstr ""
 msgid "updated by"
 msgstr "atualizado por"
 
-#: audit_logging/templates/site_history_results.html
+#: audit_logging/templates/site_history_results.html audit_logging/views.py
 #, fuzzy
 msgid "Item type"
 msgstr "Tipo de categoria"
 
-#: audit_logging/templates/site_history_results.html
+#: audit_logging/templates/site_history_results.html audit_logging/views.py
 msgid "Change"
 msgstr ""
 
-#: audit_logging/templates/site_history_results.html
+#: audit_logging/templates/site_history_results.html audit_logging/views.py
 #, fuzzy
 msgid "Changed by"
 msgstr "criado por"
@@ -6739,6 +6759,11 @@ msgid "Other responsible parties"
 msgstr "Outros responsáveis"
 
 #: reports/spreadsheets/action_print_layout.py
+#, fuzzy
+msgid "Page"
+msgstr "Link da página"
+
+#: reports/spreadsheets/action_print_layout.py
 msgid "Profiles"
 msgstr ""
 
@@ -6953,10 +6978,6 @@ msgstr "Nenhuma permissão para remover o usuário pertencente a planos que voc�
 #, fuzzy
 #~ msgid "Permission denied"
 #~ msgstr "Permissão negada"
-
-#, fuzzy
-#~ msgid "Page"
-#~ msgstr "Link da página"
 
 #, fuzzy
 #~ msgid "collection"
