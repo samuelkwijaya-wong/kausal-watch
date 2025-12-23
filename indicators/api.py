@@ -622,7 +622,7 @@ class IndicatorViewSet(BulkModelViewSet):
             serializer.create(serializer.validated_data)
             indicator.save_revision(
                 user=user,
-                log_action='indicator.update_values',
+                log_action='indicator.update_goals',
             )
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

@@ -511,7 +511,8 @@ class Action(
             approved_go_live_at=approved_go_live_at,
             changed=changed,
             log_action=log_action,
-            previous_revision=previous_revision
+            previous_revision=previous_revision,
+            clean=clean,
         )
         if not self.plan.features.enable_moderation_workflow:
             new_revision.publish(
