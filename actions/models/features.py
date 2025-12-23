@@ -138,7 +138,7 @@ class PlanFeatures(PlanRelatedModelWithRevision):
     )
     indicators_open_in_modal = models.BooleanField(
         default=False, verbose_name=_("Indicators open in modal"),
-        help_text=_("Should indicators open only in a modal dialog in the public UI."),
+        help_text=_("Should indicators open only in a modal dialog in the public UI?"),
     )
 
     class AccessibilityConformanceLevel(models.TextChoices):
