@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-11-12 17:57+0100\n"
+"POT-Creation-Date: 2025-12-23 15:14+0200\n"
 "PO-Revision-Date: 2025-04-02 07:20+0000\n"
 "Last-Translator: Matias Wargelin <matias.wargelin@kausal.tech>\n"
 "Language-Team: Latvian <https://weblate.kausal.tech/projects/watch/django/lv/>\n"
@@ -79,7 +79,8 @@ msgstr "Pēdējo reizi atjaunināts"
 
 #: actions/action_admin.py actions/templates/actions/chooser_results.html
 #: admin_site/models.py
-#: admin_site/templates/admin_site/own_indicators_panel.html copying/views.py
+#: admin_site/templates/admin_site/own_indicators_panel.html
+#: audit_logging/templates/site_history_results.html copying/views.py
 #: kausal_common/datasets/models.py
 #: kausal_common/templates/kausal_common/people/chooser_results.html
 msgid "Name"
@@ -666,6 +667,14 @@ msgid "Filter by level"
 msgstr "kategorijas līmenis"
 
 #: actions/blocks/category_list.py
+msgid "Kausal Paths target node ID"
+msgstr ""
+
+#: actions/blocks/category_list.py
+msgid "Kausal Paths target node ID used to calculate action impacts. If not set, the default outcome node will be used."
+msgstr ""
+
+#: actions/blocks/category_list.py
 #, fuzzy
 #| msgid "Category levels"
 msgid "Category level list"
@@ -720,7 +729,8 @@ msgid "Primary organization"
 msgstr "Primārā organizācija"
 
 #: actions/blocks/filters.py actions/templates/actions/chooser_results.html
-#: actions/wagtail_admin.py reports/spreadsheets/excel_report.py
+#: actions/wagtail_admin.py audit_logging/templates/site_history_results.html
+#: reports/spreadsheets/excel_report.py
 msgid "Plan"
 msgstr "Plāns"
 
@@ -901,42 +911,6 @@ msgstr "Plānošana"
 msgid "Implementation"
 msgstr "Īstenošana"
 
-#: actions/export.py aplans/utils.py kausal_common/datasets/models.py
-#: kausal_common/models/fields.py notifications/models.py
-msgid "identifier"
-msgstr "identifikators"
-
-#: actions/export.py actions/models/action.py actions/models/action_deps.py
-#: actions/models/attributes.py actions/models/category.py
-#: actions/models/plan.py feedback/models.py
-#: indicators/models/common_indicator.py indicators/models/dimensions.py
-#: indicators/models/indicator.py indicators/models/metadata.py
-#: kausal_common/datasets/models.py kausal_common/organizations/models.py
-#: reports/models.py
-msgid "name"
-msgstr "nosaukums"
-
-#: actions/export.py actions/models/action.py
-msgid "impact"
-msgstr "ietekme"
-
-#: actions/export.py actions/models/action.py
-#: reports/spreadsheets/excel_report.py
-msgid "status"
-msgstr "statuss"
-
-#: actions/export.py
-msgid "progress indicators"
-msgstr "progresa rādītāji"
-
-#: actions/export.py
-msgid "other indicators"
-msgstr "citi rādītāji"
-
-#: actions/export.py actions/models/action.py indicators/models/indicator.py
-msgid "contact persons"
-msgstr "kontaktpersonas"
-
 #: actions/models/action.py actions/models/plan.py content/models.py
 #: feedback/models.py indicators/models/indicator.py notifications/models.py
 #: orgs/models.py pages/models.py
@@ -946,6 +920,16 @@ msgstr "plāns"
 #: actions/models/action.py
 msgid "primary organization"
 msgstr "primārā organizācija"
+
+#: actions/models/action.py actions/models/action_deps.py
+#: actions/models/attributes.py actions/models/category.py
+#: actions/models/plan.py feedback/models.py
+#: indicators/models/common_indicator.py indicators/models/dimensions.py
+#: indicators/models/indicator.py indicators/models/metadata.py
+#: kausal_common/datasets/models.py kausal_common/organizations/models.py
+#: reports/models.py
+msgid "name"
+msgstr "nosaukums"
 
 #: actions/models/action.py
 msgid "official name"
@@ -980,6 +964,10 @@ msgid "What does this action involve in more detail?"
 msgstr "Kāda ir šīs rīcības sīkāk?"
 
 #: actions/models/action.py
+msgid "impact"
+msgstr "ietekme"
+
+#: actions/models/action.py
 msgid "The impact of this action"
 msgstr "Šīs rīcības ietekme"
 
@@ -994,6 +982,10 @@ msgstr "iekšējās piezīmes plānu administratoriem"
 #: actions/models/action.py indicators/models/indicator.py
 msgid "internal notes"
 msgstr "iekšējās piezīmes"
+
+#: actions/models/action.py reports/spreadsheets/excel_report.py
+msgid "status"
+msgstr "statuss"
 
 #: actions/models/action.py
 msgid "implementation phase"
@@ -1065,6 +1057,10 @@ msgstr "saistītās rīcības"
 #: actions/models/action.py
 msgid "responsible organizations"
 msgstr "atbildīgās organizācijas"
+
+#: actions/models/action.py indicators/models/indicator.py
+msgid "contact persons"
+msgstr "kontaktpersonas"
 
 #: actions/models/action.py aplans/utils.py
 #: reports/spreadsheets/excel_report.py
@@ -1298,7 +1294,7 @@ msgstr "statuss"
 msgid "comment"
 msgstr "komentārs"
 
-#: actions/models/action.py reports/report_formatters.py
+#: actions/models/action.py
 msgid "due date"
 msgstr "termiņš"
 
@@ -2893,6 +2889,11 @@ msgstr ""
 msgid "Year (2020)"
 msgstr ""
 
+#: aplans/utils.py kausal_common/datasets/models.py
+#: kausal_common/models/fields.py notifications/models.py
+msgid "identifier"
+msgstr "identifikators"
+
 #: aplans/utils.py kausal_common/models/ordered.py
 msgid "order"
 msgstr "pasūtījums"
@@ -2941,6 +2942,36 @@ msgstr ""
 #: aplans/utils.py
 msgid "updated by"
 msgstr "atjaunināja"
+
+#: audit_logging/templates/site_history_results.html
+#, fuzzy
+#| msgid "Category type"
+msgid "Item type"
+msgstr "Kategorijas veids"
+
+#: audit_logging/templates/site_history_results.html
+msgid "Change"
+msgstr ""
+
+#: audit_logging/templates/site_history_results.html
+#, fuzzy
+#| msgid "created by"
+msgid "Changed by"
+msgstr "izveidojis"
+
+#: audit_logging/templates/site_history_results.html
+msgid "Date / Time"
+msgstr ""
+
+#: audit_logging/templates/site_history_results.html
+#, fuzzy
+#| msgid "Edit this quantity"
+msgid "Edit this item"
+msgstr "Rediģēt šo daudzumu"
+
+#: audit_logging/views.py audit_logging/wagtail_hooks.py
+msgid "Change history"
+msgstr ""
 
 #: content/apps.py
 msgid "According to the action plan"
@@ -3298,6 +3329,42 @@ msgstr "Atzīmējiet šo lietotāja atsauksmi kā neapstrādātu"
 msgid "User feedback"
 msgstr "Lietotāju atsauksmes"
 
+#: feedback/wagtail_hooks.py
+#, fuzzy
+#| msgid "user feedback"
+msgid "Receive feedback"
+msgstr "lietotāju atsauksmes"
+
+#: feedback/wagtail_hooks.py
+#, fuzzy
+#| msgid "User feedback received"
+msgid "Feedback received"
+msgstr "Saņemtās lietotāju atsauksmes"
+
+#: feedback/wagtail_hooks.py
+#, fuzzy
+#| msgid "Mark user feedback as processed"
+msgid "Mark feedback as processed"
+msgstr "Atzīmēt lietotāja atsauksmes kā apstrādātas"
+
+#: feedback/wagtail_hooks.py
+#, fuzzy
+#| msgid "Mark as processed"
+msgid "Feedback marked as processed"
+msgstr "Atzīmēt kā apstrādātu"
+
+#: feedback/wagtail_hooks.py
+#, fuzzy
+#| msgid "Mark user feedback as processed"
+msgid "Unmark feedback as processed"
+msgstr "Atzīmēt lietotāja atsauksmes kā apstrādātas"
+
+#: feedback/wagtail_hooks.py
+#, fuzzy
+#| msgid "Mark as processed"
+msgid "Feedback unmarked as processed"
+msgstr "Atzīmēt kā apstrādātu"
+
 #: images/image_formats.py
 msgid "Full width (zoomable) only if width > 1000 px"
 msgstr "Pilns platums (tālummaiņa) tikai ja platums > 1000 px"
@@ -3318,7 +3385,18 @@ msgstr "attēls"
 msgid "images"
 msgstr "attēli"
 
-#: indicators/blocks/__init__.py
+#: images/wagtail_hooks.py
+msgid "Create or update file"
+msgstr ""
+
+#: images/wagtail_hooks.py
+#, fuzzy
+#| msgid "created at"
+msgid "File created or updated"
+msgstr "izveidots vietnē"
+
+#: indicators/blocks/__init__.py indicators/rich_text.py
+#: templates/aplans/paths_sync_confirmation.html
 msgid "Indicator"
 msgstr "Indikators"
 
@@ -3454,6 +3532,10 @@ msgid "Dashboard row with 1-3 content blocks"
 msgstr ""
 
 #: indicators/blocks/layout.py
+msgid "Value summary"
+msgstr ""
+
+#: indicators/blocks/layout.py
 #, fuzzy
 #| msgid "causal indicator"
 msgid "Causality navigation"
@@ -3502,11 +3584,51 @@ msgid "Goal value"
 msgstr "vērtība"
 
 #: indicators/blocks/layout.py
-msgid "Default reference year for reference value type"
+#, fuzzy
+#| msgid "default view"
+msgid "Default year"
+msgstr "noklusējuma skats"
+
+#: indicators/blocks/layout.py
+msgid "Default value year to pick for this column"
 msgstr ""
 
 #: indicators/blocks/layout.py
-msgid "Reference year is only allowed for reference value type"
+msgid "Show reference value"
+msgstr ""
+
+#: indicators/blocks/layout.py
+msgid "This shows the value from the reference year."
+msgstr ""
+
+#: indicators/blocks/layout.py
+msgid "This can be set to override the default reference year."
+msgstr ""
+
+#: indicators/blocks/layout.py
+#, fuzzy
+#| msgid "show trendline"
+msgid "Show current value"
+msgstr "parādīt tendenču līniju"
+
+#: indicators/blocks/layout.py
+#, fuzzy
+#| msgid "show total line"
+msgid "Show goal value"
+msgstr "parādīt kopējo līniju"
+
+#: indicators/blocks/layout.py
+msgid "Default year to pick for the goal value."
+msgstr ""
+
+#: indicators/blocks/layout.py
+#, fuzzy
+#| msgid "show total line"
+msgid "Show goal gap"
+msgstr "parādīt kopējo līniju"
+
+#: indicators/blocks/layout.py
+msgid "This shows the difference between the goal and the current value."
 msgstr ""
 
 #: indicators/chooser.py
@@ -3688,6 +3810,34 @@ msgstr "kopējā rādītāja dimensija"
 msgid "common indicator dimensions"
 msgstr "kopējie indikatoru izmēri"
 
+#: indicators/models/import_log.py
+msgid "Kausal Paths"
+msgstr ""
+
+#: indicators/models/import_log.py
+#, fuzzy
+#| msgid "indicator values"
+msgid "Indicator values import log"
+msgstr "rādītāju vērtības"
+
+#: indicators/models/import_log.py
+#, fuzzy
+#| msgid "indicator values"
+msgid "Indicator values import logs"
+msgstr "rādītāju vērtības"
+
+#: indicators/models/indicator.py
+#, fuzzy
+#| msgid "increases"
+msgid "Increase"
+msgstr "palielina"
+
+#: indicators/models/indicator.py
+#, fuzzy
+#| msgid "decreases"
+msgid "Decrease"
+msgstr "samazinās"
+
 #: indicators/models/indicator.py
 msgid "year"
 msgstr "gads"
@@ -3733,6 +3883,16 @@ msgstr ""
 #| msgid "notification settings"
 msgid "visualizations"
 msgstr "paziņojumu iestatījumi"
+
+#: indicators/models/indicator.py
+#, fuzzy
+#| msgid "short name"
+msgid "sort key"
+msgstr "īss nosaukums"
+
+#: indicators/models/indicator.py
+msgid "If set, this will be used as the primary criterion for sorting indicators."
+msgstr ""
 
 #: indicators/models/indicator.py
 msgid "time resolution"
@@ -3817,6 +3977,30 @@ msgstr ""
 
 #: indicators/models/indicator.py
 msgid "Data categories can be summed to form a total for the indicator (draw a stacked chart as default)"
+msgstr ""
+
+#: indicators/models/indicator.py
+msgid "non-quantified goal"
+msgstr ""
+
+#: indicators/models/indicator.py
+msgid "non-quantified goal date"
+msgstr ""
+
+#: indicators/models/indicator.py
+#, fuzzy
+#| msgid "description"
+msgid "goal description"
+msgstr "apraksts"
+
+#: indicators/models/indicator.py
+#, fuzzy
+#| msgid "identifier"
+msgid "Node identifier"
+msgstr "identifikators"
+
+#: indicators/models/indicator.py
+msgid "The node identifier of the node in Paths where this indicator's data is imported from."
 msgstr ""
 
 #: indicators/models/indicator.py
@@ -3961,14 +4145,6 @@ msgstr "rādītājs mērķis"
 #: indicators/models/values.py
 msgid "indicator goals"
 msgstr "rādītāju mērķi"
-
-#: indicators/resources.py
-msgid "Creating new indicators is not allowed"
-msgstr "Jaunu rādītāju izveide nav atļauta"
-
-#: indicators/resources.py
-msgid "Permission denied"
-msgstr "Atļauja liegta"
 
 #: indicators/templates/site_summary/indicators.html
 #, python-format
@@ -4133,6 +4309,30 @@ msgstr "Kopējie rādītāji"
 #, python-format
 msgid "This common indicator has indicators linked to it, so quantity, unit and dimensions cannot be edited. Current quantity: %(quantity)s; unit: %(unit)s; dimensions: %(dimensions)s"
 msgstr "Šim kopējam rādītājam ir piesaistīti rādītāji, tāpēc daudzumu, vienību un izmērus nevar rediģēt. Pašreizējais daudzums: %(quantity)s; vienība: %(unit)s; izmēri: %(dimensions)s"
+
+#: indicators/wagtail_hooks.py
+#, fuzzy
+#| msgid "updated values due at"
+msgid "Update values"
+msgstr "atjauninātās vērtības, kas jāsaņem, kad"
+
+#: indicators/wagtail_hooks.py
+#, fuzzy
+#| msgid "Last updated"
+msgid "Values updated"
+msgstr "Pēdējo reizi atjaunināts"
+
+#: indicators/wagtail_hooks.py
+#, fuzzy
+#| msgid "Updated at"
+msgid "Update goals"
+msgstr "Atjaunināts vietnē"
+
+#: indicators/wagtail_hooks.py
+#, fuzzy
+#| msgid "Last updated"
+msgid "Goals updated"
+msgstr "Pēdējo reizi atjaunināts"
 
 #: kausal_common/admin_site/tables.py
 #: kausal_common/models/modification_tracking.py
@@ -5178,6 +5378,10 @@ msgid "Size"
 msgstr "Izmērs"
 
 #: pages/blocks.py
+msgid "The source URL of the embed is invalid or not supported."
+msgstr ""
+
+#: pages/blocks.py
 msgid "Title"
 msgstr "Nosaukums"
 
@@ -5583,6 +5787,15 @@ msgstr "ārējo plānu saites"
 msgid "More"
 msgstr "Vairāk"
 
+#: paths_integration/indicators.py
+#, python-format
+msgid "Node %(node)s not found in Paths instance %(instance)s"
+msgstr ""
+
+#: paths_integration/indicators.py
+msgid "No values received for node %(node)s in Paths instance %(instance)"
+msgstr ""
+
 #: people/apps.py people/wagtail_admin.py
 msgid "People"
 msgstr "Cilvēki"
@@ -5624,11 +5837,13 @@ msgstr "Nē, neizdzēst"
 
 #: people/templates/people/view_as_user.html reports/report_formatters.py
 #: templates/aplans/confirmation.html
+#: templates/aplans/paths_sync_confirmation.html
 msgid "Yes"
 msgstr "Jā"
 
 #: people/templates/people/view_as_user.html reports/report_formatters.py
 #: templates/aplans/confirmation.html
+#: templates/aplans/paths_sync_confirmation.html
 msgid "No"
 msgstr "Nē"
 
@@ -5869,12 +6084,6 @@ msgid "Other responsible parties"
 msgstr "Citi atbildīgie"
 
 #: reports/spreadsheets/action_print_layout.py
-#, fuzzy
-#| msgid "Page link"
-msgid "Page"
-msgstr "Lapas saite"
-
-#: reports/spreadsheets/action_print_layout.py
 msgid "Profiles"
 msgstr ""
 
@@ -6010,6 +6219,30 @@ msgstr "Atcelt šī ziņojuma atzīšanu par pabeigtu"
 msgid "Report types"
 msgstr "Pārskatu veidi"
 
+#: templates/aplans/paths_sync_confirmation.html
+msgid "Please verify the correct node is connected to the indicator."
+msgstr ""
+
+#: templates/aplans/paths_sync_confirmation.html
+#, fuzzy
+#| msgid "Edit this indicator"
+msgid "Edit indicator"
+msgstr "Rediģēt šo rādītāju"
+
+#: templates/aplans/paths_sync_confirmation.html
+#, fuzzy
+#| msgid "Last updated"
+msgid "Last imported"
+msgstr "Pēdējo reizi atjaunināts"
+
+#: templates/aplans/paths_sync_confirmation.html
+msgid "Node"
+msgstr ""
+
+#: templates/aplans/paths_sync_confirmation.html
+msgid "Kausal Paths instance"
+msgstr ""
+
 #: templates/modeladmin/create.html templates/modeladmin/edit.html
 msgid "This page has unsaved changes."
 msgstr "Šajā lapā ir nesaglabātas izmaiņas."
@@ -6029,6 +6262,23 @@ msgstr "Lietotāji"
 #: users/models.py
 msgid "No permission to remove the user belonging to plans you are not managing."
 msgstr "Nav atļauts noņemt lietotājus, kas pieder pie plāniem, kurus jūs neapsaimniekojat."
+
+#~ msgid "progress indicators"
+#~ msgstr "progresa rādītāji"
+
+#~ msgid "other indicators"
+#~ msgstr "citi rādītāji"
+
+#~ msgid "Creating new indicators is not allowed"
+#~ msgstr "Jaunu rādītāju izveide nav atļauta"
+
+#~ msgid "Permission denied"
+#~ msgstr "Atļauja liegta"
+
+#, fuzzy
+#~| msgid "Page link"
+#~ msgid "Page"
+#~ msgstr "Lapas saite"
 
 #~ msgid "collection"
 #~ msgstr "kolekcija"
@@ -6102,9 +6352,6 @@ msgstr "Nav atļauts noņemt lietotājus, kas pieder pie plāniem, kurus jūs ne
 
 #~ msgid "Related actions"
 #~ msgstr "Saistītās rīcības"
-
-#~ msgid "Updated at"
-#~ msgstr "Atjaunināts vietnē"
 
 #, fuzzy
 #~| msgid "start date"

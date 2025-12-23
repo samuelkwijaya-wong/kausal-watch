@@ -10,11 +10,10 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-11-12 17:57+0100\n"
+"POT-Creation-Date: 2025-12-23 15:14+0200\n"
 "PO-Revision-Date: 2025-12-22 17:21+0000\n"
 "Last-Translator: Bernhard Bliem <bernhard.bliem@kausal.tech>\n"
-"Language-Team: German <https://weblate.kausal.tech/projects/watch/django/de/>"
-"\n"
+"Language-Team: German <https://weblate.kausal.tech/projects/watch/django/de/>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -34,10 +33,7 @@ msgstr "%s wird mehrfach in der Maßnahme aufgeführt."
 #: actions/action_admin.py
 #, python-format
 msgid "While editing this action you have switched to a different plan. This action was still saved with the original plan \"%s\"."
-msgstr ""
-"Während der Bearbeitung dieser Maßnahme haben Sie zu einem anderen Plan "
-"gewechselt. Diese Maßnahme wurde noch mit dem ursprünglichen Plan \"%s\" "
-"gespeichert."
+msgstr "Während der Bearbeitung dieser Maßnahme haben Sie zu einem anderen Plan gewechselt. Diese Maßnahme wurde noch mit dem ursprünglichen Plan \"%s\" gespeichert."
 
 #: actions/action_admin.py actions/models/action.py
 msgid "Unspecified"
@@ -86,7 +82,8 @@ msgstr "Zuletzt aktualisiert"
 
 #: actions/action_admin.py actions/templates/actions/chooser_results.html
 #: admin_site/models.py
-#: admin_site/templates/admin_site/own_indicators_panel.html copying/views.py
+#: admin_site/templates/admin_site/own_indicators_panel.html
+#: audit_logging/templates/site_history_results.html copying/views.py
 #: kausal_common/datasets/models.py
 #: kausal_common/templates/kausal_common/people/chooser_results.html
 msgid "Name"
@@ -625,6 +622,16 @@ msgid "Filter by level"
 msgstr "Nach Stufe filtern"
 
 #: actions/blocks/category_list.py
+#, fuzzy
+#| msgid "Kausal Paths outcome node ID"
+msgid "Kausal Paths target node ID"
+msgstr "Kausal Paths Ergebnisknoten-ID"
+
+#: actions/blocks/category_list.py
+msgid "Kausal Paths target node ID used to calculate action impacts. If not set, the default outcome node will be used."
+msgstr ""
+
+#: actions/blocks/category_list.py
 msgid "Category level list"
 msgstr "Liste der Kategoriestufen"
 
@@ -675,7 +682,8 @@ msgid "Primary organization"
 msgstr "Primärorganisation"
 
 #: actions/blocks/filters.py actions/templates/actions/chooser_results.html
-#: actions/wagtail_admin.py reports/spreadsheets/excel_report.py
+#: actions/wagtail_admin.py audit_logging/templates/site_history_results.html
+#: reports/spreadsheets/excel_report.py
 msgid "Plan"
 msgstr "Plan"
 
@@ -758,10 +766,7 @@ msgstr "Es gibt bereits eine Kategorie mit dieser Kennung."
 #: actions/category_admin.py
 #, python-format
 msgid "While editing this category type you have switched to a different plan. This category type was still saved with the original plan \"%s\"."
-msgstr ""
-"Während der Bearbeitung dieses Kategorietyps haben Sie zu einem anderen Plan "
-"gewechselt. Dieser Kategorietyp wurde noch mit dem ursprünglichen Plan \"%s\""
-" gespeichert."
+msgstr "Während der Bearbeitung dieses Kategorietyps haben Sie zu einem anderen Plan gewechselt. Dieser Kategorietyp wurde noch mit dem ursprünglichen Plan \"%s\" gespeichert."
 
 #: actions/category_admin.py
 msgid "Icons"
@@ -849,42 +854,6 @@ msgstr "Planung"
 msgid "Implementation"
 msgstr "Umsetzung"
 
-#: actions/export.py aplans/utils.py kausal_common/datasets/models.py
-#: kausal_common/models/fields.py notifications/models.py
-msgid "identifier"
-msgstr "Kennung"
-
-#: actions/export.py actions/models/action.py actions/models/action_deps.py
-#: actions/models/attributes.py actions/models/category.py
-#: actions/models/plan.py feedback/models.py
-#: indicators/models/common_indicator.py indicators/models/dimensions.py
-#: indicators/models/indicator.py indicators/models/metadata.py
-#: kausal_common/datasets/models.py kausal_common/organizations/models.py
-#: reports/models.py
-msgid "name"
-msgstr "Name"
-
-#: actions/export.py actions/models/action.py
-msgid "impact"
-msgstr "Auswirkung"
-
-#: actions/export.py actions/models/action.py
-#: reports/spreadsheets/excel_report.py
-msgid "status"
-msgstr "Status"
-
-#: actions/export.py
-msgid "progress indicators"
-msgstr "Fortschrittindikatoren"
-
-#: actions/export.py
-msgid "other indicators"
-msgstr "Andere Indikatoren"
-
-#: actions/export.py actions/models/action.py indicators/models/indicator.py
-msgid "contact persons"
-msgstr "Ansprechpersonen"
-
 #: actions/models/action.py actions/models/plan.py content/models.py
 #: feedback/models.py indicators/models/indicator.py notifications/models.py
 #: orgs/models.py pages/models.py
@@ -894,6 +863,16 @@ msgstr "Plan"
 #: actions/models/action.py
 msgid "primary organization"
 msgstr "Primärorganisation"
+
+#: actions/models/action.py actions/models/action_deps.py
+#: actions/models/attributes.py actions/models/category.py
+#: actions/models/plan.py feedback/models.py
+#: indicators/models/common_indicator.py indicators/models/dimensions.py
+#: indicators/models/indicator.py indicators/models/metadata.py
+#: kausal_common/datasets/models.py kausal_common/organizations/models.py
+#: reports/models.py
+msgid "name"
+msgstr "Name"
 
 #: actions/models/action.py
 msgid "official name"
@@ -928,6 +907,10 @@ msgid "What does this action involve in more detail?"
 msgstr "Was umfasst diese Maßnahme im Detail?"
 
 #: actions/models/action.py
+msgid "impact"
+msgstr "Auswirkung"
+
+#: actions/models/action.py
 msgid "The impact of this action"
 msgstr "Die Auswirkungen dieser Maßnahme"
 
@@ -942,6 +925,10 @@ msgstr "interne Notizen für Planadministratoren"
 #: actions/models/action.py indicators/models/indicator.py
 msgid "internal notes"
 msgstr "interne Notizen"
+
+#: actions/models/action.py reports/spreadsheets/excel_report.py
+msgid "status"
+msgstr "Status"
 
 #: actions/models/action.py
 msgid "implementation phase"
@@ -1011,6 +998,10 @@ msgstr "verbundene Maßnahmen"
 #: actions/models/action.py
 msgid "responsible organizations"
 msgstr "Zuständige Organisationen"
+
+#: actions/models/action.py indicators/models/indicator.py
+msgid "contact persons"
+msgstr "Ansprechpersonen"
 
 #: actions/models/action.py aplans/utils.py
 #: reports/spreadsheets/excel_report.py
@@ -1238,7 +1229,7 @@ msgstr "Status"
 msgid "comment"
 msgstr "Kommentar"
 
-#: actions/models/action.py reports/report_formatters.py
+#: actions/models/action.py
 msgid "due date"
 msgstr "Frist"
 
@@ -2776,6 +2767,11 @@ msgstr "Monat und Jahr (12.2020)"
 msgid "Year (2020)"
 msgstr "Jahr (2020)"
 
+#: aplans/utils.py kausal_common/datasets/models.py
+#: kausal_common/models/fields.py notifications/models.py
+msgid "identifier"
+msgstr "Kennung"
+
 #: aplans/utils.py kausal_common/models/ordered.py
 msgid "order"
 msgstr "Sortierung"
@@ -2824,6 +2820,36 @@ msgstr ""
 #: aplans/utils.py
 msgid "updated by"
 msgstr "aktualisiert von"
+
+#: audit_logging/templates/site_history_results.html
+#, fuzzy
+#| msgid "Category type"
+msgid "Item type"
+msgstr "Kategorietyp"
+
+#: audit_logging/templates/site_history_results.html
+msgid "Change"
+msgstr ""
+
+#: audit_logging/templates/site_history_results.html
+#, fuzzy
+#| msgid "created by"
+msgid "Changed by"
+msgstr "erstellt von"
+
+#: audit_logging/templates/site_history_results.html
+msgid "Date / Time"
+msgstr ""
+
+#: audit_logging/templates/site_history_results.html
+#, fuzzy
+#| msgid "Edit this quantity"
+msgid "Edit this item"
+msgstr "Bearbeite diese Größe"
+
+#: audit_logging/views.py audit_logging/wagtail_hooks.py
+msgid "Change history"
+msgstr ""
 
 #: content/apps.py
 msgid "According to the action plan"
@@ -3153,6 +3179,42 @@ msgstr "Markiere dieses Benutzer-Feedback als unbearbeitet"
 msgid "User feedback"
 msgstr "Benutzer-Feedback"
 
+#: feedback/wagtail_hooks.py
+#, fuzzy
+#| msgid "user feedback"
+msgid "Receive feedback"
+msgstr "Benutzer-Feedback"
+
+#: feedback/wagtail_hooks.py
+#, fuzzy
+#| msgid "Feedback required"
+msgid "Feedback received"
+msgstr "Feedback erforderlich"
+
+#: feedback/wagtail_hooks.py
+#, fuzzy
+#| msgid "Mark user feedback as processed"
+msgid "Mark feedback as processed"
+msgstr "Markiere Benutzer-Feedback als bearbeitet"
+
+#: feedback/wagtail_hooks.py
+#, fuzzy
+#| msgid "Mark as processed"
+msgid "Feedback marked as processed"
+msgstr "Markiere als bearbeitet"
+
+#: feedback/wagtail_hooks.py
+#, fuzzy
+#| msgid "Mark user feedback as processed"
+msgid "Unmark feedback as processed"
+msgstr "Markiere Benutzer-Feedback als bearbeitet"
+
+#: feedback/wagtail_hooks.py
+#, fuzzy
+#| msgid "Mark as processed"
+msgid "Feedback unmarked as processed"
+msgstr "Markiere als bearbeitet"
+
 #: images/image_formats.py
 msgid "Full width (zoomable) only if width > 1000 px"
 msgstr "Volle Breite (zoombar) nur wenn Breite > 1000 px"
@@ -3173,7 +3235,18 @@ msgstr "Bild"
 msgid "images"
 msgstr "Bilder"
 
-#: indicators/blocks/__init__.py
+#: images/wagtail_hooks.py
+msgid "Create or update file"
+msgstr ""
+
+#: images/wagtail_hooks.py
+#, fuzzy
+#| msgid "created at"
+msgid "File created or updated"
+msgstr "erstellt am"
+
+#: indicators/blocks/__init__.py indicators/rich_text.py
+#: templates/aplans/paths_sync_confirmation.html
 msgid "Indicator"
 msgstr "Indikator"
 
@@ -3310,6 +3383,12 @@ msgstr ""
 
 #: indicators/blocks/layout.py
 #, fuzzy
+#| msgid "Summary"
+msgid "Value summary"
+msgstr "Zusammenfassung"
+
+#: indicators/blocks/layout.py
+#, fuzzy
 #| msgid "causal indicator"
 msgid "Causality navigation"
 msgstr "kausaler Indikator"
@@ -3359,11 +3438,53 @@ msgid "Goal value"
 msgstr "Wert"
 
 #: indicators/blocks/layout.py
-msgid "Default reference year for reference value type"
+#, fuzzy
+#| msgid "default view"
+msgid "Default year"
+msgstr "Standardansicht"
+
+#: indicators/blocks/layout.py
+msgid "Default value year to pick for this column"
 msgstr ""
 
 #: indicators/blocks/layout.py
-msgid "Reference year is only allowed for reference value type"
+#, fuzzy
+#| msgid "reference"
+msgid "Show reference value"
+msgstr "Referenz"
+
+#: indicators/blocks/layout.py
+msgid "This shows the value from the reference year."
+msgstr ""
+
+#: indicators/blocks/layout.py
+msgid "This can be set to override the default reference year."
+msgstr ""
+
+#: indicators/blocks/layout.py
+#, fuzzy
+#| msgid "reference"
+msgid "Show current value"
+msgstr "Referenz"
+
+#: indicators/blocks/layout.py
+#, fuzzy
+#| msgid "show total line"
+msgid "Show goal value"
+msgstr "Gesamtlinie anzeigen"
+
+#: indicators/blocks/layout.py
+msgid "Default year to pick for the goal value."
+msgstr ""
+
+#: indicators/blocks/layout.py
+#, fuzzy
+#| msgid "show total line"
+msgid "Show goal gap"
+msgstr "Gesamtlinie anzeigen"
+
+#: indicators/blocks/layout.py
+msgid "This shows the difference between the goal and the current value."
 msgstr ""
 
 #: indicators/chooser.py
@@ -3545,6 +3666,36 @@ msgstr "Gemeinsamer-Indikator-Dimension"
 msgid "common indicator dimensions"
 msgstr "Gemeinsamer-Indikator-Dimensionen"
 
+#: indicators/models/import_log.py
+#, fuzzy
+#| msgid "Kausal Paths node UUID"
+msgid "Kausal Paths"
+msgstr "Kausal Paths Knoten-UUID"
+
+#: indicators/models/import_log.py
+#, fuzzy
+#| msgid "indicator values"
+msgid "Indicator values import log"
+msgstr "Indikatorwerte"
+
+#: indicators/models/import_log.py
+#, fuzzy
+#| msgid "indicator values"
+msgid "Indicator values import logs"
+msgstr "Indikatorwerte"
+
+#: indicators/models/indicator.py
+#, fuzzy
+#| msgid "increases"
+msgid "Increase"
+msgstr "nimmt zu"
+
+#: indicators/models/indicator.py
+#, fuzzy
+#| msgid "decreases"
+msgid "Decrease"
+msgstr "nimmt ab"
+
 #: indicators/models/indicator.py
 msgid "year"
 msgstr "Jahr"
@@ -3590,6 +3741,16 @@ msgstr ""
 #| msgid "Visualization settings"
 msgid "visualizations"
 msgstr "Visualisierungseinstellungen"
+
+#: indicators/models/indicator.py
+#, fuzzy
+#| msgid "short name"
+msgid "sort key"
+msgstr "Kurzname"
+
+#: indicators/models/indicator.py
+msgid "If set, this will be used as the primary criterion for sorting indicators."
+msgstr ""
 
 #: indicators/models/indicator.py
 msgid "time resolution"
@@ -3672,6 +3833,30 @@ msgstr ""
 
 #: indicators/models/indicator.py
 msgid "Data categories can be summed to form a total for the indicator (draw a stacked chart as default)"
+msgstr ""
+
+#: indicators/models/indicator.py
+msgid "non-quantified goal"
+msgstr ""
+
+#: indicators/models/indicator.py
+msgid "non-quantified goal date"
+msgstr ""
+
+#: indicators/models/indicator.py
+#, fuzzy
+#| msgid "description"
+msgid "goal description"
+msgstr "Beschreibung"
+
+#: indicators/models/indicator.py
+#, fuzzy
+#| msgid "identifier"
+msgid "Node identifier"
+msgstr "Kennung"
+
+#: indicators/models/indicator.py
+msgid "The node identifier of the node in Paths where this indicator's data is imported from."
 msgstr ""
 
 #: indicators/models/indicator.py
@@ -3816,14 +4001,6 @@ msgstr "Indikatorziel"
 #: indicators/models/values.py
 msgid "indicator goals"
 msgstr "Indikatorziele"
-
-#: indicators/resources.py
-msgid "Creating new indicators is not allowed"
-msgstr "Erstellen neuer Indikatoren ist nicht erlaubt"
-
-#: indicators/resources.py
-msgid "Permission denied"
-msgstr "Zugriff verweigert"
 
 #: indicators/templates/site_summary/indicators.html
 #, python-format
@@ -3984,6 +4161,30 @@ msgstr "Gemeinsame Indikatoren"
 #, python-format
 msgid "This common indicator has indicators linked to it, so quantity, unit and dimensions cannot be edited. Current quantity: %(quantity)s; unit: %(unit)s; dimensions: %(dimensions)s"
 msgstr "Dieser Gemeinsame Indikator hat mit ihm verbundene Indikatoren, daher können Größe, Einheit und Dimensionen nicht bearbeitet werden. Aktuelle Größe: %(quantity)s; Einheit: %(unit)s; Dimensionen: %(dimensions)s"
+
+#: indicators/wagtail_hooks.py
+#, fuzzy
+#| msgid "updated values due at"
+msgid "Update values"
+msgstr "aktualisierte Werte fällig am"
+
+#: indicators/wagtail_hooks.py
+#, fuzzy
+#| msgid "Last updated"
+msgid "Values updated"
+msgstr "Zuletzt aktualisiert"
+
+#: indicators/wagtail_hooks.py
+#, fuzzy
+#| msgid "Updated at"
+msgid "Update goals"
+msgstr "Aktualisiert am"
+
+#: indicators/wagtail_hooks.py
+#, fuzzy
+#| msgid "Last updated"
+msgid "Goals updated"
+msgstr "Zuletzt aktualisiert"
 
 #: kausal_common/admin_site/tables.py
 #: kausal_common/models/modification_tracking.py
@@ -4996,6 +5197,10 @@ msgid "Size"
 msgstr "Größe"
 
 #: pages/blocks.py
+msgid "The source URL of the embed is invalid or not supported."
+msgstr ""
+
+#: pages/blocks.py
 msgid "Title"
 msgstr "Titel"
 
@@ -5389,6 +5594,15 @@ msgstr "externe Plan-Links"
 msgid "More"
 msgstr "Mehr"
 
+#: paths_integration/indicators.py
+#, python-format
+msgid "Node %(node)s not found in Paths instance %(instance)s"
+msgstr ""
+
+#: paths_integration/indicators.py
+msgid "No values received for node %(node)s in Paths instance %(instance)"
+msgstr ""
+
 #: people/apps.py people/wagtail_admin.py
 msgid "People"
 msgstr "Personen"
@@ -5430,11 +5644,13 @@ msgstr "Nein, nicht löschen"
 
 #: people/templates/people/view_as_user.html reports/report_formatters.py
 #: templates/aplans/confirmation.html
+#: templates/aplans/paths_sync_confirmation.html
 msgid "Yes"
 msgstr "Ja"
 
 #: people/templates/people/view_as_user.html reports/report_formatters.py
 #: templates/aplans/confirmation.html
+#: templates/aplans/paths_sync_confirmation.html
 msgid "No"
 msgstr "Nein"
 
@@ -5671,12 +5887,6 @@ msgid "Other responsible parties"
 msgstr "Andere Verantwortliche"
 
 #: reports/spreadsheets/action_print_layout.py
-#, fuzzy
-#| msgid "Page link"
-msgid "Page"
-msgstr "Link zur Seite"
-
-#: reports/spreadsheets/action_print_layout.py
 msgid "Profiles"
 msgstr "Steckbriefe"
 
@@ -5812,6 +6022,34 @@ msgstr "Markieren dieses Berichts als abgeschlossen rückgängig machen"
 msgid "Report types"
 msgstr "Berichtstypen"
 
+#: templates/aplans/paths_sync_confirmation.html
+#, fuzzy
+#| msgid "What is the reference or source for this indicator?"
+msgid "Please verify the correct node is connected to the indicator."
+msgstr "Wie lautet die Referenz oder Quelle für diesen Indikator?"
+
+#: templates/aplans/paths_sync_confirmation.html
+#, fuzzy
+#| msgid "Edit this indicator"
+msgid "Edit indicator"
+msgstr "Bearbeite diesen Indikator"
+
+#: templates/aplans/paths_sync_confirmation.html
+#, fuzzy
+#| msgid "Last updated"
+msgid "Last imported"
+msgstr "Zuletzt aktualisiert"
+
+#: templates/aplans/paths_sync_confirmation.html
+msgid "Node"
+msgstr ""
+
+#: templates/aplans/paths_sync_confirmation.html
+#, fuzzy
+#| msgid "Kausal Paths instance UUID"
+msgid "Kausal Paths instance"
+msgstr "Kausal Paths Instanz-UUID"
+
 #: templates/modeladmin/create.html templates/modeladmin/edit.html
 msgid "This page has unsaved changes."
 msgstr "Diese Seite hat ungespeicherte Änderungen."
@@ -5831,6 +6069,23 @@ msgstr "Benutzer"
 #: users/models.py
 msgid "No permission to remove the user belonging to plans you are not managing."
 msgstr "Keine Berechtigung zum Entfernen von Benutzern, die zu Plänen gehören, die Sie nicht verwalten."
+
+#~ msgid "progress indicators"
+#~ msgstr "Fortschrittindikatoren"
+
+#~ msgid "other indicators"
+#~ msgstr "Andere Indikatoren"
+
+#~ msgid "Creating new indicators is not allowed"
+#~ msgstr "Erstellen neuer Indikatoren ist nicht erlaubt"
+
+#~ msgid "Permission denied"
+#~ msgstr "Zugriff verweigert"
+
+#, fuzzy
+#~| msgid "Page link"
+#~ msgid "Page"
+#~ msgstr "Link zur Seite"
 
 #~ msgid "collection"
 #~ msgstr "Sammlung"
@@ -5903,9 +6158,6 @@ msgstr "Keine Berechtigung zum Entfernen von Benutzern, die zu Plänen gehören,
 
 #~ msgid "Related actions"
 #~ msgstr "Verbundene Maßnahmen"
-
-#~ msgid "Updated at"
-#~ msgstr "Aktualisiert am"
 
 #~ msgid "Start date"
 #~ msgstr "Beginndatum"
