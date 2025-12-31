@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-12-31 15:11+0200\n"
-"PO-Revision-Date: 2025-12-31 15:28+0200\n"
+"PO-Revision-Date: 2025-12-31 15:32+0200\n"
 "Last-Translator: Bernhard Bliem <bernhard.bliem@kausal.tech>\n"
 "Language-Team: German <https://weblate.kausal.tech/projects/watch/django/de/>\n"
 "Language: de\n"
@@ -2429,7 +2429,7 @@ msgstr "Pläne"
 #: actions/wagtail_admin.py
 #, python-format
 msgid "Change log message: %(obj)s"
-msgstr "Änderungsnotiz"
+msgstr "Änderungsnotiz: %(obj)s"
 
 #: actions/wagtail_admin.py
 #, fuzzy
