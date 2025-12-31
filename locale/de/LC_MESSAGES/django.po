@@ -10,11 +10,10 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-12-23 16:43+0100\n"
-"PO-Revision-Date: 2025-12-23 17:03+0000\n"
+"POT-Creation-Date: 2025-12-31 15:11+0200\n"
+"PO-Revision-Date: 2025-12-31 15:28+0200\n"
 "Last-Translator: Bernhard Bliem <bernhard.bliem@kausal.tech>\n"
-"Language-Team: German <https://weblate.kausal.tech/projects/watch/django/de/>"
-"\n"
+"Language-Team: German <https://weblate.kausal.tech/projects/watch/django/de/>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -628,10 +627,7 @@ msgstr "Kausal Paths Zielknoten-ID"
 
 #: actions/blocks/category_list.py
 msgid "Kausal Paths target node ID used to calculate action impacts. If not set, the default outcome node will be used."
-msgstr ""
-"Kausal Paths Zielknoten-ID, die zur Berechnung der Auswirkungen von "
-"Maßnahmen verwendet wird. Wenn diese nicht festgelegt ist, wird der Standard-"
-"Ergebnisknoten verwendet."
+msgstr "Kausal Paths Zielknoten-ID, die zur Berechnung der Auswirkungen von Maßnahmen verwendet wird. Wenn diese nicht festgelegt ist, wird der Standard-Ergebnisknoten verwendet."
 
 #: actions/blocks/category_list.py
 msgid "Category level list"
@@ -1231,7 +1227,7 @@ msgstr "Status"
 msgid "comment"
 msgstr "Kommentar"
 
-#: actions/models/action.py reports/report_formatters.py
+#: actions/models/action.py
 msgid "due date"
 msgstr "Frist"
 
@@ -1314,6 +1310,72 @@ msgstr "Maßnahmenlink"
 msgid "action links"
 msgstr "Maßnahmenlinks"
 
+#: actions/models/action.py notifications/models.py
+msgid "content"
+msgstr "Inhalt"
+
+#: actions/models/action.py
+msgid "Summarize what was changed. This message will be displayed publicly."
+msgstr "Fassen Sie die vorgenommene Änderung zusammen. Diese Nachricht wird öffentlich angezeigt."
+
+#: actions/models/action.py aplans/utils.py kausal_common/people/models.py
+msgid "created by"
+msgstr "erstellt von"
+
+#: actions/models/action.py
+#, fuzzy
+#| msgid "Division"
+msgid "revision"
+msgstr "Abteilung"
+
+#: actions/models/action.py
+msgid "The revision this change log message is associated with."
+msgstr ""
+
+#: actions/models/action.py
+#, fuzzy
+#| msgid "action schedules"
+msgid "action change log message"
+msgstr "Maßnahmenzeitpläne"
+
+#: actions/models/action.py
+#, fuzzy
+#| msgid "action schedules"
+msgid "action change log messages"
+msgstr "Maßnahmenzeitpläne"
+
+#: actions/models/action.py indicators/models/action_links.py
+#: indicators/models/contact_persons.py indicators/models/indicator.py
+#: indicators/models/values.py
+msgid "indicator"
+msgstr "Indikator"
+
+#: actions/models/action.py
+#, fuzzy
+#| msgid "Indicators assigned to me"
+msgid "indicator change log message"
+msgstr "Mir zugewiesene Indikatoren"
+
+#: actions/models/action.py
+#, fuzzy
+#| msgid "indicator goals"
+msgid "indicator change log messages"
+msgstr "Indikatorziele"
+
+#: actions/models/action.py actions/models/category.py feedback/models.py
+msgid "category"
+msgstr "Kategorie"
+
+#: actions/models/action.py
+msgid "category change log message"
+msgstr ""
+
+#: actions/models/action.py
+#, fuzzy
+#| msgid "category levels"
+msgid "category change log messages"
+msgstr "Kategoriestufen"
+
 #: actions/models/action.py indicators/models/values.py
 #: kausal_common/datasets/models.py
 msgid "date"
@@ -1322,14 +1384,6 @@ msgstr "Datum"
 #: actions/models/action.py
 msgid "author"
 msgstr "Autor"
-
-#: actions/models/action.py notifications/models.py
-msgid "content"
-msgstr "Inhalt"
-
-#: actions/models/action.py aplans/utils.py kausal_common/people/models.py
-msgid "created by"
-msgstr "erstellt von"
 
 #: actions/models/action.py
 msgid "action status update"
@@ -1584,10 +1638,6 @@ msgstr "Gemeinsame Kategorien"
 msgid "parent category"
 msgstr "Elternkategorie"
 
-#: actions/models/category.py feedback/models.py
-msgid "category"
-msgstr "Kategorie"
-
 #: actions/models/category.py
 msgid "Parent forms a loop. Leave empty if top-level category."
 msgstr "Elternkategorie formt eine Schleife. Leer lassen, wenn Kategorie der höchsten Ebene."
@@ -1666,14 +1716,11 @@ msgstr "Sollen Benutzer authentifizierte Sitzungen in der öffentlichen Oberflä
 
 #: actions/models/features.py
 msgid "Expose unpublished plan only to authenticated users"
-msgstr ""
-"Veröffentliche unveröffentlichten Plan nur für authentifizierte Benutzer"
+msgstr "Veröffentliche unveröffentlichten Plan nur für authentifizierte Benutzer"
 
 #: actions/models/features.py
 msgid "Should the plan be exposed only to authenticated users if not published?"
-msgstr ""
-"Sollte der Plan nur authentifizierten Benutzern zugänglich sein, wenn er "
-"nicht veröffentlicht ist?"
+msgstr "Sollte der Plan nur authentifizierten Benutzern zugänglich sein, wenn er nicht veröffentlicht ist?"
 
 #: actions/models/features.py
 msgid "Publicly visible data about contact persons"
@@ -1821,9 +1868,17 @@ msgstr "Indikatoren öffnen sich in einem Modalfenster"
 
 #: actions/models/features.py
 msgid "Should indicators open only in a modal dialog in the public UI?"
+msgstr "Sollen Indikatoren in der öffentlichen Benutzeroberfläche nur in einem modalen Dialogfeld geöffnet werden?"
+
+#: actions/models/features.py
+#, fuzzy
+#| msgid "Save changes"
+msgid "Enable change log"
+msgstr "Änderungen speichern"
+
+#: actions/models/features.py
+msgid "Prompt users to add a public change log message after editing actions, indicators, or categories."
 msgstr ""
-"Sollen Indikatoren in der öffentlichen Benutzeroberfläche nur in einem "
-"modalen Dialogfeld geöffnet werden?"
 
 #: actions/models/features.py
 msgid "plan feature"
@@ -1915,9 +1970,7 @@ msgstr "von Suche ausschließen"
 
 #: actions/models/plan.py
 msgid "Should information related to the plan be excluded from search results?"
-msgstr ""
-"Sollen Informationen, die sich auf den Plan beziehen, von den "
-"Suchergebnissen ausgeschlossen werden?"
+msgstr "Sollen Informationen, die sich auf den Plan beziehen, von den Suchergebnissen ausgeschlossen werden?"
 
 #: actions/models/plan.py
 msgid "site URL"
@@ -2134,9 +2187,7 @@ msgstr "Weiterleitung zum Hostnamen"
 
 #: actions/models/plan.py
 msgid "The UI will redirect to this hostname if set."
-msgstr ""
-"Die Benutzeroberfläche leitet zu diesem Hostnamen weiter, sofern einer "
-"festgelegt ist."
+msgstr "Die Benutzeroberfläche leitet zu diesem Hostnamen weiter, sofern einer festgelegt ist."
 
 #: actions/models/plan.py
 msgid "base path"
@@ -2156,9 +2207,7 @@ msgstr "Bereitstellungsumgebung"
 
 #: actions/models/plan.py
 msgid "Domain names that will be used to redirect to the main hostname. Multiple domains are separated by commas."
-msgstr ""
-"Domänennamen, die zur Umleitung auf den Haupthostnamen verwendet werden "
-"sollen. Mehrere Domains werden durch Kommas getrennt."
+msgstr "Domänennamen, die zur Umleitung auf den Haupthostnamen verwendet werden sollen. Mehrere Domains werden durch Kommas getrennt."
 
 #: actions/models/plan.py
 msgid "Immediate override of publishing status"
@@ -2244,59 +2293,33 @@ msgstr[1] ""
 "        <span> %(n)s </span> aktive Maßnahmen <span class=\"w-sr-only\"> überwacht in %(plan)s </span>\n"
 "    "
 
-#: actions/templates/wagtailadmin/notifications/action_moderator_approval_task_state_submitted.txt
 #: actions/templates/wagtailadmin/notifications/task_state_cancelled.txt
 #, python-format
 msgid "The page \"%(title)s\" has been submitted for approval to moderation stage \"%(task)s\"."
 msgstr "Die Seite \"%(title)s\" wurde zur Freigabe in Moderationsphase \"%(task)s\" eingereicht."
 
-#: actions/templates/wagtailadmin/notifications/action_moderator_approval_task_state_submitted.txt
 #: actions/templates/wagtailadmin/notifications/task_state_cancelled.txt
 msgid "You can preview the page here:"
 msgstr "Eine Vorschau der Seite finden Sie hier:"
 
-#: actions/templates/wagtailadmin/notifications/action_moderator_approval_task_state_submitted.txt
 #: actions/templates/wagtailadmin/notifications/task_state_cancelled.txt
 msgid "You can edit the page here:"
 msgstr "Sie können die Seite hier bearbeiten:"
-
-#: actions/templates/wagtailadmin/notifications/action_moderator_approval_task_state_submitted.txt
-#, python-format
-msgid "The %(model_name)s \"%(title)s\" has been submitted for approval to moderation stage \"%(task)s\"."
-msgstr ""
-"Das „%(model_name)s“-Objekt %(title)s wurde zur Genehmigung in die "
-"Moderationsphase „%(task)s“ eingereicht."
-
-#: actions/templates/wagtailadmin/notifications/action_moderator_approval_task_state_submitted.txt
-#: actions/templates/wagtailadmin/notifications/task_state_cancelled.txt
-#, python-format
-msgid "You can preview the %(model_name)s here:"
-msgstr "Sie können hier die Vorschau des %(model_name)s-Objekts anzeigen:"
-
-#: actions/templates/wagtailadmin/notifications/action_moderator_approval_task_state_submitted.txt
-#: actions/templates/wagtailadmin/notifications/task_state_cancelled.txt
-#, python-format
-msgid "You can edit the %(model_name)s here:"
-msgstr "Sie können das %(model_name)s-Objekt hier bearbeiten:"
-
-#: actions/templates/wagtailadmin/notifications/action_moderator_approval_task_state_submitted_subject.txt
-#, python-format
-msgid "The page \"%(title)s\" has been submitted for approval in moderation stage \"%(task)s\""
-msgstr ""
-"Die Seite „%(title)s“ wurde zur Freigabe in Moderationsphase „%(task)s“ "
-"eingereicht"
-
-#: actions/templates/wagtailadmin/notifications/action_moderator_approval_task_state_submitted_subject.txt
-#, python-format
-msgid "The %(model_name)s \"%(title)s\" has been submitted for approval in moderation stage \"%(task)s\""
-msgstr ""
-"Das „%(model_name)s“-Objekt %(title)s wurde zur Genehmigung in der "
-"Moderationsphase „%(task)s“ eingereicht."
 
 #: actions/templates/wagtailadmin/notifications/task_state_cancelled.txt
 #, python-format
 msgid "The %(model_name)s \"%(title)s\" has been withdrawn from the moderation stage \"%(task)s\". It does not require approval until it has been resubmitted for moderation again."
 msgstr "%(model_name)s \"%(title)s\" wurde aus Moderationsphase \"%(task)s\" zurückgezogen. Eine Genehmigung ist bis zur nächsten Einreichung zur Moderation nicht mehr nötig."
+
+#: actions/templates/wagtailadmin/notifications/task_state_cancelled.txt
+#, python-format
+msgid "You can preview the %(model_name)s here:"
+msgstr "Sie können hier die Vorschau des %(model_name)s-Objekts anzeigen:"
+
+#: actions/templates/wagtailadmin/notifications/task_state_cancelled.txt
+#, python-format
+msgid "You can edit the %(model_name)s here:"
+msgstr "Sie können das %(model_name)s-Objekt hier bearbeiten:"
 
 #: actions/templates/wagtailadmin/notifications/task_state_cancelled_subject.txt
 #, python-format
@@ -2312,9 +2335,7 @@ msgstr "%(model_name)s \"%(title)s\" wurde aus der Moderation zurückgezogen."
 #: actions/templates/wagtailadmin/notifications/workflow_state_approved_comment.txt
 #, python-format
 msgid "The page \"%(title)s\" has been approved in workflow \"%(workflow)s\" with a comment."
-msgstr ""
-"Die Seite \"%(title)s\" wurde im Workflow \"%(workflow)s\" mit Kommentar "
-"genehmigt."
+msgstr "Die Seite \"%(title)s\" wurde im Workflow \"%(workflow)s\" mit Kommentar genehmigt."
 
 #: actions/templates/wagtailadmin/notifications/workflow_state_approved_comment.html
 #: actions/templates/wagtailadmin/notifications/workflow_state_approved_comment.txt
@@ -2325,22 +2346,17 @@ msgstr "Sie können die Seite hier aufrufen:"
 #: actions/templates/wagtailadmin/notifications/workflow_state_approved_comment.txt
 #, python-format
 msgid "The %(model_name)s \"%(title)s\" has been approved in workflow \"%(workflow)s\" with a comment."
-msgstr ""
-"Das „%(model_name)s“-Objekt %(title)s wurde im Workflow „%(workflow)s“ mit "
-"einem Kommentar genehmigt."
+msgstr "Das „%(model_name)s“-Objekt %(title)s wurde im Workflow „%(workflow)s“ mit einem Kommentar genehmigt."
 
 #: actions/templates/wagtailadmin/notifications/workflow_state_approved_comment_subject.txt
 #, python-format
 msgid "The page \"%(title)s\" has been approved in \"%(workflow)s with a comment."
-msgstr ""
-"Die Seite „%(title)s“ wurde in „%(workflow)s“ mit einem Kommentar genehmigt."
+msgstr "Die Seite „%(title)s“ wurde in „%(workflow)s“ mit einem Kommentar genehmigt."
 
 #: actions/templates/wagtailadmin/notifications/workflow_state_approved_comment_subject.txt
 #, python-format
 msgid "The %(model_name)s \"%(title)s\" has been approved in \"%(workflow)s\" with a comment."
-msgstr ""
-"Das „%(model_name)s“-Objekt %(title)s wurde in „%(workflow)s“ mit einer "
-"Anmerkung genehmigt."
+msgstr "Das „%(model_name)s“-Objekt %(title)s wurde in „%(workflow)s“ mit einer Anmerkung genehmigt."
 
 #: actions/wagtail_admin.py
 msgid "Identifier already in use"
@@ -2409,6 +2425,38 @@ msgstr "Plan-Benachrichtigungseinstellungen"
 #: actions/wagtail_admin.py admin_site/wagtail_hooks.py
 msgid "Plans"
 msgstr "Pläne"
+
+#: actions/wagtail_admin.py
+#, python-format
+msgid "Change log message: %(obj)s"
+msgstr "Änderungsnotiz"
+
+#: actions/wagtail_admin.py
+#, fuzzy
+msgid "Change log message"
+msgstr "Änderungsnotiz"
+
+#: actions/wagtail_admin.py
+msgid "Add change log message"
+msgstr "Änderungsnotiz hinzufügen"
+
+#: actions/wagtail_admin.py
+#, fuzzy
+#| msgid "Action schedules"
+msgid "Action change log messages"
+msgstr "Maßnahmenzeitpläne"
+
+#: actions/wagtail_admin.py
+#, fuzzy
+#| msgid "Indicators assigned to me"
+msgid "Indicator change log messages"
+msgstr "Mir zugewiesene Indikatoren"
+
+#: actions/wagtail_admin.py
+#, fuzzy
+#| msgid "Category type pages"
+msgid "Category change log messages"
+msgstr "Kategorietypenseiten"
 
 #: admin_site/api.py
 msgid "Invalid email address"
@@ -2637,9 +2685,7 @@ msgstr "Sie wurden erfolgreich weitergeleitet"
 
 #: admin_site/templates/wagtailadmin/login.html
 msgid "Please bookmark this page for future use."
-msgstr ""
-"Bitte speichern Sie diese Seite für die zukünftige Verwendung als "
-"Lesezeichen."
+msgstr "Bitte speichern Sie diese Seite für die zukünftige Verwendung als Lesezeichen."
 
 #: admin_site/templates/wagtailadmin/login.html
 msgid "Our apologies, the server is temporarily experiencing difficulties."
@@ -2848,6 +2894,10 @@ msgstr "Ungültiger JSON-Wert"
 #: aplans/utils.py
 msgid "updated by"
 msgstr "aktualisiert von"
+
+#: audit_logging/blocks.py
+msgid "Latest change log message"
+msgstr "Aktuelle Änderungsnotiz"
 
 #: audit_logging/templates/site_history_results.html audit_logging/views.py
 msgid "Item type"
@@ -3289,16 +3339,12 @@ msgstr "Wähle den Indikator für Datenvisualisierung"
 
 #: indicators/blocks/__init__.py
 msgid "Choose the indicator dimension that will be used for categories in the visualization"
-msgstr ""
-"Wähle die Indikator-Dimension, die für die Kategorien in der Visualisierung "
-"verwendet werden soll"
+msgstr "Wähle die Indikator-Dimension, die für die Kategorien in der Visualisierung verwendet werden soll"
 
 #: indicators/blocks/__init__.py
 #, python-format
 msgid "Dimension '%(dimension)s' is not valid for indicator '%(indicator)s'. Please choose a dimension that belongs to the indicator."
-msgstr ""
-"Dimension „%(dimension)s“ ist für Indikator „%(indicator)s“ nicht gültig. "
-"Bitte wählen Sie eine Dimension aus, die zu diesem Indikator gehört."
+msgstr "Dimension „%(dimension)s“ ist für Indikator „%(indicator)s“ nicht gültig. Bitte wählen Sie eine Dimension aus, die zu diesem Indikator gehört."
 
 #: indicators/blocks/__init__.py
 msgid "Stacked bars"
@@ -3351,9 +3397,7 @@ msgstr "Indikatorvisualisierung als Kreisdiagramm"
 #: indicators/blocks/__init__.py
 #, python-format
 msgid "The selected year (%(selected_year)s) has no data for this indicator. Available years are: %(available_years)s"
-msgstr ""
-"Für das ausgewählte Jahr (%(selected_year)s) liegen keine Daten für diesen "
-"Indikator vor. Verfügbare Jahre sind: %(available_years)s"
+msgstr "Für das ausgewählte Jahr (%(selected_year)s) liegen keine Daten für diesen Indikator vor. Verfügbare Jahre sind: %(available_years)s"
 
 #: indicators/blocks/__init__.py
 msgid "Indicator: Summary"
@@ -3433,8 +3477,7 @@ msgstr "Dies zeigt den Wert aus dem Referenzjahr."
 
 #: indicators/blocks/layout.py
 msgid "This can be set to override the default reference year."
-msgstr ""
-"Dies kann eingestellt werden, um das Standard-Referenzjahr zu überschreiben."
+msgstr "Dies kann eingestellt werden, um das Standard-Referenzjahr zu überschreiben."
 
 #: indicators/blocks/layout.py
 msgid "Show current value"
@@ -3454,8 +3497,7 @@ msgstr "Zielabweichung anzeigen"
 
 #: indicators/blocks/layout.py
 msgid "This shows the difference between the goal and the current value."
-msgstr ""
-"Dies verdeutlicht die Differenz zwischen dem Zielwert und dem aktuellen Wert."
+msgstr "Dies verdeutlicht die Differenz zwischen dem Zielwert und dem aktuellen Wert."
 
 #: indicators/chooser.py
 msgid "Choose an indicator"
@@ -3480,11 +3522,6 @@ msgstr "Wähle einen Wert"
 #: indicators/chooser.py
 msgid "Choose another value"
 msgstr "Wähle einen anderen Wert"
-
-#: indicators/models/action_links.py indicators/models/contact_persons.py
-#: indicators/models/indicator.py indicators/models/values.py
-msgid "indicator"
-msgstr "Indikator"
 
 #: indicators/models/action_links.py indicators/models/relationships.py
 msgid "effect type"
@@ -3580,9 +3617,7 @@ msgstr "Dimensionen"
 #: indicators/models/dimensions.py
 #, python-format
 msgid "Cannot delete dimension \"%(dimension)s\" because it is linked to multiple plans: %(plans)s"
-msgstr ""
-"Die Dimension „%(dimension)s“ kann nicht gelöscht werden, da sie mit "
-"mehreren Plänen verknüpft ist: %(plans)s"
+msgstr "Die Dimension „%(dimension)s“ kann nicht gelöscht werden, da sie mit mehreren Plänen verknüpft ist: %(plans)s"
 
 #: indicators/models/dimensions.py
 msgid "default color"
@@ -3694,9 +3729,7 @@ msgstr "Sortierschlüssel"
 
 #: indicators/models/indicator.py
 msgid "If set, this will be used as the primary criterion for sorting indicators."
-msgstr ""
-"Wenn gesetzt, wird dies als primäres Kriterium für die Sortierung der "
-"Indikatoren verwendet."
+msgstr "Wenn gesetzt, wird dies als primäres Kriterium für die Sortierung der Indikatoren verwendet."
 
 #: indicators/models/indicator.py
 msgid "time resolution"
@@ -3757,9 +3790,7 @@ msgstr "Gesamtlinie anzeigen"
 
 #: indicators/models/indicator.py
 msgid "Data categories can be summed to form total for the indicator (draw stacked chart as default)"
-msgstr ""
-"Datenkategorien können summiert werden, um den Gesamtwert für den Indikator "
-"zu bilden (standardmäßig als gestapeltes Diagramm dargestellt)"
+msgstr "Datenkategorien können summiert werden, um den Gesamtwert für den Indikator zu bilden (standardmäßig als gestapeltes Diagramm dargestellt)"
 
 #: indicators/models/indicator.py
 msgid "Number of steps on the y-axis"
@@ -3775,9 +3806,7 @@ msgstr "Anzahl der signifikanten Stellen bei der Anzeige von Indikatorwerten"
 
 #: indicators/models/indicator.py
 msgid "Data categories can be summed to form a total for the indicator (draw a stacked chart as default)"
-msgstr ""
-"Datenkategorien können summiert werden, um einen Gesamtwert für den "
-"Indikator zu bilden (standardmäßig als gestapeltes Diagramm dargestellt)"
+msgstr "Datenkategorien können summiert werden, um einen Gesamtwert für den Indikator zu bilden (standardmäßig als gestapeltes Diagramm dargestellt)"
 
 #: indicators/models/indicator.py
 msgid "non-quantified goal"
@@ -3797,9 +3826,7 @@ msgstr "Knotenkennung"
 
 #: indicators/models/indicator.py
 msgid "The node identifier of the node in Paths where this indicator's data is imported from."
-msgstr ""
-"Die Knotenkennung in Paths, woraus die Daten dieses Indikators importiert "
-"werden."
+msgstr "Die Knotenkennung in Paths, woraus die Daten dieses Indikators importiert werden."
 
 #: indicators/models/indicator.py
 msgid "Has datasets"
@@ -3994,9 +4021,7 @@ msgstr "Bearbeite diese Größe"
 #: indicators/wagtail_admin.py
 #, python-format
 msgid "Cannot delete dimension \"%(dimension)s\" at this time, please contact support."
-msgstr ""
-"Dimension „%(dimension)s“ kann derzeit nicht gelöscht werden. Bitte wenden "
-"Sie sich an den Support."
+msgstr "Dimension „%(dimension)s“ kann derzeit nicht gelöscht werden. Bitte wenden Sie sich an den Support."
 
 #: indicators/wagtail_admin.py
 msgid "Indicator dimensions"
@@ -4025,10 +4050,7 @@ msgstr "Dimensionen müssen gleich wie im Gemeinsamen Indikator sein"
 #: indicators/wagtail_admin.py
 #, python-format
 msgid "While editing this indicator you have switched to a different plan. This indicator was still saved with the original plan \"%s\"."
-msgstr ""
-"Während der Bearbeitung dieses Indikators haben Sie zu einem anderen Plan "
-"gewechselt. Dieser Indikator wurde weiterhin mit dem ursprünglichen Plan „%s"
-"“ gespeichert."
+msgstr "Während der Bearbeitung dieses Indikators haben Sie zu einem anderen Plan gewechselt. Dieser Indikator wurde weiterhin mit dem ursprünglichen Plan „%s“ gespeichert."
 
 #: indicators/wagtail_admin.py
 msgid "none"
@@ -4049,9 +4071,7 @@ msgstr "Klassifizierung"
 
 #: indicators/wagtail_admin.py
 msgid "Only used for raw visualization data exported from Plotly"
-msgstr ""
-"Nur verwendet für Rohdaten zur Visualisierung, die aus Plotly exportiert "
-"wurden"
+msgstr "Nur verwendet für Rohdaten zur Visualisierung, die aus Plotly exportiert wurden"
 
 #: indicators/wagtail_admin.py
 msgid "Visualization settings"
@@ -4137,9 +4157,7 @@ msgstr "Instanz kann nicht gelöscht werden, da andere Objekte darauf verweisen.
 #: kausal_common/api/exceptions.py
 #, python-format
 msgid "Cannot delete \"%s\" because it is connected to other objects such as instances, persons or actions."
-msgstr ""
-"„%s“-Objekt kann nicht gelöscht werden, da es mit anderen Objekten wie "
-"Instanzen, Personen oder Maßnahmen verknüpft ist."
+msgstr "„%s“-Objekt kann nicht gelöscht werden, da es mit anderen Objekten wie Instanzen, Personen oder Maßnahmen verknüpft ist."
 
 #: kausal_common/blocks/base.py
 msgid "Label for the column to be used instead of the default"
@@ -4147,8 +4165,7 @@ msgstr "Spaltenbeschriftung, die anstelle des Standardwerts verwendet werden sol
 
 #: kausal_common/blocks/base.py
 msgid "Help text for the column to be shown in the UI"
-msgstr ""
-"Hilfetext für die Spalte, der in der Benutzeroberfläche angezeigt werden soll"
+msgstr "Hilfetext für die Spalte, der in der Benutzeroberfläche angezeigt werden soll"
 
 #: kausal_common/blocks/base.py kausal_common/blocks/fields.py
 #, python-format
@@ -4170,15 +4187,11 @@ msgstr "Wähle einen anderen Datensatz"
 
 #: kausal_common/datasets/models.py
 msgid "Optional identifier that, if set, must be unique within the dimension"
-msgstr ""
-"Optionale Kennung, die, falls festgelegt, innerhalb der Dimension eindeutig "
-"sein muss"
+msgstr "Optionale Kennung, die, falls festgelegt, innerhalb der Dimension eindeutig sein muss"
 
 #: kausal_common/datasets/models.py
 msgid "Optional identifier that, if set, must be unique in the scope"
-msgstr ""
-"Optionale Kennung, die, falls festgelegt, innerhalb des Geltungsbereichs "
-"eindeutig sein muss"
+msgstr "Optionale Kennung, die, falls festgelegt, innerhalb des Geltungsbereichs eindeutig sein muss"
 
 #: kausal_common/datasets/models.py
 msgid "dimension scope"
@@ -4198,9 +4211,7 @@ msgstr "Zeitliche Auflösung der Zeitstempel der Datenpunkte in diesem Datensatz
 
 #: kausal_common/datasets/models.py
 msgid "For a newly created dataset, start entering values from this year"
-msgstr ""
-"Für einen neu erstellten Datensatz beginnen Sie mit der Eingabe der Werte "
-"aus diesem Jahr"
+msgstr "Für einen neu erstellten Datensatz beginnen Sie mit der Eingabe der Werte aus diesem Jahr"
 
 #: kausal_common/datasets/models.py
 msgid "Descriptive name of the dataset schema"
@@ -4224,8 +4235,7 @@ msgstr "Metriken"
 
 #: kausal_common/datasets/models.py
 msgid "Defines the interpretation and units for the values of the dataset"
-msgstr ""
-"Legt die Interpretation und die Einheiten für die Werte des Datensatzes fest"
+msgstr "Legt die Interpretation und die Einheiten für die Werte des Datensatzes fest"
 
 #: kausal_common/datasets/models.py
 msgid "Used when metrics are tracked for multiple categories"
@@ -4237,8 +4247,7 @@ msgstr "Berechtigungen für Personen"
 
 #: kausal_common/datasets/models.py
 msgid "Grants permissions on datasets of this schema to certain persons"
-msgstr ""
-"Erteilt bestimmten Personen Berechtigungen für Datensätze dieses Schemas"
+msgstr "Erteilt bestimmten Personen Berechtigungen für Datensätze dieses Schemas"
 
 #: kausal_common/datasets/models.py
 msgid "Group permissions"
@@ -4246,9 +4255,7 @@ msgstr "Gruppenberechtigungen"
 
 #: kausal_common/datasets/models.py
 msgid "Grants permissions on datasets of this schema to certain person groups"
-msgstr ""
-"Erteilt bestimmten Personengruppen Berechtigungen für Datensätze dieses "
-"Schemas"
+msgstr "Erteilt bestimmten Personengruppen Berechtigungen für Datensätze dieses Schemas"
 
 #: kausal_common/datasets/models.py orgs/wagtail_admin.py
 msgid "Permissions"
@@ -4284,9 +4291,7 @@ msgstr "Schema"
 
 #: kausal_common/datasets/models.py
 msgid "Optional identifier that, if set, must be unique in the dataset's scope"
-msgstr ""
-"Optionaler Bezeichner, der, falls gesetzt, im Geltungsbereich des "
-"Datensatzes eindeutig sein muss"
+msgstr "Optionaler Bezeichner, der, falls gesetzt, im Geltungsbereich des Datensatzes eindeutig sein muss"
 
 #: kausal_common/datasets/models.py
 msgid "dataset schema scope"
@@ -5071,9 +5076,7 @@ msgstr "Größe"
 
 #: pages/blocks.py
 msgid "The source URL of the embed is invalid or not supported."
-msgstr ""
-"Die Quell-URL des eingebetteten Inhalts ist ungültig oder wird nicht "
-"unterstützt."
+msgstr "Die Quell-URL des eingebetteten Inhalts ist ungültig oder wird nicht unterstützt."
 
 #: pages/blocks.py
 msgid "Title"
@@ -5681,9 +5684,7 @@ msgstr "Wähle einen anderen Berichtstyp"
 
 #: reports/models.py
 msgid "Only plan admins can mark actions as complete for reports of this type"
-msgstr ""
-"Nur Planadministratoren können Maßnahmen für Berichte dieses Typs als "
-"abgeschlossen markieren"
+msgstr "Nur Planadministratoren können Maßnahmen für Berichte dieses Typs als abgeschlossen markieren"
 
 #: reports/models.py
 msgid "report type"
@@ -5754,10 +5755,6 @@ msgstr "Leer"
 #: reports/report_formatters.py
 msgid "Other responsible parties"
 msgstr "Andere Verantwortliche"
-
-#: reports/spreadsheets/action_print_layout.py
-msgid "Page"
-msgstr "Seite"
 
 #: reports/spreadsheets/action_print_layout.py
 msgid "Profiles"
@@ -5895,10 +5892,17 @@ msgstr "Markieren dieses Berichts als abgeschlossen rückgängig machen"
 msgid "Report types"
 msgstr "Berichtstypen"
 
+#: templates/aplans/change_log_message_create.html
+msgid "Current change log message"
+msgstr "Aktuelle Änderungsnotiz"
+
+#: templates/aplans/change_log_message_create.html
+msgid "Skip"
+msgstr "Überspringen"
+
 #: templates/aplans/paths_sync_confirmation.html
 msgid "Please verify the correct node is connected to the indicator."
-msgstr ""
-"Bitte überprüfen Sie, ob der richtige Knoten mit dem Indikator verbunden ist."
+msgstr "Bitte überprüfen Sie, ob der richtige Knoten mit dem Indikator verbunden ist."
 
 #: templates/aplans/paths_sync_confirmation.html
 msgid "Edit indicator"
@@ -5935,6 +5939,21 @@ msgstr "Benutzer"
 #: users/models.py
 msgid "No permission to remove the user belonging to plans you are not managing."
 msgstr "Keine Berechtigung zum Entfernen von Benutzern, die zu Plänen gehören, die Sie nicht verwalten."
+
+#, python-format
+#~ msgid "The %(model_name)s \"%(title)s\" has been submitted for approval to moderation stage \"%(task)s\"."
+#~ msgstr "Das „%(model_name)s“-Objekt %(title)s wurde zur Genehmigung in die Moderationsphase „%(task)s“ eingereicht."
+
+#, python-format
+#~ msgid "The page \"%(title)s\" has been submitted for approval in moderation stage \"%(task)s\""
+#~ msgstr "Die Seite „%(title)s“ wurde zur Freigabe in Moderationsphase „%(task)s“ eingereicht"
+
+#, python-format
+#~ msgid "The %(model_name)s \"%(title)s\" has been submitted for approval in moderation stage \"%(task)s\""
+#~ msgstr "Das „%(model_name)s“-Objekt %(title)s wurde zur Genehmigung in der Moderationsphase „%(task)s“ eingereicht."
+
+#~ msgid "Page"
+#~ msgstr "Seite"
 
 #~ msgid "progress indicators"
 #~ msgstr "Fortschrittindikatoren"
@@ -6062,9 +6081,6 @@ msgstr "Keine Berechtigung zum Entfernen von Benutzern, die zu Plänen gehören,
 #~ msgid "Remove row"
 #~ msgstr "Zeile entfernen"
 
-#~ msgid "Save changes"
-#~ msgstr "Änderungen speichern"
-
 #~ msgid "Date"
 #~ msgstr "Datum"
 
@@ -6073,9 +6089,6 @@ msgstr "Keine Berechtigung zum Entfernen von Benutzern, die zu Plänen gehören,
 
 #~ msgid "Unable to save changes"
 #~ msgstr "Änderungen konnten nicht gespeichert werden"
-
-#~ msgid "Changes were saved"
-#~ msgstr "Änderungen gespeichert"
 
 #~ msgid "Either SVG or image must be set"
 #~ msgstr "Entweder SVG oder Bild muss gesetzt sein"

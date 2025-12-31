@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-12-23 16:43+0100\n"
+"POT-Creation-Date: 2025-12-31 15:11+0200\n"
 "PO-Revision-Date: 2025-04-02 07:20+0000\n"
 "Last-Translator: Matias Wargelin <matias.wargelin@kausal.tech>\n"
 "Language-Team: Spanish <https://weblate.kausal.tech/projects/watch/django/es/>\n"
@@ -1257,7 +1257,7 @@ msgstr "estado"
 msgid "comment"
 msgstr "comentario"
 
-#: actions/models/action.py reports/report_formatters.py
+#: actions/models/action.py
 msgid "due date"
 msgstr "fecha de vencimiento"
 
@@ -1340,6 +1340,72 @@ msgstr "enlace de acción"
 msgid "action links"
 msgstr "enlaces de acción"
 
+#: actions/models/action.py notifications/models.py
+msgid "content"
+msgstr "contenido"
+
+#: actions/models/action.py
+msgid "Summarize what was changed. This message will be displayed publicly."
+msgstr ""
+
+#: actions/models/action.py aplans/utils.py kausal_common/people/models.py
+msgid "created by"
+msgstr "creado por"
+
+#: actions/models/action.py
+#, fuzzy
+#| msgid "Division"
+msgid "revision"
+msgstr "División"
+
+#: actions/models/action.py
+msgid "The revision this change log message is associated with."
+msgstr ""
+
+#: actions/models/action.py
+#, fuzzy
+#| msgid "action schedules"
+msgid "action change log message"
+msgstr "calendarios de actuación"
+
+#: actions/models/action.py
+#, fuzzy
+#| msgid "action schedules"
+msgid "action change log messages"
+msgstr "calendarios de actuación"
+
+#: actions/models/action.py indicators/models/action_links.py
+#: indicators/models/contact_persons.py indicators/models/indicator.py
+#: indicators/models/values.py
+msgid "indicator"
+msgstr "indicador"
+
+#: actions/models/action.py
+#, fuzzy
+#| msgid "Indicators assigned to me"
+msgid "indicator change log message"
+msgstr "Indicadores que me han sido asignados"
+
+#: actions/models/action.py
+#, fuzzy
+#| msgid "indicator goals"
+msgid "indicator change log messages"
+msgstr "objetivos de los indicadores"
+
+#: actions/models/action.py actions/models/category.py feedback/models.py
+msgid "category"
+msgstr "categoría"
+
+#: actions/models/action.py
+msgid "category change log message"
+msgstr ""
+
+#: actions/models/action.py
+#, fuzzy
+#| msgid "category levels"
+msgid "category change log messages"
+msgstr "niveles de categoría"
+
 #: actions/models/action.py indicators/models/values.py
 #: kausal_common/datasets/models.py
 msgid "date"
@@ -1348,14 +1414,6 @@ msgstr "fecha"
 #: actions/models/action.py
 msgid "author"
 msgstr "autor"
-
-#: actions/models/action.py notifications/models.py
-msgid "content"
-msgstr "contenido"
-
-#: actions/models/action.py aplans/utils.py kausal_common/people/models.py
-msgid "created by"
-msgstr "creado por"
 
 #: actions/models/action.py
 msgid "action status update"
@@ -1610,10 +1668,6 @@ msgstr "categorías comunes"
 msgid "parent category"
 msgstr "categoría superior"
 
-#: actions/models/category.py feedback/models.py
-msgid "category"
-msgstr "categoría"
-
 #: actions/models/category.py
 msgid "Parent forms a loop. Leave empty if top-level category."
 msgstr "El padre forma un bucle. Dejar vacío si la categoría es de nivel superior."
@@ -1861,6 +1915,14 @@ msgstr "Dimensiones del indicador"
 #| msgid "Should profile pictures be shown for contact persons in the public UI?"
 msgid "Should indicators open only in a modal dialog in the public UI?"
 msgstr "¿Deben mostrarse las fotos de perfil de las personas de contacto en la interfaz de usuario pública?"
+
+#: actions/models/features.py
+msgid "Enable change log"
+msgstr ""
+
+#: actions/models/features.py
+msgid "Prompt users to add a public change log message after editing actions, indicators, or categories."
+msgstr ""
 
 #: actions/models/features.py
 msgid "plan feature"
@@ -2289,56 +2351,33 @@ msgstr[1] ""
 "        <span>%(n)s</span> acciones activas <span class=\"w-sr-only\">supervisadas en %(plan)s</span>\n"
 "    "
 
-#: actions/templates/wagtailadmin/notifications/action_moderator_approval_task_state_submitted.txt
 #: actions/templates/wagtailadmin/notifications/task_state_cancelled.txt
 #, python-format
 msgid "The page \"%(title)s\" has been submitted for approval to moderation stage \"%(task)s\"."
 msgstr "La página \"%(title)s\" ha sido enviada para su aprobación a la etapa de moderación \"%(task)s\"."
 
-#: actions/templates/wagtailadmin/notifications/action_moderator_approval_task_state_submitted.txt
 #: actions/templates/wagtailadmin/notifications/task_state_cancelled.txt
 msgid "You can preview the page here:"
 msgstr "Puede previsualizar la página aquí:"
 
-#: actions/templates/wagtailadmin/notifications/action_moderator_approval_task_state_submitted.txt
 #: actions/templates/wagtailadmin/notifications/task_state_cancelled.txt
 msgid "You can edit the page here:"
 msgstr "Puede editar la página aquí:"
-
-#: actions/templates/wagtailadmin/notifications/action_moderator_approval_task_state_submitted.txt
-#, fuzzy, python-format
-#| msgid "The page \"%(title)s\" has been submitted for approval to moderation stage \"%(task)s\"."
-msgid "The %(model_name)s \"%(title)s\" has been submitted for approval to moderation stage \"%(task)s\"."
-msgstr "La página \"%(title)s\" ha sido enviada para su aprobación a la etapa de moderación \"%(task)s\"."
-
-#: actions/templates/wagtailadmin/notifications/action_moderator_approval_task_state_submitted.txt
-#: actions/templates/wagtailadmin/notifications/task_state_cancelled.txt
-#, python-format
-msgid "You can preview the %(model_name)s here:"
-msgstr "Puede consultar una vista previa de %(model_name)s aquí:"
-
-#: actions/templates/wagtailadmin/notifications/action_moderator_approval_task_state_submitted.txt
-#: actions/templates/wagtailadmin/notifications/task_state_cancelled.txt
-#, python-format
-msgid "You can edit the %(model_name)s here:"
-msgstr "Puede editar la página %(model_name)s aquí:"
-
-#: actions/templates/wagtailadmin/notifications/action_moderator_approval_task_state_submitted_subject.txt
-#, fuzzy, python-format
-#| msgid "The page \"%(title)s\" has been submitted for approval in moderation stage \"%(task)s\"."
-msgid "The page \"%(title)s\" has been submitted for approval in moderation stage \"%(task)s\""
-msgstr "La página \"%(title)s\" ha sido sometida a aprobación en fase de moderación \"%(task)s\"."
-
-#: actions/templates/wagtailadmin/notifications/action_moderator_approval_task_state_submitted_subject.txt
-#, fuzzy, python-format
-#| msgid "The page \"%(title)s\" has been submitted for approval in moderation stage \"%(task)s\"."
-msgid "The %(model_name)s \"%(title)s\" has been submitted for approval in moderation stage \"%(task)s\""
-msgstr "La página \"%(title)s\" ha sido sometida a aprobación en fase de moderación \"%(task)s\"."
 
 #: actions/templates/wagtailadmin/notifications/task_state_cancelled.txt
 #, python-format
 msgid "The %(model_name)s \"%(title)s\" has been withdrawn from the moderation stage \"%(task)s\". It does not require approval until it has been resubmitted for moderation again."
 msgstr "El sitio %(model_name)s \"%(title)s\" ha sido retirado de la fase de moderación \"%(task)s\". No requiere aprobación hasta que se haya vuelto a someter a moderación."
+
+#: actions/templates/wagtailadmin/notifications/task_state_cancelled.txt
+#, python-format
+msgid "You can preview the %(model_name)s here:"
+msgstr "Puede consultar una vista previa de %(model_name)s aquí:"
+
+#: actions/templates/wagtailadmin/notifications/task_state_cancelled.txt
+#, python-format
+msgid "You can edit the %(model_name)s here:"
+msgstr "Puede editar la página %(model_name)s aquí:"
 
 #: actions/templates/wagtailadmin/notifications/task_state_cancelled_subject.txt
 #, python-format
@@ -2450,6 +2489,37 @@ msgstr "Ajustes de notificación del plan"
 #: actions/wagtail_admin.py admin_site/wagtail_hooks.py
 msgid "Plans"
 msgstr "Planes"
+
+#: actions/wagtail_admin.py
+#, python-format
+msgid "Change log message: %(obj)s"
+msgstr ""
+
+#: actions/wagtail_admin.py
+msgid "Change log message"
+msgstr ""
+
+#: actions/wagtail_admin.py
+msgid "Add change log message"
+msgstr ""
+
+#: actions/wagtail_admin.py
+#, fuzzy
+#| msgid "Action schedules"
+msgid "Action change log messages"
+msgstr "Planes de acción"
+
+#: actions/wagtail_admin.py
+#, fuzzy
+#| msgid "Indicators assigned to me"
+msgid "Indicator change log messages"
+msgstr "Indicadores que me han sido asignados"
+
+#: actions/wagtail_admin.py
+#, fuzzy
+#| msgid "Category type pages"
+msgid "Category change log messages"
+msgstr "Páginas de tipo categoría"
 
 #: admin_site/api.py
 msgid "Invalid email address"
@@ -2889,6 +2959,10 @@ msgstr ""
 #: aplans/utils.py
 msgid "updated by"
 msgstr "actualizado por"
+
+#: audit_logging/blocks.py
+msgid "Latest change log message"
+msgstr ""
 
 #: audit_logging/templates/site_history_results.html audit_logging/views.py
 #, fuzzy
@@ -3605,11 +3679,6 @@ msgstr "Elija un cliente"
 #| msgid "Choose another client"
 msgid "Choose another value"
 msgstr "Elegir otro cliente"
-
-#: indicators/models/action_links.py indicators/models/contact_persons.py
-#: indicators/models/indicator.py indicators/models/values.py
-msgid "indicator"
-msgstr "indicador"
 
 #: indicators/models/action_links.py indicators/models/relationships.py
 msgid "effect type"
@@ -5977,12 +6046,6 @@ msgid "Other responsible parties"
 msgstr "Otros responsables"
 
 #: reports/spreadsheets/action_print_layout.py
-#, fuzzy
-#| msgid "Page link"
-msgid "Page"
-msgstr "Enlace de página"
-
-#: reports/spreadsheets/action_print_layout.py
 msgid "Profiles"
 msgstr "Perfiles"
 
@@ -6118,6 +6181,14 @@ msgstr "Deshacer el marcado de este informe como completo"
 msgid "Report types"
 msgstr "Tipos de informes"
 
+#: templates/aplans/change_log_message_create.html
+msgid "Current change log message"
+msgstr ""
+
+#: templates/aplans/change_log_message_create.html
+msgid "Skip"
+msgstr ""
+
 #: templates/aplans/paths_sync_confirmation.html
 #, fuzzy
 #| msgid "What is the reference or source for this indicator?"
@@ -6165,6 +6236,26 @@ msgstr "Usuarios"
 #: users/models.py
 msgid "No permission to remove the user belonging to plans you are not managing."
 msgstr "Sin permiso para eliminar el usuario perteneciente a planes que no gestiona."
+
+#, fuzzy, python-format
+#~| msgid "The page \"%(title)s\" has been submitted for approval to moderation stage \"%(task)s\"."
+#~ msgid "The %(model_name)s \"%(title)s\" has been submitted for approval to moderation stage \"%(task)s\"."
+#~ msgstr "La página \"%(title)s\" ha sido enviada para su aprobación a la etapa de moderación \"%(task)s\"."
+
+#, fuzzy, python-format
+#~| msgid "The page \"%(title)s\" has been submitted for approval in moderation stage \"%(task)s\"."
+#~ msgid "The page \"%(title)s\" has been submitted for approval in moderation stage \"%(task)s\""
+#~ msgstr "La página \"%(title)s\" ha sido sometida a aprobación en fase de moderación \"%(task)s\"."
+
+#, fuzzy, python-format
+#~| msgid "The page \"%(title)s\" has been submitted for approval in moderation stage \"%(task)s\"."
+#~ msgid "The %(model_name)s \"%(title)s\" has been submitted for approval in moderation stage \"%(task)s\""
+#~ msgstr "La página \"%(title)s\" ha sido sometida a aprobación en fase de moderación \"%(task)s\"."
+
+#, fuzzy
+#~| msgid "Page link"
+#~ msgid "Page"
+#~ msgstr "Enlace de página"
 
 #~ msgid "progress indicators"
 #~ msgstr "indicadores de progreso"
