@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-12-31 15:11+0200\n"
+"POT-Creation-Date: 2026-01-02 11:42+0100\n"
 "PO-Revision-Date: 2025-04-02 07:20+0000\n"
 "Last-Translator: Matias Wargelin <matias.wargelin@kausal.tech>\n"
 "Language-Team: English (Australia) <https://weblate.kausal.tech/projects/watch/django/en_AU/>\n"
@@ -81,8 +81,6 @@ msgstr ""
 #: admin_site/models.py
 #: admin_site/templates/admin_site/own_indicators_panel.html
 #: audit_logging/templates/site_history_results.html copying/views.py
-#: kausal_common/datasets/models.py
-#: kausal_common/templates/kausal_common/people/chooser_results.html
 msgid "Name"
 msgstr ""
 
@@ -371,8 +369,7 @@ msgstr ""
 
 #: actions/blocks/action_content.py actions/blocks/action_content_blocks.py
 #: actions/blocks/action_list.py actions/blocks/category_list.py
-#: actions/blocks/paths_content.py kausal_common/blocks/base.py
-#: kausal_common/blocks/fields.py
+#: actions/blocks/paths_content.py
 msgid "Help text"
 msgstr ""
 
@@ -396,12 +393,11 @@ msgstr ""
 msgid "Category"
 msgstr ""
 
-#: actions/blocks/action_content_blocks.py kausal_common/blocks/base.py
-#: kausal_common/blocks/fields.py
+#: actions/blocks/action_content_blocks.py
 msgid "Heading to show instead of the default"
 msgstr ""
 
-#: actions/blocks/action_content_blocks.py kausal_common/blocks/base.py
+#: actions/blocks/action_content_blocks.py
 msgid "Label"
 msgstr ""
 
@@ -455,7 +451,6 @@ msgid "Form Field"
 msgstr ""
 
 #: actions/blocks/action_content_blocks.py indicators/wagtail_admin.py
-#: kausal_common/datasets/models.py
 msgid "Description"
 msgstr ""
 
@@ -532,8 +527,7 @@ msgstr ""
 msgid "What label should be used in the public UI for the official name?"
 msgstr ""
 
-#: actions/blocks/action_content_blocks.py kausal_common/blocks/base.py
-#: kausal_common/blocks/fields.py
+#: actions/blocks/action_content_blocks.py
 msgid "Field label"
 msgstr ""
 
@@ -652,7 +646,7 @@ msgstr ""
 msgid "Dataset Schema"
 msgstr ""
 
-#: actions/blocks/filters.py kausal_common/blocks/base.py
+#: actions/blocks/filters.py
 msgid "Label for 'show all'"
 msgstr ""
 
@@ -870,7 +864,6 @@ msgstr "primary organisation"
 #: actions/models/plan.py feedback/models.py
 #: indicators/models/common_indicator.py indicators/models/dimensions.py
 #: indicators/models/indicator.py indicators/models/metadata.py
-#: kausal_common/datasets/models.py kausal_common/organizations/models.py
 #: reports/models.py
 msgid "name"
 msgstr ""
@@ -898,8 +891,7 @@ msgstr ""
 
 #: actions/models/action.py actions/models/plan.py
 #: indicators/models/common_indicator.py indicators/models/indicator.py
-#: indicators/models/metadata.py kausal_common/datasets/models.py
-#: kausal_common/organizations/models.py
+#: indicators/models/metadata.py
 msgid "description"
 msgstr ""
 
@@ -1009,7 +1001,7 @@ msgstr ""
 msgid "updated at"
 msgstr ""
 
-#: actions/models/action.py kausal_common/datasets/models.py reports/models.py
+#: actions/models/action.py reports/models.py
 msgid "start date"
 msgstr ""
 
@@ -1119,8 +1111,7 @@ msgid "Collaborator"
 msgstr ""
 
 #: actions/models/action.py actions/models/plan.py
-#: indicators/models/indicator.py kausal_common/organizations/models.py
-#: kausal_common/people/models.py orgs/models.py people/wagtail_admin.py
+#: indicators/models/indicator.py orgs/models.py people/wagtail_admin.py
 msgid "organization"
 msgstr "organisation"
 
@@ -1155,8 +1146,7 @@ msgid "Moderator"
 msgstr ""
 
 #: actions/models/action.py actions/models/plan.py
-#: indicators/models/contact_persons.py kausal_common/people/models.py
-#: orgs/models.py
+#: indicators/models/contact_persons.py orgs/models.py
 msgid "person"
 msgstr ""
 
@@ -1228,11 +1218,11 @@ msgstr ""
 msgid "state"
 msgstr ""
 
-#: actions/models/action.py feedback/models.py kausal_common/datasets/models.py
+#: actions/models/action.py feedback/models.py
 msgid "comment"
 msgstr ""
 
-#: actions/models/action.py
+#: actions/models/action.py reports/report_formatters.py
 msgid "due date"
 msgstr ""
 
@@ -1298,7 +1288,6 @@ msgid "action impact classes"
 msgstr ""
 
 #: actions/models/action.py feedback/models.py indicators/models/metadata.py
-#: kausal_common/datasets/models.py kausal_common/organizations/models.py
 #: pages/blocks.py pages/models.py
 msgid "URL"
 msgstr ""
@@ -1323,7 +1312,7 @@ msgstr ""
 msgid "Summarize what was changed. This message will be displayed publicly."
 msgstr ""
 
-#: actions/models/action.py aplans/utils.py kausal_common/people/models.py
+#: actions/models/action.py aplans/utils.py
 msgid "created by"
 msgstr ""
 
@@ -1374,7 +1363,6 @@ msgid "category change log messages"
 msgstr ""
 
 #: actions/models/action.py indicators/models/values.py
-#: kausal_common/datasets/models.py
 msgid "date"
 msgstr ""
 
@@ -1559,7 +1547,7 @@ msgstr ""
 msgid "Set if this category type should have its own collection for images"
 msgstr ""
 
-#: actions/models/category.py kausal_common/organizations/models.py
+#: actions/models/category.py
 #, fuzzy
 #| msgid "primary organization"
 msgid "primary language"
@@ -2598,7 +2586,7 @@ msgstr ""
 msgid "Login method that will be used for users that don't have a password set"
 msgstr ""
 
-#: admin_site/models.py kausal_common/datasets/models.py
+#: admin_site/models.py
 msgid "label"
 msgstr ""
 
@@ -2855,12 +2843,11 @@ msgstr ""
 msgid "Year (2020)"
 msgstr ""
 
-#: aplans/utils.py kausal_common/datasets/models.py
-#: kausal_common/models/fields.py notifications/models.py
+#: aplans/utils.py notifications/models.py
 msgid "identifier"
 msgstr ""
 
-#: aplans/utils.py kausal_common/models/ordered.py
+#: aplans/utils.py
 msgid "order"
 msgstr ""
 
@@ -2982,7 +2969,6 @@ msgid "Milestones"
 msgstr ""
 
 #: content/models.py indicators/wagtail_admin.py
-#: kausal_common/templates/kausal_common/people/chooser_results.html
 msgid "Organization"
 msgstr "Organisation"
 
@@ -3172,8 +3158,7 @@ msgstr ""
 msgid "documents"
 msgstr ""
 
-#: feedback/models.py kausal_common/organizations/models.py
-#: kausal_common/people/models.py kausal_common/users/models.py users/models.py
+#: feedback/models.py users/models.py
 msgid "email address"
 msgstr ""
 
@@ -3307,7 +3292,7 @@ msgstr ""
 msgid "Alt text"
 msgstr ""
 
-#: images/models.py kausal_common/people/models.py
+#: images/models.py
 msgid "image"
 msgstr ""
 
@@ -3348,8 +3333,7 @@ msgstr ""
 msgid "Indicator showcase"
 msgstr ""
 
-#: indicators/blocks/__init__.py kausal_common/blocks/base.py
-#: kausal_common/blocks/fields.py
+#: indicators/blocks/__init__.py
 msgid "Help text for the field to be shown in the UI"
 msgstr ""
 
@@ -3582,7 +3566,7 @@ msgid "quantity"
 msgstr ""
 
 #: indicators/models/common_indicator.py indicators/models/indicator.py
-#: indicators/models/metadata.py kausal_common/datasets/models.py
+#: indicators/models/metadata.py
 msgid "unit"
 msgstr ""
 
@@ -3634,11 +3618,11 @@ msgstr ""
 msgid "indicator contact persons"
 msgstr ""
 
-#: indicators/models/dimensions.py kausal_common/datasets/models.py
+#: indicators/models/dimensions.py
 msgid "dimension"
 msgstr ""
 
-#: indicators/models/dimensions.py kausal_common/datasets/models.py
+#: indicators/models/dimensions.py
 msgid "dimensions"
 msgstr ""
 
@@ -3655,11 +3639,11 @@ msgstr ""
 msgid "Default color for this dimension category in charts"
 msgstr ""
 
-#: indicators/models/dimensions.py kausal_common/datasets/models.py
+#: indicators/models/dimensions.py
 msgid "dimension category"
 msgstr ""
 
-#: indicators/models/dimensions.py kausal_common/datasets/models.py
+#: indicators/models/dimensions.py
 msgid "dimension categories"
 msgstr ""
 
@@ -3776,7 +3760,6 @@ msgid "reference value"
 msgstr ""
 
 #: indicators/models/indicator.py indicators/models/metadata.py
-#: kausal_common/datasets/models.py
 msgid "datasets"
 msgstr ""
 
@@ -3939,7 +3922,7 @@ msgstr "Set if owner organisation is not available"
 msgid "license"
 msgstr ""
 
-#: indicators/models/metadata.py kausal_common/datasets/models.py
+#: indicators/models/metadata.py
 msgid "dataset"
 msgstr ""
 
@@ -3983,7 +3966,7 @@ msgstr ""
 msgid "How confident we are that the causal effect is present"
 msgstr ""
 
-#: indicators/models/values.py kausal_common/datasets/models.py
+#: indicators/models/values.py
 msgid "value"
 msgstr ""
 
@@ -4093,7 +4076,7 @@ msgstr ""
 msgid "Indicator settings"
 msgstr "organisations"
 
-#: indicators/wagtail_admin.py kausal_common/organizations/models.py
+#: indicators/wagtail_admin.py
 msgid "Classification"
 msgstr ""
 
@@ -4107,7 +4090,7 @@ msgstr ""
 msgid "Visualization settings"
 msgstr "organisations"
 
-#: indicators/wagtail_admin.py kausal_common/datasets/models.py
+#: indicators/wagtail_admin.py
 msgid "Dimensions"
 msgstr ""
 
@@ -4173,419 +4156,6 @@ msgstr ""
 
 #: indicators/wagtail_hooks.py
 msgid "Goals updated"
-msgstr ""
-
-#: kausal_common/admin_site/tables.py
-#: kausal_common/models/modification_tracking.py
-msgid "Last modified at"
-msgstr ""
-
-#: kausal_common/api/exceptions.py
-msgid "Cannot delete instance because other objects reference it."
-msgstr ""
-
-#: kausal_common/api/exceptions.py
-#, python-format
-msgid "Cannot delete \"%s\" because it is connected to other objects such as instances, persons or actions."
-msgstr ""
-
-#: kausal_common/blocks/base.py
-msgid "Label for the column to be used instead of the default"
-msgstr ""
-
-#: kausal_common/blocks/base.py
-msgid "Help text for the column to be shown in the UI"
-msgstr ""
-
-#: kausal_common/blocks/base.py kausal_common/blocks/fields.py
-#, python-format
-msgid "Content block: %(label)s"
-msgstr ""
-
-#: kausal_common/blocks/base.py
-#, python-format
-msgid "Filter: %(filter_label)s"
-msgstr ""
-
-#: kausal_common/datasets/chooser.py
-#, fuzzy
-#| msgid "organization"
-msgid "Choose a dataset"
-msgstr "organisation"
-
-#: kausal_common/datasets/chooser.py
-#, fuzzy
-#| msgid "organization"
-msgid "Choose another dataset"
-msgstr "organisation"
-
-#: kausal_common/datasets/models.py
-msgid "Optional identifier that, if set, must be unique within the dimension"
-msgstr ""
-
-#: kausal_common/datasets/models.py
-msgid "Optional identifier that, if set, must be unique in the scope"
-msgstr ""
-
-#: kausal_common/datasets/models.py
-msgid "dimension scope"
-msgstr ""
-
-#: kausal_common/datasets/models.py
-msgid "dimension scopes"
-msgstr ""
-
-#: kausal_common/datasets/models.py
-msgid "Yearly"
-msgstr ""
-
-#: kausal_common/datasets/models.py
-msgid "Time resolution of the time stamps of data points in this dataset"
-msgstr ""
-
-#: kausal_common/datasets/models.py
-msgid "For a newly created dataset, start entering values from this year"
-msgstr ""
-
-#: kausal_common/datasets/models.py
-msgid "Descriptive name of the dataset schema"
-msgstr "Descriptive name of the dataset schema"
-
-#: kausal_common/datasets/models.py
-msgid "Description of the content and use of the dataset"
-msgstr ""
-
-#: kausal_common/datasets/models.py
-msgid "Time resolution"
-msgstr ""
-
-#: kausal_common/datasets/models.py
-msgid "Initial date"
-msgstr ""
-
-#: kausal_common/datasets/models.py
-msgid "Metrics"
-msgstr ""
-
-#: kausal_common/datasets/models.py
-msgid "Defines the interpretation and units for the values of the dataset"
-msgstr ""
-
-#: kausal_common/datasets/models.py
-msgid "Used when metrics are tracked for multiple categories"
-msgstr ""
-
-#: kausal_common/datasets/models.py
-msgid "Person permissions"
-msgstr ""
-
-#: kausal_common/datasets/models.py
-msgid "Grants permissions on datasets of this schema to certain persons"
-msgstr ""
-
-#: kausal_common/datasets/models.py
-msgid "Group permissions"
-msgstr ""
-
-#: kausal_common/datasets/models.py
-msgid "Grants permissions on datasets of this schema to certain person groups"
-msgstr ""
-
-#: kausal_common/datasets/models.py orgs/wagtail_admin.py
-msgid "Permissions"
-msgstr ""
-
-#: kausal_common/datasets/models.py
-#, fuzzy
-#| msgid "organization"
-msgid "dataset schema"
-msgstr "organisation"
-
-#: kausal_common/datasets/models.py
-#, fuzzy
-#| msgid "organization"
-msgid "dataset schemas"
-msgstr "organisation"
-
-#: kausal_common/datasets/models.py
-#, fuzzy
-#| msgid "organization"
-msgid "dataset metric"
-msgstr "organisation"
-
-#: kausal_common/datasets/models.py
-#, fuzzy
-#| msgid "organization"
-msgid "dataset metrics"
-msgstr "organisation"
-
-#: kausal_common/datasets/models.py
-msgid "dataset schema dimension"
-msgstr ""
-
-#: kausal_common/datasets/models.py
-msgid "dataset schema dimensions"
-msgstr ""
-
-#: kausal_common/datasets/models.py
-msgid "schema"
-msgstr ""
-
-#: kausal_common/datasets/models.py
-msgid "Optional identifier that, if set, must be unique in the dataset's scope"
-msgstr ""
-
-#: kausal_common/datasets/models.py
-msgid "dataset schema scope"
-msgstr ""
-
-#: kausal_common/datasets/models.py
-msgid "dataset schema scopes"
-msgstr ""
-
-#: kausal_common/datasets/models.py
-msgid "Date of this data point in context of the dataset's time resolution"
-msgstr ""
-
-#: kausal_common/datasets/models.py
-msgid "metric"
-msgstr ""
-
-#: kausal_common/datasets/models.py
-msgid "data point"
-msgstr ""
-
-#: kausal_common/datasets/models.py
-msgid "data points"
-msgstr ""
-
-#: kausal_common/datasets/models.py
-msgid "data point dimension category"
-msgstr ""
-
-#: kausal_common/datasets/models.py
-msgid "data point dimension categories"
-msgstr ""
-
-#: kausal_common/datasets/models.py
-msgid "Resolved"
-msgstr ""
-
-#: kausal_common/datasets/models.py
-msgid "Unresolved"
-msgstr ""
-
-#: kausal_common/datasets/models.py
-msgid "Sticky comment"
-msgstr ""
-
-#: kausal_common/datasets/models.py
-msgid "Review comment"
-msgstr ""
-
-#: kausal_common/datasets/models.py
-msgid "resolved at"
-msgstr ""
-
-#: kausal_common/datasets/models.py
-msgid "comments"
-msgstr ""
-
-#: kausal_common/datasets/models.py
-msgid "edition"
-msgstr ""
-
-#: kausal_common/datasets/models.py
-msgid "authority"
-msgstr ""
-
-#: kausal_common/datasets/models.py
-#, fuzzy
-#| msgid "main organization for the plan"
-msgid "The organization responsible for the data source"
-msgstr "main organisation for the plan"
-
-#: kausal_common/datasets/models.py
-msgid "Data source"
-msgstr ""
-
-#: kausal_common/datasets/models.py kausal_common/datasets/wagtail_hooks.py
-msgid "Data sources"
-msgstr ""
-
-#: kausal_common/datasets/models.py
-msgid "Unknown schema"
-msgstr ""
-
-#: kausal_common/datasets/models.py
-#, python-format
-msgid "Data source reference in: %(schema)s"
-msgstr ""
-
-#: kausal_common/datasets/models.py
-msgid "Data source reference"
-msgstr ""
-
-#: kausal_common/datasets/models.py
-msgid "data source reference"
-msgstr ""
-
-#: kausal_common/datasets/models.py
-msgid "data source references"
-msgstr ""
-
-#: kausal_common/datasets/wagtail_hooks.py
-msgid "Edit dataset"
-msgstr ""
-
-#: kausal_common/datasets/wagtail_hooks.py
-#, python-format
-msgid "(Private %(object)s)"
-msgstr ""
-
-#: kausal_common/datasets/wagtail_hooks.py
-#, python-format
-msgid "Edit this %(object)s"
-msgstr ""
-
-#: kausal_common/models/modification_tracking.py
-msgid "Created at"
-msgstr ""
-
-#: kausal_common/models/modification_tracking.py
-msgid "Last modified by"
-msgstr ""
-
-#: kausal_common/models/uuid.py
-msgid "UUID"
-msgstr ""
-
-#: kausal_common/organizations/forms.py
-msgid "A node cannot be moved under itself in the hierarchy."
-msgstr ""
-
-#: kausal_common/organizations/models.py
-msgctxt "node"
-msgid "Parent"
-msgstr ""
-
-#: kausal_common/organizations/models.py
-msgid "The time at which the resource was created"
-msgstr ""
-
-#: kausal_common/organizations/models.py
-msgid "The time at which the resource was updated"
-msgstr ""
-
-#: kausal_common/organizations/models.py
-msgid "An organization category, e.g. committee"
-msgstr "An organisation category, e.g. committee"
-
-#: kausal_common/organizations/models.py
-msgid "A primary name, e.g. a legally recognized name"
-msgstr "A primary name, e.g. a legally recognised name"
-
-#: kausal_common/organizations/models.py
-msgid "Short name"
-msgstr ""
-
-#: kausal_common/organizations/models.py
-msgid "A simplified short version of name for the general public"
-msgstr ""
-
-#: kausal_common/organizations/models.py
-msgid "A distinct name for this organization (generated automatically)"
-msgstr "A distinct name for this organisation (generated automatically)"
-
-#: kausal_common/organizations/models.py
-msgid "A date of founding"
-msgstr ""
-
-#: kausal_common/organizations/models.py
-msgid "A date of dissolution"
-msgstr ""
-
-#: kausal_common/organizations/models.py
-msgid "Location"
-msgstr ""
-
-#: kausal_common/organizations/models.py
-msgid "organizations"
-msgstr "organisations"
-
-#: kausal_common/organizations/views.py
-#, python-format
-msgid "New child %(model)s for %(parent)s"
-msgstr ""
-
-#: kausal_common/organizations/views.py
-msgid "This will delete the following objects:"
-msgstr ""
-
-#: kausal_common/people/api.py kausal_common/people/models.py
-msgid "Person with this email already exists"
-msgstr ""
-
-#: kausal_common/people/api.py
-msgid "Not all objects have an email address"
-msgstr ""
-
-#: kausal_common/people/api.py
-#, python-format
-msgid "Duplicate email addresses: %s"
-msgstr ""
-
-#: kausal_common/people/chooser.py
-msgid "Create new"
-msgstr ""
-
-#: kausal_common/people/chooser.py
-msgid "Choose person"
-msgstr ""
-
-#: kausal_common/people/chooser.py
-msgid "Choose a person"
-msgstr ""
-
-#: kausal_common/people/chooser.py
-msgid "Choose another person"
-msgstr ""
-
-#: kausal_common/people/chooser.py
-msgid "Edit this person"
-msgstr ""
-
-#: kausal_common/people/models.py people/wagtail_admin.py
-msgid "first name"
-msgstr ""
-
-#: kausal_common/people/models.py people/wagtail_admin.py
-msgid "last name"
-msgstr ""
-
-#: kausal_common/people/models.py
-msgctxt "person's role"
-msgid "title"
-msgstr ""
-
-#: kausal_common/people/models.py
-msgid "postal address"
-msgstr ""
-
-#: kausal_common/people/models.py
-msgid "user"
-msgstr ""
-
-#: kausal_common/people/models.py
-msgid "Set if the person has an user account"
-msgstr ""
-
-#: kausal_common/people/models.py
-msgid "image cropping"
-msgstr ""
-
-#: kausal_common/people/models.py
-msgid "people"
 msgstr ""
 
 #: notifications/apps.py notifications/wagtail_admin.py
@@ -5071,6 +4641,10 @@ msgstr ""
 
 #: orgs/wagtail_admin.py
 msgid "People who can edit data of this organization and suborganizations but no plan-specific content"
+msgstr ""
+
+#: orgs/wagtail_admin.py
+msgid "Permissions"
 msgstr ""
 
 #: orgs/wagtail_admin.py
@@ -5711,6 +5285,14 @@ msgid "This person has no access to the admin interface. This is commonly becaus
 msgstr ""
 
 #: people/wagtail_admin.py
+msgid "first name"
+msgstr ""
+
+#: people/wagtail_admin.py
+msgid "last name"
+msgstr ""
+
+#: people/wagtail_admin.py
 msgid "last login"
 msgstr ""
 
@@ -5837,6 +5419,10 @@ msgstr ""
 #| msgid "responsible organizations"
 msgid "Other responsible parties"
 msgstr "responsible organisations"
+
+#: reports/spreadsheets/action_print_layout.py
+msgid "Page"
+msgstr ""
 
 #: reports/spreadsheets/action_print_layout.py
 msgid "Profiles"
@@ -6021,6 +5607,56 @@ msgstr ""
 #: users/models.py
 msgid "No permission to remove the user belonging to plans you are not managing."
 msgstr ""
+
+#, fuzzy
+#~| msgid "organization"
+#~ msgid "Choose a dataset"
+#~ msgstr "organisation"
+
+#, fuzzy
+#~| msgid "organization"
+#~ msgid "Choose another dataset"
+#~ msgstr "organisation"
+
+#~ msgid "Descriptive name of the dataset schema"
+#~ msgstr "Descriptive name of the dataset schema"
+
+#, fuzzy
+#~| msgid "organization"
+#~ msgid "dataset schema"
+#~ msgstr "organisation"
+
+#, fuzzy
+#~| msgid "organization"
+#~ msgid "dataset schemas"
+#~ msgstr "organisation"
+
+#, fuzzy
+#~| msgid "organization"
+#~ msgid "dataset metric"
+#~ msgstr "organisation"
+
+#, fuzzy
+#~| msgid "organization"
+#~ msgid "dataset metrics"
+#~ msgstr "organisation"
+
+#, fuzzy
+#~| msgid "main organization for the plan"
+#~ msgid "The organization responsible for the data source"
+#~ msgstr "main organisation for the plan"
+
+#~ msgid "An organization category, e.g. committee"
+#~ msgstr "An organisation category, e.g. committee"
+
+#~ msgid "A primary name, e.g. a legally recognized name"
+#~ msgstr "A primary name, e.g. a legally recognised name"
+
+#~ msgid "A distinct name for this organization (generated automatically)"
+#~ msgstr "A distinct name for this organisation (generated automatically)"
+
+#~ msgid "organizations"
+#~ msgstr "organisations"
 
 #~ msgid "What is the minimum value this indicator can reach? It is used in visualizations as the Y axis minimum."
 #~ msgstr "What is the minimum value this indicator can reach? It is used in visualisations as the Y axis minimum."

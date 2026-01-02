@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-12-31 15:11+0200\n"
+"POT-Creation-Date: 2026-01-02 11:42+0100\n"
 "PO-Revision-Date: 2025-04-02 07:20+0000\n"
 "Last-Translator: Matias Wargelin <matias.wargelin@kausal.tech>\n"
 "Language-Team: Portuguese (Brazil) <https://weblate.kausal.tech/projects/watch/django/pt_BR/>\n"
@@ -82,8 +82,6 @@ msgstr "Última atualização"
 #: admin_site/models.py
 #: admin_site/templates/admin_site/own_indicators_panel.html
 #: audit_logging/templates/site_history_results.html copying/views.py
-#: kausal_common/datasets/models.py
-#: kausal_common/templates/kausal_common/people/chooser_results.html
 msgid "Name"
 msgstr "Nome"
 
@@ -412,8 +410,7 @@ msgstr "Título"
 
 #: actions/blocks/action_content.py actions/blocks/action_content_blocks.py
 #: actions/blocks/action_list.py actions/blocks/category_list.py
-#: actions/blocks/paths_content.py kausal_common/blocks/base.py
-#: kausal_common/blocks/fields.py
+#: actions/blocks/paths_content.py
 #, fuzzy
 msgid "Help text"
 msgstr "Texto de ajuda"
@@ -442,13 +439,12 @@ msgstr "Campo"
 msgid "Category"
 msgstr "Categoria"
 
-#: actions/blocks/action_content_blocks.py kausal_common/blocks/base.py
-#: kausal_common/blocks/fields.py
+#: actions/blocks/action_content_blocks.py
 #, fuzzy
 msgid "Heading to show instead of the default"
 msgstr "Título a ser exibido em vez do padrão"
 
-#: actions/blocks/action_content_blocks.py kausal_common/blocks/base.py
+#: actions/blocks/action_content_blocks.py
 #, fuzzy
 msgid "Label"
 msgstr "Rótulo"
@@ -512,7 +508,6 @@ msgid "Form Field"
 msgstr "Campo"
 
 #: actions/blocks/action_content_blocks.py indicators/wagtail_admin.py
-#: kausal_common/datasets/models.py
 #, fuzzy
 msgid "Description"
 msgstr "Descrição"
@@ -598,8 +593,7 @@ msgstr "conjuntos de dados"
 msgid "What label should be used in the public UI for the official name?"
 msgstr "Qual rótulo deve ser usado na IU pública para o nome oficial?"
 
-#: actions/blocks/action_content_blocks.py kausal_common/blocks/base.py
-#: kausal_common/blocks/fields.py
+#: actions/blocks/action_content_blocks.py
 #, fuzzy
 msgid "Field label"
 msgstr "Etiqueta do campo"
@@ -744,7 +738,7 @@ msgstr "Status"
 msgid "Dataset Schema"
 msgstr "licença do conjunto de dados"
 
-#: actions/blocks/filters.py kausal_common/blocks/base.py
+#: actions/blocks/filters.py
 #, fuzzy
 msgid "Label for 'show all'"
 msgstr "Rótulo para \"mostrar tudo"
@@ -1001,7 +995,6 @@ msgstr "organização principal"
 #: actions/models/plan.py feedback/models.py
 #: indicators/models/common_indicator.py indicators/models/dimensions.py
 #: indicators/models/indicator.py indicators/models/metadata.py
-#: kausal_common/datasets/models.py kausal_common/organizations/models.py
 #: reports/models.py
 #, fuzzy
 msgid "name"
@@ -1035,8 +1028,7 @@ msgstr "Parágrafo principal"
 
 #: actions/models/action.py actions/models/plan.py
 #: indicators/models/common_indicator.py indicators/models/indicator.py
-#: indicators/models/metadata.py kausal_common/datasets/models.py
-#: kausal_common/organizations/models.py
+#: indicators/models/metadata.py
 #, fuzzy
 msgid "description"
 msgstr "descrição"
@@ -1173,7 +1165,7 @@ msgstr "pessoas de contato"
 msgid "updated at"
 msgstr "atualizado em"
 
-#: actions/models/action.py kausal_common/datasets/models.py reports/models.py
+#: actions/models/action.py reports/models.py
 #, fuzzy
 msgid "start date"
 msgstr "data de início"
@@ -1302,8 +1294,7 @@ msgid "Collaborator"
 msgstr "Colaborador"
 
 #: actions/models/action.py actions/models/plan.py
-#: indicators/models/indicator.py kausal_common/organizations/models.py
-#: kausal_common/people/models.py orgs/models.py people/wagtail_admin.py
+#: indicators/models/indicator.py orgs/models.py people/wagtail_admin.py
 #, fuzzy
 msgid "organization"
 msgstr "organização"
@@ -1344,8 +1335,7 @@ msgid "Moderator"
 msgstr "Moderador"
 
 #: actions/models/action.py actions/models/plan.py
-#: indicators/models/contact_persons.py kausal_common/people/models.py
-#: orgs/models.py
+#: indicators/models/contact_persons.py orgs/models.py
 #, fuzzy
 msgid "person"
 msgstr "pessoa"
@@ -1435,12 +1425,12 @@ msgstr "cancelada"
 msgid "state"
 msgstr "estado"
 
-#: actions/models/action.py feedback/models.py kausal_common/datasets/models.py
+#: actions/models/action.py feedback/models.py
 #, fuzzy
 msgid "comment"
 msgstr "comentário"
 
-#: actions/models/action.py
+#: actions/models/action.py reports/report_formatters.py
 #, fuzzy
 msgid "due date"
 msgstr "data de vencimento"
@@ -1522,7 +1512,6 @@ msgid "action impact classes"
 msgstr "aulas de impacto de ação"
 
 #: actions/models/action.py feedback/models.py indicators/models/metadata.py
-#: kausal_common/datasets/models.py kausal_common/organizations/models.py
 #: pages/blocks.py pages/models.py
 #, fuzzy
 msgid "URL"
@@ -1552,7 +1541,7 @@ msgstr "conteúdo"
 msgid "Summarize what was changed. This message will be displayed publicly."
 msgstr ""
 
-#: actions/models/action.py aplans/utils.py kausal_common/people/models.py
+#: actions/models/action.py aplans/utils.py
 #, fuzzy
 msgid "created by"
 msgstr "criado por"
@@ -1608,7 +1597,6 @@ msgid "category change log messages"
 msgstr "níveis de categoria"
 
 #: actions/models/action.py indicators/models/values.py
-#: kausal_common/datasets/models.py
 #, fuzzy
 msgid "date"
 msgstr "data"
@@ -1837,7 +1825,7 @@ msgstr "tem uma coleção"
 msgid "Set if this category type should have its own collection for images"
 msgstr "Defina se esse tipo de categoria deve ter sua própria coleção de imagens"
 
-#: actions/models/category.py kausal_common/organizations/models.py
+#: actions/models/category.py
 #, fuzzy
 msgid "primary language"
 msgstr "idioma principal"
@@ -3046,7 +3034,7 @@ msgstr "método de login"
 msgid "Login method that will be used for users that don't have a password set"
 msgstr "Método de login que será usado para usuários que não têm uma senha definida"
 
-#: admin_site/models.py kausal_common/datasets/models.py
+#: admin_site/models.py
 #, fuzzy
 msgid "label"
 msgstr "rótulo"
@@ -3343,13 +3331,12 @@ msgstr "Mês e ano (12.2020)"
 msgid "Year (2020)"
 msgstr "Ano (2020)"
 
-#: aplans/utils.py kausal_common/datasets/models.py
-#: kausal_common/models/fields.py notifications/models.py
+#: aplans/utils.py notifications/models.py
 #, fuzzy
 msgid "identifier"
 msgstr "identificador"
 
-#: aplans/utils.py kausal_common/models/ordered.py
+#: aplans/utils.py
 #, fuzzy
 msgid "order"
 msgstr "ordem"
@@ -3495,7 +3482,6 @@ msgid "Milestones"
 msgstr "Marcos"
 
 #: content/models.py indicators/wagtail_admin.py
-#: kausal_common/templates/kausal_common/people/chooser_results.html
 #, fuzzy
 msgid "Organization"
 msgstr "Organização"
@@ -3721,8 +3707,7 @@ msgstr "documento"
 msgid "documents"
 msgstr "documentos"
 
-#: feedback/models.py kausal_common/organizations/models.py
-#: kausal_common/people/models.py kausal_common/users/models.py users/models.py
+#: feedback/models.py users/models.py
 #, fuzzy
 msgid "email address"
 msgstr "endereço de e-mail"
@@ -3878,7 +3863,7 @@ msgstr "Assinatura ou créditos da imagem"
 msgid "Alt text"
 msgstr "Texto alternativo"
 
-#: images/models.py kausal_common/people/models.py
+#: images/models.py
 #, fuzzy
 msgid "image"
 msgstr "imagem"
@@ -3928,8 +3913,7 @@ msgstr "Animado"
 msgid "Indicator showcase"
 msgstr "Vitrine de indicadores"
 
-#: indicators/blocks/__init__.py kausal_common/blocks/base.py
-#: kausal_common/blocks/fields.py
+#: indicators/blocks/__init__.py
 #, fuzzy
 msgid "Help text for the field to be shown in the UI"
 msgstr "Texto de ajuda para o campo a ser mostrado na interface do usuário"
@@ -4192,7 +4176,7 @@ msgid "quantity"
 msgstr "quantidade"
 
 #: indicators/models/common_indicator.py indicators/models/indicator.py
-#: indicators/models/metadata.py kausal_common/datasets/models.py
+#: indicators/models/metadata.py
 #, fuzzy
 msgid "unit"
 msgstr "unidade"
@@ -4257,12 +4241,12 @@ msgstr "indicador pessoa de contato"
 msgid "indicator contact persons"
 msgstr "pessoas de contato do indicador"
 
-#: indicators/models/dimensions.py kausal_common/datasets/models.py
+#: indicators/models/dimensions.py
 #, fuzzy
 msgid "dimension"
 msgstr "dimensão"
 
-#: indicators/models/dimensions.py kausal_common/datasets/models.py
+#: indicators/models/dimensions.py
 #, fuzzy
 msgid "dimensions"
 msgstr "dimensões"
@@ -4281,12 +4265,12 @@ msgstr "visualização padrão"
 msgid "Default color for this dimension category in charts"
 msgstr ""
 
-#: indicators/models/dimensions.py kausal_common/datasets/models.py
+#: indicators/models/dimensions.py
 #, fuzzy
 msgid "dimension category"
 msgstr "categoria de dimensão"
 
-#: indicators/models/dimensions.py kausal_common/datasets/models.py
+#: indicators/models/dimensions.py
 #, fuzzy
 msgid "dimension categories"
 msgstr "categorias de dimensão"
@@ -4422,7 +4406,6 @@ msgid "reference value"
 msgstr ""
 
 #: indicators/models/indicator.py indicators/models/metadata.py
-#: kausal_common/datasets/models.py
 #, fuzzy
 msgid "datasets"
 msgstr "conjuntos de dados"
@@ -4610,7 +4593,7 @@ msgstr "Definir se a organização do proprietário não estiver disponível"
 msgid "license"
 msgstr "licença"
 
-#: indicators/models/metadata.py kausal_common/datasets/models.py
+#: indicators/models/metadata.py
 #, fuzzy
 msgid "dataset"
 msgstr "conjunto de dados"
@@ -4665,7 +4648,7 @@ msgstr "nível de confiança"
 msgid "How confident we are that the causal effect is present"
 msgstr "Quão confiantes estamos de que o efeito causal está presente"
 
-#: indicators/models/values.py kausal_common/datasets/models.py
+#: indicators/models/values.py
 #, fuzzy
 msgid "value"
 msgstr "valor"
@@ -4793,7 +4776,7 @@ msgstr "Esse indicador está vinculado a um indicador comum, portanto, a quantid
 msgid "Indicator settings"
 msgstr "configurações de notificação"
 
-#: indicators/wagtail_admin.py kausal_common/organizations/models.py
+#: indicators/wagtail_admin.py
 #, fuzzy
 msgid "Classification"
 msgstr "Classificação"
@@ -4807,7 +4790,7 @@ msgstr ""
 msgid "Visualization settings"
 msgstr "configurações de notificação"
 
-#: indicators/wagtail_admin.py kausal_common/datasets/models.py
+#: indicators/wagtail_admin.py
 #, fuzzy
 msgid "Dimensions"
 msgstr "Dimensões"
@@ -4890,476 +4873,6 @@ msgstr "Atualizado em"
 #| msgid "Last updated"
 msgid "Goals updated"
 msgstr "Última atualização"
-
-#: kausal_common/admin_site/tables.py
-#: kausal_common/models/modification_tracking.py
-#, fuzzy
-msgid "Last modified at"
-msgstr "Última modificação"
-
-#: kausal_common/api/exceptions.py
-#, fuzzy
-msgid "Cannot delete instance because other objects reference it."
-msgstr "Não é possível excluir a instância porque outros objetos fazem referência a ela."
-
-#: kausal_common/api/exceptions.py
-#, fuzzy, python-format
-msgid "Cannot delete \"%s\" because it is connected to other objects such as instances, persons or actions."
-msgstr "Não é possível excluir \"%s\" porque ele está conectado a outros objetos, como planos, pessoas ou ações."
-
-#: kausal_common/blocks/base.py
-#, fuzzy
-msgid "Label for the column to be used instead of the default"
-msgstr "Rótulo da coluna a ser usado em vez do padrão"
-
-#: kausal_common/blocks/base.py
-#, fuzzy
-msgid "Help text for the column to be shown in the UI"
-msgstr "Texto de ajuda para o campo a ser mostrado na interface do usuário"
-
-#: kausal_common/blocks/base.py kausal_common/blocks/fields.py
-#, fuzzy, python-format
-msgid "Content block: %(label)s"
-msgstr "Bloco de conteúdo: %(label)s"
-
-#: kausal_common/blocks/base.py
-#, fuzzy, python-format
-msgid "Filter: %(filter_label)s"
-msgstr "Filtro: %(filter_label)s"
-
-#: kausal_common/datasets/chooser.py
-#, fuzzy
-msgid "Choose a dataset"
-msgstr "Escolha um tipo de categoria"
-
-#: kausal_common/datasets/chooser.py
-#, fuzzy
-msgid "Choose another dataset"
-msgstr "Escolha outro tipo de categoria"
-
-#: kausal_common/datasets/models.py
-msgid "Optional identifier that, if set, must be unique within the dimension"
-msgstr ""
-
-#: kausal_common/datasets/models.py
-msgid "Optional identifier that, if set, must be unique in the scope"
-msgstr ""
-
-#: kausal_common/datasets/models.py
-#, fuzzy
-msgid "dimension scope"
-msgstr "dimensões"
-
-#: kausal_common/datasets/models.py
-#, fuzzy
-msgid "dimension scopes"
-msgstr "categorias de dimensão"
-
-#: kausal_common/datasets/models.py
-#, fuzzy
-msgid "Yearly"
-msgstr "Ano"
-
-#: kausal_common/datasets/models.py
-msgid "Time resolution of the time stamps of data points in this dataset"
-msgstr ""
-
-#: kausal_common/datasets/models.py
-msgid "For a newly created dataset, start entering values from this year"
-msgstr ""
-
-#: kausal_common/datasets/models.py
-msgid "Descriptive name of the dataset schema"
-msgstr "Nome descritivo do esquema do conjunto de dados"
-
-#: kausal_common/datasets/models.py
-#, fuzzy
-msgid "Description of the content and use of the dataset"
-msgstr "Descrição a ser exibida após o conteúdo do campo"
-
-#: kausal_common/datasets/models.py
-#, fuzzy
-msgid "Time resolution"
-msgstr "resolução de tempo"
-
-#: kausal_common/datasets/models.py
-#, fuzzy
-msgid "Initial date"
-msgstr "data de início"
-
-#: kausal_common/datasets/models.py
-msgid "Metrics"
-msgstr "Métricas"
-
-#: kausal_common/datasets/models.py
-msgid "Defines the interpretation and units for the values of the dataset"
-msgstr ""
-
-#: kausal_common/datasets/models.py
-msgid "Used when metrics are tracked for multiple categories"
-msgstr ""
-
-#: kausal_common/datasets/models.py
-#, fuzzy
-msgid "Person permissions"
-msgstr "Permissões"
-
-#: kausal_common/datasets/models.py
-msgid "Grants permissions on datasets of this schema to certain persons"
-msgstr ""
-
-#: kausal_common/datasets/models.py
-#, fuzzy
-msgid "Group permissions"
-msgstr "Permissões"
-
-#: kausal_common/datasets/models.py
-msgid "Grants permissions on datasets of this schema to certain person groups"
-msgstr ""
-
-#: kausal_common/datasets/models.py orgs/wagtail_admin.py
-#, fuzzy
-msgid "Permissions"
-msgstr "Permissões"
-
-#: kausal_common/datasets/models.py
-#, fuzzy
-msgid "dataset schema"
-msgstr "licença do conjunto de dados"
-
-#: kausal_common/datasets/models.py
-#, fuzzy
-msgid "dataset schemas"
-msgstr "licença do conjunto de dados"
-
-#: kausal_common/datasets/models.py
-#, fuzzy
-msgid "dataset metric"
-msgstr "licença do conjunto de dados"
-
-#: kausal_common/datasets/models.py
-#, fuzzy
-msgid "dataset metrics"
-msgstr "licença do conjunto de dados"
-
-#: kausal_common/datasets/models.py
-#, fuzzy
-msgid "dataset schema dimension"
-msgstr "dimensões"
-
-#: kausal_common/datasets/models.py
-#, fuzzy
-msgid "dataset schema dimensions"
-msgstr "dimensões"
-
-#: kausal_common/datasets/models.py
-msgid "schema"
-msgstr ""
-
-#: kausal_common/datasets/models.py
-msgid "Optional identifier that, if set, must be unique in the dataset's scope"
-msgstr ""
-
-#: kausal_common/datasets/models.py
-#, fuzzy
-msgid "dataset schema scope"
-msgstr "licença do conjunto de dados"
-
-#: kausal_common/datasets/models.py
-#, fuzzy
-msgid "dataset schema scopes"
-msgstr "licenças de conjuntos de dados"
-
-#: kausal_common/datasets/models.py
-msgid "Date of this data point in context of the dataset's time resolution"
-msgstr ""
-
-#: kausal_common/datasets/models.py
-msgid "metric"
-msgstr ""
-
-#: kausal_common/datasets/models.py
-#, fuzzy
-msgid "data point"
-msgstr "Último ponto de dados"
-
-#: kausal_common/datasets/models.py
-#, fuzzy
-msgid "data points"
-msgstr "Último ponto de dados"
-
-#: kausal_common/datasets/models.py
-#, fuzzy
-msgid "data point dimension category"
-msgstr "categoria de dimensão"
-
-#: kausal_common/datasets/models.py
-#, fuzzy
-msgid "data point dimension categories"
-msgstr "categorias de dimensão"
-
-#: kausal_common/datasets/models.py
-msgid "Resolved"
-msgstr ""
-
-#: kausal_common/datasets/models.py
-msgid "Unresolved"
-msgstr ""
-
-#: kausal_common/datasets/models.py
-#, fuzzy
-msgid "Sticky comment"
-msgstr "comentário"
-
-#: kausal_common/datasets/models.py
-#, fuzzy
-msgid "Review comment"
-msgstr "comentário"
-
-#: kausal_common/datasets/models.py
-#, fuzzy
-msgid "resolved at"
-msgstr "criado em"
-
-#: kausal_common/datasets/models.py
-#, fuzzy
-msgid "comments"
-msgstr "comentário"
-
-#: kausal_common/datasets/models.py
-#, fuzzy
-msgid "edition"
-msgstr "Seção"
-
-#: kausal_common/datasets/models.py
-#, fuzzy
-msgid "authority"
-msgstr "autor"
-
-#: kausal_common/datasets/models.py
-#, fuzzy
-msgid "The organization responsible for the data source"
-msgstr "organização principal do plano"
-
-#: kausal_common/datasets/models.py
-#, fuzzy
-msgid "Data source"
-msgstr "conjuntos de dados"
-
-#: kausal_common/datasets/models.py kausal_common/datasets/wagtail_hooks.py
-#, fuzzy
-msgid "Data sources"
-msgstr "conjuntos de dados"
-
-#: kausal_common/datasets/models.py
-#, fuzzy
-msgid "Unknown schema"
-msgstr "Desconhecido"
-
-#: kausal_common/datasets/models.py
-#, fuzzy, python-format
-msgid "Data source reference in: %(schema)s"
-msgstr "Preferências de notificação"
-
-#: kausal_common/datasets/models.py
-#, fuzzy
-msgid "Data source reference"
-msgstr "Preferências de notificação"
-
-#: kausal_common/datasets/models.py
-msgid "data source reference"
-msgstr ""
-
-#: kausal_common/datasets/models.py
-#, fuzzy
-msgid "data source references"
-msgstr "Preferências de notificação"
-
-#: kausal_common/datasets/wagtail_hooks.py
-#, fuzzy
-msgid "Edit dataset"
-msgstr "Editar dados"
-
-#: kausal_common/datasets/wagtail_hooks.py
-#, python-format
-msgid "(Private %(object)s)"
-msgstr ""
-
-#: kausal_common/datasets/wagtail_hooks.py
-#, fuzzy, python-format
-msgid "Edit this %(object)s"
-msgstr "Editar esta pessoa"
-
-#: kausal_common/models/modification_tracking.py
-#, fuzzy
-msgid "Created at"
-msgstr "criado em"
-
-#: kausal_common/models/modification_tracking.py
-#, fuzzy
-msgid "Last modified by"
-msgstr "Última modificação"
-
-#: kausal_common/models/uuid.py
-msgid "UUID"
-msgstr ""
-
-#: kausal_common/organizations/forms.py
-#, fuzzy
-msgid "A node cannot be moved under itself in the hierarchy."
-msgstr "Um nó não pode ser movido para baixo de si mesmo na hierarquia."
-
-#: kausal_common/organizations/models.py
-#, fuzzy
-msgctxt "node"
-msgid "Parent"
-msgstr "Pais"
-
-#: kausal_common/organizations/models.py
-#, fuzzy
-msgid "The time at which the resource was created"
-msgstr "A hora em que o recurso foi criado"
-
-#: kausal_common/organizations/models.py
-#, fuzzy
-msgid "The time at which the resource was updated"
-msgstr "A hora em que o recurso foi atualizado"
-
-#: kausal_common/organizations/models.py
-#, fuzzy
-msgid "An organization category, e.g. committee"
-msgstr "Uma categoria de organização, por exemplo, comitê"
-
-#: kausal_common/organizations/models.py
-#, fuzzy
-msgid "A primary name, e.g. a legally recognized name"
-msgstr "Um nome principal, por exemplo, um nome legalmente reconhecido"
-
-#: kausal_common/organizations/models.py
-#, fuzzy
-msgid "Short name"
-msgstr "Nome abreviado"
-
-#: kausal_common/organizations/models.py
-#, fuzzy
-msgid "A simplified short version of name for the general public"
-msgstr "Uma versão curta e simplificada do nome para o público em geral"
-
-#: kausal_common/organizations/models.py
-#, fuzzy
-msgid "A distinct name for this organization (generated automatically)"
-msgstr "Um nome distinto para essa organização (gerado automaticamente)"
-
-#: kausal_common/organizations/models.py
-#, fuzzy
-msgid "A date of founding"
-msgstr "Uma data de fundação"
-
-#: kausal_common/organizations/models.py
-#, fuzzy
-msgid "A date of dissolution"
-msgstr "Uma data de dissolução"
-
-#: kausal_common/organizations/models.py
-#, fuzzy
-msgid "Location"
-msgstr "Localização"
-
-#: kausal_common/organizations/models.py
-#, fuzzy
-msgid "organizations"
-msgstr "organizações"
-
-#: kausal_common/organizations/views.py
-#, python-format
-msgid "New child %(model)s for %(parent)s"
-msgstr ""
-
-#: kausal_common/organizations/views.py
-#, fuzzy
-msgid "This will delete the following objects:"
-msgstr "Isso marcará as seguintes ações como concluídas:"
-
-#: kausal_common/people/api.py kausal_common/people/models.py
-#, fuzzy
-msgid "Person with this email already exists"
-msgstr "Já existe uma pessoa com esse e-mail"
-
-#: kausal_common/people/api.py
-#, fuzzy
-msgid "Not all objects have an email address"
-msgstr "Nem todos os objetos têm um endereço de e-mail"
-
-#: kausal_common/people/api.py
-#, fuzzy, python-format
-msgid "Duplicate email addresses: %s"
-msgstr "Endereços de e-mail duplicados: %s"
-
-#: kausal_common/people/chooser.py
-#, fuzzy
-msgid "Create new"
-msgstr "Criar novo"
-
-#: kausal_common/people/chooser.py
-#, fuzzy
-msgid "Choose person"
-msgstr "Escolha a pessoa"
-
-#: kausal_common/people/chooser.py
-#, fuzzy
-msgid "Choose a person"
-msgstr "Escolha uma pessoa"
-
-#: kausal_common/people/chooser.py
-#, fuzzy
-msgid "Choose another person"
-msgstr "Escolha outra pessoa"
-
-#: kausal_common/people/chooser.py
-#, fuzzy
-msgid "Edit this person"
-msgstr "Editar esta pessoa"
-
-#: kausal_common/people/models.py people/wagtail_admin.py
-#, fuzzy
-msgid "first name"
-msgstr "primeiro nome"
-
-#: kausal_common/people/models.py people/wagtail_admin.py
-#, fuzzy
-msgid "last name"
-msgstr "sobrenome"
-
-#: kausal_common/people/models.py
-#, fuzzy
-msgctxt "person's role"
-msgid "title"
-msgstr "título"
-
-#: kausal_common/people/models.py
-#, fuzzy
-msgid "postal address"
-msgstr "endereço postal"
-
-#: kausal_common/people/models.py
-#, fuzzy
-msgid "user"
-msgstr "usuário"
-
-#: kausal_common/people/models.py
-#, fuzzy
-msgid "Set if the person has an user account"
-msgstr "Defina se a pessoa tem uma conta de usuário"
-
-#: kausal_common/people/models.py
-#, fuzzy
-msgid "image cropping"
-msgstr "corte de imagens"
-
-#: kausal_common/people/models.py
-#, fuzzy
-msgid "people"
-msgstr "pessoas"
 
 #: notifications/apps.py notifications/wagtail_admin.py
 #, fuzzy
@@ -5921,6 +5434,11 @@ msgstr "Administradores de metadados"
 #, fuzzy
 msgid "People who can edit data of this organization and suborganizations but no plan-specific content"
 msgstr "Pessoas que podem editar os dados dessa organização e das suborganizações, mas não o conteúdo específico do plano"
+
+#: orgs/wagtail_admin.py
+#, fuzzy
+msgid "Permissions"
+msgstr "Permissões"
 
 #: orgs/wagtail_admin.py
 #, fuzzy, python-format
@@ -6678,6 +6196,16 @@ msgstr "Essa pessoa não tem acesso à interface de administração. Isso geralm
 
 #: people/wagtail_admin.py
 #, fuzzy
+msgid "first name"
+msgstr "primeiro nome"
+
+#: people/wagtail_admin.py
+#, fuzzy
+msgid "last name"
+msgstr "sobrenome"
+
+#: people/wagtail_admin.py
+#, fuzzy
 msgid "last login"
 msgstr "último login"
 
@@ -6822,6 +6350,11 @@ msgstr ""
 #: reports/report_formatters.py
 msgid "Other responsible parties"
 msgstr "Outros responsáveis"
+
+#: reports/spreadsheets/action_print_layout.py
+#, fuzzy
+msgid "Page"
+msgstr "Link da página"
 
 #: reports/spreadsheets/action_print_layout.py
 msgid "Profiles"
@@ -7031,6 +6564,310 @@ msgstr "Usuários"
 msgid "No permission to remove the user belonging to plans you are not managing."
 msgstr "Nenhuma permissão para remover o usuário pertencente a planos que você não está gerenciando."
 
+#, fuzzy
+#~ msgid "Last modified at"
+#~ msgstr "Última modificação"
+
+#, fuzzy
+#~ msgid "Cannot delete instance because other objects reference it."
+#~ msgstr "Não é possível excluir a instância porque outros objetos fazem referência a ela."
+
+#, fuzzy, python-format
+#~ msgid "Cannot delete \"%s\" because it is connected to other objects such as instances, persons or actions."
+#~ msgstr "Não é possível excluir \"%s\" porque ele está conectado a outros objetos, como planos, pessoas ou ações."
+
+#, fuzzy
+#~ msgid "Label for the column to be used instead of the default"
+#~ msgstr "Rótulo da coluna a ser usado em vez do padrão"
+
+#, fuzzy
+#~ msgid "Help text for the column to be shown in the UI"
+#~ msgstr "Texto de ajuda para o campo a ser mostrado na interface do usuário"
+
+#, fuzzy, python-format
+#~ msgid "Content block: %(label)s"
+#~ msgstr "Bloco de conteúdo: %(label)s"
+
+#, fuzzy, python-format
+#~ msgid "Filter: %(filter_label)s"
+#~ msgstr "Filtro: %(filter_label)s"
+
+#, fuzzy
+#~ msgid "Choose a dataset"
+#~ msgstr "Escolha um tipo de categoria"
+
+#, fuzzy
+#~ msgid "Choose another dataset"
+#~ msgstr "Escolha outro tipo de categoria"
+
+#, fuzzy
+#~ msgid "dimension scope"
+#~ msgstr "dimensões"
+
+#, fuzzy
+#~ msgid "dimension scopes"
+#~ msgstr "categorias de dimensão"
+
+#, fuzzy
+#~ msgid "Yearly"
+#~ msgstr "Ano"
+
+#~ msgid "Descriptive name of the dataset schema"
+#~ msgstr "Nome descritivo do esquema do conjunto de dados"
+
+#, fuzzy
+#~ msgid "Description of the content and use of the dataset"
+#~ msgstr "Descrição a ser exibida após o conteúdo do campo"
+
+#, fuzzy
+#~ msgid "Time resolution"
+#~ msgstr "resolução de tempo"
+
+#, fuzzy
+#~ msgid "Initial date"
+#~ msgstr "data de início"
+
+#~ msgid "Metrics"
+#~ msgstr "Métricas"
+
+#, fuzzy
+#~ msgid "Person permissions"
+#~ msgstr "Permissões"
+
+#, fuzzy
+#~ msgid "Group permissions"
+#~ msgstr "Permissões"
+
+#, fuzzy
+#~ msgid "dataset schema"
+#~ msgstr "licença do conjunto de dados"
+
+#, fuzzy
+#~ msgid "dataset schemas"
+#~ msgstr "licença do conjunto de dados"
+
+#, fuzzy
+#~ msgid "dataset metric"
+#~ msgstr "licença do conjunto de dados"
+
+#, fuzzy
+#~ msgid "dataset metrics"
+#~ msgstr "licença do conjunto de dados"
+
+#, fuzzy
+#~ msgid "dataset schema dimension"
+#~ msgstr "dimensões"
+
+#, fuzzy
+#~ msgid "dataset schema dimensions"
+#~ msgstr "dimensões"
+
+#, fuzzy
+#~ msgid "dataset schema scope"
+#~ msgstr "licença do conjunto de dados"
+
+#, fuzzy
+#~ msgid "dataset schema scopes"
+#~ msgstr "licenças de conjuntos de dados"
+
+#, fuzzy
+#~ msgid "data point"
+#~ msgstr "Último ponto de dados"
+
+#, fuzzy
+#~ msgid "data points"
+#~ msgstr "Último ponto de dados"
+
+#, fuzzy
+#~ msgid "data point dimension category"
+#~ msgstr "categoria de dimensão"
+
+#, fuzzy
+#~ msgid "data point dimension categories"
+#~ msgstr "categorias de dimensão"
+
+#, fuzzy
+#~ msgid "Sticky comment"
+#~ msgstr "comentário"
+
+#, fuzzy
+#~ msgid "Review comment"
+#~ msgstr "comentário"
+
+#, fuzzy
+#~ msgid "resolved at"
+#~ msgstr "criado em"
+
+#, fuzzy
+#~ msgid "comments"
+#~ msgstr "comentário"
+
+#, fuzzy
+#~ msgid "edition"
+#~ msgstr "Seção"
+
+#, fuzzy
+#~ msgid "authority"
+#~ msgstr "autor"
+
+#, fuzzy
+#~ msgid "The organization responsible for the data source"
+#~ msgstr "organização principal do plano"
+
+#, fuzzy
+#~ msgid "Data source"
+#~ msgstr "conjuntos de dados"
+
+#, fuzzy
+#~ msgid "Data sources"
+#~ msgstr "conjuntos de dados"
+
+#, fuzzy
+#~ msgid "Unknown schema"
+#~ msgstr "Desconhecido"
+
+#, fuzzy, python-format
+#~ msgid "Data source reference in: %(schema)s"
+#~ msgstr "Preferências de notificação"
+
+#, fuzzy
+#~ msgid "Data source reference"
+#~ msgstr "Preferências de notificação"
+
+#, fuzzy
+#~ msgid "data source references"
+#~ msgstr "Preferências de notificação"
+
+#, fuzzy
+#~ msgid "Edit dataset"
+#~ msgstr "Editar dados"
+
+#, fuzzy, python-format
+#~ msgid "Edit this %(object)s"
+#~ msgstr "Editar esta pessoa"
+
+#, fuzzy
+#~ msgid "Created at"
+#~ msgstr "criado em"
+
+#, fuzzy
+#~ msgid "Last modified by"
+#~ msgstr "Última modificação"
+
+#, fuzzy
+#~ msgid "A node cannot be moved under itself in the hierarchy."
+#~ msgstr "Um nó não pode ser movido para baixo de si mesmo na hierarquia."
+
+#, fuzzy
+#~ msgctxt "node"
+#~ msgid "Parent"
+#~ msgstr "Pais"
+
+#, fuzzy
+#~ msgid "The time at which the resource was created"
+#~ msgstr "A hora em que o recurso foi criado"
+
+#, fuzzy
+#~ msgid "The time at which the resource was updated"
+#~ msgstr "A hora em que o recurso foi atualizado"
+
+#, fuzzy
+#~ msgid "An organization category, e.g. committee"
+#~ msgstr "Uma categoria de organização, por exemplo, comitê"
+
+#, fuzzy
+#~ msgid "A primary name, e.g. a legally recognized name"
+#~ msgstr "Um nome principal, por exemplo, um nome legalmente reconhecido"
+
+#, fuzzy
+#~ msgid "Short name"
+#~ msgstr "Nome abreviado"
+
+#, fuzzy
+#~ msgid "A simplified short version of name for the general public"
+#~ msgstr "Uma versão curta e simplificada do nome para o público em geral"
+
+#, fuzzy
+#~ msgid "A distinct name for this organization (generated automatically)"
+#~ msgstr "Um nome distinto para essa organização (gerado automaticamente)"
+
+#, fuzzy
+#~ msgid "A date of founding"
+#~ msgstr "Uma data de fundação"
+
+#, fuzzy
+#~ msgid "A date of dissolution"
+#~ msgstr "Uma data de dissolução"
+
+#, fuzzy
+#~ msgid "Location"
+#~ msgstr "Localização"
+
+#, fuzzy
+#~ msgid "organizations"
+#~ msgstr "organizações"
+
+#, fuzzy
+#~ msgid "This will delete the following objects:"
+#~ msgstr "Isso marcará as seguintes ações como concluídas:"
+
+#, fuzzy
+#~ msgid "Person with this email already exists"
+#~ msgstr "Já existe uma pessoa com esse e-mail"
+
+#, fuzzy
+#~ msgid "Not all objects have an email address"
+#~ msgstr "Nem todos os objetos têm um endereço de e-mail"
+
+#, fuzzy, python-format
+#~ msgid "Duplicate email addresses: %s"
+#~ msgstr "Endereços de e-mail duplicados: %s"
+
+#, fuzzy
+#~ msgid "Create new"
+#~ msgstr "Criar novo"
+
+#, fuzzy
+#~ msgid "Choose person"
+#~ msgstr "Escolha a pessoa"
+
+#, fuzzy
+#~ msgid "Choose a person"
+#~ msgstr "Escolha uma pessoa"
+
+#, fuzzy
+#~ msgid "Choose another person"
+#~ msgstr "Escolha outra pessoa"
+
+#, fuzzy
+#~ msgid "Edit this person"
+#~ msgstr "Editar esta pessoa"
+
+#, fuzzy
+#~ msgctxt "person's role"
+#~ msgid "title"
+#~ msgstr "título"
+
+#, fuzzy
+#~ msgid "postal address"
+#~ msgstr "endereço postal"
+
+#, fuzzy
+#~ msgid "user"
+#~ msgstr "usuário"
+
+#, fuzzy
+#~ msgid "Set if the person has an user account"
+#~ msgstr "Defina se a pessoa tem uma conta de usuário"
+
+#, fuzzy
+#~ msgid "image cropping"
+#~ msgstr "corte de imagens"
+
+#, fuzzy
+#~ msgid "people"
+#~ msgstr "pessoas"
+
 #, fuzzy, python-format
 #~ msgid "The %(model_name)s \"%(title)s\" has been submitted for approval to moderation stage \"%(task)s\"."
 #~ msgstr "A página \"%(title)s\" foi enviada para aprovação no estágio de moderação \"%(task)s\"."
@@ -7042,10 +6879,6 @@ msgstr "Nenhuma permissão para remover o usuário pertencente a planos que voc�
 #, fuzzy, python-format
 #~ msgid "The %(model_name)s \"%(title)s\" has been submitted for approval in moderation stage \"%(task)s\""
 #~ msgstr "A página \"%(title)s\" foi enviada para aprovação no estágio de moderação \"%(task)s\"."
-
-#, fuzzy
-#~ msgid "Page"
-#~ msgstr "Link da página"
 
 #, fuzzy
 #~ msgid "progress indicators"

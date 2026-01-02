@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-12-31 15:11+0200\n"
+"POT-Creation-Date: 2026-01-02 11:42+0100\n"
 "PO-Revision-Date: 2025-04-02 07:20+0000\n"
 "Last-Translator: Matias Wargelin <matias.wargelin@kausal.tech>\n"
 "Language-Team: Latvian <https://weblate.kausal.tech/projects/watch/django/lv/>\n"
@@ -81,8 +81,6 @@ msgstr "Pēdējo reizi atjaunināts"
 #: admin_site/models.py
 #: admin_site/templates/admin_site/own_indicators_panel.html
 #: audit_logging/templates/site_history_results.html copying/views.py
-#: kausal_common/datasets/models.py
-#: kausal_common/templates/kausal_common/people/chooser_results.html
 msgid "Name"
 msgstr "Nosaukums"
 
@@ -383,8 +381,7 @@ msgstr "Virsraksts"
 
 #: actions/blocks/action_content.py actions/blocks/action_content_blocks.py
 #: actions/blocks/action_list.py actions/blocks/category_list.py
-#: actions/blocks/paths_content.py kausal_common/blocks/base.py
-#: kausal_common/blocks/fields.py
+#: actions/blocks/paths_content.py
 msgid "Help text"
 msgstr "Palīdzības teksts"
 
@@ -408,12 +405,11 @@ msgstr "Laukums"
 msgid "Category"
 msgstr "Kategorija"
 
-#: actions/blocks/action_content_blocks.py kausal_common/blocks/base.py
-#: kausal_common/blocks/fields.py
+#: actions/blocks/action_content_blocks.py
 msgid "Heading to show instead of the default"
 msgstr "Virsraksts, kas tiek rādīts noklusējuma vietā"
 
-#: actions/blocks/action_content_blocks.py kausal_common/blocks/base.py
+#: actions/blocks/action_content_blocks.py
 msgid "Label"
 msgstr "Etiķete"
 
@@ -479,7 +475,6 @@ msgid "Form Field"
 msgstr "Laukums"
 
 #: actions/blocks/action_content_blocks.py indicators/wagtail_admin.py
-#: kausal_common/datasets/models.py
 msgid "Description"
 msgstr "Apraksts"
 
@@ -568,8 +563,7 @@ msgstr "datu kopas"
 msgid "What label should be used in the public UI for the official name?"
 msgstr "Kāds marķējums būtu jāizmanto publiskajā UI oficiālajam nosaukumam?"
 
-#: actions/blocks/action_content_blocks.py kausal_common/blocks/base.py
-#: kausal_common/blocks/fields.py
+#: actions/blocks/action_content_blocks.py
 msgid "Field label"
 msgstr "Lauka etiķete"
 
@@ -704,7 +698,7 @@ msgstr "Statuss"
 msgid "Dataset Schema"
 msgstr "datu kopas licence"
 
-#: actions/blocks/filters.py kausal_common/blocks/base.py
+#: actions/blocks/filters.py
 msgid "Label for 'show all'"
 msgstr "\"Rādīt visus\" etiķete"
 
@@ -926,7 +920,6 @@ msgstr "primārā organizācija"
 #: actions/models/plan.py feedback/models.py
 #: indicators/models/common_indicator.py indicators/models/dimensions.py
 #: indicators/models/indicator.py indicators/models/metadata.py
-#: kausal_common/datasets/models.py kausal_common/organizations/models.py
 #: reports/models.py
 msgid "name"
 msgstr "nosaukums"
@@ -954,8 +947,7 @@ msgstr "Vadošā rindkopa"
 
 #: actions/models/action.py actions/models/plan.py
 #: indicators/models/common_indicator.py indicators/models/indicator.py
-#: indicators/models/metadata.py kausal_common/datasets/models.py
-#: kausal_common/organizations/models.py
+#: indicators/models/metadata.py
 msgid "description"
 msgstr "apraksts"
 
@@ -1067,7 +1059,7 @@ msgstr "kontaktpersonas"
 msgid "updated at"
 msgstr "atjaunināts vietnē"
 
-#: actions/models/action.py kausal_common/datasets/models.py reports/models.py
+#: actions/models/action.py reports/models.py
 msgid "start date"
 msgstr "sākuma datums"
 
@@ -1183,8 +1175,7 @@ msgid "Collaborator"
 msgstr "Sadarbības partneris"
 
 #: actions/models/action.py actions/models/plan.py
-#: indicators/models/indicator.py kausal_common/organizations/models.py
-#: kausal_common/people/models.py orgs/models.py people/wagtail_admin.py
+#: indicators/models/indicator.py orgs/models.py people/wagtail_admin.py
 msgid "organization"
 msgstr "organizācija"
 
@@ -1217,8 +1208,7 @@ msgid "Moderator"
 msgstr "Moderators"
 
 #: actions/models/action.py actions/models/plan.py
-#: indicators/models/contact_persons.py kausal_common/people/models.py
-#: orgs/models.py
+#: indicators/models/contact_persons.py orgs/models.py
 msgid "person"
 msgstr "persona"
 
@@ -1290,11 +1280,11 @@ msgstr "atcelts"
 msgid "state"
 msgstr "statuss"
 
-#: actions/models/action.py feedback/models.py kausal_common/datasets/models.py
+#: actions/models/action.py feedback/models.py
 msgid "comment"
 msgstr "komentārs"
 
-#: actions/models/action.py
+#: actions/models/action.py reports/report_formatters.py
 msgid "due date"
 msgstr "termiņš"
 
@@ -1362,7 +1352,6 @@ msgid "action impact classes"
 msgstr "rīcības ietekmes klases"
 
 #: actions/models/action.py feedback/models.py indicators/models/metadata.py
-#: kausal_common/datasets/models.py kausal_common/organizations/models.py
 #: pages/blocks.py pages/models.py
 msgid "URL"
 msgstr "URL"
@@ -1387,7 +1376,7 @@ msgstr "saturs"
 msgid "Summarize what was changed. This message will be displayed publicly."
 msgstr ""
 
-#: actions/models/action.py aplans/utils.py kausal_common/people/models.py
+#: actions/models/action.py aplans/utils.py
 msgid "created by"
 msgstr "izveidojis"
 
@@ -1446,7 +1435,6 @@ msgid "category change log messages"
 msgstr "kategoriju līmeņi"
 
 #: actions/models/action.py indicators/models/values.py
-#: kausal_common/datasets/models.py
 msgid "date"
 msgstr "datums"
 
@@ -1635,7 +1623,7 @@ msgstr "ir kolekcija"
 msgid "Set if this category type should have its own collection for images"
 msgstr "Iestatīt, vai šim kategorijas tipam ir jābūt savai attēlu kolekcijai"
 
-#: actions/models/category.py kausal_common/organizations/models.py
+#: actions/models/category.py
 msgid "primary language"
 msgstr "pamatvaloda"
 
@@ -2718,7 +2706,7 @@ msgstr "pieteikšanās metode"
 msgid "Login method that will be used for users that don't have a password set"
 msgstr "Pieslēgšanās metode, kas tiks izmantota lietotājiem, kuriem nav iestatīta parole"
 
-#: admin_site/models.py kausal_common/datasets/models.py
+#: admin_site/models.py
 msgid "label"
 msgstr "etiķete"
 
@@ -2986,12 +2974,11 @@ msgstr ""
 msgid "Year (2020)"
 msgstr ""
 
-#: aplans/utils.py kausal_common/datasets/models.py
-#: kausal_common/models/fields.py notifications/models.py
+#: aplans/utils.py notifications/models.py
 msgid "identifier"
 msgstr "identifikators"
 
-#: aplans/utils.py kausal_common/models/ordered.py
+#: aplans/utils.py
 msgid "order"
 msgstr "pasūtījums"
 
@@ -3119,7 +3106,6 @@ msgid "Milestones"
 msgstr "Stūrakmeņi"
 
 #: content/models.py indicators/wagtail_admin.py
-#: kausal_common/templates/kausal_common/people/chooser_results.html
 msgid "Organization"
 msgstr "Organizācija"
 
@@ -3329,8 +3315,7 @@ msgstr "dokuments"
 msgid "documents"
 msgstr "dokumenti"
 
-#: feedback/models.py kausal_common/organizations/models.py
-#: kausal_common/people/models.py kausal_common/users/models.py users/models.py
+#: feedback/models.py users/models.py
 msgid "email address"
 msgstr "e-pasta adrese"
 
@@ -3478,7 +3463,7 @@ msgstr "Attēlu pamatnosaukums vai kredīti"
 msgid "Alt text"
 msgstr "Alt teksts"
 
-#: images/models.py kausal_common/people/models.py
+#: images/models.py
 msgid "image"
 msgstr "attēls"
 
@@ -3523,8 +3508,7 @@ msgstr "Animēts"
 msgid "Indicator showcase"
 msgstr "Indikatoru vitrīna"
 
-#: indicators/blocks/__init__.py kausal_common/blocks/base.py
-#: kausal_common/blocks/fields.py
+#: indicators/blocks/__init__.py
 msgid "Help text for the field to be shown in the UI"
 msgstr ""
 
@@ -3795,7 +3779,7 @@ msgid "quantity"
 msgstr "daudzums"
 
 #: indicators/models/common_indicator.py indicators/models/indicator.py
-#: indicators/models/metadata.py kausal_common/datasets/models.py
+#: indicators/models/metadata.py
 msgid "unit"
 msgstr "vienība"
 
@@ -3847,11 +3831,11 @@ msgstr "rādītājs kontaktpersona"
 msgid "indicator contact persons"
 msgstr "rādītāju kontaktpersonas"
 
-#: indicators/models/dimensions.py kausal_common/datasets/models.py
+#: indicators/models/dimensions.py
 msgid "dimension"
 msgstr "dimensija"
 
-#: indicators/models/dimensions.py kausal_common/datasets/models.py
+#: indicators/models/dimensions.py
 msgid "dimensions"
 msgstr "izmēri"
 
@@ -3870,11 +3854,11 @@ msgstr "noklusējuma skats"
 msgid "Default color for this dimension category in charts"
 msgstr ""
 
-#: indicators/models/dimensions.py kausal_common/datasets/models.py
+#: indicators/models/dimensions.py
 msgid "dimension category"
 msgstr "dimensiju kategorija"
 
-#: indicators/models/dimensions.py kausal_common/datasets/models.py
+#: indicators/models/dimensions.py
 msgid "dimension categories"
 msgstr "dimensiju kategorijas"
 
@@ -4003,7 +3987,6 @@ msgid "reference value"
 msgstr ""
 
 #: indicators/models/indicator.py indicators/models/metadata.py
-#: kausal_common/datasets/models.py
 msgid "datasets"
 msgstr "datu kopas"
 
@@ -4178,7 +4161,7 @@ msgstr "Iestatīts, ja īpašnieka organizācija nav pieejama"
 msgid "license"
 msgstr "licence"
 
-#: indicators/models/metadata.py kausal_common/datasets/models.py
+#: indicators/models/metadata.py
 msgid "dataset"
 msgstr "datu kopa"
 
@@ -4222,7 +4205,7 @@ msgstr "uzticamības līmenis"
 msgid "How confident we are that the causal effect is present"
 msgstr "Cik pārliecināti esam, ka cēloņsakarības ietekme pastāv"
 
-#: indicators/models/values.py kausal_common/datasets/models.py
+#: indicators/models/values.py
 msgid "value"
 msgstr "vērtība"
 
@@ -4333,7 +4316,7 @@ msgstr "Šis rādītājs ir saistīts ar kopējo rādītāju, tāpēc daudzumu, 
 msgid "Indicator settings"
 msgstr "paziņojumu iestatījumi"
 
-#: indicators/wagtail_admin.py kausal_common/organizations/models.py
+#: indicators/wagtail_admin.py
 msgid "Classification"
 msgstr "Klasifikācija"
 
@@ -4347,7 +4330,7 @@ msgstr ""
 msgid "Visualization settings"
 msgstr "paziņojumu iestatījumi"
 
-#: indicators/wagtail_admin.py kausal_common/datasets/models.py
+#: indicators/wagtail_admin.py
 msgid "Dimensions"
 msgstr "Izmēri"
 
@@ -4429,490 +4412,6 @@ msgstr "Atjaunināts vietnē"
 #| msgid "Last updated"
 msgid "Goals updated"
 msgstr "Pēdējo reizi atjaunināts"
-
-#: kausal_common/admin_site/tables.py
-#: kausal_common/models/modification_tracking.py
-#, fuzzy
-#| msgid "Last modified"
-msgid "Last modified at"
-msgstr "Pēdējo reizi mainīts"
-
-#: kausal_common/api/exceptions.py
-msgid "Cannot delete instance because other objects reference it."
-msgstr "Nevar dzēst gadījumu, jo uz to atsaucas citi objekti."
-
-#: kausal_common/api/exceptions.py
-#, fuzzy, python-format
-#| msgid "Cannot delete \"%s\" because it is connected to other objects such as plans, persons or actions."
-msgid "Cannot delete \"%s\" because it is connected to other objects such as instances, persons or actions."
-msgstr "Nevar dzēst \"%s\", jo tas ir saistīts ar citiem objektiem, piemēram, plāniem, personām vai rīcībām."
-
-#: kausal_common/blocks/base.py
-msgid "Label for the column to be used instead of the default"
-msgstr "Kolonnas etiķete, kas jāizmanto noklusējuma vietā"
-
-#: kausal_common/blocks/base.py
-#, fuzzy
-#| msgid "Set if action identifiers should be visible in the public UI"
-msgid "Help text for the column to be shown in the UI"
-msgstr "Iestatiet, vai rīcību identifikatoriem jābūt redzamiem publiskajā lietotāja saskarnē"
-
-#: kausal_common/blocks/base.py kausal_common/blocks/fields.py
-#, python-format
-msgid "Content block: %(label)s"
-msgstr "Satura bloks: %(label)s"
-
-#: kausal_common/blocks/base.py
-#, python-format
-msgid "Filter: %(filter_label)s"
-msgstr "Filtrs: %(filter_label)s"
-
-#: kausal_common/datasets/chooser.py
-#, fuzzy
-#| msgid "Choose a category type"
-msgid "Choose a dataset"
-msgstr "Izvēlieties kategorijas veidu"
-
-#: kausal_common/datasets/chooser.py
-#, fuzzy
-#| msgid "Choose another category type"
-msgid "Choose another dataset"
-msgstr "Izvēlieties citu kategorijas veidu"
-
-#: kausal_common/datasets/models.py
-msgid "Optional identifier that, if set, must be unique within the dimension"
-msgstr ""
-
-#: kausal_common/datasets/models.py
-msgid "Optional identifier that, if set, must be unique in the scope"
-msgstr ""
-
-#: kausal_common/datasets/models.py
-#, fuzzy
-#| msgid "dimensions"
-msgid "dimension scope"
-msgstr "izmēri"
-
-#: kausal_common/datasets/models.py
-#, fuzzy
-#| msgid "dimension categories"
-msgid "dimension scopes"
-msgstr "dimensiju kategorijas"
-
-#: kausal_common/datasets/models.py
-#, fuzzy
-#| msgid "Year"
-msgid "Yearly"
-msgstr "Gads"
-
-#: kausal_common/datasets/models.py
-msgid "Time resolution of the time stamps of data points in this dataset"
-msgstr ""
-
-#: kausal_common/datasets/models.py
-msgid "For a newly created dataset, start entering values from this year"
-msgstr ""
-
-#: kausal_common/datasets/models.py
-msgid "Descriptive name of the dataset schema"
-msgstr "Datu kopas shēmas aprakstošais nosaukums"
-
-#: kausal_common/datasets/models.py
-#, fuzzy
-#| msgid "Description to show after the field content"
-msgid "Description of the content and use of the dataset"
-msgstr "Apraksts, kas jānorāda pēc lauka satura"
-
-#: kausal_common/datasets/models.py
-#, fuzzy
-#| msgid "time resolution"
-msgid "Time resolution"
-msgstr "laika izšķirtspēja"
-
-#: kausal_common/datasets/models.py
-#, fuzzy
-#| msgid "start date"
-msgid "Initial date"
-msgstr "sākuma datums"
-
-#: kausal_common/datasets/models.py
-msgid "Metrics"
-msgstr "Metrikas"
-
-#: kausal_common/datasets/models.py
-msgid "Defines the interpretation and units for the values of the dataset"
-msgstr ""
-
-#: kausal_common/datasets/models.py
-msgid "Used when metrics are tracked for multiple categories"
-msgstr ""
-
-#: kausal_common/datasets/models.py
-#, fuzzy
-#| msgid "Permissions"
-msgid "Person permissions"
-msgstr "Atļaujas"
-
-#: kausal_common/datasets/models.py
-msgid "Grants permissions on datasets of this schema to certain persons"
-msgstr ""
-
-#: kausal_common/datasets/models.py
-#, fuzzy
-#| msgid "Permissions"
-msgid "Group permissions"
-msgstr "Atļaujas"
-
-#: kausal_common/datasets/models.py
-msgid "Grants permissions on datasets of this schema to certain person groups"
-msgstr ""
-
-#: kausal_common/datasets/models.py orgs/wagtail_admin.py
-msgid "Permissions"
-msgstr "Atļaujas"
-
-#: kausal_common/datasets/models.py
-#, fuzzy
-#| msgid "dataset license"
-msgid "dataset schema"
-msgstr "datu kopas licence"
-
-#: kausal_common/datasets/models.py
-#, fuzzy
-#| msgid "dataset license"
-msgid "dataset schemas"
-msgstr "datu kopas licence"
-
-#: kausal_common/datasets/models.py
-#, fuzzy
-#| msgid "dataset license"
-msgid "dataset metric"
-msgstr "datu kopas licence"
-
-#: kausal_common/datasets/models.py
-#, fuzzy
-#| msgid "dataset license"
-msgid "dataset metrics"
-msgstr "datu kopas licence"
-
-#: kausal_common/datasets/models.py
-#, fuzzy
-#| msgid "dimensions"
-msgid "dataset schema dimension"
-msgstr "izmēri"
-
-#: kausal_common/datasets/models.py
-#, fuzzy
-#| msgid "dimensions"
-msgid "dataset schema dimensions"
-msgstr "izmēri"
-
-#: kausal_common/datasets/models.py
-msgid "schema"
-msgstr ""
-
-#: kausal_common/datasets/models.py
-msgid "Optional identifier that, if set, must be unique in the dataset's scope"
-msgstr ""
-
-#: kausal_common/datasets/models.py
-#, fuzzy
-#| msgid "dataset license"
-msgid "dataset schema scope"
-msgstr "datu kopas licence"
-
-#: kausal_common/datasets/models.py
-#, fuzzy
-#| msgid "dataset licenses"
-msgid "dataset schema scopes"
-msgstr "datu kopas licences"
-
-#: kausal_common/datasets/models.py
-msgid "Date of this data point in context of the dataset's time resolution"
-msgstr ""
-
-#: kausal_common/datasets/models.py
-msgid "metric"
-msgstr ""
-
-#: kausal_common/datasets/models.py
-#, fuzzy
-#| msgid "Last data point"
-msgid "data point"
-msgstr "Pēdējais datu punkts"
-
-#: kausal_common/datasets/models.py
-#, fuzzy
-#| msgid "Last data point"
-msgid "data points"
-msgstr "Pēdējais datu punkts"
-
-#: kausal_common/datasets/models.py
-#, fuzzy
-#| msgid "dimension category"
-msgid "data point dimension category"
-msgstr "dimensiju kategorija"
-
-#: kausal_common/datasets/models.py
-#, fuzzy
-#| msgid "dimension categories"
-msgid "data point dimension categories"
-msgstr "dimensiju kategorijas"
-
-#: kausal_common/datasets/models.py
-msgid "Resolved"
-msgstr ""
-
-#: kausal_common/datasets/models.py
-msgid "Unresolved"
-msgstr ""
-
-#: kausal_common/datasets/models.py
-#, fuzzy
-#| msgid "comment"
-msgid "Sticky comment"
-msgstr "komentārs"
-
-#: kausal_common/datasets/models.py
-#, fuzzy
-#| msgid "comment"
-msgid "Review comment"
-msgstr "komentārs"
-
-#: kausal_common/datasets/models.py
-#, fuzzy
-#| msgid "created at"
-msgid "resolved at"
-msgstr "izveidots vietnē"
-
-#: kausal_common/datasets/models.py
-#, fuzzy
-#| msgid "comment"
-msgid "comments"
-msgstr "komentārs"
-
-#: kausal_common/datasets/models.py
-#, fuzzy
-#| msgid "Section"
-msgid "edition"
-msgstr "Sadaļa"
-
-#: kausal_common/datasets/models.py
-#, fuzzy
-#| msgid "author"
-msgid "authority"
-msgstr "autors"
-
-#: kausal_common/datasets/models.py
-#, fuzzy
-#| msgid "main organization for the plan"
-msgid "The organization responsible for the data source"
-msgstr "plāna galvenā organizācija"
-
-#: kausal_common/datasets/models.py
-#, fuzzy
-#| msgid "datasets"
-msgid "Data source"
-msgstr "datu kopas"
-
-#: kausal_common/datasets/models.py kausal_common/datasets/wagtail_hooks.py
-#, fuzzy
-#| msgid "datasets"
-msgid "Data sources"
-msgstr "datu kopas"
-
-#: kausal_common/datasets/models.py
-#, fuzzy
-#| msgid "Unknown"
-msgid "Unknown schema"
-msgstr "Nezināms"
-
-#: kausal_common/datasets/models.py
-#, fuzzy, python-format
-#| msgid "Notification preferences"
-msgid "Data source reference in: %(schema)s"
-msgstr "Paziņojumu preferences"
-
-#: kausal_common/datasets/models.py
-#, fuzzy
-#| msgid "Notification preferences"
-msgid "Data source reference"
-msgstr "Paziņojumu preferences"
-
-#: kausal_common/datasets/models.py
-msgid "data source reference"
-msgstr ""
-
-#: kausal_common/datasets/models.py
-#, fuzzy
-#| msgid "Notification preferences"
-msgid "data source references"
-msgstr "Paziņojumu preferences"
-
-#: kausal_common/datasets/wagtail_hooks.py
-#, fuzzy
-#| msgid "Edit data"
-msgid "Edit dataset"
-msgstr "Rediģēt datus"
-
-#: kausal_common/datasets/wagtail_hooks.py
-#, python-format
-msgid "(Private %(object)s)"
-msgstr ""
-
-#: kausal_common/datasets/wagtail_hooks.py
-#, fuzzy, python-format
-#| msgid "Edit this person"
-msgid "Edit this %(object)s"
-msgstr "Rediģēt šo personu"
-
-#: kausal_common/models/modification_tracking.py
-#, fuzzy
-#| msgid "created at"
-msgid "Created at"
-msgstr "izveidots vietnē"
-
-#: kausal_common/models/modification_tracking.py
-#, fuzzy
-#| msgid "Last modified"
-msgid "Last modified by"
-msgstr "Pēdējo reizi mainīts"
-
-#: kausal_common/models/uuid.py
-msgid "UUID"
-msgstr ""
-
-#: kausal_common/organizations/forms.py
-msgid "A node cannot be moved under itself in the hierarchy."
-msgstr "Hierarhijā mezglu nevar pārvietot zem paša mezgla."
-
-#: kausal_common/organizations/models.py
-#, fuzzy
-#| msgid "Parent"
-msgctxt "node"
-msgid "Parent"
-msgstr "Vecāks"
-
-#: kausal_common/organizations/models.py
-msgid "The time at which the resource was created"
-msgstr "Resursa izveides laiks"
-
-#: kausal_common/organizations/models.py
-msgid "The time at which the resource was updated"
-msgstr "Laiks, kad resurss tika atjaunināts"
-
-#: kausal_common/organizations/models.py
-msgid "An organization category, e.g. committee"
-msgstr "Organizācijas kategorija, piemēram, komiteja"
-
-#: kausal_common/organizations/models.py
-msgid "A primary name, e.g. a legally recognized name"
-msgstr "Galvenais vārds, piemēram, juridiski atzīts vārds"
-
-#: kausal_common/organizations/models.py
-msgid "Short name"
-msgstr "Īss nosaukums"
-
-#: kausal_common/organizations/models.py
-msgid "A simplified short version of name for the general public"
-msgstr "Vienkāršota īsa nosaukuma versija plašai sabiedrībai"
-
-#: kausal_common/organizations/models.py
-msgid "A distinct name for this organization (generated automatically)"
-msgstr "Atšķirīgs šīs organizācijas nosaukums (tiek ģenerēts automātiski)"
-
-#: kausal_common/organizations/models.py
-msgid "A date of founding"
-msgstr "Dibināšanas datums"
-
-#: kausal_common/organizations/models.py
-msgid "A date of dissolution"
-msgstr "Izbeigšanas datums"
-
-#: kausal_common/organizations/models.py
-msgid "Location"
-msgstr "Atrašanās vieta"
-
-#: kausal_common/organizations/models.py
-msgid "organizations"
-msgstr "organizācijas"
-
-#: kausal_common/organizations/views.py
-#, python-format
-msgid "New child %(model)s for %(parent)s"
-msgstr ""
-
-#: kausal_common/organizations/views.py
-#, fuzzy
-#| msgid "This will mark the following actions as complete:"
-msgid "This will delete the following objects:"
-msgstr "Šādas rīcības tiks atzīmētas kā pabeigtas:"
-
-#: kausal_common/people/api.py kausal_common/people/models.py
-msgid "Person with this email already exists"
-msgstr "Persona ar šo e-pasta adresi jau eksistē"
-
-#: kausal_common/people/api.py
-msgid "Not all objects have an email address"
-msgstr "Ne visiem objektiem ir e-pasta adrese"
-
-#: kausal_common/people/api.py
-#, python-format
-msgid "Duplicate email addresses: %s"
-msgstr "e-pasta adrešu dublēšanās: %s"
-
-#: kausal_common/people/chooser.py
-msgid "Create new"
-msgstr "Izveidot jaunu"
-
-#: kausal_common/people/chooser.py
-msgid "Choose person"
-msgstr "Izvēlieties personu"
-
-#: kausal_common/people/chooser.py
-msgid "Choose a person"
-msgstr "Izvēlieties personu"
-
-#: kausal_common/people/chooser.py
-msgid "Choose another person"
-msgstr "Izvēlieties citu personu"
-
-#: kausal_common/people/chooser.py
-msgid "Edit this person"
-msgstr "Rediģēt šo personu"
-
-#: kausal_common/people/models.py people/wagtail_admin.py
-msgid "first name"
-msgstr "vārds"
-
-#: kausal_common/people/models.py people/wagtail_admin.py
-msgid "last name"
-msgstr "uzvārds"
-
-#: kausal_common/people/models.py
-msgctxt "person's role"
-msgid "title"
-msgstr "virsraksts"
-
-#: kausal_common/people/models.py
-msgid "postal address"
-msgstr "pasta adrese"
-
-#: kausal_common/people/models.py
-msgid "user"
-msgstr "lietotājs"
-
-#: kausal_common/people/models.py
-msgid "Set if the person has an user account"
-msgstr "Iestatīt, ja personai ir lietotāja konts"
-
-#: kausal_common/people/models.py
-msgid "image cropping"
-msgstr "attēlu apgriešana"
-
-#: kausal_common/people/models.py
-msgid "people"
-msgstr "cilvēki"
 
 #: notifications/apps.py notifications/wagtail_admin.py
 msgid "Notifications"
@@ -5402,6 +4901,10 @@ msgstr "Metadatu administratori"
 #: orgs/wagtail_admin.py
 msgid "People who can edit data of this organization and suborganizations but no plan-specific content"
 msgstr "Personas, kas var rediģēt šīs organizācijas un apakšorganizāciju datus, bet ne ar plānu saistītu saturu"
+
+#: orgs/wagtail_admin.py
+msgid "Permissions"
+msgstr "Atļaujas"
 
 #: orgs/wagtail_admin.py
 #, fuzzy, python-format
@@ -6056,6 +5559,14 @@ msgid "This person has no access to the admin interface. This is commonly becaus
 msgstr "Šai personai nav piekļuves administratora saskarnei. Parasti tas ir tāpēc, ka viņiem nav piešķirtas nekādas rīcības vai rādītāji."
 
 #: people/wagtail_admin.py
+msgid "first name"
+msgstr "vārds"
+
+#: people/wagtail_admin.py
+msgid "last name"
+msgstr "uzvārds"
+
+#: people/wagtail_admin.py
 msgid "last login"
 msgstr "pēdējā pieteikšanās"
 
@@ -6178,6 +5689,12 @@ msgstr ""
 #: reports/report_formatters.py
 msgid "Other responsible parties"
 msgstr "Citi atbildīgie"
+
+#: reports/spreadsheets/action_print_layout.py
+#, fuzzy
+#| msgid "Page link"
+msgid "Page"
+msgstr "Lapas saite"
 
 #: reports/spreadsheets/action_print_layout.py
 msgid "Profiles"
@@ -6367,6 +5884,327 @@ msgstr "Lietotāji"
 msgid "No permission to remove the user belonging to plans you are not managing."
 msgstr "Nav atļauts noņemt lietotājus, kas pieder pie plāniem, kurus jūs neapsaimniekojat."
 
+#, fuzzy
+#~| msgid "Last modified"
+#~ msgid "Last modified at"
+#~ msgstr "Pēdējo reizi mainīts"
+
+#~ msgid "Cannot delete instance because other objects reference it."
+#~ msgstr "Nevar dzēst gadījumu, jo uz to atsaucas citi objekti."
+
+#, fuzzy, python-format
+#~| msgid "Cannot delete \"%s\" because it is connected to other objects such as plans, persons or actions."
+#~ msgid "Cannot delete \"%s\" because it is connected to other objects such as instances, persons or actions."
+#~ msgstr "Nevar dzēst \"%s\", jo tas ir saistīts ar citiem objektiem, piemēram, plāniem, personām vai rīcībām."
+
+#~ msgid "Label for the column to be used instead of the default"
+#~ msgstr "Kolonnas etiķete, kas jāizmanto noklusējuma vietā"
+
+#, fuzzy
+#~| msgid "Set if action identifiers should be visible in the public UI"
+#~ msgid "Help text for the column to be shown in the UI"
+#~ msgstr "Iestatiet, vai rīcību identifikatoriem jābūt redzamiem publiskajā lietotāja saskarnē"
+
+#, python-format
+#~ msgid "Content block: %(label)s"
+#~ msgstr "Satura bloks: %(label)s"
+
+#, python-format
+#~ msgid "Filter: %(filter_label)s"
+#~ msgstr "Filtrs: %(filter_label)s"
+
+#, fuzzy
+#~| msgid "Choose a category type"
+#~ msgid "Choose a dataset"
+#~ msgstr "Izvēlieties kategorijas veidu"
+
+#, fuzzy
+#~| msgid "Choose another category type"
+#~ msgid "Choose another dataset"
+#~ msgstr "Izvēlieties citu kategorijas veidu"
+
+#, fuzzy
+#~| msgid "dimensions"
+#~ msgid "dimension scope"
+#~ msgstr "izmēri"
+
+#, fuzzy
+#~| msgid "dimension categories"
+#~ msgid "dimension scopes"
+#~ msgstr "dimensiju kategorijas"
+
+#, fuzzy
+#~| msgid "Year"
+#~ msgid "Yearly"
+#~ msgstr "Gads"
+
+#~ msgid "Descriptive name of the dataset schema"
+#~ msgstr "Datu kopas shēmas aprakstošais nosaukums"
+
+#, fuzzy
+#~| msgid "Description to show after the field content"
+#~ msgid "Description of the content and use of the dataset"
+#~ msgstr "Apraksts, kas jānorāda pēc lauka satura"
+
+#, fuzzy
+#~| msgid "time resolution"
+#~ msgid "Time resolution"
+#~ msgstr "laika izšķirtspēja"
+
+#, fuzzy
+#~| msgid "start date"
+#~ msgid "Initial date"
+#~ msgstr "sākuma datums"
+
+#~ msgid "Metrics"
+#~ msgstr "Metrikas"
+
+#, fuzzy
+#~| msgid "Permissions"
+#~ msgid "Person permissions"
+#~ msgstr "Atļaujas"
+
+#, fuzzy
+#~| msgid "Permissions"
+#~ msgid "Group permissions"
+#~ msgstr "Atļaujas"
+
+#, fuzzy
+#~| msgid "dataset license"
+#~ msgid "dataset schema"
+#~ msgstr "datu kopas licence"
+
+#, fuzzy
+#~| msgid "dataset license"
+#~ msgid "dataset schemas"
+#~ msgstr "datu kopas licence"
+
+#, fuzzy
+#~| msgid "dataset license"
+#~ msgid "dataset metric"
+#~ msgstr "datu kopas licence"
+
+#, fuzzy
+#~| msgid "dataset license"
+#~ msgid "dataset metrics"
+#~ msgstr "datu kopas licence"
+
+#, fuzzy
+#~| msgid "dimensions"
+#~ msgid "dataset schema dimension"
+#~ msgstr "izmēri"
+
+#, fuzzy
+#~| msgid "dimensions"
+#~ msgid "dataset schema dimensions"
+#~ msgstr "izmēri"
+
+#, fuzzy
+#~| msgid "dataset license"
+#~ msgid "dataset schema scope"
+#~ msgstr "datu kopas licence"
+
+#, fuzzy
+#~| msgid "dataset licenses"
+#~ msgid "dataset schema scopes"
+#~ msgstr "datu kopas licences"
+
+#, fuzzy
+#~| msgid "Last data point"
+#~ msgid "data point"
+#~ msgstr "Pēdējais datu punkts"
+
+#, fuzzy
+#~| msgid "Last data point"
+#~ msgid "data points"
+#~ msgstr "Pēdējais datu punkts"
+
+#, fuzzy
+#~| msgid "dimension category"
+#~ msgid "data point dimension category"
+#~ msgstr "dimensiju kategorija"
+
+#, fuzzy
+#~| msgid "dimension categories"
+#~ msgid "data point dimension categories"
+#~ msgstr "dimensiju kategorijas"
+
+#, fuzzy
+#~| msgid "comment"
+#~ msgid "Sticky comment"
+#~ msgstr "komentārs"
+
+#, fuzzy
+#~| msgid "comment"
+#~ msgid "Review comment"
+#~ msgstr "komentārs"
+
+#, fuzzy
+#~| msgid "created at"
+#~ msgid "resolved at"
+#~ msgstr "izveidots vietnē"
+
+#, fuzzy
+#~| msgid "comment"
+#~ msgid "comments"
+#~ msgstr "komentārs"
+
+#, fuzzy
+#~| msgid "Section"
+#~ msgid "edition"
+#~ msgstr "Sadaļa"
+
+#, fuzzy
+#~| msgid "author"
+#~ msgid "authority"
+#~ msgstr "autors"
+
+#, fuzzy
+#~| msgid "main organization for the plan"
+#~ msgid "The organization responsible for the data source"
+#~ msgstr "plāna galvenā organizācija"
+
+#, fuzzy
+#~| msgid "datasets"
+#~ msgid "Data source"
+#~ msgstr "datu kopas"
+
+#, fuzzy
+#~| msgid "datasets"
+#~ msgid "Data sources"
+#~ msgstr "datu kopas"
+
+#, fuzzy
+#~| msgid "Unknown"
+#~ msgid "Unknown schema"
+#~ msgstr "Nezināms"
+
+#, fuzzy, python-format
+#~| msgid "Notification preferences"
+#~ msgid "Data source reference in: %(schema)s"
+#~ msgstr "Paziņojumu preferences"
+
+#, fuzzy
+#~| msgid "Notification preferences"
+#~ msgid "Data source reference"
+#~ msgstr "Paziņojumu preferences"
+
+#, fuzzy
+#~| msgid "Notification preferences"
+#~ msgid "data source references"
+#~ msgstr "Paziņojumu preferences"
+
+#, fuzzy
+#~| msgid "Edit data"
+#~ msgid "Edit dataset"
+#~ msgstr "Rediģēt datus"
+
+#, fuzzy, python-format
+#~| msgid "Edit this person"
+#~ msgid "Edit this %(object)s"
+#~ msgstr "Rediģēt šo personu"
+
+#, fuzzy
+#~| msgid "created at"
+#~ msgid "Created at"
+#~ msgstr "izveidots vietnē"
+
+#, fuzzy
+#~| msgid "Last modified"
+#~ msgid "Last modified by"
+#~ msgstr "Pēdējo reizi mainīts"
+
+#~ msgid "A node cannot be moved under itself in the hierarchy."
+#~ msgstr "Hierarhijā mezglu nevar pārvietot zem paša mezgla."
+
+#, fuzzy
+#~| msgid "Parent"
+#~ msgctxt "node"
+#~ msgid "Parent"
+#~ msgstr "Vecāks"
+
+#~ msgid "The time at which the resource was created"
+#~ msgstr "Resursa izveides laiks"
+
+#~ msgid "The time at which the resource was updated"
+#~ msgstr "Laiks, kad resurss tika atjaunināts"
+
+#~ msgid "An organization category, e.g. committee"
+#~ msgstr "Organizācijas kategorija, piemēram, komiteja"
+
+#~ msgid "A primary name, e.g. a legally recognized name"
+#~ msgstr "Galvenais vārds, piemēram, juridiski atzīts vārds"
+
+#~ msgid "Short name"
+#~ msgstr "Īss nosaukums"
+
+#~ msgid "A simplified short version of name for the general public"
+#~ msgstr "Vienkāršota īsa nosaukuma versija plašai sabiedrībai"
+
+#~ msgid "A distinct name for this organization (generated automatically)"
+#~ msgstr "Atšķirīgs šīs organizācijas nosaukums (tiek ģenerēts automātiski)"
+
+#~ msgid "A date of founding"
+#~ msgstr "Dibināšanas datums"
+
+#~ msgid "A date of dissolution"
+#~ msgstr "Izbeigšanas datums"
+
+#~ msgid "Location"
+#~ msgstr "Atrašanās vieta"
+
+#~ msgid "organizations"
+#~ msgstr "organizācijas"
+
+#, fuzzy
+#~| msgid "This will mark the following actions as complete:"
+#~ msgid "This will delete the following objects:"
+#~ msgstr "Šādas rīcības tiks atzīmētas kā pabeigtas:"
+
+#~ msgid "Person with this email already exists"
+#~ msgstr "Persona ar šo e-pasta adresi jau eksistē"
+
+#~ msgid "Not all objects have an email address"
+#~ msgstr "Ne visiem objektiem ir e-pasta adrese"
+
+#, python-format
+#~ msgid "Duplicate email addresses: %s"
+#~ msgstr "e-pasta adrešu dublēšanās: %s"
+
+#~ msgid "Create new"
+#~ msgstr "Izveidot jaunu"
+
+#~ msgid "Choose person"
+#~ msgstr "Izvēlieties personu"
+
+#~ msgid "Choose a person"
+#~ msgstr "Izvēlieties personu"
+
+#~ msgid "Choose another person"
+#~ msgstr "Izvēlieties citu personu"
+
+#~ msgid "Edit this person"
+#~ msgstr "Rediģēt šo personu"
+
+#~ msgctxt "person's role"
+#~ msgid "title"
+#~ msgstr "virsraksts"
+
+#~ msgid "postal address"
+#~ msgstr "pasta adrese"
+
+#~ msgid "user"
+#~ msgstr "lietotājs"
+
+#~ msgid "Set if the person has an user account"
+#~ msgstr "Iestatīt, ja personai ir lietotāja konts"
+
+#~ msgid "image cropping"
+#~ msgstr "attēlu apgriešana"
+
+#~ msgid "people"
+#~ msgstr "cilvēki"
+
 #, fuzzy, python-format
 #~| msgid "%(model_name)s '%(object)s' has been submitted for moderation."
 #~ msgid "The %(model_name)s \"%(title)s\" has been submitted for approval to moderation stage \"%(task)s\"."
@@ -6381,11 +6219,6 @@ msgstr "Nav atļauts noņemt lietotājus, kas pieder pie plāniem, kurus jūs ne
 #~| msgid "%(model_name)s '%(object)s' has been submitted for moderation."
 #~ msgid "The %(model_name)s \"%(title)s\" has been submitted for approval in moderation stage \"%(task)s\""
 #~ msgstr "%(model_name)s '%(object)s' ir iesniegts rediģēšanai."
-
-#, fuzzy
-#~| msgid "Page link"
-#~ msgid "Page"
-#~ msgstr "Lapas saite"
 
 #~ msgid "progress indicators"
 #~ msgstr "progresa rādītāji"
