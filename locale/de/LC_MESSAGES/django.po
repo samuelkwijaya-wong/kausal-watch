@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-01-02 16:02+0100\n"
-"PO-Revision-Date: 2026-01-02 15:07+0000\n"
+"PO-Revision-Date: 2026-01-02 15:15+0000\n"
 "Last-Translator: Bernhard Bliem <bernhard.bliem@kausal.tech>\n"
 "Language-Team: German <https://weblate.kausal.tech/projects/watch/django/de/>"
 "\n"
@@ -3562,15 +3562,15 @@ msgstr "verbundene Indikatoren"
 
 #: indicators/models/common_indicator.py indicators/models/metadata.py
 msgid "framework"
-msgstr "Rahmenwerk"
+msgstr "Rahmen"
 
 #: indicators/models/common_indicator.py
 msgid "framework indicator"
-msgstr "Rahmenwerkindikator"
+msgstr "Rahmenindikator"
 
 #: indicators/models/common_indicator.py
 msgid "framework indicators"
-msgstr "Rahmenwerkindikatoren"
+msgstr "Rahmenindikatoren"
 
 #: indicators/models/contact_persons.py
 msgid "indicator contact person"
@@ -3886,7 +3886,7 @@ msgstr "Datensatz"
 
 #: indicators/models/metadata.py
 msgid "frameworks"
-msgstr "Rahmenwerke"
+msgstr "Rahmen"
 
 #: indicators/models/relationships.py
 msgid "increases"
