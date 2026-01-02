@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-01-02 15:51+0100\n"
+"POT-Creation-Date: 2026-01-02 16:02+0100\n"
 "PO-Revision-Date: 2025-04-02 07:20+0000\n"
 "Last-Translator: Matias Wargelin <matias.wargelin@kausal.tech>\n"
 "Language-Team: Greek <https://weblate.kausal.tech/projects/watch/django/el/>\n"
@@ -1374,12 +1374,14 @@ msgstr ""
 #: actions/models/action.py
 #, fuzzy
 #| msgid "action schedules"
+msgctxt "verbose name of model"
 msgid "action change log message"
 msgstr "χρονοδιαγράμματα δράσης"
 
 #: actions/models/action.py
 #, fuzzy
 #| msgid "action schedules"
+msgctxt "verbose name plural of model"
 msgid "action change log messages"
 msgstr "χρονοδιαγράμματα δράσης"
 

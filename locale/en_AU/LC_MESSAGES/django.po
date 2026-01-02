@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-01-02 15:51+0100\n"
+"POT-Creation-Date: 2026-01-02 16:02+0100\n"
 "PO-Revision-Date: 2025-04-02 07:20+0000\n"
 "Last-Translator: Matias Wargelin <matias.wargelin@kausal.tech>\n"
 "Language-Team: English (Australia) <https://weblate.kausal.tech/projects/watch/django/en_AU/>\n"
@@ -1325,12 +1325,18 @@ msgid "The revision this change log message is associated with."
 msgstr ""
 
 #: actions/models/action.py
+#, fuzzy
+#| msgid "synchronize with pages"
+msgctxt "verbose name of model"
 msgid "action change log message"
-msgstr ""
+msgstr "synchronise with pages"
 
 #: actions/models/action.py
+#, fuzzy
+#| msgid "synchronize with pages"
+msgctxt "verbose name plural of model"
 msgid "action change log messages"
-msgstr ""
+msgstr "synchronise with pages"
 
 #: actions/models/action.py indicators/models/action_links.py
 #: indicators/models/contact_persons.py indicators/models/indicator.py
