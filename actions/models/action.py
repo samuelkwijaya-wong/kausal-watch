@@ -1994,8 +1994,8 @@ class ActionChangeLogMessage(BaseChangeLogMessage):
     ]
 
     class Meta:
-        verbose_name = _('action change log message')
-        verbose_name_plural = _('action change log messages')
+        verbose_name = pgettext_lazy('verbose name of model', 'action change log message')
+        verbose_name_plural = pgettext_lazy('verbose name plural of model', 'action change log messages')
 
     def __str__(self):
         return f'{self.action} - {self.created_at}'
