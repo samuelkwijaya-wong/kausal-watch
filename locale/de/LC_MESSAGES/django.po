@@ -11,9 +11,10 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-01-02 15:51+0100\n"
-"PO-Revision-Date: 2025-12-31 15:32+0200\n"
+"PO-Revision-Date: 2026-01-02 15:01+0000\n"
 "Last-Translator: Bernhard Bliem <bernhard.bliem@kausal.tech>\n"
-"Language-Team: German <https://weblate.kausal.tech/projects/watch/django/de/>\n"
+"Language-Team: German <https://weblate.kausal.tech/projects/watch/django/de/>"
+"\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1056,11 +1057,11 @@ msgstr "Maßnahme"
 #: actions/models/action.py feedback/models.py
 #: indicators/models/action_links.py
 msgid "action"
-msgstr "Maßnahme"
+msgstr "Aktion"
 
 #: actions/models/action.py
 msgid "actions"
-msgstr "Maßnahmen"
+msgstr "Aktionen"
 
 #: actions/models/action.py
 msgid "Can administrate all actions"
@@ -1312,14 +1313,13 @@ msgid "created by"
 msgstr "erstellt von"
 
 #: actions/models/action.py
-#, fuzzy
-#| msgid "Division"
 msgid "revision"
-msgstr "Abteilung"
+msgstr "Überarbeitung"
 
 #: actions/models/action.py
 msgid "The revision this change log message is associated with."
 msgstr ""
+"Die Überarbeitung, auf die sich dieser Eintrag im Änderungsprotokoll bezieht."
 
 #: actions/models/action.py
 #, fuzzy
