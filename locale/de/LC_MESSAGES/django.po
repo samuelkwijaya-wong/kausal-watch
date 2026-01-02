@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-01-02 11:42+0100\n"
+"POT-Creation-Date: 2026-01-02 15:51+0100\n"
 "PO-Revision-Date: 2025-12-31 15:32+0200\n"
 "Last-Translator: Bernhard Bliem <bernhard.bliem@kausal.tech>\n"
 "Language-Team: German <https://weblate.kausal.tech/projects/watch/django/de/>\n"
@@ -2415,34 +2415,43 @@ msgid "Plans"
 msgstr "Pläne"
 
 #: actions/wagtail_admin.py
-#, python-format
+#, fuzzy, python-format
+#| msgid "Change log message: %(obj)s"
+msgctxt "page subtitle"
 msgid "Change log message: %(obj)s"
 msgstr "Änderungsnotiz: %(obj)s"
 
 #: actions/wagtail_admin.py
 #, fuzzy
+msgctxt "page subtitle"
 msgid "Change log message"
 msgstr "Änderungsnotiz"
 
 #: actions/wagtail_admin.py
+#, fuzzy
+#| msgid "Add change log message"
+msgctxt "page title"
 msgid "Add change log message"
 msgstr "Änderungsnotiz hinzufügen"
 
 #: actions/wagtail_admin.py
 #, fuzzy
 #| msgid "Action schedules"
+msgctxt "menu label"
 msgid "Action change log messages"
 msgstr "Maßnahmenzeitpläne"
 
 #: actions/wagtail_admin.py
 #, fuzzy
 #| msgid "Indicators assigned to me"
+msgctxt "menu label"
 msgid "Indicator change log messages"
 msgstr "Mir zugewiesene Indikatoren"
 
 #: actions/wagtail_admin.py
 #, fuzzy
 #| msgid "Category type pages"
+msgctxt "menu label"
 msgid "Category change log messages"
 msgstr "Kategorietypenseiten"
 

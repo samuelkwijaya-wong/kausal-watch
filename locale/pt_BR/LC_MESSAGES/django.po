@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-01-02 11:42+0100\n"
+"POT-Creation-Date: 2026-01-02 15:51+0100\n"
 "PO-Revision-Date: 2025-04-02 07:20+0000\n"
 "Last-Translator: Matias Wargelin <matias.wargelin@kausal.tech>\n"
 "Language-Team: Portuguese (Brazil) <https://weblate.kausal.tech/projects/watch/django/pt_BR/>\n"
@@ -2850,31 +2850,38 @@ msgid "Plans"
 msgstr "Planos"
 
 #: actions/wagtail_admin.py
-#, python-format
+#, fuzzy, python-format
+msgctxt "page subtitle"
 msgid "Change log message: %(obj)s"
-msgstr ""
+msgstr "As alterações foram salvas"
 
 #: actions/wagtail_admin.py
 #, fuzzy
+msgctxt "page subtitle"
 msgid "Change log message"
 msgstr "As alterações foram salvas"
 
 #: actions/wagtail_admin.py
+#, fuzzy
+msgctxt "page title"
 msgid "Add change log message"
-msgstr ""
+msgstr "As alterações foram salvas"
 
 #: actions/wagtail_admin.py
 #, fuzzy
+msgctxt "menu label"
 msgid "Action change log messages"
 msgstr "Cronogramas de ação"
 
 #: actions/wagtail_admin.py
 #, fuzzy
+msgctxt "menu label"
 msgid "Indicator change log messages"
 msgstr "Página da lista de indicadores"
 
 #: actions/wagtail_admin.py
 #, fuzzy
+msgctxt "menu label"
 msgid "Category change log messages"
 msgstr "Páginas de tipo de categoria"
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-01-02 11:42+0100\n"
+"POT-Creation-Date: 2026-01-02 15:51+0100\n"
 "PO-Revision-Date: 2024-12-11 10:52+0000\n"
 "Last-Translator: Timo Tuominen <timo.tuominen@kausal.tech>\n"
 "Language-Team: Spanish (American) <https://weblate.kausal.tech/projects/watch/django/es_US/>\n"
@@ -2395,26 +2395,32 @@ msgstr ""
 
 #: actions/wagtail_admin.py
 #, python-format
+msgctxt "page subtitle"
 msgid "Change log message: %(obj)s"
 msgstr ""
 
 #: actions/wagtail_admin.py
+msgctxt "page subtitle"
 msgid "Change log message"
 msgstr ""
 
 #: actions/wagtail_admin.py
+msgctxt "page title"
 msgid "Add change log message"
 msgstr ""
 
 #: actions/wagtail_admin.py
+msgctxt "menu label"
 msgid "Action change log messages"
 msgstr ""
 
 #: actions/wagtail_admin.py
+msgctxt "menu label"
 msgid "Indicator change log messages"
 msgstr ""
 
 #: actions/wagtail_admin.py
+msgctxt "menu label"
 msgid "Category change log messages"
 msgstr ""
 
