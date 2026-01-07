@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-01-07 14:00+0100\n"
+"POT-Creation-Date: 2026-01-07 17:25+0100\n"
 "PO-Revision-Date: 2025-04-02 07:20+0000\n"
 "Last-Translator: Matias Wargelin <matias.wargelin@kausal.tech>\n"
 "Language-Team: English (United Kingdom) <https://weblate.kausal.tech/projects/watch/django/en_GB/>\n"
@@ -73,6 +73,7 @@ msgstr ""
 #: content/models.py indicators/wagtail_admin.py
 #: reports/spreadsheets/excel_report.py reports/tests/test_excel_roundtrip.py
 #: templates/modeladmin/create.html
+msgctxt "Action model"
 msgid "Actions"
 msgstr ""
 
@@ -1063,14 +1064,17 @@ msgctxt "partitive"
 msgid "action"
 msgstr ""
 
-#: actions/models/action.py feedback/models.py
-#: indicators/models/action_links.py
+#: actions/models/action.py
+msgctxt "Action model"
 msgid "action"
 msgstr ""
 
 #: actions/models/action.py
+#, fuzzy
+#| msgid "Organizations"
+msgctxt "Action model"
 msgid "actions"
-msgstr ""
+msgstr "Organisations"
 
 #: actions/models/action.py
 msgid "Can administrate all actions"
@@ -1292,6 +1296,11 @@ msgstr ""
 
 #: actions/models/action.py
 msgid "action impact classes"
+msgstr ""
+
+#: actions/models/action.py
+msgctxt "action model"
+msgid "action"
 msgstr ""
 
 #: actions/models/action.py feedback/models.py indicators/models/metadata.py
@@ -2943,6 +2952,7 @@ msgid "Item type"
 msgstr ""
 
 #: audit_logging/templates/site_history_results.html audit_logging/views.py
+msgctxt "type of change (e.g., \"create\", \"edit\" or \"delete\")"
 msgid "Change"
 msgstr ""
 
@@ -2960,9 +2970,19 @@ msgstr ""
 msgid "Edit this item"
 msgstr "dataset licence"
 
-#: audit_logging/views.py audit_logging/wagtail_hooks.py
+#: audit_logging/views.py
+#, fuzzy
+#| msgid "synchronize with pages"
+msgctxt "page title for history of changes"
 msgid "Change history"
-msgstr ""
+msgstr "synchronise with pages"
+
+#: audit_logging/wagtail_hooks.py
+#, fuzzy
+#| msgid "synchronize with pages"
+msgctxt "menu item for accessing history of changes"
+msgid "Change history"
+msgstr "synchronise with pages"
 
 #: content/apps.py
 msgid "According to the action plan"
@@ -2973,6 +2993,7 @@ msgid "Content"
 msgstr ""
 
 #: content/models.py feedback/models.py reports/spreadsheets/excel_report.py
+msgctxt "Action model"
 msgid "Action"
 msgstr ""
 
@@ -3196,6 +3217,10 @@ msgstr ""
 
 #: documents/models.py
 msgid "documents"
+msgstr ""
+
+#: feedback/models.py indicators/models/action_links.py
+msgid "action"
 msgstr ""
 
 #: feedback/models.py users/models.py

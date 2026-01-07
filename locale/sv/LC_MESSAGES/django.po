@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-01-07 14:00+0100\n"
+"POT-Creation-Date: 2026-01-07 17:25+0100\n"
 "PO-Revision-Date: 2025-04-02 12:20+0000\n"
 "Last-Translator: Matias Wargelin <matias.wargelin@kausal.tech>\n"
 "Language-Team: Swedish <https://weblate.kausal.tech/projects/watch/django/sv/>\n"
@@ -73,6 +73,9 @@ msgstr "Ångra markeringen av denna åtgärd som slutförd för rapporten %s"
 #: content/models.py indicators/wagtail_admin.py
 #: reports/spreadsheets/excel_report.py reports/tests/test_excel_roundtrip.py
 #: templates/modeladmin/create.html
+#, fuzzy
+#| msgid "Actions"
+msgctxt "Action model"
 msgid "Actions"
 msgstr "Åtgärder"
 
@@ -1118,12 +1121,17 @@ msgctxt "partitive"
 msgid "action"
 msgstr "åtgärd"
 
-#: actions/models/action.py feedback/models.py
-#: indicators/models/action_links.py
+#: actions/models/action.py
+#, fuzzy
+#| msgid "action"
+msgctxt "Action model"
 msgid "action"
 msgstr "åtgärd"
 
 #: actions/models/action.py
+#, fuzzy
+#| msgid "actions"
+msgctxt "Action model"
 msgid "actions"
 msgstr "åtgärder"
 
@@ -1347,6 +1355,13 @@ msgstr "åtgärdseffektklass"
 #: actions/models/action.py
 msgid "action impact classes"
 msgstr "åtgärder påverkan klasser"
+
+#: actions/models/action.py
+#, fuzzy
+#| msgid "action"
+msgctxt "action model"
+msgid "action"
+msgstr "åtgärd"
 
 #: actions/models/action.py feedback/models.py indicators/models/metadata.py
 #: pages/blocks.py pages/models.py
@@ -3115,8 +3130,11 @@ msgid "Item type"
 msgstr "Kategorityp"
 
 #: audit_logging/templates/site_history_results.html audit_logging/views.py
+#, fuzzy
+#| msgid "created by"
+msgctxt "type of change (e.g., \"create\", \"edit\" or \"delete\")"
 msgid "Change"
-msgstr ""
+msgstr "skapad av"
 
 #: audit_logging/templates/site_history_results.html audit_logging/views.py
 #, fuzzy
@@ -3134,9 +3152,19 @@ msgstr ""
 msgid "Edit this item"
 msgstr "Redigera denna kvantitet"
 
-#: audit_logging/views.py audit_logging/wagtail_hooks.py
+#: audit_logging/views.py
+#, fuzzy
+#| msgid "Changes were saved"
+msgctxt "page title for history of changes"
 msgid "Change history"
-msgstr ""
+msgstr "Ändringar sparades"
+
+#: audit_logging/wagtail_hooks.py
+#, fuzzy
+#| msgid "Changes were saved"
+msgctxt "menu item for accessing history of changes"
+msgid "Change history"
+msgstr "Ändringar sparades"
 
 #: content/apps.py
 msgid "According to the action plan"
@@ -3148,6 +3176,7 @@ msgstr "Innehåll"
 
 #: content/models.py feedback/models.py reports/spreadsheets/excel_report.py
 #, fuzzy
+msgctxt "Action model"
 msgid "Action"
 msgstr "Åtgärder"
 
@@ -3393,6 +3422,10 @@ msgstr "dokumentera"
 #: documents/models.py
 msgid "documents"
 msgstr "dokument"
+
+#: feedback/models.py indicators/models/action_links.py
+msgid "action"
+msgstr "åtgärd"
 
 #: feedback/models.py users/models.py
 msgid "email address"
