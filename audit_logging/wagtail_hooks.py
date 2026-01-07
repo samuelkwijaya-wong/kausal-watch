@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from django.urls import reverse
-from django.utils.translation import gettext_lazy as _
+from django.utils.translation import pgettext_lazy
 from wagtail import hooks
 from wagtail.admin.menu import MenuItem
 
@@ -23,7 +23,7 @@ def register_core_log_actions(actions):
 @hooks.register('register_admin_menu_item')
 def register_audit_log():
     return MenuItem(
-        _('Change history'),
+        pgettext_lazy('menu item for accessing history of changes', 'Change history'),
         reverse('watch-plan-history'),
         icon_name='history',
         order=10000,

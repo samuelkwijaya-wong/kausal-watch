@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from django.forms import CheckboxSelectMultiple
-from django.utils.translation import gettext_lazy as _
+from django.utils.translation import gettext_lazy as _, pgettext_lazy
 from wagtail.admin.filters import ContentTypeFilter, MultipleUserFilter
 from wagtail.admin.views.reports.audit_logging import (
     LogEntriesView,
@@ -20,7 +20,7 @@ class CustomSiteHistoryReportFilterSet(SiteHistoryReportFilterSet):
     """Subclassed simply to change terminology."""
 
     action = django_filters.MultipleChoiceFilter(
-        label=_('Change'),
+        label=pgettext_lazy('type of change (e.g., "create", "edit" or "delete")', 'Change'),
         widget=CheckboxSelectMultiple,
     )
     user = MultipleUserFilter(
@@ -36,7 +36,7 @@ class CustomSiteHistoryReportFilterSet(SiteHistoryReportFilterSet):
 
 class PlanScopedLogEntriesView(LogEntriesView):
     results_template_name = "site_history_results.html"
-    page_title = _("Change history")
+    page_title = pgettext_lazy("page title for history of changes", "Change history")
     LOG_MODELS_TO_EXCLUDE = ModelLogEntry, PageLogEntry
     permission_policy: ModelPermissionPolicy = ModelPermissionPolicy(PlanScopedModelLogEntry)
     filterset_class = CustomSiteHistoryReportFilterSet

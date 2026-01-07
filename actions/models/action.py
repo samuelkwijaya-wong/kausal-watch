@@ -656,8 +656,8 @@ class Action(
     verbose_name_partitive = pgettext_lazy('partitive', 'action')
 
     class Meta:
-        verbose_name = _('action')
-        verbose_name_plural = _('actions')
+        verbose_name = pgettext_lazy('Action model', 'action')
+        verbose_name_plural = pgettext_lazy('Action model', 'actions')
         ordering = ('plan', 'order')
         indexes = [
             models.Index(fields=['plan', 'order']),
@@ -1379,7 +1379,7 @@ class ActionResponsibleParty(OrderedModel, ModelWithRole['ActionResponsibleParty
         'actions.Action',
         on_delete=models.CASCADE,
         related_name='responsible_parties',
-        verbose_name=_('action'),
+        verbose_name=pgettext_lazy('Action model', 'action'),
     )
     organization: FK[Organization] = models.ForeignKey(
         Organization,
@@ -1477,7 +1477,7 @@ class ActionContactPerson(OrderedModel, ModelWithRole['ActionContactPerson.Role'
     action = ParentalKey(
         Action,
         on_delete=models.CASCADE,
-        verbose_name=_('action'),
+        verbose_name=pgettext_lazy('Action model', 'action'),
         related_name='contact_persons',
     )
     action_id: int
@@ -1762,7 +1762,7 @@ class ActionTask(ActionRelatedModelTransModelMixin, models.Model):
         Action,
         on_delete=models.CASCADE,
         related_name='tasks',
-        verbose_name=_('action'),
+        verbose_name=pgettext_lazy('Action model', 'action'),
     )
     name = models.CharField(max_length=250, verbose_name=_('name'))
     state = models.CharField(max_length=20, choices=STATES, default=NOT_STARTED, verbose_name=_('state'))
@@ -1898,7 +1898,12 @@ class ActionImpact(PlanRelatedModelWithRevision, OrderedModel):
 class ActionLink(ActionRelatedModelTransModelMixin, OrderedModel):
     """A link related to an action."""
 
-    action = ParentalKey(Action, on_delete=models.CASCADE, verbose_name=_('action'), related_name='links')
+    action = ParentalKey(
+        Action,
+        on_delete=models.CASCADE,
+        verbose_name=pgettext_lazy('action model', 'action'),
+        related_name='links',
+    )
     url = models.URLField(max_length=400, verbose_name=_('URL'), validators=[URLValidator(('http', 'https'))])
     title = models.CharField(max_length=254, verbose_name=_('title'), blank=True)
 
@@ -1972,7 +1977,7 @@ class ActionChangeLogMessage(BaseChangeLogMessage):
         Action,
         on_delete=models.CASCADE,
         related_name='change_log_messages',
-        verbose_name=_('action'),
+        verbose_name=pgettext_lazy('Action model', 'action'),
     )
     revision = models.ForeignKey(
         Revision,
@@ -2053,7 +2058,7 @@ class ActionStatusUpdate(models.Model):
         Action,
         on_delete=models.CASCADE,
         related_name='status_updates',
-        verbose_name=_('action'),
+        verbose_name=pgettext_lazy('Action model', 'action'),
     )
 
     title = models.CharField(max_length=200, verbose_name=_('title'))
@@ -2120,7 +2125,7 @@ class ImpactGroupAction(models.Model):
     )
     action = models.ForeignKey(
         Action,
-        verbose_name=_('action'),
+        verbose_name=pgettext_lazy('Action model', 'action'),
         on_delete=models.CASCADE,
         related_name='impact_groups',
     )
