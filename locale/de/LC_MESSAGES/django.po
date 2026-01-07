@@ -11,9 +11,10 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-01-07 14:00+0100\n"
-"PO-Revision-Date: 2026-01-07 09:29+0200\n"
+"PO-Revision-Date: 2026-01-07 13:09+0000\n"
 "Last-Translator: Bernhard Bliem <bernhard.bliem@kausal.tech>\n"
-"Language-Team: German <https://weblate.kausal.tech/projects/watch/django/de/>\n"
+"Language-Team: German <https://weblate.kausal.tech/projects/watch/django/de/>"
+"\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1316,26 +1317,19 @@ msgid "revision"
 msgstr "Überarbeitung"
 
 #: actions/models/action.py
-#, fuzzy
-#| msgid "The revision this change log message is associated with."
 msgid "The revision this change history message is associated with"
-msgstr "Die Überarbeitung, auf die sich dieser Eintrag im Änderungsprotokoll bezieht."
+msgstr ""
+"Die Überarbeitung, auf die sich dieser Eintrag im Änderungsverlauf bezieht"
 
 #: actions/models/action.py
-#, fuzzy
-#| msgctxt "menu label"
-#| msgid "Action change history messages"
 msgctxt "verbose name of model"
 msgid "action change history message"
-msgstr "Einträge im Maßnahmenänderungsprotokoll"
+msgstr "Eintrag im Maßnahmenänderungsverlauf"
 
 #: actions/models/action.py
-#, fuzzy
-#| msgctxt "menu label"
-#| msgid "Action change history messages"
 msgctxt "verbose name plural of model"
 msgid "action change history messages"
-msgstr "Einträge im Maßnahmenänderungsprotokoll"
+msgstr "Einträge im Maßnahmenänderungsverlauf"
 
 #: actions/models/action.py indicators/models/action_links.py
 #: indicators/models/contact_persons.py indicators/models/indicator.py
@@ -1344,36 +1338,24 @@ msgid "indicator"
 msgstr "Indikator"
 
 #: actions/models/action.py
-#, fuzzy
-#| msgctxt "menu label"
-#| msgid "Indicator change history messages"
 msgid "indicator change history message"
-msgstr "Einträge im Indikatoränderungsprotokoll"
+msgstr "Eintrag im Indikatoränderungsverlauf"
 
 #: actions/models/action.py
-#, fuzzy
-#| msgctxt "menu label"
-#| msgid "Indicator change history messages"
 msgid "indicator change history messages"
-msgstr "Einträge im Indikatoränderungsprotokoll"
+msgstr "Einträge im Indikatoränderungsverlauf"
 
 #: actions/models/action.py actions/models/category.py feedback/models.py
 msgid "category"
 msgstr "Kategorie"
 
 #: actions/models/action.py
-#, fuzzy
-#| msgctxt "menu label"
-#| msgid "Category change history messages"
 msgid "category change history message"
-msgstr "Einträge im Kategorieänderungsprotokoll"
+msgstr "Eintrage im Kategorieänderungsverlauf"
 
 #: actions/models/action.py
-#, fuzzy
-#| msgctxt "menu label"
-#| msgid "Category change history messages"
 msgid "category change history messages"
-msgstr "Einträge im Kategorieänderungsprotokoll"
+msgstr "Einträge im Kategorieänderungsverlauf"
 
 #: actions/models/action.py indicators/models/values.py
 msgid "date"
@@ -1869,17 +1851,14 @@ msgid "Should indicators open only in a modal dialog in the public UI?"
 msgstr "Sollen Indikatoren in der öffentlichen Benutzeroberfläche nur in einem modalen Dialogfeld geöffnet werden?"
 
 #: actions/models/features.py
-#, fuzzy
-#| msgctxt "menu label"
-#| msgid "Category change history messages"
 msgid "Enable change history messages"
-msgstr "Einträge im Kategorieänderungsprotokoll"
+msgstr "Einträge im Änderungsverlauf aktivieren"
 
 #: actions/models/features.py
-#, fuzzy
-#| msgid "Prompt users to add a public change log message after editing actions, indicators, or categories."
 msgid "Prompt users to add a public change history message after editing actions, indicators, or categories."
-msgstr "Fordere Benutzer auf, nach der Bearbeitung von Maßnahmen, Indikatoren oder Kategorien einen öffentlichen Eintrag im Änderungsprotokoll hinzuzufügen."
+msgstr ""
+"Fordere Benutzer auf, nach der Bearbeitung von Maßnahmen, Indikatoren oder "
+"Kategorien einen öffentlichen Eintrag im Änderungsverlauf hinzuzufügen."
 
 #: actions/models/features.py
 msgid "plan feature"
@@ -2895,11 +2874,8 @@ msgid "updated by"
 msgstr "aktualisiert von"
 
 #: audit_logging/blocks.py
-#, fuzzy
-#| msgctxt "menu label"
-#| msgid "Category change history messages"
 msgid "Latest change history message"
-msgstr "Einträge im Kategorieänderungsprotokoll"
+msgstr "Letzter Eintrag im Änderungsverlauf"
 
 #: audit_logging/templates/site_history_results.html audit_logging/views.py
 msgid "Item type"
