@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-01-07 09:10+0200\n"
+"POT-Creation-Date: 2026-01-07 14:00+0100\n"
 "PO-Revision-Date: 2025-04-02 12:20+0000\n"
 "Last-Translator: Matias Wargelin <matias.wargelin@kausal.tech>\n"
 "Language-Team: Swedish <https://weblate.kausal.tech/projects/watch/django/sv/>\n"
@@ -1282,7 +1282,7 @@ msgstr "stat"
 msgid "comment"
 msgstr "kommentar"
 
-#: actions/models/action.py
+#: actions/models/action.py reports/report_formatters.py
 msgid "due date"
 msgstr "förfallodatum"
 
@@ -1383,22 +1383,24 @@ msgid "revision"
 msgstr "mått"
 
 #: actions/models/action.py
-msgid "The revision this change log message is associated with."
-msgstr ""
+#, fuzzy
+#| msgid "Changes were saved"
+msgid "The revision this change history message is associated with"
+msgstr "Ändringar sparades"
 
 #: actions/models/action.py
 #, fuzzy
-#| msgid "action schedules"
+#| msgid "Action schedules"
 msgctxt "verbose name of model"
-msgid "action change log message"
-msgstr "åtgärdsscheman"
+msgid "action change history message"
+msgstr "Tidsram för åtgärd"
 
 #: actions/models/action.py
 #, fuzzy
-#| msgid "action schedules"
+#| msgid "Action schedules"
 msgctxt "verbose name plural of model"
-msgid "action change log messages"
-msgstr "åtgärdsscheman"
+msgid "action change history messages"
+msgstr "Tidsram för åtgärd"
 
 #: actions/models/action.py indicators/models/action_links.py
 #: indicators/models/contact_persons.py indicators/models/indicator.py
@@ -1409,28 +1411,28 @@ msgstr "indikator"
 #: actions/models/action.py
 #, fuzzy
 #| msgid "Indicators assigned to me"
-msgid "indicator change log message"
+msgid "indicator change history message"
 msgstr "Indikatorer tilldelade mig"
 
 #: actions/models/action.py
 #, fuzzy
-#| msgid "indicator goals"
-msgid "indicator change log messages"
-msgstr "indikatormål"
+#| msgid "Indicators assigned to me"
+msgid "indicator change history messages"
+msgstr "Indikatorer tilldelade mig"
 
 #: actions/models/action.py actions/models/category.py feedback/models.py
 msgid "category"
 msgstr "kategori"
 
 #: actions/models/action.py
-msgid "category change log message"
-msgstr ""
+#, fuzzy
+msgid "category change history message"
+msgstr "Kategorityper"
 
 #: actions/models/action.py
 #, fuzzy
-#| msgid "category levels"
-msgid "category change log messages"
-msgstr "kategorinivåer"
+msgid "category change history messages"
+msgstr "Kategorityper"
 
 #: actions/models/action.py indicators/models/values.py
 msgid "date"
@@ -1990,7 +1992,7 @@ msgid "Enable change history messages"
 msgstr "kategorinivåer"
 
 #: actions/models/features.py
-msgid "Prompt users to add a public change log message after editing actions, indicators, or categories."
+msgid "Prompt users to add a public change history message after editing actions, indicators, or categories."
 msgstr ""
 
 #: actions/models/features.py
@@ -3102,8 +3104,9 @@ msgid "updated by"
 msgstr "uppdaterad kl"
 
 #: audit_logging/blocks.py
-msgid "Latest change log message"
-msgstr ""
+#, fuzzy
+msgid "Latest change history message"
+msgstr "Kategorityper"
 
 #: audit_logging/templates/site_history_results.html audit_logging/views.py
 #, fuzzy
@@ -5835,6 +5838,12 @@ msgstr "Andra ansvariga"
 
 #: reports/spreadsheets/action_print_layout.py
 #, fuzzy
+#| msgid "Page link"
+msgid "Page"
+msgstr "Sidolänk"
+
+#: reports/spreadsheets/action_print_layout.py
+#, fuzzy
 msgid "Profiles"
 msgstr "Profiler"
 
@@ -6034,14 +6043,36 @@ msgid "No permission to remove the user belonging to plans you are not managing.
 msgstr "Inget tillstånd att ta bort användaren som tillhör planer som du inte hanterar."
 
 #, fuzzy
+#~| msgid "action schedules"
+#~ msgctxt "verbose name of model"
+#~ msgid "action change log message"
+#~ msgstr "åtgärdsscheman"
+
+#, fuzzy
+#~| msgid "action schedules"
+#~ msgctxt "verbose name plural of model"
+#~ msgid "action change log messages"
+#~ msgstr "åtgärdsscheman"
+
+#, fuzzy
+#~| msgid "Indicators assigned to me"
+#~ msgid "indicator change log message"
+#~ msgstr "Indikatorer tilldelade mig"
+
+#, fuzzy
+#~| msgid "indicator goals"
+#~ msgid "indicator change log messages"
+#~ msgstr "indikatormål"
+
+#, fuzzy
+#~| msgid "category levels"
+#~ msgid "category change log messages"
+#~ msgstr "kategorinivåer"
+
+#, fuzzy
 #~| msgid "Save changes"
 #~ msgid "Enable change log"
 #~ msgstr "Spara ändringar"
-
-#, fuzzy
-#~| msgid "Page link"
-#~ msgid "Page"
-#~ msgstr "Sidolänk"
 
 #, fuzzy
 #~| msgid "Last modified"

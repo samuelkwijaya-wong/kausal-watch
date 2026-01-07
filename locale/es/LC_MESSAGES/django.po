@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-01-07 09:10+0200\n"
+"POT-Creation-Date: 2026-01-07 14:00+0100\n"
 "PO-Revision-Date: 2025-04-02 07:20+0000\n"
 "Last-Translator: Matias Wargelin <matias.wargelin@kausal.tech>\n"
 "Language-Team: Spanish <https://weblate.kausal.tech/projects/watch/django/es/>\n"
@@ -1247,7 +1247,7 @@ msgstr "estado"
 msgid "comment"
 msgstr "comentario"
 
-#: actions/models/action.py
+#: actions/models/action.py reports/report_formatters.py
 msgid "due date"
 msgstr "fecha de vencimiento"
 
@@ -1348,22 +1348,24 @@ msgid "revision"
 msgstr "División"
 
 #: actions/models/action.py
-msgid "The revision this change log message is associated with."
-msgstr ""
+#, fuzzy
+#| msgid "action schedules"
+msgid "The revision this change history message is associated with"
+msgstr "calendarios de actuación"
 
 #: actions/models/action.py
 #, fuzzy
-#| msgid "action schedules"
+#| msgid "Action schedules"
 msgctxt "verbose name of model"
-msgid "action change log message"
-msgstr "calendarios de actuación"
+msgid "action change history message"
+msgstr "Planes de acción"
 
 #: actions/models/action.py
 #, fuzzy
-#| msgid "action schedules"
+#| msgid "Action schedules"
 msgctxt "verbose name plural of model"
-msgid "action change log messages"
-msgstr "calendarios de actuación"
+msgid "action change history messages"
+msgstr "Planes de acción"
 
 #: actions/models/action.py indicators/models/action_links.py
 #: indicators/models/contact_persons.py indicators/models/indicator.py
@@ -1374,28 +1376,30 @@ msgstr "indicador"
 #: actions/models/action.py
 #, fuzzy
 #| msgid "Indicators assigned to me"
-msgid "indicator change log message"
+msgid "indicator change history message"
 msgstr "Indicadores que me han sido asignados"
 
 #: actions/models/action.py
 #, fuzzy
-#| msgid "indicator goals"
-msgid "indicator change log messages"
-msgstr "objetivos de los indicadores"
+#| msgid "Indicators assigned to me"
+msgid "indicator change history messages"
+msgstr "Indicadores que me han sido asignados"
 
 #: actions/models/action.py actions/models/category.py feedback/models.py
 msgid "category"
 msgstr "categoría"
 
 #: actions/models/action.py
-msgid "category change log message"
-msgstr ""
+#, fuzzy
+#| msgid "Category type pages"
+msgid "category change history message"
+msgstr "Páginas de tipo categoría"
 
 #: actions/models/action.py
 #, fuzzy
-#| msgid "category levels"
-msgid "category change log messages"
-msgstr "niveles de categoría"
+#| msgid "Category type pages"
+msgid "category change history messages"
+msgstr "Páginas de tipo categoría"
 
 #: actions/models/action.py indicators/models/values.py
 msgid "date"
@@ -1913,7 +1917,7 @@ msgid "Enable change history messages"
 msgstr "niveles de categoría"
 
 #: actions/models/features.py
-msgid "Prompt users to add a public change log message after editing actions, indicators, or categories."
+msgid "Prompt users to add a public change history message after editing actions, indicators, or categories."
 msgstr ""
 
 #: actions/models/features.py
@@ -2963,8 +2967,10 @@ msgid "updated by"
 msgstr "actualizado por"
 
 #: audit_logging/blocks.py
-msgid "Latest change log message"
-msgstr ""
+#, fuzzy
+#| msgid "Category type pages"
+msgid "Latest change history message"
+msgstr "Páginas de tipo categoría"
 
 #: audit_logging/templates/site_history_results.html audit_logging/views.py
 #, fuzzy
@@ -5586,6 +5592,12 @@ msgid "Other responsible parties"
 msgstr "Otros responsables"
 
 #: reports/spreadsheets/action_print_layout.py
+#, fuzzy
+#| msgid "Page link"
+msgid "Page"
+msgstr "Enlace de página"
+
+#: reports/spreadsheets/action_print_layout.py
 msgid "Profiles"
 msgstr "Perfiles"
 
@@ -5780,9 +5792,31 @@ msgid "No permission to remove the user belonging to plans you are not managing.
 msgstr "Sin permiso para eliminar el usuario perteneciente a planes que no gestiona."
 
 #, fuzzy
-#~| msgid "Page link"
-#~ msgid "Page"
-#~ msgstr "Enlace de página"
+#~| msgid "action schedules"
+#~ msgctxt "verbose name of model"
+#~ msgid "action change log message"
+#~ msgstr "calendarios de actuación"
+
+#, fuzzy
+#~| msgid "action schedules"
+#~ msgctxt "verbose name plural of model"
+#~ msgid "action change log messages"
+#~ msgstr "calendarios de actuación"
+
+#, fuzzy
+#~| msgid "Indicators assigned to me"
+#~ msgid "indicator change log message"
+#~ msgstr "Indicadores que me han sido asignados"
+
+#, fuzzy
+#~| msgid "indicator goals"
+#~ msgid "indicator change log messages"
+#~ msgstr "objetivos de los indicadores"
+
+#, fuzzy
+#~| msgid "category levels"
+#~ msgid "category change log messages"
+#~ msgstr "niveles de categoría"
 
 #~ msgid "Last modified at"
 #~ msgstr "Última modificación en"

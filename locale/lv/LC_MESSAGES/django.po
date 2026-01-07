@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-01-07 09:10+0200\n"
+"POT-Creation-Date: 2026-01-07 14:00+0100\n"
 "PO-Revision-Date: 2025-04-02 07:20+0000\n"
 "Last-Translator: Matias Wargelin <matias.wargelin@kausal.tech>\n"
 "Language-Team: Latvian <https://weblate.kausal.tech/projects/watch/django/lv/>\n"
@@ -1284,7 +1284,7 @@ msgstr "statuss"
 msgid "comment"
 msgstr "komentārs"
 
-#: actions/models/action.py
+#: actions/models/action.py reports/report_formatters.py
 msgid "due date"
 msgstr "termiņš"
 
@@ -1387,22 +1387,24 @@ msgid "revision"
 msgstr "Nodaļa"
 
 #: actions/models/action.py
-msgid "The revision this change log message is associated with."
-msgstr ""
+#, fuzzy
+#| msgid "Changes were saved"
+msgid "The revision this change history message is associated with"
+msgstr "Izmaiņas tika saglabātas"
 
 #: actions/models/action.py
 #, fuzzy
-#| msgid "action schedules"
+#| msgid "Action schedules"
 msgctxt "verbose name of model"
-msgid "action change log message"
-msgstr "rīcības grafiki"
+msgid "action change history message"
+msgstr "Rīcības grafiki"
 
 #: actions/models/action.py
 #, fuzzy
-#| msgid "action schedules"
+#| msgid "Action schedules"
 msgctxt "verbose name plural of model"
-msgid "action change log messages"
-msgstr "rīcības grafiki"
+msgid "action change history messages"
+msgstr "Rīcības grafiki"
 
 #: actions/models/action.py indicators/models/action_links.py
 #: indicators/models/contact_persons.py indicators/models/indicator.py
@@ -1413,28 +1415,30 @@ msgstr "indikators"
 #: actions/models/action.py
 #, fuzzy
 #| msgid "Indicators assigned to me"
-msgid "indicator change log message"
+msgid "indicator change history message"
 msgstr "Man piešķirtie rādītāji"
 
 #: actions/models/action.py
 #, fuzzy
-#| msgid "indicator goals"
-msgid "indicator change log messages"
-msgstr "rādītāju mērķi"
+#| msgid "Indicators assigned to me"
+msgid "indicator change history messages"
+msgstr "Man piešķirtie rādītāji"
 
 #: actions/models/action.py actions/models/category.py feedback/models.py
 msgid "category"
 msgstr "kategorija"
 
 #: actions/models/action.py
-msgid "category change log message"
-msgstr ""
+#, fuzzy
+#| msgid "Category type pages"
+msgid "category change history message"
+msgstr "Kategorijas tipa lapas"
 
 #: actions/models/action.py
 #, fuzzy
-#| msgid "category levels"
-msgid "category change log messages"
-msgstr "kategoriju līmeņi"
+#| msgid "Category type pages"
+msgid "category change history messages"
+msgstr "Kategorijas tipa lapas"
 
 #: actions/models/action.py indicators/models/values.py
 msgid "date"
@@ -1970,7 +1974,7 @@ msgid "Enable change history messages"
 msgstr "kategoriju līmeņi"
 
 #: actions/models/features.py
-msgid "Prompt users to add a public change log message after editing actions, indicators, or categories."
+msgid "Prompt users to add a public change history message after editing actions, indicators, or categories."
 msgstr ""
 
 #: actions/models/features.py
@@ -3039,8 +3043,10 @@ msgid "updated by"
 msgstr "atjaunināja"
 
 #: audit_logging/blocks.py
-msgid "Latest change log message"
-msgstr ""
+#, fuzzy
+#| msgid "Category type pages"
+msgid "Latest change history message"
+msgstr "Kategorijas tipa lapas"
 
 #: audit_logging/templates/site_history_results.html audit_logging/views.py
 #, fuzzy
@@ -5702,6 +5708,12 @@ msgid "Other responsible parties"
 msgstr "Citi atbildīgie"
 
 #: reports/spreadsheets/action_print_layout.py
+#, fuzzy
+#| msgid "Page link"
+msgid "Page"
+msgstr "Lapas saite"
+
+#: reports/spreadsheets/action_print_layout.py
 msgid "Profiles"
 msgstr ""
 
@@ -5892,14 +5904,36 @@ msgid "No permission to remove the user belonging to plans you are not managing.
 msgstr "Nav atļauts noņemt lietotājus, kas pieder pie plāniem, kurus jūs neapsaimniekojat."
 
 #, fuzzy
+#~| msgid "action schedules"
+#~ msgctxt "verbose name of model"
+#~ msgid "action change log message"
+#~ msgstr "rīcības grafiki"
+
+#, fuzzy
+#~| msgid "action schedules"
+#~ msgctxt "verbose name plural of model"
+#~ msgid "action change log messages"
+#~ msgstr "rīcības grafiki"
+
+#, fuzzy
+#~| msgid "Indicators assigned to me"
+#~ msgid "indicator change log message"
+#~ msgstr "Man piešķirtie rādītāji"
+
+#, fuzzy
+#~| msgid "indicator goals"
+#~ msgid "indicator change log messages"
+#~ msgstr "rādītāju mērķi"
+
+#, fuzzy
+#~| msgid "category levels"
+#~ msgid "category change log messages"
+#~ msgstr "kategoriju līmeņi"
+
+#, fuzzy
 #~| msgid "Save changes"
 #~ msgid "Enable change log"
 #~ msgstr "Izmaiņu saglabāšana"
-
-#, fuzzy
-#~| msgid "Page link"
-#~ msgid "Page"
-#~ msgstr "Lapas saite"
 
 #, fuzzy
 #~| msgid "Last modified"

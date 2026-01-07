@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-01-07 09:29+0200\n"
+"POT-Creation-Date: 2026-01-07 14:00+0100\n"
 "PO-Revision-Date: 2026-01-07 09:29+0200\n"
 "Last-Translator: Bernhard Bliem <bernhard.bliem@kausal.tech>\n"
 "Language-Team: German <https://weblate.kausal.tech/projects/watch/django/de/>\n"
@@ -1217,7 +1217,7 @@ msgstr "Status"
 msgid "comment"
 msgstr "Kommentar"
 
-#: actions/models/action.py
+#: actions/models/action.py reports/report_formatters.py
 msgid "due date"
 msgstr "Frist"
 
@@ -1316,17 +1316,25 @@ msgid "revision"
 msgstr "Überarbeitung"
 
 #: actions/models/action.py
-msgid "The revision this change log message is associated with."
+#, fuzzy
+#| msgid "The revision this change log message is associated with."
+msgid "The revision this change history message is associated with"
 msgstr "Die Überarbeitung, auf die sich dieser Eintrag im Änderungsprotokoll bezieht."
 
 #: actions/models/action.py
+#, fuzzy
+#| msgctxt "menu label"
+#| msgid "Action change history messages"
 msgctxt "verbose name of model"
-msgid "action change log message"
-msgstr "Eintrag im Maßnahmenänderungsprotokoll"
+msgid "action change history message"
+msgstr "Einträge im Maßnahmenänderungsprotokoll"
 
 #: actions/models/action.py
+#, fuzzy
+#| msgctxt "menu label"
+#| msgid "Action change history messages"
 msgctxt "verbose name plural of model"
-msgid "action change log messages"
+msgid "action change history messages"
 msgstr "Einträge im Maßnahmenänderungsprotokoll"
 
 #: actions/models/action.py indicators/models/action_links.py
@@ -1336,11 +1344,17 @@ msgid "indicator"
 msgstr "Indikator"
 
 #: actions/models/action.py
-msgid "indicator change log message"
-msgstr "Eintrag im Indikatoränderungsprotokoll"
+#, fuzzy
+#| msgctxt "menu label"
+#| msgid "Indicator change history messages"
+msgid "indicator change history message"
+msgstr "Einträge im Indikatoränderungsprotokoll"
 
 #: actions/models/action.py
-msgid "indicator change log messages"
+#, fuzzy
+#| msgctxt "menu label"
+#| msgid "Indicator change history messages"
+msgid "indicator change history messages"
 msgstr "Einträge im Indikatoränderungsprotokoll"
 
 #: actions/models/action.py actions/models/category.py feedback/models.py
@@ -1348,11 +1362,17 @@ msgid "category"
 msgstr "Kategorie"
 
 #: actions/models/action.py
-msgid "category change log message"
-msgstr "Eintrag im Kategorieänderungsprotokoll"
+#, fuzzy
+#| msgctxt "menu label"
+#| msgid "Category change history messages"
+msgid "category change history message"
+msgstr "Einträge im Kategorieänderungsprotokoll"
 
 #: actions/models/action.py
-msgid "category change log messages"
+#, fuzzy
+#| msgctxt "menu label"
+#| msgid "Category change history messages"
+msgid "category change history messages"
 msgstr "Einträge im Kategorieänderungsprotokoll"
 
 #: actions/models/action.py indicators/models/values.py
@@ -1856,7 +1876,9 @@ msgid "Enable change history messages"
 msgstr "Einträge im Kategorieänderungsprotokoll"
 
 #: actions/models/features.py
-msgid "Prompt users to add a public change log message after editing actions, indicators, or categories."
+#, fuzzy
+#| msgid "Prompt users to add a public change log message after editing actions, indicators, or categories."
+msgid "Prompt users to add a public change history message after editing actions, indicators, or categories."
 msgstr "Fordere Benutzer auf, nach der Bearbeitung von Maßnahmen, Indikatoren oder Kategorien einen öffentlichen Eintrag im Änderungsprotokoll hinzuzufügen."
 
 #: actions/models/features.py
@@ -2873,8 +2895,11 @@ msgid "updated by"
 msgstr "aktualisiert von"
 
 #: audit_logging/blocks.py
-msgid "Latest change log message"
-msgstr "Aktuelle Änderungsnotiz"
+#, fuzzy
+#| msgctxt "menu label"
+#| msgid "Category change history messages"
+msgid "Latest change history message"
+msgstr "Einträge im Kategorieänderungsprotokoll"
 
 #: audit_logging/templates/site_history_results.html audit_logging/views.py
 msgid "Item type"
@@ -5343,6 +5368,10 @@ msgid "Other responsible parties"
 msgstr "Andere Verantwortliche"
 
 #: reports/spreadsheets/action_print_layout.py
+msgid "Page"
+msgstr "Seite"
+
+#: reports/spreadsheets/action_print_layout.py
 msgid "Profiles"
 msgstr "Steckbriefe"
 
@@ -5526,11 +5555,31 @@ msgstr "Benutzer"
 msgid "No permission to remove the user belonging to plans you are not managing."
 msgstr "Keine Berechtigung zum Entfernen von Benutzern, die zu Plänen gehören, die Sie nicht verwalten."
 
+#~ msgctxt "verbose name of model"
+#~ msgid "action change log message"
+#~ msgstr "Eintrag im Maßnahmenänderungsprotokoll"
+
+#~ msgctxt "verbose name plural of model"
+#~ msgid "action change log messages"
+#~ msgstr "Einträge im Maßnahmenänderungsprotokoll"
+
+#~ msgid "indicator change log message"
+#~ msgstr "Eintrag im Indikatoränderungsprotokoll"
+
+#~ msgid "indicator change log messages"
+#~ msgstr "Einträge im Indikatoränderungsprotokoll"
+
+#~ msgid "category change log message"
+#~ msgstr "Eintrag im Kategorieänderungsprotokoll"
+
+#~ msgid "category change log messages"
+#~ msgstr "Einträge im Kategorieänderungsprotokoll"
+
+#~ msgid "Latest change log message"
+#~ msgstr "Aktuelle Änderungsnotiz"
+
 #~ msgid "Enable change log"
 #~ msgstr "Änderungsprotokoll aktivieren"
-
-#~ msgid "Page"
-#~ msgstr "Seite"
 
 #~ msgid "Last modified at"
 #~ msgstr "Zuletzt geändert am"

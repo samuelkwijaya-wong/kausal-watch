@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-01-07 09:10+0200\n"
+"POT-Creation-Date: 2026-01-07 14:00+0100\n"
 "PO-Revision-Date: 2025-04-02 07:20+0000\n"
 "Last-Translator: Matias Wargelin <matias.wargelin@kausal.tech>\n"
 "Language-Team: German (Switzerland) <https://weblate.kausal.tech/projects/watch/django/de_CH/>\n"
@@ -1247,7 +1247,7 @@ msgstr ""
 msgid "comment"
 msgstr ""
 
-#: actions/models/action.py
+#: actions/models/action.py reports/report_formatters.py
 msgid "due date"
 msgstr ""
 
@@ -1346,21 +1346,23 @@ msgid "revision"
 msgstr ""
 
 #: actions/models/action.py
-msgid "The revision this change log message is associated with."
-msgstr ""
-
-#: actions/models/action.py
 #, fuzzy
 #| msgid "action schedules"
-msgctxt "verbose name of model"
-msgid "action change log message"
+msgid "The revision this change history message is associated with"
 msgstr "Massnahmenzeitpläne"
 
 #: actions/models/action.py
 #, fuzzy
-#| msgid "action schedules"
+#| msgid "Action schedules"
+msgctxt "verbose name of model"
+msgid "action change history message"
+msgstr "Massnahmenzeitpläne"
+
+#: actions/models/action.py
+#, fuzzy
+#| msgid "Action schedules"
 msgctxt "verbose name plural of model"
-msgid "action change log messages"
+msgid "action change history messages"
 msgstr "Massnahmenzeitpläne"
 
 #: actions/models/action.py indicators/models/action_links.py
@@ -1371,14 +1373,14 @@ msgstr ""
 
 #: actions/models/action.py
 #, fuzzy
-#| msgid "indicates action progress"
-msgid "indicator change log message"
-msgstr "zeigt Massnahmenfortschritt an"
+#| msgid "Indicator for actions"
+msgid "indicator change history message"
+msgstr "Indikator für Massnahmen"
 
 #: actions/models/action.py
 #, fuzzy
 #| msgid "Indicator for actions"
-msgid "indicator change log messages"
+msgid "indicator change history messages"
 msgstr "Indikator für Massnahmen"
 
 #: actions/models/action.py actions/models/category.py feedback/models.py
@@ -1386,12 +1388,16 @@ msgid "category"
 msgstr ""
 
 #: actions/models/action.py
-msgid "category change log message"
-msgstr ""
+#, fuzzy
+#| msgid "action schedules"
+msgid "category change history message"
+msgstr "Massnahmenzeitpläne"
 
 #: actions/models/action.py
-msgid "category change log messages"
-msgstr ""
+#, fuzzy
+#| msgid "action schedules"
+msgid "category change history messages"
+msgstr "Massnahmenzeitpläne"
 
 #: actions/models/action.py indicators/models/values.py
 msgid "date"
@@ -1911,7 +1917,7 @@ msgid "Enable change history messages"
 msgstr "Massnahmenzeitpläne"
 
 #: actions/models/features.py
-msgid "Prompt users to add a public change log message after editing actions, indicators, or categories."
+msgid "Prompt users to add a public change history message after editing actions, indicators, or categories."
 msgstr ""
 
 #: actions/models/features.py
@@ -2970,8 +2976,10 @@ msgid "updated by"
 msgstr ""
 
 #: audit_logging/blocks.py
-msgid "Latest change log message"
-msgstr ""
+#, fuzzy
+#| msgid "action schedules"
+msgid "Latest change history message"
+msgstr "Massnahmenzeitpläne"
 
 #: audit_logging/templates/site_history_results.html audit_logging/views.py
 msgid "Item type"
@@ -5551,6 +5559,10 @@ msgid "Other responsible parties"
 msgstr ""
 
 #: reports/spreadsheets/action_print_layout.py
+msgid "Page"
+msgstr ""
+
+#: reports/spreadsheets/action_print_layout.py
 msgid "Profiles"
 msgstr ""
 
@@ -5737,6 +5749,28 @@ msgstr ""
 #: users/models.py
 msgid "No permission to remove the user belonging to plans you are not managing."
 msgstr ""
+
+#, fuzzy
+#~| msgid "action schedules"
+#~ msgctxt "verbose name of model"
+#~ msgid "action change log message"
+#~ msgstr "Massnahmenzeitpläne"
+
+#, fuzzy
+#~| msgid "action schedules"
+#~ msgctxt "verbose name plural of model"
+#~ msgid "action change log messages"
+#~ msgstr "Massnahmenzeitpläne"
+
+#, fuzzy
+#~| msgid "indicates action progress"
+#~ msgid "indicator change log message"
+#~ msgstr "zeigt Massnahmenfortschritt an"
+
+#, fuzzy
+#~| msgid "Indicator for actions"
+#~ msgid "indicator change log messages"
+#~ msgstr "Indikator für Massnahmen"
 
 #, fuzzy
 #~| msgid "Set if action identifiers should be visible in the public UI"

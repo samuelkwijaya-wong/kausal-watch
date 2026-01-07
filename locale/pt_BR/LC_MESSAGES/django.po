@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-01-07 09:10+0200\n"
+"POT-Creation-Date: 2026-01-07 14:00+0100\n"
 "PO-Revision-Date: 2025-04-02 07:20+0000\n"
 "Last-Translator: Matias Wargelin <matias.wargelin@kausal.tech>\n"
 "Language-Team: Portuguese (Brazil) <https://weblate.kausal.tech/projects/watch/django/pt_BR/>\n"
@@ -1430,7 +1430,7 @@ msgstr "estado"
 msgid "comment"
 msgstr "comentário"
 
-#: actions/models/action.py
+#: actions/models/action.py reports/report_formatters.py
 #, fuzzy
 msgid "due date"
 msgstr "data de vencimento"
@@ -1552,20 +1552,21 @@ msgid "revision"
 msgstr "Divisão"
 
 #: actions/models/action.py
-msgid "The revision this change log message is associated with."
-msgstr ""
+#, fuzzy
+msgid "The revision this change history message is associated with"
+msgstr "As alterações foram salvas"
 
 #: actions/models/action.py
 #, fuzzy
 msgctxt "verbose name of model"
-msgid "action change log message"
-msgstr "cronogramas de ação"
+msgid "action change history message"
+msgstr "Cronogramas de ação"
 
 #: actions/models/action.py
 #, fuzzy
 msgctxt "verbose name plural of model"
-msgid "action change log messages"
-msgstr "cronogramas de ação"
+msgid "action change history messages"
+msgstr "Cronogramas de ação"
 
 #: actions/models/action.py indicators/models/action_links.py
 #: indicators/models/contact_persons.py indicators/models/indicator.py
@@ -1576,13 +1577,13 @@ msgstr "indicador"
 
 #: actions/models/action.py
 #, fuzzy
-msgid "indicator change log message"
+msgid "indicator change history message"
 msgstr "Página da lista de indicadores"
 
 #: actions/models/action.py
 #, fuzzy
-msgid "indicator change log messages"
-msgstr "metas de indicadores"
+msgid "indicator change history messages"
+msgstr "Página da lista de indicadores"
 
 #: actions/models/action.py actions/models/category.py feedback/models.py
 #, fuzzy
@@ -1590,13 +1591,14 @@ msgid "category"
 msgstr "categoria"
 
 #: actions/models/action.py
-msgid "category change log message"
-msgstr ""
+#, fuzzy
+msgid "category change history message"
+msgstr "Páginas de tipo de categoria"
 
 #: actions/models/action.py
 #, fuzzy
-msgid "category change log messages"
-msgstr "níveis de categoria"
+msgid "category change history messages"
+msgstr "Páginas de tipo de categoria"
 
 #: actions/models/action.py indicators/models/values.py
 #, fuzzy
@@ -2209,7 +2211,7 @@ msgid "Enable change history messages"
 msgstr "níveis de categoria"
 
 #: actions/models/features.py
-msgid "Prompt users to add a public change log message after editing actions, indicators, or categories."
+msgid "Prompt users to add a public change history message after editing actions, indicators, or categories."
 msgstr ""
 
 #: actions/models/features.py
@@ -3405,8 +3407,9 @@ msgid "updated by"
 msgstr "atualizado por"
 
 #: audit_logging/blocks.py
-msgid "Latest change log message"
-msgstr ""
+#, fuzzy
+msgid "Latest change history message"
+msgstr "Páginas de tipo de categoria"
 
 #: audit_logging/templates/site_history_results.html audit_logging/views.py
 #, fuzzy
@@ -6361,6 +6364,11 @@ msgid "Other responsible parties"
 msgstr "Outros responsáveis"
 
 #: reports/spreadsheets/action_print_layout.py
+#, fuzzy
+msgid "Page"
+msgstr "Link da página"
+
+#: reports/spreadsheets/action_print_layout.py
 msgid "Profiles"
 msgstr ""
 
@@ -6570,12 +6578,30 @@ msgid "No permission to remove the user belonging to plans you are not managing.
 msgstr "Nenhuma permissão para remover o usuário pertencente a planos que você não está gerenciando."
 
 #, fuzzy
-#~ msgid "Enable change log"
-#~ msgstr "Salvar alterações"
+#~ msgctxt "verbose name of model"
+#~ msgid "action change log message"
+#~ msgstr "cronogramas de ação"
 
 #, fuzzy
-#~ msgid "Page"
-#~ msgstr "Link da página"
+#~ msgctxt "verbose name plural of model"
+#~ msgid "action change log messages"
+#~ msgstr "cronogramas de ação"
+
+#, fuzzy
+#~ msgid "indicator change log message"
+#~ msgstr "Página da lista de indicadores"
+
+#, fuzzy
+#~ msgid "indicator change log messages"
+#~ msgstr "metas de indicadores"
+
+#, fuzzy
+#~ msgid "category change log messages"
+#~ msgstr "níveis de categoria"
+
+#, fuzzy
+#~ msgid "Enable change log"
+#~ msgstr "Salvar alterações"
 
 #, fuzzy
 #~ msgid "Last modified at"

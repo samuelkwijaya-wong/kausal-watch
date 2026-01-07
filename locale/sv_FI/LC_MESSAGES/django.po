@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-01-07 09:10+0200\n"
+"POT-Creation-Date: 2026-01-07 14:00+0100\n"
 "PO-Revision-Date: 2024-12-11 10:47+0000\n"
 "Last-Translator: Timo Tuominen <timo.tuominen@kausal.tech>\n"
 "Language-Team: Swedish <https://weblate.kausal.tech/projects/watch/django/sv_FI/>\n"
@@ -1214,7 +1214,7 @@ msgstr ""
 msgid "comment"
 msgstr ""
 
-#: actions/models/action.py
+#: actions/models/action.py reports/report_formatters.py
 msgid "due date"
 msgstr ""
 
@@ -1313,17 +1313,17 @@ msgid "revision"
 msgstr ""
 
 #: actions/models/action.py
-msgid "The revision this change log message is associated with."
+msgid "The revision this change history message is associated with"
 msgstr ""
 
 #: actions/models/action.py
 msgctxt "verbose name of model"
-msgid "action change log message"
+msgid "action change history message"
 msgstr ""
 
 #: actions/models/action.py
 msgctxt "verbose name plural of model"
-msgid "action change log messages"
+msgid "action change history messages"
 msgstr ""
 
 #: actions/models/action.py indicators/models/action_links.py
@@ -1333,11 +1333,11 @@ msgid "indicator"
 msgstr ""
 
 #: actions/models/action.py
-msgid "indicator change log message"
+msgid "indicator change history message"
 msgstr ""
 
 #: actions/models/action.py
-msgid "indicator change log messages"
+msgid "indicator change history messages"
 msgstr ""
 
 #: actions/models/action.py actions/models/category.py feedback/models.py
@@ -1345,11 +1345,11 @@ msgid "category"
 msgstr ""
 
 #: actions/models/action.py
-msgid "category change log message"
+msgid "category change history message"
 msgstr ""
 
 #: actions/models/action.py
-msgid "category change log messages"
+msgid "category change history messages"
 msgstr ""
 
 #: actions/models/action.py indicators/models/values.py
@@ -1850,7 +1850,7 @@ msgid "Enable change history messages"
 msgstr ""
 
 #: actions/models/features.py
-msgid "Prompt users to add a public change log message after editing actions, indicators, or categories."
+msgid "Prompt users to add a public change history message after editing actions, indicators, or categories."
 msgstr ""
 
 #: actions/models/features.py
@@ -2861,7 +2861,7 @@ msgid "updated by"
 msgstr ""
 
 #: audit_logging/blocks.py
-msgid "Latest change log message"
+msgid "Latest change history message"
 msgstr ""
 
 #: audit_logging/templates/site_history_results.html audit_logging/views.py
@@ -5317,6 +5317,10 @@ msgstr ""
 #: reports/report_formatters.py
 msgid "Other responsible parties"
 msgstr "Andra ansvariga"
+
+#: reports/spreadsheets/action_print_layout.py
+msgid "Page"
+msgstr ""
 
 #: reports/spreadsheets/action_print_layout.py
 msgid "Profiles"

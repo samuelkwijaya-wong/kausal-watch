@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-01-07 09:10+0200\n"
+"POT-Creation-Date: 2026-01-07 14:00+0100\n"
 "PO-Revision-Date: 2025-04-02 07:20+0000\n"
 "Last-Translator: Matias Wargelin <matias.wargelin@kausal.tech>\n"
 "Language-Team: Finnish <https://weblate.kausal.tech/projects/watch/django/fi/>\n"
@@ -1257,7 +1257,7 @@ msgstr "tila"
 msgid "comment"
 msgstr "kommentti"
 
-#: actions/models/action.py
+#: actions/models/action.py reports/report_formatters.py
 msgid "due date"
 msgstr "tavoitepäivämäärä"
 
@@ -1358,22 +1358,24 @@ msgid "revision"
 msgstr "mittarin dimensiot"
 
 #: actions/models/action.py
-msgid "The revision this change log message is associated with."
-msgstr ""
+#, fuzzy
+#| msgid "Changes were saved"
+msgid "The revision this change history message is associated with"
+msgstr "Muutokset tallennettu"
 
 #: actions/models/action.py
 #, fuzzy
-#| msgid "action schedules"
+#| msgid "Action schedules"
 msgctxt "verbose name of model"
-msgid "action change log message"
-msgstr "toimenpiteiden aikataulut"
+msgid "action change history message"
+msgstr "Toimenpiteen aikataulu"
 
 #: actions/models/action.py
 #, fuzzy
-#| msgid "action schedules"
+#| msgid "Action schedules"
 msgctxt "verbose name plural of model"
-msgid "action change log messages"
-msgstr "toimenpiteiden aikataulut"
+msgid "action change history messages"
+msgstr "Toimenpiteen aikataulu"
 
 #: actions/models/action.py indicators/models/action_links.py
 #: indicators/models/contact_persons.py indicators/models/indicator.py
@@ -1384,28 +1386,30 @@ msgstr "mittari"
 #: actions/models/action.py
 #, fuzzy
 #| msgid "Indicators assigned to me"
-msgid "indicator change log message"
+msgid "indicator change history message"
 msgstr "Minulle osoitetut mittarit"
 
 #: actions/models/action.py
 #, fuzzy
-#| msgid "indicator goals"
-msgid "indicator change log messages"
-msgstr "mittarin tavoitteet"
+#| msgid "Indicators assigned to me"
+msgid "indicator change history messages"
+msgstr "Minulle osoitetut mittarit"
 
 #: actions/models/action.py actions/models/category.py feedback/models.py
 msgid "category"
 msgstr "luokka"
 
 #: actions/models/action.py
-msgid "category change log message"
-msgstr ""
+#, fuzzy
+#| msgid "Category type pages"
+msgid "category change history message"
+msgstr "Luokkatyyppisivut"
 
 #: actions/models/action.py
 #, fuzzy
-#| msgid "category levels"
-msgid "category change log messages"
-msgstr "luokan tasot"
+#| msgid "Category type pages"
+msgid "category change history messages"
+msgstr "Luokkatyyppisivut"
 
 #: actions/models/action.py indicators/models/values.py
 msgid "date"
@@ -1933,7 +1937,7 @@ msgid "Enable change history messages"
 msgstr "luokan tasot"
 
 #: actions/models/features.py
-msgid "Prompt users to add a public change log message after editing actions, indicators, or categories."
+msgid "Prompt users to add a public change history message after editing actions, indicators, or categories."
 msgstr ""
 
 #: actions/models/features.py
@@ -2998,8 +3002,10 @@ msgid "updated by"
 msgstr "viimeksi päivittänyt"
 
 #: audit_logging/blocks.py
-msgid "Latest change log message"
-msgstr ""
+#, fuzzy
+#| msgid "Category type pages"
+msgid "Latest change history message"
+msgstr "Luokkatyyppisivut"
 
 #: audit_logging/templates/site_history_results.html audit_logging/views.py
 #, fuzzy
@@ -5681,6 +5687,11 @@ msgid "Other responsible parties"
 msgstr "Muut vastuutahot"
 
 #: reports/spreadsheets/action_print_layout.py
+#, fuzzy
+msgid "Page"
+msgstr "ulkopuolinen linkki"
+
+#: reports/spreadsheets/action_print_layout.py
 msgid "Profiles"
 msgstr ""
 
@@ -5871,13 +5882,36 @@ msgid "No permission to remove the user belonging to plans you are not managing.
 msgstr "Ei oikeuksia poistaa käyttäjä joka kuuluu toimenpideohjelmiin, joita et hallinnoi."
 
 #, fuzzy
+#~| msgid "action schedules"
+#~ msgctxt "verbose name of model"
+#~ msgid "action change log message"
+#~ msgstr "toimenpiteiden aikataulut"
+
+#, fuzzy
+#~| msgid "action schedules"
+#~ msgctxt "verbose name plural of model"
+#~ msgid "action change log messages"
+#~ msgstr "toimenpiteiden aikataulut"
+
+#, fuzzy
+#~| msgid "Indicators assigned to me"
+#~ msgid "indicator change log message"
+#~ msgstr "Minulle osoitetut mittarit"
+
+#, fuzzy
+#~| msgid "indicator goals"
+#~ msgid "indicator change log messages"
+#~ msgstr "mittarin tavoitteet"
+
+#, fuzzy
+#~| msgid "category levels"
+#~ msgid "category change log messages"
+#~ msgstr "luokan tasot"
+
+#, fuzzy
 #~| msgid "Save changes"
 #~ msgid "Enable change log"
 #~ msgstr "Tallenna muutokset"
-
-#, fuzzy
-#~ msgid "Page"
-#~ msgstr "ulkopuolinen linkki"
 
 #, fuzzy
 #~ msgid "Last modified at"
