@@ -142,7 +142,7 @@ class PlanFeatures(PlanRelatedModelWithRevision):
     )
     enable_change_log = models.BooleanField(
         default=False, verbose_name=_("Enable change history messages"),
-        help_text=_("Prompt users to add a public change log message after editing actions, indicators, or categories."),
+        help_text=_("Prompt users to add a public change history message after editing actions, indicators, or categories."),
     )
 
     class AccessibilityConformanceLevel(models.TextChoices):

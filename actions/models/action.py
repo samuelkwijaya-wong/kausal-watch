@@ -1186,7 +1186,7 @@ class Action(
         if not self.live_revision:
             return None
         # When publishing, Wagtail creates a new revision, but the previous revision's id
-        # is stored in the live revision. Currently the change log message is always
+        # is stored in the live revision. Currently the change history message is always
         # connected to that previous version, pre-publishing
         previous_revision_to_published_revision = self.live_revision.content['latest_revision']
         try:
@@ -1981,7 +1981,7 @@ class ActionChangeLogMessage(BaseChangeLogMessage):
         blank=True,
         related_name='+',
         verbose_name=_('revision'),
-        help_text=_('The revision this change log message is associated with.'),
+        help_text=_('The revision this change history message is associated with'),
     )
 
     i18n = TranslationField(
@@ -1994,8 +1994,8 @@ class ActionChangeLogMessage(BaseChangeLogMessage):
     ]
 
     class Meta:
-        verbose_name = pgettext_lazy('verbose name of model', 'action change log message')
-        verbose_name_plural = pgettext_lazy('verbose name plural of model', 'action change log messages')
+        verbose_name = pgettext_lazy('verbose name of model', 'action change history message')
+        verbose_name_plural = pgettext_lazy('verbose name plural of model', 'action change history messages')
 
     def __str__(self):
         return f'{self.action} - {self.created_at}'
@@ -2018,8 +2018,8 @@ class IndicatorChangeLogMessage(BaseChangeLogMessage):
     ]
 
     class Meta:
-        verbose_name = _('indicator change log message')
-        verbose_name_plural = _('indicator change log messages')
+        verbose_name = _('indicator change history message')
+        verbose_name_plural = _('indicator change history messages')
 
     def __str__(self):
         return f'{self.indicator} – {self.created_at}'  # noqa: RUF001
@@ -2042,8 +2042,8 @@ class CategoryChangeLogMessage(BaseChangeLogMessage):
     ]
 
     class Meta:
-        verbose_name = _('category change log message')
-        verbose_name_plural = _('category change log messages')
+        verbose_name = _('category change history message')
+        verbose_name_plural = _('category change history messages')
 
     def __str__(self):
         return f'{self.category} – {self.created_at}'  # noqa: RUF001

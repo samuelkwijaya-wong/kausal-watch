@@ -9,7 +9,7 @@ from kausal_common.blocks.base import ContentBlockBase
 
 @register_streamfield_block
 class ChangeLogMessageBlock(ContentBlockBase):
-    """Show the latest change log message in the details page of an action, category, and later also an indicator."""
+    """Show the latest change history message in the details page of an action, category, and later also an indicator."""
 
     class Meta:
-        label = _('Latest change log message')
+        label = _('Latest change history message')
