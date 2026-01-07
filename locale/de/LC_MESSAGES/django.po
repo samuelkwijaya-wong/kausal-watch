@@ -1063,7 +1063,7 @@ msgstr "Maßnahme"
 #: actions/models/action.py
 msgctxt "Action model"
 msgid "actions"
-msgstr "Aktionen"
+msgstr "Maßnahmen"
 
 #: actions/models/action.py
 msgid "Can administrate all actions"
@@ -3143,7 +3143,7 @@ msgstr "Dokumente"
 
 #: feedback/models.py indicators/models/action_links.py
 msgid "action"
-msgstr "Aktion"
+msgstr "Maßnahme"
 
 #: feedback/models.py users/models.py
 msgid "email address"
