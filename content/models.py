@@ -4,7 +4,7 @@ from typing import ClassVar
 
 import reversion
 from django.db import models
-from django.utils.translation import gettext_lazy as _
+from django.utils.translation import gettext_lazy as _, pgettext_lazy
 from modeltrans.fields import TranslationField
 from wagtail.fields import RichTextField
 
@@ -17,12 +17,12 @@ class SiteGeneralContent(PlanRelatedModelWithRevision):
         # When changing terms, make sure to also change ACTION_TERM_PLURAL below.
         # Get a printable SiteGeneralContent instance's action term with `instance.get_action_term_display()` and, for
         # plural, `instance.get_action_term_display_plural()`.
-        ACTION = 'action', _('Action')
+        ACTION = 'action', pgettext_lazy('Action model', 'Action')
         STRATEGY = 'strategy', _('Strategy')
         CASE_STUDY = 'case_study', _('Case study')
 
     ACTION_TERM_PLURAL = {
-        ActionTerm.ACTION: _('Actions'),
+        ActionTerm.ACTION: pgettext_lazy('Action model', 'Actions'),
         ActionTerm.STRATEGY: _('Strategies'),
         ActionTerm.CASE_STUDY: _('Case studies'),
     }

@@ -61,7 +61,7 @@
             {# Copied from modeladmin/create.html. Overrides what would be in the form_actions block and adds the unsaved changes warning. #}
             {# We replaced <ul> and <li> by a <div> as this is the way Wagtail 6 does things. #}
             <footer class="footer w-grid md:w-grid-flow-col">
-                <nav class="actions actions--primary footer__container" aria-label="{% trans 'Actions' %}">
+                <nav class="actions actions--primary footer__container" aria-label="{% trans 'Actions' context 'Action model' %}">
                     {% if action_menu %}
                         {{ action_menu.render_html }}
                     {% else %}

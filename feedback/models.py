@@ -5,7 +5,7 @@ import typing
 from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
 from django.forms import ValidationError
-from django.utils.translation import gettext_lazy as _
+from django.utils.translation import gettext_lazy as _, pgettext_lazy
 from wagtail.models import Page
 
 from aplans.utils import PlanRelatedModelWithRevision
@@ -19,7 +19,7 @@ class UserFeedback(PlanRelatedModelWithRevision):
     class FeedbackType(models.TextChoices):
         GENERAL = '', _('General')
         ACCESSIBILITY = 'accessibility', _('Accessibility')
-        ACTION = 'action', _('Action')
+        ACTION = 'action', pgettext_lazy('Action model', 'Action')
         CATEGORY = "category", _("Category")
 
     plan = models.ForeignKey(Plan, on_delete=models.CASCADE, related_name='user_feedbacks', verbose_name=_("plan"))

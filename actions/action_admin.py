@@ -12,7 +12,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.urls import URLPattern, path, re_path
 from django.utils import timezone
-from django.utils.translation import gettext_lazy as _
+from django.utils.translation import gettext_lazy as _, pgettext_lazy
 from django.views.generic.detail import SingleObjectMixin
 from modelcluster.forms import childformset_factory
 from wagtail.admin.forms.models import WagtailAdminModelForm, formfield_for_dbfield
@@ -734,7 +734,7 @@ class ActionAdmin(AplansModelAdmin[Action]):
     edit_view_class = ActionEditView
     menu_icon = 'kausal-action'
     menu_order = 10
-    menu_label = _('Actions')
+    menu_label = pgettext_lazy('Action model', 'Actions')
     list_display = ('identifier', 'name_link')
     list_display_add_buttons = 'name_link'
     search_fields = ('identifier', 'name')

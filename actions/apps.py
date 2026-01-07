@@ -3,7 +3,7 @@ from __future__ import annotations
 from functools import cache
 
 from django.apps import AppConfig
-from django.utils.translation import gettext_lazy as _
+from django.utils.translation import gettext_lazy as _, pgettext_lazy
 
 from kausal_common.users import user_or_bust
 
@@ -164,7 +164,7 @@ def monkeypatch_deferring_forward_many_to_many_manager():
 
 class ActionsConfig(AppConfig):
     name = 'actions'
-    verbose_name = _('Actions')
+    verbose_name = pgettext_lazy('Action model', 'Actions')
 
     def ready(self):
         # monkeypatch filtering of Collections

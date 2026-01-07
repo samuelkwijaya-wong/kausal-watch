@@ -191,7 +191,7 @@ class ExcelReport:
         worksheet.set_column(1, 1, 40)
 
     def _write_actions_sheet(self, df: pl.DataFrame) -> xlsxwriter.worksheet.Worksheet:
-        return self._write_sheet(self.workbook.add_worksheet(_('Actions')), df)
+        return self._write_sheet(self.workbook.add_worksheet(pgettext('Action model', 'Actions')), df)
 
     def _write_sheet(
             self,
@@ -319,7 +319,7 @@ class ExcelReport:
             if completed_at is not None:
                 completed_at = timezone.make_naive(completed_at, timezone=self.report.type.plan.tzinfo)
             append_to_key(_('Identifier'), action_identifier, 'identifier')
-            append_to_key(_('Action'), action_name, 'name')
+            append_to_key(pgettext('Action model', 'Action'), action_name, 'name')
             if self.child_plans:
                 append_to_key(_('Plan'), action_obj.plan.name, 'plan')
             for field in fields:
@@ -356,7 +356,7 @@ class ExcelReport:
             return (action_df
                     .group_by(labels)
                     .len()
-                    .rename({'len': _('Actions')}))
+                    .rename({'len': pgettext('Action model', 'Actions')}))
         return action_df.pivot(  # noqa: PD010
             values=_("Identifier"),
             index=labels[0],

@@ -699,7 +699,7 @@ class Plan(ClusterableModel, ModelWithPrimaryLanguage, PermissionedModel):
         # Create subpages of root page
         def _dummy_function_so_makemessages_finds_strings():  # noqa: ANN202
             # This is never called
-            _("Actions")
+            pgettext_lazy("Action model", "Actions")
             _("Indicators")
             _("Privacy")
             _("Accessibility")

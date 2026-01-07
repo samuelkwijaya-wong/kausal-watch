@@ -1,7 +1,7 @@
 from io import BytesIO
 
 from django.utils import translation
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext as _, pgettext
 
 import polars
 import polars.selectors as cs
@@ -28,7 +28,7 @@ def excel_file_from_report_factory(actions_having_attributes, report_with_all_at
 
 
 def assert_report_dimensions(excel_file, report, actions):
-    df_actions = polars.read_excel(BytesIO(excel_file), sheet_name=_('Actions'), engine='openpyxl')
+    df_actions = polars.read_excel(BytesIO(excel_file), sheet_name=pgettext('Action model', 'Actions'), engine='openpyxl')
     non_report_fields = ['action', 'identifier']
     has_complete_actions = False
     if report.is_complete:

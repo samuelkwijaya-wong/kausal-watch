@@ -8,7 +8,7 @@ from django.contrib.admin import SimpleListFilter
 from django.core.exceptions import ValidationError
 from django.shortcuts import redirect
 from django.urls import reverse
-from django.utils.translation import gettext_lazy as _, ngettext_lazy
+from django.utils.translation import gettext_lazy as _, ngettext_lazy, pgettext_lazy
 from wagtail import hooks
 from wagtail.admin.panels import (
     FieldPanel,
@@ -684,7 +684,7 @@ class IndicatorAdmin(AplansModelAdmin[Indicator]):
 
         panels = [
             FieldPanel('common', widget=autocomplete.ModelSelect2(url='common-indicator-autocomplete')),
-            MultiFieldPanel(actions_panels, heading=_('Actions')),
+            MultiFieldPanel(actions_panels, heading=pgettext_lazy('Action model', 'Actions')),
             MultiFieldPanel(other_indicators_panels, heading=_('Other indicators')),
         ]
 
