@@ -11,9 +11,10 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-01-07 17:25+0100\n"
-"PO-Revision-Date: 2026-01-07 13:22+0000\n"
+"PO-Revision-Date: 2026-01-07 16:29+0000\n"
 "Last-Translator: Bernhard Bliem <bernhard.bliem@kausal.tech>\n"
-"Language-Team: German <https://weblate.kausal.tech/projects/watch/django/de/>\n"
+"Language-Team: German <https://weblate.kausal.tech/projects/watch/django/de/>"
+"\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -73,8 +74,6 @@ msgstr "Mache das Markieren dieser Maßnahme als für den Bericht %s abgeschloss
 #: content/models.py indicators/wagtail_admin.py
 #: reports/spreadsheets/excel_report.py reports/tests/test_excel_roundtrip.py
 #: templates/modeladmin/create.html
-#, fuzzy
-#| msgid "Actions"
 msgctxt "Action model"
 msgid "Actions"
 msgstr "Maßnahmen"
@@ -1057,15 +1056,11 @@ msgid "action"
 msgstr "Maßnahme"
 
 #: actions/models/action.py
-#, fuzzy
-#| msgid "action"
 msgctxt "Action model"
 msgid "action"
-msgstr "Aktion"
+msgstr "Maßnahme"
 
 #: actions/models/action.py
-#, fuzzy
-#| msgid "actions"
 msgctxt "Action model"
 msgid "actions"
 msgstr "Aktionen"
@@ -1291,11 +1286,9 @@ msgid "action impact classes"
 msgstr "Maßnahmenauswirkungsklassen"
 
 #: actions/models/action.py
-#, fuzzy
-#| msgid "action"
 msgctxt "action model"
 msgid "action"
-msgstr "Aktion"
+msgstr "Maßnahme"
 
 #: actions/models/action.py feedback/models.py indicators/models/metadata.py
 #: pages/blocks.py pages/models.py
@@ -2893,11 +2886,9 @@ msgid "Item type"
 msgstr "Elementtyp"
 
 #: audit_logging/templates/site_history_results.html audit_logging/views.py
-#, fuzzy
-#| msgid "Change"
 msgctxt "type of change (e.g., \"create\", \"edit\" or \"delete\")"
 msgid "Change"
-msgstr "Ändern"
+msgstr "Änderung"
 
 #: audit_logging/templates/site_history_results.html audit_logging/views.py
 msgid "Changed by"
@@ -2912,15 +2903,11 @@ msgid "Edit this item"
 msgstr "Bearbeite dieses Element"
 
 #: audit_logging/views.py
-#, fuzzy
-#| msgid "Change history"
 msgctxt "page title for history of changes"
 msgid "Change history"
 msgstr "Änderungsverlauf"
 
 #: audit_logging/wagtail_hooks.py
-#, fuzzy
-#| msgid "Change history"
 msgctxt "menu item for accessing history of changes"
 msgid "Change history"
 msgstr "Änderungsverlauf"
@@ -2934,8 +2921,6 @@ msgid "Content"
 msgstr "Inhalt"
 
 #: content/models.py feedback/models.py reports/spreadsheets/excel_report.py
-#, fuzzy
-#| msgid "Action"
 msgctxt "Action model"
 msgid "Action"
 msgstr "Maßnahme"
