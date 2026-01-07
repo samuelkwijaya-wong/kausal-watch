@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-01-07 14:00+0100\n"
-"PO-Revision-Date: 2026-01-07 13:09+0000\n"
+"PO-Revision-Date: 2026-01-07 13:22+0000\n"
 "Last-Translator: Bernhard Bliem <bernhard.bliem@kausal.tech>\n"
 "Language-Team: German <https://weblate.kausal.tech/projects/watch/django/de/>"
 "\n"
@@ -2410,32 +2410,32 @@ msgstr "Pläne"
 #, python-format
 msgctxt "page subtitle"
 msgid "Change history message: %(obj)s"
-msgstr "Eintrag im Änderungsprotokoll: %(obj)s"
+msgstr "Eintrag im Änderungsverlauf: %(obj)s"
 
 #: actions/wagtail_admin.py
 msgctxt "page subtitle"
 msgid "Change history message"
-msgstr "Eintrag im Änderungsprotokoll"
+msgstr "Eintrag im Änderungsverlauf"
 
 #: actions/wagtail_admin.py
 msgctxt "page title"
 msgid "Add change history message"
-msgstr "Eintrag im Änderungsprotokoll hinzufügen"
+msgstr "Eintrag im Änderungsverlauf hinzufügen"
 
 #: actions/wagtail_admin.py
 msgctxt "menu label"
 msgid "Action change history messages"
-msgstr "Einträge im Maßnahmenänderungsprotokoll"
+msgstr "Einträge im Maßnahmenänderungsverlauf"
 
 #: actions/wagtail_admin.py
 msgctxt "menu label"
 msgid "Indicator change history messages"
-msgstr "Einträge im Indikatoränderungsprotokoll"
+msgstr "Einträge im Indikatoränderungsverlauf"
 
 #: actions/wagtail_admin.py
 msgctxt "menu label"
 msgid "Category change history messages"
-msgstr "Einträge im Kategorieänderungsprotokoll"
+msgstr "Einträge im Kategorieänderungsverlauf"
 
 #: admin_site/api.py
 msgid "Invalid email address"
@@ -2899,7 +2899,7 @@ msgstr "Bearbeite dieses Element"
 
 #: audit_logging/views.py audit_logging/wagtail_hooks.py
 msgid "Change history"
-msgstr "Änderungshistorie"
+msgstr "Änderungsverlauf"
 
 #: content/apps.py
 msgid "According to the action plan"
@@ -5485,7 +5485,7 @@ msgstr "Berichtstypen"
 
 #: templates/aplans/change_log_message_create.html
 msgid "Current change history message"
-msgstr "Aktuelle Änderungsnotiz"
+msgstr "Aktueller Eintrag im Änderungsverlauf"
 
 #: templates/aplans/change_log_message_create.html
 msgid "Skip"
