@@ -14,6 +14,7 @@ from wagtail.permissions import ModelPermissionPolicy
 import django_filters
 
 from audit_logging.models import PlanScopedModelLogEntry
+from people.models import Person
 
 
 class CustomSiteHistoryReportFilterSet(SiteHistoryReportFilterSet):
@@ -32,6 +33,14 @@ class CustomSiteHistoryReportFilterSet(SiteHistoryReportFilterSet):
         method='filter_object_type',
         queryset=lambda request: get_content_types_for_filter(request.user),
     )
+
+    def get_users_queryset(self):
+        plan = self.request.user.get_active_admin_plan()
+        qs = super().get_users_queryset()
+        if not plan:
+            return qs.none()
+        persons_available_for_plan = Person.objects.available_for_plan(plan, include_contact_persons=True)
+        return qs.filter(person__in=persons_available_for_plan)
 
 
 class PlanScopedLogEntriesView(LogEntriesView):
