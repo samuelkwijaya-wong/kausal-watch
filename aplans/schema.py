@@ -12,6 +12,7 @@ from graphql.type import (
     GraphQLDirective,
 )
 from strawberry.schema import Schema as StrawberrySchema
+from strawberry.tools import merge_types
 from strawberry.types import has_object_definition
 
 import graphene_django_optimizer as gql_optimizer
@@ -322,6 +323,9 @@ def _validate_type_registry(types: set[type]) -> None:
         registered_names.add(name)
 
 
+Subscription = merge_types('Subscription', (actions_schema.Subscription,))
+
+
 def generate_strawberry_schema() -> sb.Schema:
     from kausal_common.graphene.registry import registry as graphene_registry
     from kausal_common.strawberry.registry import strawberry_types
@@ -335,6 +339,7 @@ def generate_strawberry_schema() -> sb.Schema:
     schema = WatchSchema(
         query=Query,
         mutation=Mutation,
+        subscription=Subscription,
         types=all_types,
         directives=[context_directive, workflow_directive, auth_directive],
     )

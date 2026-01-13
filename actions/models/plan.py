@@ -55,8 +55,6 @@ from orgs.models import Organization
 from people.models import Person
 
 if TYPE_CHECKING:
-    from collections.abc import Sequence
-
     from django.http.request import HttpRequest
     from django_stubs_ext import StrOrPromise
 
@@ -294,7 +292,7 @@ class Plan(ClusterableModel, ModelWithPrimaryLanguage, PermissionedModel):
         Group, null=True, on_delete=models.PROTECT, editable=False, related_name='contact_person_for_plan',
     )
 
-    other_languages: ChoiceArrayField[list[str]] = ChoiceArrayField(  # pyright: ignore
+    other_languages: ChoiceArrayField[list[str]] = ChoiceArrayField(
         models.CharField(max_length=8, choices=get_supported_languages(), default=get_default_language),
         default=list, blank=True,
     )
@@ -394,7 +392,7 @@ class Plan(ClusterableModel, ModelWithPrimaryLanguage, PermissionedModel):
     cache_invalidated_at = models.DateTimeField(auto_now=True)
     i18n = TranslationField(fields=['name', 'short_name'], default_language_field='primary_language_lowercase')
 
-    action_attribute_types: RevMany[AttributeType] = GenericRelation(  # type: ignore
+    action_attribute_types: RevMany[AttributeType] = GenericRelation(  # type: ignore  # pyright: ignore[reportAssignmentType]
         to='actions.AttributeType',
         related_query_name='plan',
         content_type_field='scope_content_type',
@@ -539,7 +537,7 @@ class Plan(ClusterableModel, ModelWithPrimaryLanguage, PermissionedModel):
         return page
 
     @classmethod
-    def permission_policy(cls) -> PlanPermissionPolicy:  # pyright: ignore[reportIncompatibleMethodOverride]
+    def permission_policy(cls) -> PlanPermissionPolicy:
         return PlanPermissionPolicy(cls)
 
     def get_translated_root_page(self, fallback=True) -> Page | None:
@@ -655,9 +653,23 @@ class Plan(ClusterableModel, ModelWithPrimaryLanguage, PermissionedModel):
         )
 
     def invalidate_cache(self):
+        from asgiref.sync import async_to_sync
+        from channels.layers import get_channel_layer
+
         logger.info('Invalidate cache for %s' % self)
         self.cache_invalidated_at = timezone.now()
         super().save(update_fields=['cache_invalidated_at'])
+        channel_layer = get_channel_layer()
+        if channel_layer is None:
+            return
+        async_to_sync(channel_layer.group_send)(
+            'plan_cache_invalidations',
+            {
+                'type': 'plan.cache_invalidated',
+                'plan_identifier': self.identifier,
+                'invalidated_at': self.cache_invalidated_at.isoformat(),
+            },
+        )
 
     def create_default_pages(self):
         """
@@ -1143,7 +1155,7 @@ class GeneralPlanAdmin(OrderedModel):
     person = models.ForeignKey(Person, on_delete=models.CASCADE, verbose_name=_('person'),
                                related_name='general_admin_plans_ordered')
 
-    class Meta:  # pyright: ignore[reportIncompatibleVariableOverride]
+    class Meta:
         ordering = ['plan', 'order']
         indexes = [
             models.Index(fields=['plan', 'order']),
@@ -1318,7 +1330,7 @@ class Scenario(PlanRelatedModelWithRevision):
         'id', 'plan', 'name', 'identifier', 'description',
     ]
 
-    class Meta:  # pyright: ignore[reportIncompatibleVariableOverride]
+    class Meta:
         unique_together = (('plan', 'identifier'),)
         verbose_name = _('scenario')
         verbose_name_plural = _('scenarios')
@@ -1347,7 +1359,7 @@ class ImpactGroup(PlanRelatedModelWithRevision):
         'id', 'plan', 'identifier', 'parent', 'weight', 'name', 'color', 'actions',
     ]
 
-    class Meta:  # pyright: ignore[reportIncompatibleVariableOverride]
+    class Meta:
         unique_together = (('plan', 'identifier'),)
         verbose_name = _('impact group')
         verbose_name_plural = _('impact groups')
@@ -1383,7 +1395,7 @@ class MonitoringQualityPoint(PlanRelatedModelWithRevision, OrderedModel):
         'id', 'name', 'description_yes', 'description_no', 'plan', 'identifier',
     ]
 
-    class Meta:  # pyright: ignore[reportIncompatibleVariableOverride]
+    class Meta:
         verbose_name = _('monitoring quality point')
         verbose_name_plural = _('monitoring quality points')
         unique_together = (('plan', 'order'),)

@@ -3,12 +3,15 @@ from __future__ import annotations
 
 import logging
 import uuid
+from collections.abc import AsyncGenerator
+from datetime import datetime
 from itertools import chain
 from typing import TYPE_CHECKING, Annotated, Any, ClassVar, Generic, Protocol, TypeVar
 from urllib.parse import urlparse
 
 import graphene
 import strawberry
+import strawberry as sb
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Prefetch, Q, QuerySet, prefetch_related_objects
 from django.forms import ModelForm
@@ -36,6 +39,7 @@ from aplans.cache import SerializedDictWithRelatedObjectCache
 from aplans.graphql_helpers import ModelAdminAdminButtonsMixin
 from aplans.graphql_types import (
     DjangoNode,
+    SBInfo,
     WorkflowStateDescription,
     WorkflowStateEnum,
     get_plan_from_context,
@@ -103,7 +107,7 @@ from .models import (
 )
 
 if TYPE_CHECKING:
-    from collections.abc import Iterable, Mapping, Sequence
+    from collections.abc import AsyncGenerator, Iterable, Mapping, Sequence
 
     from django_stubs_ext import StrOrPromise
 
@@ -331,6 +335,7 @@ class PlanNode(DjangoNode[Plan]):
     )
 
     has_indicator_relationships = graphene.Boolean()
+
     @staticmethod
     @gql_optimizer.resolver_hints(
         model_field='indicator_levels',
@@ -1774,7 +1779,6 @@ class Query:
             'description': WorkflowStateEnum(e).description,
         } for e in result]
 
-
     @staticmethod
     def resolve_plan(_root: Query, info: GQLInfo, id: str | None = None, domain: str | None = None, **_kwargs) -> Plan | None:
         if not id and not domain:
@@ -2026,3 +2030,29 @@ class UpdatePlanMutation(UpdateModelInstanceMutation):
 class Mutation(graphene.ObjectType[Any]):
     update_plan = UpdatePlanMutation.Field()
     update_action_responsible_party = UpdateActionResponsiblePartyMutation.Field()
+
+
+@sb.type
+class PlanUpdate:
+    identifier: sb.ID
+    cache_invalidated_at: datetime
+
+
+@sb.type
+class Subscription:
+    @sb.subscription
+    async def plan_cache_invalidations(self, info: SBInfo) -> AsyncGenerator[list[PlanUpdate]]:
+        ws = info.context.get_ws_consumer()
+        channel_layer = ws.channel_layer
+        if channel_layer is None:
+            raise ValueError('Channel layer is not available')
+        await channel_layer.group_add('plan_cache_invalidations', ws.channel_name)
+        async with ws.listen_to_channel('plan.cache_invalidated') as listener:
+            async for message in listener:
+                plan_identifier = message.get('plan_identifier')
+                if plan_identifier is None:
+                    continue
+                invalidated_at = message.get('invalidated_at')
+                if invalidated_at is None:
+                    continue
+                yield [PlanUpdate(identifier=plan_identifier, cache_invalidated_at=datetime.fromisoformat(invalidated_at))]
