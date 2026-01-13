@@ -453,7 +453,7 @@ class IndicatorSerializer(IndicatorSerializerMixin, serializers.ModelSerializer)
     _modifiable_indicators_cache: IndicatorQuerySet
 
     uuid = serializers.UUIDField(required=False)
-    latest_value = IndicatorValueSerializer(read_only=True, required=False)
+    latest_value = IndicatorValueSerializer(read_only=True, required=False, label=_('Latest value'))
     contact_persons = IndicatorContactPersonSerializer(required=False, label=_('Contact persons'))
     categories = IndicatorCategoriesSerializer(required=False)
 
