@@ -64,9 +64,20 @@ if typing.TYPE_CHECKING:
     from indicators.models.values import IndicatorGoal
     from paths_integration._generated_.graphql_client.node_values import NodeValuesNodeMetricDim
     from people.models import Person
+    from users.models import User
 
 
 class IndicatorQuerySet(SearchableQuerySetMixin, MultilingualQuerySet['Indicator']):
+    def modifiable_by(self, user: User) -> Self:
+        if user.is_superuser:
+            return self
+        person = user.get_corresponding_person()
+        query = Q(organization__in=user.get_adminable_organizations())
+        if person:
+            query |= Q(plans__in=person.general_admin_plans.all())
+            query |= Q(contact_persons__person=person)
+        return self.filter(query).distinct()
+
     def available_for_plan(self, plan: Plan):
         related_orgs = Organization.objects.qs.available_for_plan(plan)
         return self.filter(organization__in=related_orgs)

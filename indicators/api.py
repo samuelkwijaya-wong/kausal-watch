@@ -35,7 +35,9 @@ from .models import (
 )
 
 if TYPE_CHECKING:
-    from aplans.types import AuthenticatedWatchRequest
+    from rest_framework.request import Request
+
+    from indicators.models.indicator import IndicatorQuerySet
 
 all_views = []
 
@@ -448,6 +450,8 @@ class IndicatorSerializerMixin:
 
 
 class IndicatorSerializer(IndicatorSerializerMixin, serializers.ModelSerializer):
+    _modifiable_indicators_cache: IndicatorQuerySet
+
     uuid = serializers.UUIDField(required=False)
     latest_value = IndicatorValueSerializer(read_only=True, required=False)
     contact_persons = IndicatorContactPersonSerializer(required=False, label=_('Contact persons'))
@@ -505,7 +509,24 @@ class IndicatorSerializer(IndicatorSerializerMixin, serializers.ModelSerializer)
         if user is None or not user.is_authenticated or (not user.is_superuser and not user.is_general_admin_for_plan(plan)):
             # Remove fields that are only for admins
             del fields['internal_notes']
+
+        if user is not None:
+            fields['modifiable_by_user'] = serializers.SerializerMethodField()
+
         return fields
+
+    def get_modifiable_by_user(self, indicator: Indicator):
+        if hasattr(self, '_modifiable_indicators_cache'):
+            return indicator in self._modifiable_indicators_cache
+        request: Request | None = self.context.get('request')
+        if request is None:
+            return False
+        user = user_or_none(request.user)
+        view = self.context.get('view')
+        if user is None or view is None:
+            return False
+        self._modifiable_indicators_cache = view.get_queryset().modifiable_by(user)
+        return indicator in self._modifiable_indicators_cache
 
 
 class IndicatorGoalSerializer(serializers.ModelSerializer, IndicatorDataPointMixin):
