@@ -1721,6 +1721,7 @@ def _resolve_action_revision(action: Action, desired_workflow_state: WorkflowSta
 class Query:
     plan = gql_optimizer.field(graphene.Field(PlanNode, id=graphene.ID(), domain=graphene.String()))
     plans_for_hostname = graphene.List(graphene.NonNull(PlanInterface), hostname=graphene.String())
+    plans = graphene.List(graphene.NonNull(PlanNode))
     my_plans = graphene.List(PlanNode)
 
     action = graphene.Field(ActionNode, id=graphene.ID(), identifier=graphene.ID(), plan=graphene.ID())
@@ -1804,6 +1805,15 @@ class Query:
         if not ret:
             logger.info("No plans found for hostname %s (wildcard domains: %s)" % (hostname, req.wildcard_domains))
         return ret
+
+    @staticmethod
+    def resolve_plans(_root: Query, info: GQLInfo) -> list[Plan]:
+        user = user_or_none(info.context.user)
+        if user is None or not user.is_superuser:
+            return []
+
+        qs = Plan.objects.get_queryset().visible_for_user(info.context.user)
+        return list(qs)
 
     @staticmethod
     def resolve_my_plans(_root, info: GQLInfo):

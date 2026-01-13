@@ -23,6 +23,7 @@ from kausal_common.models.types import copy_signature
 from kausal_common.strawberry.extensions import LoggingTracingExtension
 from kausal_common.strawberry.schema import Schema as UnifiedSchema
 from kausal_common.users import user_or_none
+from kausal_common.users.schema import UserNode
 
 from aplans.cache import OrganizationActionCountCache
 from aplans.graphql_types import WorkflowStateGrapheneEnum
@@ -61,6 +62,7 @@ if TYPE_CHECKING:
     from aplans.graphql_types import GQLInfo
 
     from actions.models import Plan
+    from users.models import User
 
 
 def mp_node_get_ancestors[QS: MP_NodeQuerySet[Any]](qs: QS, include_self: bool = False) -> QS:
@@ -102,6 +104,7 @@ class Query(
         required=False,
     )
     person = graphene.Field(people_schema.PersonNode, id=graphene.ID(required=True), plan=graphene.ID(required=True))
+    me = graphene.Field(UserNode, required=False, description='The current user')
 
     def resolve_plan_organizations(
         self, info: GQLInfo, plan: str | None, with_ancestors: bool, for_responsible_parties: bool, for_contact_persons: bool,
@@ -193,6 +196,9 @@ class Query(
             return None
         qs = Person.objects.get_queryset().available_for_plan(plan_obj).visible_for_user(user, plan=plan_obj)
         return qs.filter(id=id).first()
+
+    def resolve_me(self, info: GQLInfo) -> User | None:
+        return user_or_none(info.context.user)
 
 
 @sb.type
@@ -336,3 +342,6 @@ def generate_strawberry_schema() -> sb.Schema:
 
 
 schema = generate_strawberry_schema()
+# We need a separate schema instance for async operations due to
+# some weird behavior in the GraphQL MiddlewareManager.
+async_schema = generate_strawberry_schema()

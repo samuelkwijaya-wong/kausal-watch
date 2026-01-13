@@ -1,0 +1,21 @@
+projects:
+  mcp_server:
+    schema: schema.graphql
+    documents: mcp_server/queries.graphql
+    extensions:
+      turms: # path for configuration for turms
+        out_dir: mcp_server/__generated__
+        plugins: # path for plugin configuration
+          - type: turms.plugins.enums.EnumsPlugin
+          - type: turms.plugins.inputs.InputsPlugin
+          - type: turms.plugins.fragments.FragmentsPlugin
+          - type: turms.plugins.operations.OperationsPlugin
+          - type: turms.plugins.funcs.FuncsPlugin
+        stylers:
+          - type: turms.stylers.snake_case.SnakeCaseStyler
+        # processors:
+        #   - type: turms.processors.black.BlackProcessor
+        #   - type: turms.processors.isort.IsortProcessor
+        scalar_definitions:
+          UUID: str
+          Date: str

@@ -36,3 +36,4 @@ requirements-local.txt
 /.dmypy.json
 .secrets/**
 *.egg-info/
+/schema.graphql

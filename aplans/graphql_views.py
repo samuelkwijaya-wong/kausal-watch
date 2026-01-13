@@ -58,7 +58,7 @@ class WatchExecutionContext(ExecutionContext):
 
 class WatchGraphQLWSConsumer(GraphQLWSConsumer[WatchGraphQLContext]):
     @override
-    async def get_context(self, request: GraphQLWSConsumer, response: GraphQLWSConsumer) -> WatchGraphQLContext:  # pyright: ignore[reportIncompatibleMethodOverride]
+    async def get_context(self, request: GraphQLWSConsumer, response: GraphQLWSConsumer) -> WatchGraphQLContext:
         base_ctx = await self.get_base_context(request, response)
         return WatchGraphQLContext(
             **base_ctx,

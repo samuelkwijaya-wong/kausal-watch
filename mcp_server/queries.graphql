@@ -1,0 +1,411 @@
+query MCPUserDetails {
+  me {
+    id
+    uuid
+    email
+    firstName
+    lastName
+    isSuperuser
+  }
+}
+
+query MCPListPlans {
+  plans {
+    id
+    identifier
+    name
+    shortName
+    versionName
+    primaryLanguage
+    otherLanguages
+    publishedAt
+    viewUrl
+  }
+}
+
+query MCPListActions(
+  $plan: ID!
+  $category: ID
+  $first: Int
+  $orderBy: String
+) @context(input: {identifier: $plan}) {
+  planActions(
+    plan: $plan
+    category: $category
+    first: $first
+    orderBy: $orderBy
+  ) {
+    id
+    identifier
+    name
+    officialName
+    completion
+    scheduleContinuous
+    startDate
+    endDate
+    updatedAt
+
+    # Status information
+    status {
+      id
+      identifier
+      name
+      isCompleted
+    }
+    implementationPhase {
+      id
+      identifier
+      name
+    }
+    statusSummary {
+      identifier
+      label
+      sentiment
+      isActive
+      isCompleted
+    }
+
+    # Organization info
+    responsibleParties {
+      id
+      organization {
+        id
+        name
+        abbreviation
+      }
+    }
+    primaryOrg {
+      id
+      name
+      abbreviation
+    }
+
+    # Categories (for filtering/grouping)
+    categories {
+      id
+      identifier
+      name
+      type {
+        id
+        identifier
+        name
+      }
+    }
+  }
+}
+
+query MCPGetPlan($identifier: ID!) @context(input: {identifier: $identifier}) {
+  plan(id: $identifier) {
+    id
+    identifier
+    name
+    shortName
+    versionName
+    primaryLanguage
+    otherLanguages
+    publishedAt
+    viewUrl
+    accessibilityStatementUrl
+    externalFeedbackUrl
+
+    # Plan features configuration
+    features {
+      publicContactPersons
+      hasActionIdentifiers
+      hasActionOfficialName
+      hasActionLeadParagraph
+      hasActionPrimaryOrgs
+      enableSearch
+      enableIndicatorComparison
+      minimalStatuses
+      contactPersonsPublicData
+    }
+
+    # Category types (organizational structure)
+    categoryTypes {
+      id
+      identifier
+      name
+      usableForActions
+      usableForIndicators
+    }
+
+    # Action status summaries (dashboard statistics)
+    actionStatusSummaries {
+      identifier
+      label
+      isActive
+      isCompleted
+      sentiment
+    }
+
+    # Attribute types (dynamic attributes schema)
+    actionAttributeTypes {
+      id
+      identifier
+      name
+      format
+      unit {
+        id
+        shortName
+      }
+      choiceOptions {
+        id
+        identifier
+        name
+      }
+    }
+  }
+}
+
+query MCPGetAction($plan: ID!, $identifier: ID!) @context(input: {identifier: $plan}) {
+  action(plan: $plan, identifier: $identifier) {
+    # Core identifiers
+    id
+    uuid
+    identifier
+    name
+    officialName
+
+    # Content
+    leadParagraph
+    description
+
+    # Scheduling
+    startDate
+    endDate
+    scheduleContinuous
+    dateFormat
+    updatedAt
+
+    # Status & Progress
+    completion
+    manualStatusReason
+    status {
+      id
+      identifier
+      name
+      isCompleted
+    }
+    implementationPhase {
+      id
+      identifier
+      name
+    }
+    statusSummary {
+      identifier
+      label
+      sentiment
+      isActive
+      isCompleted
+    }
+    timeliness {
+      identifier
+      comparison
+      days
+    }
+    color
+
+    # Impact
+    impact {
+      id
+      identifier
+      name
+    }
+
+    # Organizations
+    primaryOrg {
+      id
+      name
+      abbreviation
+    }
+    responsibleParties {
+      id
+      role
+      specifier
+      organization {
+        id
+        name
+        abbreviation
+      }
+    }
+
+    # Categories
+    categories {
+      id
+      identifier
+      name
+      type {
+        id
+        identifier
+        name
+      }
+    }
+
+    # Contact Persons
+    contactPersons {
+      id
+      role
+      primaryContact
+      person {
+        id
+        firstName
+        lastName
+        title
+        email
+        organization {
+          id
+          name
+          abbreviation
+        }
+      }
+    }
+
+    # Tasks
+    tasks {
+      id
+      name
+      state
+      dueAt
+      completedAt
+      comment
+    }
+
+    # Indicators
+    relatedIndicators {
+      id
+      effectType
+      indicatesActionProgress
+      indicator {
+        id
+        identifier
+        name
+        unit {
+          id
+          name
+          shortName
+        }
+        latestValue {
+          id
+          date
+          value
+        }
+      }
+    }
+
+    # Links
+    links {
+      id
+      url
+      title
+    }
+
+    # Status Updates
+    statusUpdates {
+      id
+      title
+      date
+      content
+      author {
+        id
+        firstName
+        lastName
+      }
+    }
+
+    # Related Actions
+    relatedActions {
+      id
+      identifier
+      name
+    }
+    mergedWith {
+      id
+      identifier
+      name
+    }
+    mergedActions {
+      id
+      identifier
+      name
+    }
+    supersededBy {
+      id
+      identifier
+      name
+    }
+    supersededActions {
+      id
+      identifier
+      name
+    }
+
+    # Dependencies
+    allDependencyRelationships {
+      preceding {
+        id
+        identifier
+        name
+      }
+      dependent {
+        id
+        identifier
+        name
+      }
+    }
+
+    # Impact Groups
+    impactGroups {
+      id
+      group {
+        id
+        identifier
+        name
+      }
+      impact {
+        id
+        identifier
+      }
+    }
+
+    # Attributes (dynamic fields)
+    attributes {
+      __typename
+      type {
+        identifier
+        name
+        unit {
+          shortName
+        }
+      }
+      keyIdentifier
+      ... on AttributeText {
+        textValue: value
+      }
+      ... on AttributeRichText {
+        richTextValue: value
+      }
+      ... on AttributeCategoryChoice {
+        categories {
+          identifier
+          type {
+            identifier
+          }
+        }
+      }
+      ... on AttributeNumericValue {
+        numericValue: value
+      }
+      ... on AttributeChoice {
+        choice {
+          identifier
+        }
+      }
+    }
+
+    # Metadata
+    visibility
+    order
+    viewUrl
+  }
+}

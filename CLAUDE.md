@@ -55,6 +55,7 @@ Can integrate with Kausal Paths (scenario modeling product) for emissions impact
 - `notifications/` - Email notification system using MJML templates
 - `admin_site/` - Custom admin interface extensions
 - `kausal_common/` - git submodule for code that is shared between Kausal Paths and Kausal Watch
+- `mcp_server/` - MCP server for AI assistant integration (see [architecture docs](docs/architecture/mcp-server.md))
 
 ### GraphQL Schema Architecture
 The application provides dual GraphQL implementations:
@@ -198,3 +199,9 @@ Each Django app follows consistent naming conventions for different functionalit
 - Action content blocks for displaying plan data
 - Category listing and filtering blocks
 - Custom stream fields for flexible page layouts
+
+## Detailed Architecture Documentation
+
+For in-depth implementation details on specific subsystems, see:
+
+- [MCP Server](docs/architecture/mcp-server.md) - Adding tools, GraphQL integration, authentication flow

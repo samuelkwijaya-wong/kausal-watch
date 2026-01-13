@@ -116,8 +116,7 @@ kausal = [
 
 [tool.ruff]
 extend = "./kausal_common/configs/ruff.toml"
-extend-exclude = ["./paths_integration/_generated_"]
-
+extend-exclude = ["./paths_integration/_generated_", "./mcp_server/__generated__"]
 
 
 [tool.pytest.ini_options]
@@ -155,6 +154,7 @@ exclude = [
   "^kausal_common/deployment/gunicorn\\.py$",
   "node_modules",
   "^.*/_generated_/.*$",
+  "^.*/__generated__/.*$",
   #"^kausal_common/typings/",
 ]
 check_untyped_defs = true
@@ -217,6 +217,13 @@ module = [
   "xlsxwriter.*",
 ]
 ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = [
+  "mcp_server.__generated__.*",
+  "paths_integration._generated_.*",
+]
+ignore_errors = true
 
 [tool.mypy-baseline]
 baseline_path = ".mypy-baseline.txt"
@@ -321,6 +328,9 @@ lint = [
     "types-psutil",
     "types-python-dateutil",
     "types-uwsgi",
+]
+mcp = [
+    "fastmcp>=2.14.2",
 ]
 prod = [
     "gunicorn",

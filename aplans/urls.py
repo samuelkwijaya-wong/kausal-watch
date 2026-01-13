@@ -175,6 +175,10 @@ urlpatterns = [
     path('', RootRedirectView.as_view(), name='root-redirect'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
+if settings.DEBUG:
+    from django.contrib.staticfiles.views import serve as serve_static
+    urlpatterns.append(re_path(r"^static/(?P<path>.*)$", serve_static))
+
 
 if kwe_urls:
     urlpatterns.append(path('', include(kwe_urls)))

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import importlib.util
+import os
 import sys
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, cast
@@ -101,6 +102,7 @@ env = environ.FileAwareEnv(
     ENABLE_DEBUG_TOOLBAR=(bool, False),
     KAUSAL_PATHS_URL=(str, ''),
     DISABLE_WAGTAIL_EDITING_SESSION_PING=(bool, False),
+    ENABLE_MCP_SERVER=(bool, False),
     **COMMON_ENV_SCHEMA,
 )
 
@@ -118,12 +120,12 @@ else:
 
 # Read all files in the directories given in MOUNTED_SECRET_PATHS whose names look like environment variables and use
 # the contents of the files for the corresponding variables
-for directory in env('MOUNTED_SECRET_PATHS'):
+for directory in cast('list[str]', env('MOUNTED_SECRET_PATHS')):
     set_secret_file_vars(env, directory)
 
-DEBUG = env('DEBUG')
-DEPLOYMENT_TYPE = env('DEPLOYMENT_TYPE')
-ALLOWED_HOSTS = env('ALLOWED_HOSTS')
+DEBUG = cast('bool', env('DEBUG'))
+DEPLOYMENT_TYPE = cast('str', env('DEPLOYMENT_TYPE'))
+ALLOWED_HOSTS = cast('list[str]', env('ALLOWED_HOSTS'))
 INTERNAL_IPS = env.list('INTERNAL_IPS',
                         default=(['127.0.0.1'] if DEBUG else []))  # pyright: ignore
 DATABASES = {
@@ -137,7 +139,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
 # If Redis is configured, but no CACHE_URL is set in the environment,
 # default to using Redis as the cache.
-REDIS_URL = env('REDIS_URL')
+REDIS_URL = cast('str', env('REDIS_URL'))
 
 cache_var = 'CACHE_URL'
 if env.get_value('CACHE_URL', default=None) is None and REDIS_URL:  # pyright: ignore
@@ -200,6 +202,8 @@ INSTALLED_APPS = [
     'django_extensions',
     'modeltrans',
     'corsheaders',
+    'channels',
+    'strawberry_django',
 
     'wagtail.contrib.forms',
     'wagtail.contrib.redirects',
@@ -319,7 +323,7 @@ STORAGES: dict[str, dict[str, Any]] = {
 if 'pytest' in sys.modules:
     STORAGES['default']['BACKEND'] = 'django.core.files.storage.InMemoryStorage'
 else:
-    media_storage_url: ParseResult = env.url('S3_MEDIA_STORAGE_URL')
+    media_storage_url: ParseResult = cast('ParseResult', env.url('S3_MEDIA_STORAGE_URL'))
     if media_storage_url.scheme:
         if media_storage_url.scheme != 's3':
             raise ImproperlyConfigured('S3_MEDIA_STORAGE_URL only supports s3 scheme')
@@ -448,6 +452,27 @@ REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': f'{PROJECT_NAME}.openapi.AutoSchema',
 }
 
+
+if REDIS_URL:
+    CHANNEL_LAYERS = {
+        'default': {
+            'BACKEND': 'channels_redis.core.RedisChannelLayer',
+            'CONFIG': {
+                'hosts': [REDIS_URL],
+                'prefix': f'{PROJECT_NAME}-asgi',
+            },
+        },
+    }
+else:
+    CHANNEL_LAYERS = {
+        'default': {
+            'BACKEND': 'channels.layers.InMemoryChannelLayer',
+        },
+    }
+ENABLE_MCP_SERVER = cast('bool', env('ENABLE_MCP_SERVER'))
+
+if REDIS_URL and not os.getenv('FASTMCP_DOCKET_URL'):
+    os.environ['FASTMCP_DOCKET_URL'] = REDIS_URL
 
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_HEADERS = list(default_cors_headers) + get_allowed_cors_headers() + [
@@ -799,7 +824,7 @@ MEDIA_ROOT = env('MEDIA_ROOT')
 USE_X_FORWARDED_HOST = True
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
-SENTRY_DSN = env('SENTRY_DSN')
+SENTRY_DSN = cast('str', env('SENTRY_DSN'))
 
 SILENCED_SYSTEM_CHECKS = [
     'fields.W904',  # postgres JSONField -> django JSONField
@@ -840,7 +865,7 @@ if not locals().get('SECRET_KEY', ''):
 
         system_random = random.SystemRandom()
         try:
-            SECRET_KEY = ''.join([system_random.choice('abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(-_=+)') for i in range(64)])
+            SECRET_KEY = ''.join([system_random.choice('abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(-_=+)') for _i in range(64)])
             with secret_file.open('w') as f:
                 secret_file.chmod(0o0600)
                 f.write(SECRET_KEY)
@@ -868,16 +893,18 @@ LOGGING = None
 if env('CONFIGURE_LOGGING'):
     from kausal_common.logging.init import LogFormat, UserLoggingOptions, init_logging_django
 
-    is_kube = env.bool('KUBERNETES_MODE') or env.bool('KUBERNETES_LOGGING', False) # type: ignore
+    kube_mode = cast('bool', env.bool('KUBERNETES_MODE'))
+    kube_logging = cast('bool', env.bool('KUBERNETES_LOGGING', default=False))  # pyright: ignore[reportArgumentType]
+    enable_kube_logging = kube_mode or kube_logging
     log_format: LogFormat | None
-    if not is_kube and DEBUG:
+    if not enable_kube_logging and DEBUG:
         # If logfmt hasn't been explicitly selected and DEBUG is on, fall back to autodetection.
         log_format = None
     else:
         log_format = 'logfmt'
 
     if DEBUG:
-        runserver_logging = dict(
+        runserver_logging = cast('dict[str, bool]', dict(
             django_runserver_minimize_noise=env('LOG_DJANGO_RUNSERVER_MINIMIZE_NOISE'),
             django_runserver_requests_media=env('LOG_DJANGO_RUNSERVER_REQUESTS_MEDIA'),
             django_runserver_requests_static=env('LOG_DJANGO_RUNSERVER_REQUESTS_STATIC'),
@@ -887,7 +914,7 @@ if env('CONFIGURE_LOGGING'):
             django_runserver_errors_favicon=env('LOG_DJANGO_RUNSERVER_ERRORS_FAVICON'),
             django_runserver_requests_broken_pipe=env('LOG_DJANGO_RUNSERVER_REQUESTS_BROKEN_PIPE'),
             people_verbose=env('LOG_PEOPLE_VERBOSE'),
-        )
+        ))
     else:
         runserver_logging = dict()
 
