@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-01-07 17:25+0100\n"
+"POT-Creation-Date: 2026-01-13 15:13+0100\n"
 "PO-Revision-Date: 2025-04-02 07:20+0000\n"
 "Last-Translator: Matias Wargelin <matias.wargelin@kausal.tech>\n"
 "Language-Team: German (Switzerland) <https://weblate.kausal.tech/projects/watch/django/de_CH/>\n"
@@ -72,7 +72,6 @@ msgstr "Abschliessen für Bericht %s rückgängig machen"
 #: actions/action_admin.py actions/apps.py actions/models/plan.py
 #: content/models.py indicators/wagtail_admin.py
 #: reports/spreadsheets/excel_report.py reports/tests/test_excel_roundtrip.py
-#: templates/modeladmin/create.html
 #, fuzzy
 #| msgid "Actions"
 msgctxt "Action model"
@@ -1022,7 +1021,7 @@ msgstr ""
 msgid "contact persons"
 msgstr ""
 
-#: actions/models/action.py aplans/utils.py
+#: actions/models/action.py admin_site/models.py aplans/utils.py
 #: reports/spreadsheets/excel_report.py
 msgid "updated at"
 msgstr ""
@@ -1283,7 +1282,8 @@ msgstr ""
 msgid "completed by"
 msgstr ""
 
-#: actions/models/action.py aplans/utils.py feedback/models.py
+#: actions/models/action.py admin_site/models.py aplans/utils.py
+#: feedback/models.py
 msgid "created at"
 msgstr ""
 
@@ -1344,23 +1344,11 @@ msgstr "Massnahmenlink"
 msgid "action links"
 msgstr "Massnahmenlinks"
 
-#: actions/models/action.py notifications/models.py
-msgid "content"
-msgstr ""
-
-#: actions/models/action.py
-msgid "Please summarize the change you made. This message will be displayed publicly."
-msgstr ""
-
-#: actions/models/action.py aplans/utils.py
-msgid "created by"
-msgstr ""
-
-#: actions/models/action.py
+#: actions/models/action.py pages/models.py
 msgid "revision"
 msgstr ""
 
-#: actions/models/action.py
+#: actions/models/action.py pages/models.py
 #, fuzzy
 #| msgid "action schedules"
 msgid "The revision this change history message is associated with"
@@ -1420,6 +1408,14 @@ msgstr ""
 
 #: actions/models/action.py
 msgid "author"
+msgstr ""
+
+#: actions/models/action.py admin_site/models.py notifications/models.py
+msgid "content"
+msgstr ""
+
+#: actions/models/action.py admin_site/models.py aplans/utils.py
+msgid "created by"
 msgstr ""
 
 #: actions/models/action.py
@@ -2508,27 +2504,6 @@ msgid "Plans"
 msgstr ""
 
 #: actions/wagtail_admin.py
-#, fuzzy, python-format
-#| msgid "action schedules"
-msgctxt "page subtitle"
-msgid "Change history message: %(obj)s"
-msgstr "Massnahmenzeitpläne"
-
-#: actions/wagtail_admin.py
-#, fuzzy
-#| msgid "action schedules"
-msgctxt "page subtitle"
-msgid "Change history message"
-msgstr "Massnahmenzeitpläne"
-
-#: actions/wagtail_admin.py
-#, fuzzy
-#| msgid "Action schedules"
-msgctxt "page title"
-msgid "Add change history message"
-msgstr "Massnahmenzeitpläne"
-
-#: actions/wagtail_admin.py
 #, fuzzy
 #| msgid "Action schedules"
 msgctxt "menu label"
@@ -2689,6 +2664,10 @@ msgstr ""
 msgid "Field '%(field)s' in model '%(model)s' of plan '%(plan)s'"
 msgstr ""
 
+#: admin_site/models.py
+msgid "Please summarize the change you made. This message will be displayed publicly."
+msgstr ""
+
 #: admin_site/signals.py
 #, fuzzy, python-format
 #| msgid "Do you really want to exclude the organization '%(org)s' from the plan '%(plan)s'?"
@@ -2809,6 +2788,27 @@ msgstr ""
 #, python-format
 msgid "%s could not be created due to errors."
 msgstr ""
+
+#: admin_site/viewsets.py
+#, fuzzy, python-format
+#| msgid "action schedules"
+msgctxt "page subtitle"
+msgid "Change history message: %(obj)s"
+msgstr "Massnahmenzeitpläne"
+
+#: admin_site/viewsets.py
+#, fuzzy
+#| msgid "action schedules"
+msgctxt "page subtitle"
+msgid "Change history message"
+msgstr "Massnahmenzeitpläne"
+
+#: admin_site/viewsets.py
+#, fuzzy
+#| msgid "Action schedules"
+msgctxt "page title"
+msgid "Add change history message"
+msgstr "Massnahmenzeitpläne"
 
 #: admin_site/wagtail.py
 #, python-format
@@ -3432,6 +3432,10 @@ msgstr ""
 msgid "File created or updated"
 msgstr ""
 
+#: indicators/api.py indicators/blocks/layout.py
+msgid "Latest value"
+msgstr ""
+
 #: indicators/blocks/__init__.py indicators/rich_text.py
 #: templates/aplans/paths_sync_confirmation.html
 msgid "Indicator"
@@ -3589,10 +3593,6 @@ msgstr ""
 
 #: indicators/blocks/layout.py
 msgid "Invalid category level"
-msgstr ""
-
-#: indicators/blocks/layout.py
-msgid "Latest value"
 msgstr ""
 
 #: indicators/blocks/layout.py
@@ -5286,9 +5286,32 @@ msgstr ""
 msgid "external plan links"
 msgstr ""
 
+#: pages/models.py
+msgid "page"
+msgstr ""
+
+#: pages/models.py
+#, fuzzy
+#| msgid "action schedules"
+msgid "page change history message"
+msgstr "Massnahmenzeitpläne"
+
+#: pages/models.py
+#, fuzzy
+#| msgid "action schedules"
+msgid "page change history messages"
+msgstr "Massnahmenzeitpläne"
+
 #: pages/wagtail_admin.py
 msgid "More"
 msgstr ""
+
+#: pages/wagtail_admin.py
+#, fuzzy
+#| msgid "action schedules"
+msgctxt "menu label"
+msgid "Page change history messages"
+msgstr "Massnahmenzeitpläne"
 
 #: paths_integration/indicators.py
 #, python-format
@@ -5766,6 +5789,12 @@ msgstr ""
 #: templates/modeladmin/create.html templates/modeladmin/edit.html
 msgid "This page has unsaved changes."
 msgstr ""
+
+#: templates/modeladmin/create.html
+#, fuzzy
+#| msgid "Actions"
+msgid "Actions"
+msgstr "Massnahmen"
 
 #: templates/modeladmin/create.html templates/modeladmin/edit.html
 msgid "Saving…"

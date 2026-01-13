@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-01-07 17:25+0100\n"
+"POT-Creation-Date: 2026-01-13 15:13+0100\n"
 "PO-Revision-Date: 2025-04-02 07:20+0000\n"
 "Last-Translator: Matias Wargelin <matias.wargelin@kausal.tech>\n"
 "Language-Team: Spanish <https://weblate.kausal.tech/projects/watch/django/es/>\n"
@@ -69,7 +69,6 @@ msgstr "Deshacer el marcado de esta acción como completa para el informe %s"
 #: actions/action_admin.py actions/apps.py actions/models/plan.py
 #: content/models.py indicators/wagtail_admin.py
 #: reports/spreadsheets/excel_report.py reports/tests/test_excel_roundtrip.py
-#: templates/modeladmin/create.html
 #, fuzzy
 #| msgid "Actions"
 msgctxt "Action model"
@@ -1024,7 +1023,7 @@ msgstr "Organizaciones responsables"
 msgid "contact persons"
 msgstr "Personas de contacto"
 
-#: actions/models/action.py aplans/utils.py
+#: actions/models/action.py admin_site/models.py aplans/utils.py
 #: reports/spreadsheets/excel_report.py
 msgid "updated at"
 msgstr "actualizado en"
@@ -1283,7 +1282,8 @@ msgstr "Fecha de finalización de la tarea"
 msgid "completed by"
 msgstr "completado por"
 
-#: actions/models/action.py aplans/utils.py feedback/models.py
+#: actions/models/action.py admin_site/models.py aplans/utils.py
+#: feedback/models.py
 msgid "created at"
 msgstr "creado en"
 
@@ -1344,25 +1344,13 @@ msgstr "enlace de acción"
 msgid "action links"
 msgstr "enlaces de acción"
 
-#: actions/models/action.py notifications/models.py
-msgid "content"
-msgstr "contenido"
-
-#: actions/models/action.py
-msgid "Please summarize the change you made. This message will be displayed publicly."
-msgstr ""
-
-#: actions/models/action.py aplans/utils.py
-msgid "created by"
-msgstr "creado por"
-
-#: actions/models/action.py
+#: actions/models/action.py pages/models.py
 #, fuzzy
 #| msgid "Division"
 msgid "revision"
 msgstr "División"
 
-#: actions/models/action.py
+#: actions/models/action.py pages/models.py
 #, fuzzy
 #| msgid "action schedules"
 msgid "The revision this change history message is associated with"
@@ -1423,6 +1411,14 @@ msgstr "fecha"
 #: actions/models/action.py
 msgid "author"
 msgstr "autor"
+
+#: actions/models/action.py admin_site/models.py notifications/models.py
+msgid "content"
+msgstr "contenido"
+
+#: actions/models/action.py admin_site/models.py aplans/utils.py
+msgid "created by"
+msgstr "creado por"
 
 #: actions/models/action.py
 msgid "action status update"
@@ -2502,27 +2498,6 @@ msgid "Plans"
 msgstr "Planes"
 
 #: actions/wagtail_admin.py
-#, fuzzy, python-format
-#| msgid "Category type pages"
-msgctxt "page subtitle"
-msgid "Change history message: %(obj)s"
-msgstr "Páginas de tipo categoría"
-
-#: actions/wagtail_admin.py
-#, fuzzy
-#| msgid "action schedules"
-msgctxt "page subtitle"
-msgid "Change history message"
-msgstr "calendarios de actuación"
-
-#: actions/wagtail_admin.py
-#, fuzzy
-#| msgid "Action schedules"
-msgctxt "page title"
-msgid "Add change history message"
-msgstr "Planes de acción"
-
-#: actions/wagtail_admin.py
 #, fuzzy
 #| msgid "Action schedules"
 msgctxt "menu label"
@@ -2683,6 +2658,10 @@ msgstr "%(field)s no es un campo válido en el modelo '%(model)s'"
 msgid "Field '%(field)s' in model '%(model)s' of plan '%(plan)s'"
 msgstr "Campo '%(field)s' en el modelo '%(model)s' del plan '%(plan)s'"
 
+#: admin_site/models.py
+msgid "Please summarize the change you made. This message will be displayed publicly."
+msgstr ""
+
 #: admin_site/signals.py
 #, python-format
 msgid "You are now viewing the site as %(user)s."
@@ -2800,6 +2779,27 @@ msgstr "En uso: \"%(instance)s\"."
 #, python-format
 msgid "%s could not be created due to errors."
 msgstr "%s no se ha podido crear debido a errores."
+
+#: admin_site/viewsets.py
+#, fuzzy, python-format
+#| msgid "Category type pages"
+msgctxt "page subtitle"
+msgid "Change history message: %(obj)s"
+msgstr "Páginas de tipo categoría"
+
+#: admin_site/viewsets.py
+#, fuzzy
+#| msgid "action schedules"
+msgctxt "page subtitle"
+msgid "Change history message"
+msgstr "calendarios de actuación"
+
+#: admin_site/viewsets.py
+#, fuzzy
+#| msgid "Action schedules"
+msgctxt "page title"
+msgid "Add change history message"
+msgstr "Planes de acción"
 
 #: admin_site/wagtail.py
 #, python-format
@@ -3447,6 +3447,10 @@ msgstr ""
 msgid "File created or updated"
 msgstr "creado en"
 
+#: indicators/api.py indicators/blocks/layout.py
+msgid "Latest value"
+msgstr ""
+
 #: indicators/blocks/__init__.py indicators/rich_text.py
 #: templates/aplans/paths_sync_confirmation.html
 msgid "Indicator"
@@ -3617,10 +3621,6 @@ msgstr "Categorías"
 #| msgid "category level"
 msgid "Invalid category level"
 msgstr "nivel de categoría"
-
-#: indicators/blocks/layout.py
-msgid "Latest value"
-msgstr ""
 
 #: indicators/blocks/layout.py
 msgid "Earliest value"
@@ -5322,9 +5322,34 @@ msgstr "enlace externo al plan"
 msgid "external plan links"
 msgstr "enlaces externos del plan"
 
+#: pages/models.py
+#, fuzzy
+#| msgid "page id"
+msgid "page"
+msgstr "id de página"
+
+#: pages/models.py
+#, fuzzy
+#| msgid "Category type pages"
+msgid "page change history message"
+msgstr "Páginas de tipo categoría"
+
+#: pages/models.py
+#, fuzzy
+#| msgid "category levels"
+msgid "page change history messages"
+msgstr "niveles de categoría"
+
 #: pages/wagtail_admin.py
 msgid "More"
 msgstr "Más"
+
+#: pages/wagtail_admin.py
+#, fuzzy
+#| msgid "category levels"
+msgctxt "menu label"
+msgid "Page change history messages"
+msgstr "niveles de categoría"
 
 #: paths_integration/indicators.py
 #, python-format
@@ -5809,6 +5834,12 @@ msgstr "UUID de la instancia Kausal Paths"
 #: templates/modeladmin/create.html templates/modeladmin/edit.html
 msgid "This page has unsaved changes."
 msgstr "Esta página tiene cambios sin guardar."
+
+#: templates/modeladmin/create.html
+#, fuzzy
+#| msgid "Actions"
+msgid "Actions"
+msgstr "Acciones"
 
 #: templates/modeladmin/create.html templates/modeladmin/edit.html
 msgid "Saving…"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-01-07 17:25+0100\n"
+"POT-Creation-Date: 2026-01-13 15:13+0100\n"
 "PO-Revision-Date: 2025-04-02 07:20+0000\n"
 "Last-Translator: Matias Wargelin <matias.wargelin@kausal.tech>\n"
 "Language-Team: Latvian <https://weblate.kausal.tech/projects/watch/django/lv/>\n"
@@ -69,7 +69,6 @@ msgstr "Atcelt šīs rīcības atzīmēšanu kā pabeigtu ziņojumam %s"
 #: actions/action_admin.py actions/apps.py actions/models/plan.py
 #: content/models.py indicators/wagtail_admin.py
 #: reports/spreadsheets/excel_report.py reports/tests/test_excel_roundtrip.py
-#: templates/modeladmin/create.html
 #, fuzzy
 #| msgid "Actions"
 msgctxt "Action model"
@@ -1057,7 +1056,7 @@ msgstr "atbildīgās organizācijas"
 msgid "contact persons"
 msgstr "kontaktpersonas"
 
-#: actions/models/action.py aplans/utils.py
+#: actions/models/action.py admin_site/models.py aplans/utils.py
 #: reports/spreadsheets/excel_report.py
 msgid "updated at"
 msgstr "atjaunināts vietnē"
@@ -1322,7 +1321,8 @@ msgstr "Datums, kad uzdevums tika pabeigts"
 msgid "completed by"
 msgstr "pabeidzis"
 
-#: actions/models/action.py aplans/utils.py feedback/models.py
+#: actions/models/action.py admin_site/models.py aplans/utils.py
+#: feedback/models.py
 msgid "created at"
 msgstr "izveidots vietnē"
 
@@ -1383,25 +1383,13 @@ msgstr "rīcības saite"
 msgid "action links"
 msgstr "rīcības saites"
 
-#: actions/models/action.py notifications/models.py
-msgid "content"
-msgstr "saturs"
-
-#: actions/models/action.py
-msgid "Please summarize the change you made. This message will be displayed publicly."
-msgstr ""
-
-#: actions/models/action.py aplans/utils.py
-msgid "created by"
-msgstr "izveidojis"
-
-#: actions/models/action.py
+#: actions/models/action.py pages/models.py
 #, fuzzy
 #| msgid "Division"
 msgid "revision"
 msgstr "Nodaļa"
 
-#: actions/models/action.py
+#: actions/models/action.py pages/models.py
 #, fuzzy
 #| msgid "Changes were saved"
 msgid "The revision this change history message is associated with"
@@ -1462,6 +1450,14 @@ msgstr "datums"
 #: actions/models/action.py
 msgid "author"
 msgstr "autors"
+
+#: actions/models/action.py admin_site/models.py notifications/models.py
+msgid "content"
+msgstr "saturs"
+
+#: actions/models/action.py admin_site/models.py aplans/utils.py
+msgid "created by"
+msgstr "izveidojis"
 
 #: actions/models/action.py
 msgid "action status update"
@@ -2569,27 +2565,6 @@ msgid "Plans"
 msgstr "Plāni"
 
 #: actions/wagtail_admin.py
-#, fuzzy, python-format
-#| msgid "Changes were saved"
-msgctxt "page subtitle"
-msgid "Change history message: %(obj)s"
-msgstr "Izmaiņas tika saglabātas"
-
-#: actions/wagtail_admin.py
-#, fuzzy
-#| msgid "Changes were saved"
-msgctxt "page subtitle"
-msgid "Change history message"
-msgstr "Izmaiņas tika saglabātas"
-
-#: actions/wagtail_admin.py
-#, fuzzy
-#| msgid "Changes were saved"
-msgctxt "page title"
-msgid "Add change history message"
-msgstr "Izmaiņas tika saglabātas"
-
-#: actions/wagtail_admin.py
 #, fuzzy
 #| msgid "Action schedules"
 msgctxt "menu label"
@@ -2750,6 +2725,10 @@ msgstr "%(field)s nav derīgs lauks modelī '%(model)s'"
 msgid "Field '%(field)s' in model '%(model)s' of plan '%(plan)s'"
 msgstr "Lauks '%(field)s' plāna '%(plan)s' modelī '%(model)s'"
 
+#: admin_site/models.py
+msgid "Please summarize the change you made. This message will be displayed publicly."
+msgstr ""
+
 #: admin_site/signals.py
 #, fuzzy, python-format
 #| msgid "Do you really want to send a password reset link to %(person)s?"
@@ -2874,6 +2853,27 @@ msgstr "Lietošanā: \"%(instance)s\"."
 #, python-format
 msgid "%s could not be created due to errors."
 msgstr "%s nevarēja izveidot kļūdu dēļ."
+
+#: admin_site/viewsets.py
+#, fuzzy, python-format
+#| msgid "Changes were saved"
+msgctxt "page subtitle"
+msgid "Change history message: %(obj)s"
+msgstr "Izmaiņas tika saglabātas"
+
+#: admin_site/viewsets.py
+#, fuzzy
+#| msgid "Changes were saved"
+msgctxt "page subtitle"
+msgid "Change history message"
+msgstr "Izmaiņas tika saglabātas"
+
+#: admin_site/viewsets.py
+#, fuzzy
+#| msgid "Changes were saved"
+msgctxt "page title"
+msgid "Add change history message"
+msgstr "Izmaiņas tika saglabātas"
 
 #: admin_site/wagtail.py
 #, python-format
@@ -3533,6 +3533,10 @@ msgstr ""
 msgid "File created or updated"
 msgstr "izveidots vietnē"
 
+#: indicators/api.py indicators/blocks/layout.py
+msgid "Latest value"
+msgstr ""
+
 #: indicators/blocks/__init__.py indicators/rich_text.py
 #: templates/aplans/paths_sync_confirmation.html
 msgid "Indicator"
@@ -3701,10 +3705,6 @@ msgstr "Kategorijas līmeņi"
 #| msgid "category level"
 msgid "Invalid category level"
 msgstr "kategorijas līmenis"
-
-#: indicators/blocks/layout.py
-msgid "Latest value"
-msgstr ""
 
 #: indicators/blocks/layout.py
 msgid "Earliest value"
@@ -5434,9 +5434,34 @@ msgstr "ārējā plāna saite"
 msgid "external plan links"
 msgstr "ārējo plānu saites"
 
+#: pages/models.py
+#, fuzzy
+#| msgid "Page link"
+msgid "page"
+msgstr "Lapas saite"
+
+#: pages/models.py
+#, fuzzy
+#| msgid "Category type pages"
+msgid "page change history message"
+msgstr "Kategorijas tipa lapas"
+
+#: pages/models.py
+#, fuzzy
+#| msgid "category levels"
+msgid "page change history messages"
+msgstr "kategoriju līmeņi"
+
 #: pages/wagtail_admin.py
 msgid "More"
 msgstr "Vairāk"
+
+#: pages/wagtail_admin.py
+#, fuzzy
+#| msgid "category levels"
+msgctxt "menu label"
+msgid "Page change history messages"
+msgstr "kategoriju līmeņi"
 
 #: paths_integration/indicators.py
 #, python-format
@@ -5921,6 +5946,12 @@ msgstr ""
 #: templates/modeladmin/create.html templates/modeladmin/edit.html
 msgid "This page has unsaved changes."
 msgstr "Šajā lapā ir nesaglabātas izmaiņas."
+
+#: templates/modeladmin/create.html
+#, fuzzy
+#| msgid "Actions"
+msgid "Actions"
+msgstr "Rīcības"
 
 #: templates/modeladmin/create.html templates/modeladmin/edit.html
 msgid "Saving…"

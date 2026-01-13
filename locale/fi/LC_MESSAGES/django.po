@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-01-07 17:25+0100\n"
+"POT-Creation-Date: 2026-01-13 15:13+0100\n"
 "PO-Revision-Date: 2025-04-02 07:20+0000\n"
 "Last-Translator: Matias Wargelin <matias.wargelin@kausal.tech>\n"
 "Language-Team: Finnish <https://weblate.kausal.tech/projects/watch/django/fi/>\n"
@@ -73,7 +73,6 @@ msgstr "Peru tämän toimenpiteen valmiiksi merkitseminen raporttia %s varten"
 #: actions/action_admin.py actions/apps.py actions/models/plan.py
 #: content/models.py indicators/wagtail_admin.py
 #: reports/spreadsheets/excel_report.py reports/tests/test_excel_roundtrip.py
-#: templates/modeladmin/create.html
 #, fuzzy
 #| msgid "Actions"
 msgctxt "Action model"
@@ -1033,7 +1032,7 @@ msgstr "vastuuorganisaatiot"
 msgid "contact persons"
 msgstr "yhteyshenkilöt"
 
-#: actions/models/action.py aplans/utils.py
+#: actions/models/action.py admin_site/models.py aplans/utils.py
 #: reports/spreadsheets/excel_report.py
 msgid "updated at"
 msgstr "päivitysaika"
@@ -1294,7 +1293,8 @@ msgstr "Päivämäärä jolloin tehtävä valmistui"
 msgid "completed by"
 msgstr "käyttäjä joka merkitsi tehtävän valmiiksi"
 
-#: actions/models/action.py aplans/utils.py feedback/models.py
+#: actions/models/action.py admin_site/models.py aplans/utils.py
+#: feedback/models.py
 msgid "created at"
 msgstr "luomisaika"
 
@@ -1355,24 +1355,12 @@ msgstr "ulkopuolinen linkki"
 msgid "action links"
 msgstr "ulkopuoliset linkit"
 
-#: actions/models/action.py notifications/models.py
-msgid "content"
-msgstr "sisältö"
-
-#: actions/models/action.py
-msgid "Please summarize the change you made. This message will be displayed publicly."
-msgstr ""
-
-#: actions/models/action.py aplans/utils.py
-msgid "created by"
-msgstr "luoja"
-
-#: actions/models/action.py
+#: actions/models/action.py pages/models.py
 #, fuzzy
 msgid "revision"
 msgstr "mittarin dimensiot"
 
-#: actions/models/action.py
+#: actions/models/action.py pages/models.py
 #, fuzzy
 #| msgid "Changes were saved"
 msgid "The revision this change history message is associated with"
@@ -1433,6 +1421,14 @@ msgstr "päivämäärä"
 #: actions/models/action.py
 msgid "author"
 msgstr "tekijä"
+
+#: actions/models/action.py admin_site/models.py notifications/models.py
+msgid "content"
+msgstr "sisältö"
+
+#: actions/models/action.py admin_site/models.py aplans/utils.py
+msgid "created by"
+msgstr "luoja"
 
 #: actions/models/action.py
 msgid "action status update"
@@ -2521,27 +2517,6 @@ msgid "Plans"
 msgstr "Toimenpideohjelmat"
 
 #: actions/wagtail_admin.py
-#, fuzzy, python-format
-#| msgid "Changes were saved"
-msgctxt "page subtitle"
-msgid "Change history message: %(obj)s"
-msgstr "Muutokset tallennettu"
-
-#: actions/wagtail_admin.py
-#, fuzzy
-#| msgid "Changes were saved"
-msgctxt "page subtitle"
-msgid "Change history message"
-msgstr "Muutokset tallennettu"
-
-#: actions/wagtail_admin.py
-#, fuzzy
-#| msgid "Changes were saved"
-msgctxt "page title"
-msgid "Add change history message"
-msgstr "Muutokset tallennettu"
-
-#: actions/wagtail_admin.py
 #, fuzzy
 #| msgid "Action schedules"
 msgctxt "menu label"
@@ -2711,6 +2686,10 @@ msgstr "%(field)s ei ole kelvollinen kenttä mallissa '%(model)s'"
 msgid "Field '%(field)s' in model '%(model)s' of plan '%(plan)s'"
 msgstr "Kenttä '%(field)s' mallissa '%(model)s' suunnitelmassa '%(plan)s'"
 
+#: admin_site/models.py
+msgid "Please summarize the change you made. This message will be displayed publicly."
+msgstr ""
+
 #: admin_site/signals.py
 #, fuzzy, python-format
 msgid "You are now viewing the site as %(user)s."
@@ -2832,6 +2811,27 @@ msgstr "Käytössä: \"%(instance)s\""
 #, python-format
 msgid "%s could not be created due to errors."
 msgstr "%s ei voitu tallentaa virheiden takia."
+
+#: admin_site/viewsets.py
+#, fuzzy, python-format
+#| msgid "Changes were saved"
+msgctxt "page subtitle"
+msgid "Change history message: %(obj)s"
+msgstr "Muutokset tallennettu"
+
+#: admin_site/viewsets.py
+#, fuzzy
+#| msgid "Changes were saved"
+msgctxt "page subtitle"
+msgid "Change history message"
+msgstr "Muutokset tallennettu"
+
+#: admin_site/viewsets.py
+#, fuzzy
+#| msgid "Changes were saved"
+msgctxt "page title"
+msgid "Add change history message"
+msgstr "Muutokset tallennettu"
 
 #: admin_site/wagtail.py
 #, python-format
@@ -3482,6 +3482,10 @@ msgstr ""
 msgid "File created or updated"
 msgstr "luomisaika"
 
+#: indicators/api.py indicators/blocks/layout.py
+msgid "Latest value"
+msgstr ""
+
 #: indicators/blocks/__init__.py indicators/rich_text.py
 #: templates/aplans/paths_sync_confirmation.html
 msgid "Indicator"
@@ -3649,10 +3653,6 @@ msgstr "Kategorian tasot"
 #| msgid "category level"
 msgid "Invalid category level"
 msgstr "luokan taso"
-
-#: indicators/blocks/layout.py
-msgid "Latest value"
-msgstr ""
 
 #: indicators/blocks/layout.py
 msgid "Earliest value"
@@ -5411,9 +5411,33 @@ msgstr "Ulkopuolinen linkki"
 msgid "external plan links"
 msgstr "Ulkopuoliset linkit"
 
+#: pages/models.py
+#, fuzzy
+msgid "page"
+msgstr "ulkopuolinen linkki"
+
+#: pages/models.py
+#, fuzzy
+#| msgid "Category type pages"
+msgid "page change history message"
+msgstr "Luokkatyyppisivut"
+
+#: pages/models.py
+#, fuzzy
+#| msgid "category levels"
+msgid "page change history messages"
+msgstr "luokan tasot"
+
 #: pages/wagtail_admin.py
 msgid "More"
 msgstr "Lisää"
+
+#: pages/wagtail_admin.py
+#, fuzzy
+#| msgid "category levels"
+msgctxt "menu label"
+msgid "Page change history messages"
+msgstr "luokan tasot"
 
 #: paths_integration/indicators.py
 #, python-format
@@ -5899,6 +5923,12 @@ msgstr ""
 #: templates/modeladmin/create.html templates/modeladmin/edit.html
 msgid "This page has unsaved changes."
 msgstr "Sivulla on tallentamattomia muutoksia"
+
+#: templates/modeladmin/create.html
+#, fuzzy
+#| msgid "Actions"
+msgid "Actions"
+msgstr "Toimenpiteet"
 
 #: templates/modeladmin/create.html templates/modeladmin/edit.html
 msgid "Saving…"
