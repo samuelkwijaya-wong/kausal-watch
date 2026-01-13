@@ -44,6 +44,7 @@ dependencies = [
     "elasticsearch",
     "elasticsearch-dsl",
     "factory-boy",
+    "fastmcp>=2.14.2",
     "graphene-django",
     "graphene-django-optimizer",
     "graphene-pydantic",
@@ -328,9 +329,6 @@ lint = [
     "types-psutil",
     "types-python-dateutil",
     "types-uwsgi",
-]
-mcp = [
-    "fastmcp>=2.14.2",
 ]
 prod = [
     "gunicorn",
