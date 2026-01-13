@@ -11,9 +11,10 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-01-13 15:13+0100\n"
-"PO-Revision-Date: 2026-01-07 16:29+0000\n"
+"PO-Revision-Date: 2026-01-13 14:16+0000\n"
 "Last-Translator: Bernhard Bliem <bernhard.bliem@kausal.tech>\n"
-"Language-Team: German <https://weblate.kausal.tech/projects/watch/django/de/>\n"
+"Language-Team: German <https://weblate.kausal.tech/projects/watch/django/de/>"
+"\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -5057,33 +5058,25 @@ msgid "external plan links"
 msgstr "externe Plan-Links"
 
 #: pages/models.py
-#, fuzzy
-#| msgid "page id"
 msgid "page"
-msgstr "Seiten-ID"
+msgstr "Seite"
 
 #: pages/models.py
-#, fuzzy
-#| msgid "Latest change history message"
 msgid "page change history message"
-msgstr "Letzter Eintrag im Änderungsverlauf"
+msgstr "Eintrag im Änderungsverlauf der Seite"
 
 #: pages/models.py
-#, fuzzy
-#| msgid "Enable change history messages"
 msgid "page change history messages"
-msgstr "Einträge im Änderungsverlauf aktivieren"
+msgstr "Einträge im Änderungsverlauf der Seite"
 
 #: pages/wagtail_admin.py
 msgid "More"
 msgstr "Mehr"
 
 #: pages/wagtail_admin.py
-#, fuzzy
-#| msgid "Enable change history messages"
 msgctxt "menu label"
 msgid "Page change history messages"
-msgstr "Einträge im Änderungsverlauf aktivieren"
+msgstr "Einträge im Änderungsverlauf der Seite"
 
 #: paths_integration/indicators.py
 #, python-format
@@ -5556,11 +5549,8 @@ msgid "This page has unsaved changes."
 msgstr "Diese Seite hat ungespeicherte Änderungen."
 
 #: templates/modeladmin/create.html
-#, fuzzy
-#| msgctxt "Action model"
-#| msgid "Actions"
 msgid "Actions"
-msgstr "Maßnahmen"
+msgstr "Aktionen"
 
 #: templates/modeladmin/create.html templates/modeladmin/edit.html
 msgid "Saving…"
