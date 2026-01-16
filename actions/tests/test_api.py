@@ -7,7 +7,7 @@ from django.urls import reverse
 import pytest
 
 from actions.api import ActionSerializer
-from actions.tests.factories import ActionFactory
+from actions.tests.factories import ActionContactFactory, ActionFactory
 from orgs.tests.factories import OrganizationFactory
 
 pytestmark = pytest.mark.django_db
@@ -158,19 +158,18 @@ def test_action_api_put_unauthenticated(
     assert response.status_code == 401
 
 
-def test_action_post_as_contact_person_denied(
-        api_client, action, action_list_url, action_contact_factory):
-    contact = action_contact_factory()
+def test_action_post_as_contact_person_denied(api_client, action_list_url):
+    contact = ActionContactFactory.create()
     user = contact.person.user
     api_client.force_login(user)
     response = api_client.post(action_list_url, data={'name': 'bar'})
     assert response.status_code == 403
 
 
-def test_action_put_as_contact_person_denied_for_other_action(
-        api_client, action, action_detail_url, action_contact_factory):
-    contact = action_contact_factory()
+def test_action_put_as_contact_person_denied_for_other_action(api_client, action, action_detail_url):
+    contact = ActionContactFactory.create(action__plan=action.plan)
     user = contact.person.user
+    assert user
     assert not user.is_superuser
     assert action.plan not in user.person.general_admin_plans.all()
     assert contact.action != action
@@ -182,10 +181,10 @@ def test_action_put_as_contact_person_denied_for_other_action(
     assert response.status_code == 403
 
 
-def test_action_put_as_contact_person_allowed_for_own_action(
-        api_client, plan, action_contact_factory):
-    contact = action_contact_factory(action__plan=plan)
+def test_action_put_as_contact_person_allowed_for_own_action(api_client, plan):
+    contact = ActionContactFactory.create(action__plan=plan)
     user = contact.person.user
+    assert user
     assert not user.is_superuser
     assert contact.action.plan not in user.person.general_admin_plans.all()
     api_client.force_login(user)
