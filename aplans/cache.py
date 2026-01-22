@@ -124,6 +124,7 @@ class PlanSpecificCache:
             .for_model(CategoryType)
             .filter(scopes__scope_id__in=plan_category_type_ids)
             .prefetch_related('scopes')
+            .distinct()
         )
         by_id: dict[int, list[DatasetSchema]] = {}
         for ds in qs:
