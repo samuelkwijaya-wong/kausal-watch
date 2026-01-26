@@ -37,5 +37,4 @@ requirements-local.txt
 .secrets/**
 *.egg-info/
 /schema.graphql
-/.mcp.json
-/.claude/
+/.claude/*.local*
