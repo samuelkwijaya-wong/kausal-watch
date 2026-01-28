@@ -39,7 +39,7 @@ env = environ.FileAwareEnv(
     SECRET_KEY_FALLBACKS=(list, []),
     ALLOWED_HOSTS=(list, []),
     CONFIGURE_LOGGING=(bool, True),
-    DATABASE_URL=(str, 'sqlite:///db.sqlite3'),
+    DATABASE_URL=(str, 'postgresql:///watch'),
     DATABASE_CONN_MAX_AGE=(int, 20),
     REDIS_URL=(str, ''),
     CACHE_URL=(str, 'locmemcache://'),
@@ -103,6 +103,8 @@ env = environ.FileAwareEnv(
     KAUSAL_PATHS_URL=(str, ''),
     DISABLE_WAGTAIL_EDITING_SESSION_PING=(bool, False),
     ENABLE_MCP_SERVER=(bool, False),
+    GDAL_LIBRARY_PATH=(str, ''),
+    GEOS_LIBRARY_PATH=(str, ''),
     **COMMON_ENV_SCHEMA,
 )
 
@@ -117,6 +119,9 @@ else:
     dotenv_path = BASE_DIR / Path('.env')
     if dotenv_path.exists():
         environ.Env.read_env(dotenv_path)
+
+GDAL_LIBRARY_PATH=env('GDAL_LIBRARY_PATH') or None
+GEOS_LIBRARY_PATH=env('GEOS_LIBRARY_PATH') or None
 
 # Read all files in the directories given in MOUNTED_SECRET_PATHS whose names look like environment variables and use
 # the contents of the files for the corresponding variables

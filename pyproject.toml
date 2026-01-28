@@ -72,7 +72,7 @@ dependencies = [
     "pillow",
     "polars[xlsx2csv]",
     "psutil",
-    "psycopg[pool]",
+    "psycopg[pool,binary]",
     "pycryptodome",
     "pygithub",
     "pygments-graphql",
@@ -332,7 +332,8 @@ lint = [
 ]
 prod = [
     "gunicorn",
-    "rustface",
+    "psycopg[c]; sys_platform == 'linux'",
+    "rustface>=0.1.0; sys_platform == 'linux'",
     "uvicorn-worker",
     "uvicorn[standard]",
 ]
