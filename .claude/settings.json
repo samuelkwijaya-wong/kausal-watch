@@ -27,16 +27,5 @@
     }
   },
   "hooks": {
-    "PostToolUse": [
-      {
-        "matcher": "Edit|Write",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "python \"$CLAUDE_PROJECT_DIR\"/kausal_common/development/claude/hooks/post_tool_use.py"
-          }
-        ]
-      }
-    ]
   }
 }
