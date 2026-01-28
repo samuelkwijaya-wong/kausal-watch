@@ -39,6 +39,9 @@ class ActionDependencyRole(OrderedModel):
         'id', 'name',
     ]
 
+    def filter_siblings(self, qs: models.QuerySet[Self]) -> models.QuerySet[Self]:
+        return qs.filter(plan=self.plan)
+
     class Meta:
         constraints = [
             models.UniqueConstraint(name='unique_plan_order', fields=['plan', 'order']),

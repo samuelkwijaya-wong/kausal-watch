@@ -1175,6 +1175,9 @@ class GeneralPlanAdmin(OrderedModel):
     def __str__(self):
         return str(self.person)
 
+    def filter_siblings(self, qs: models.QuerySet[Self]) -> models.QuerySet[Self]:
+        return qs.filter(plan=self.plan)
+
 
 class PlanPublicSiteViewer(models.Model):
     plan = models.ForeignKey(Plan, on_delete=models.CASCADE, verbose_name=_('plan'), related_name='public_site_viewers')
@@ -1235,7 +1238,7 @@ class PlanDomain(models.Model):
     redirect_aliases = ArrayField(
         models.CharField(max_length=80),
         blank=True,
-        default=[],
+        default=list,
         verbose_name='redirect aliases',
         help_text=_(
             "Domain names that will be used to redirect to the main hostname. Multiple domains are separated by commas.",
@@ -1394,6 +1397,9 @@ class MonitoringQualityPoint(PlanRelatedModelWithRevision, OrderedModel):
     public_fields: ClassVar = [
         'id', 'name', 'description_yes', 'description_no', 'plan', 'identifier',
     ]
+
+    def filter_siblings(self, qs: models.QuerySet[Self]) -> models.QuerySet[Self]:
+        return qs.filter(plan=self.plan)
 
     class Meta:
         verbose_name = _('monitoring quality point')

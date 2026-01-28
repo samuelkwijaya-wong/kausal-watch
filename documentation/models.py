@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 
 
 class DocumentationRootPage(DefaultSlugForCopyingMixin, Page):  # type: ignore[misc]
-    plan: FK[Plan] = models.ForeignKey(Plan, on_delete=models.CASCADE, related_name='documentation_root_pages')
+    plan: FK[Plan] = models.ForeignKey(Plan, on_delete=models.PROTECT, related_name='documentation_root_pages')
 
     content_panels = [
         FieldPanel('title'),

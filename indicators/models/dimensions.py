@@ -83,6 +83,9 @@ class DimensionCategory(OrderedModel):
     # type annotations
     values: RevMany[IndicatorValue]
 
+    def filter_siblings(self, qs: models.QuerySet[Self]) -> models.QuerySet[Self]:
+        return qs.filter(dimension=self.dimension)
+
     class Meta:
         verbose_name = _('dimension category')
         verbose_name_plural = _('dimension categories')
@@ -113,6 +116,9 @@ class IndicatorDimension(OrderedModel):
 
     public_fields: ClassVar = ['id', 'dimension', 'indicator', 'order']
 
+    def filter_siblings(self, qs: models.QuerySet[Self]) -> models.QuerySet[Self]:
+        return qs.filter(indicator=self.indicator)
+
     class Meta:
         verbose_name = _('indicator dimension')
         verbose_name_plural = _('indicator dimensions')
@@ -133,6 +139,9 @@ class CommonIndicatorDimension(OrderedModel):
     common_indicator = ParentalKey('indicators.CommonIndicator', on_delete=models.CASCADE, related_name='dimensions')
 
     public_fields: ClassVar = ['id', 'dimension', 'common_indicator', 'order']
+
+    def filter_siblings(self, qs: models.QuerySet[Self]) -> models.QuerySet[Self]:
+        return qs.filter(common_indicator=self.common_indicator)
 
     class Meta:
         verbose_name = _('common indicator dimension')

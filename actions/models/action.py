@@ -1895,6 +1895,9 @@ class ActionImpact(PlanRelatedModelWithRevision, OrderedModel):
     def __str__(self):
         return '%s (%s)' % (self.name, self.identifier)
 
+    def filter_siblings(self, qs: models.QuerySet[Self]) -> models.QuerySet[Self]:
+        return qs.filter(plan=self.plan)
+
 
 class ActionLink(ActionRelatedModelTransModelMixin, OrderedModel):
     """A link related to an action."""
@@ -1919,6 +1922,9 @@ class ActionLink(ActionRelatedModelTransModelMixin, OrderedModel):
         'title',
         'order',
     ]
+
+    def filter_siblings(self, qs: models.QuerySet[Self]) -> models.QuerySet[Self]:
+        return qs.filter(action=self.action)
 
     class Meta:
         ordering = ['action', 'order']

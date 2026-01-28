@@ -117,6 +117,9 @@ class ClientPlan(OrderedModel):
         qs = self.__class__.objects.filter(plan=self.plan)
         return qs.aggregate(models.Max(self.sort_order_field))['%s__max' % self.sort_order_field] or 0
 
+    def filter_siblings(self, qs: models.QuerySet[Self]) -> models.QuerySet[Self]:
+        return qs.filter(client=self.client)
+
     class Meta:
         unique_together = (('plan', 'order'),)
         ordering = ('plan', 'order')
@@ -134,6 +137,9 @@ class EmailDomains(OrderedModel, ClusterableModel):
         related_name='email_domains',
     )
     domain = HostnameField(unique=True)
+
+    def filter_siblings(self, qs: models.QuerySet[Self]) -> models.QuerySet[Self]:
+        return qs.filter(client=self.client)
 
     class Meta:
         ordering = ('client', 'order')
