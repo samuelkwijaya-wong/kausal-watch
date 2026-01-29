@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, ClassVar, override
+from typing import TYPE_CHECKING, Any, ClassVar, Self, override
 
 import reversion
 from django.db import models
