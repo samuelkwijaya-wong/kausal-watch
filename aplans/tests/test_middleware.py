@@ -169,3 +169,28 @@ def test_wildcard_rejects_invalid_subdomain_chars(request_factory):
     request = request_factory.get('/', HTTP_HOST='test-.example.com')  # ends with hyphen
     response = middleware(request)
     assert response.status_code == 200  # Should NOT redirect
+
+
+@override_settings(REDIRECT_HOSTNAMES=(('*.example.com', 'admin.example.com'),))
+def test_wildcard_does_not_match_if_already_target(request_factory):
+    """Test that wildcard does not match a nonexistent part in the domain name."""
+    middleware = HostnameRedirectMiddleware(get_response_success)
+
+    # Valid subdomain parts
+    request = request_factory.get('/', HTTP_HOST='admin.example.com')
+    response = middleware(request)
+    assert response.status_code == 200, "Should not redirect for admin.example.com"
+
+
+@override_settings(
+    ALLOWED_HOSTS=(('.example.com', 'admin.example.com', 'api.example.com')),
+    REDIRECT_HOSTNAMES=(('*.example.com', 'admin.example.com'),)
+)
+def test_wildcard_does_not_match_if_in_allowed_hosts(request_factory):
+    """Test that wildcard does not match an allowed host."""
+    middleware = HostnameRedirectMiddleware(get_response_success)
+
+    # Valid subdomain parts
+    request = request_factory.get('/', HTTP_HOST='api.example.com')
+    response = middleware(request)
+    assert response.status_code == 200, "Should not redirect for api.example.com"

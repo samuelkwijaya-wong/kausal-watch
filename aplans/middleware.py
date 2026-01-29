@@ -196,9 +196,16 @@ def _matches_hostname_pattern(hostname: str, pattern: str) -> bool:
     return True
 
 
-def _check_hostname_redirect(request: http.HttpRequest, redirect_hostnames: list[tuple[str, str]]) -> http.HttpResponse | None:
+def _check_hostname_redirect(
+    request: http.HttpRequest,
+    redirect_hostnames: list[tuple[str, str]],
+    allowed_non_wildcard_hosts: set[str],
+) -> http.HttpResponse | None:
     """
     Check if request should be redirected based on hostname patterns.
+
+    If the request host matches any host in allowed_non_wildcard_hosts,
+    do not redirect!
 
     Returns:
         HttpResponsePermanentRedirect if redirect needed, None otherwise.
@@ -210,6 +217,8 @@ def _check_hostname_redirect(request: http.HttpRequest, redirect_hostnames: list
         return None
 
     for from_pattern, to_hostname in redirect_hostnames:
+        if hostname == to_hostname or hostname in allowed_non_wildcard_hosts:
+            continue
         if not _matches_hostname_pattern(hostname, from_pattern):
             continue
 
@@ -256,17 +265,21 @@ def hostname_redirect_middleware(get_response):
         )
     """
     redirect_hostnames = getattr(settings, 'REDIRECT_HOSTNAMES', ())
+    allowed_non_wildcard_hosts = set(
+        h for h in getattr(settings, 'ALLOWED_HOSTS', [])
+        if not h.startswith('.')
+    )
     if not redirect_hostnames:
         raise MiddlewareNotUsed('REDIRECT_HOSTNAMES not configured')
     if iscoroutinefunction(get_response):
         async def middleware(request: http.HttpRequest):  # pyright: ignore[reportRedeclaration]  # type: ignore[misc]  # noqa: ANN202
-            redirect_response = _check_hostname_redirect(request, redirect_hostnames)
+            redirect_response = _check_hostname_redirect(request, redirect_hostnames, allowed_non_wildcard_hosts)
             if redirect_response:
                 return redirect_response
             return await get_response(request)
     else:
         def middleware(request: http.HttpRequest):  # type: ignore[misc]  # noqa: ANN202
-            redirect_response = _check_hostname_redirect(request, redirect_hostnames)
+            redirect_response = _check_hostname_redirect(request, redirect_hostnames, allowed_non_wildcard_hosts)
             if redirect_response:
                 return redirect_response
             return get_response(request)
