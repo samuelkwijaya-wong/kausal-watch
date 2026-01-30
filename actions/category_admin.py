@@ -109,6 +109,8 @@ class CategoryTypeDeleteView(DeleteView):
         cct = self.instance.common
         if cct is not None:
             plan.common_category_types.remove(cct)
+        for page in self.instance.category_type_pages.all():
+            page.delete()
         return super().delete_instance()
 
 
@@ -369,7 +371,12 @@ class CategoryEditView(CategoryTypeQueryParameterMixin, AplansEditView[Category]
 
 
 class CategoryDeleteView(CategoryTypeQueryParameterMixin, DeleteView):
-    pass
+    def delete_instance(self):
+        assert self.instance is not None
+        cat: Category = self.instance
+        for page in list(cat.category_pages.all()):
+            page.delete()
+        return super().delete_instance()
 
 
 class CategoryAdminButtonHelper(ButtonHelper):
