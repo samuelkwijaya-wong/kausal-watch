@@ -270,7 +270,7 @@ def hostname_redirect_middleware(get_response):
         if not h.startswith('.')
     )
     if not redirect_hostnames:
-        raise MiddlewareNotUsed('REDIRECT_HOSTNAMES not configured')
+        raise MiddlewareNotUsed('REDIRECT_HOSTNAMES not configured. This is only an error if hostname redirects must be active.')
     if iscoroutinefunction(get_response):
         async def middleware(request: http.HttpRequest):  # pyright: ignore[reportRedeclaration]  # type: ignore[misc]  # noqa: ANN202
             redirect_response = _check_hostname_redirect(request, redirect_hostnames, allowed_non_wildcard_hosts)
