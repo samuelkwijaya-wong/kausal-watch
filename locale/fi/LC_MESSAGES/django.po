@@ -12,15 +12,16 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-01-13 15:13+0100\n"
-"PO-Revision-Date: 2025-04-02 07:20+0000\n"
-"Last-Translator: Matias Wargelin <matias.wargelin@kausal.tech>\n"
-"Language-Team: Finnish <https://weblate.kausal.tech/projects/watch/django/fi/>\n"
+"PO-Revision-Date: 2026-02-09 09:21+0000\n"
+"Last-Translator: Timo Tuominen <timo.tuominen@kausal.tech>\n"
+"Language-Team: Finnish <https://weblate.kausal.tech/projects/watch/django/"
+"fi/>\n"
 "Language: fi\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.4.2\n"
+"X-Generator: Weblate 5.15.1\n"
 
 #: actions/action_admin.py
 msgid "There is already an action with this identifier."
@@ -35,6 +36,8 @@ msgstr "%s toistuu toimenpiteen tiedoissa"
 #, python-format
 msgid "While editing this action you have switched to a different plan. This action was still saved with the original plan \"%s\"."
 msgstr ""
+"Muokatessasi tätä toimenpidettä vaihdoit toiseen toimenpideohjelmaan. Tämä "
+"toimenpide tallennettiin alkuperäiseen ohjelmaan \"%s\"."
 
 #: actions/action_admin.py actions/models/action.py
 msgid "Unspecified"
@@ -191,7 +194,7 @@ msgid "Workflow on %(model_name)s '%(object)s' has been cancelled."
 msgstr "Työnkulku kohteelle %(model_name)s '%(object)s' on peruutettu."
 
 #: actions/action_admin_mixins.py
-#, fuzzy, python-format
+#, python-format
 msgid "%(model_name)s '%(object)s' approved and published."
 msgstr "%(model_name)s '%(object)s' on päivitetty ja julkaistu."
 
@@ -210,9 +213,8 @@ msgid "Edit"
 msgstr "Muokkaa"
 
 #: actions/action_fields.py actions/tests/fixtures_stream_block.py
-#, fuzzy
 msgid "Action dependencies"
-msgstr "Toimenpiteen aikataulu"
+msgstr "Toimenpiteen riippuvuudet"
 
 #: actions/action_fields.py actions/tests/fixtures_stream_block.py
 msgid "Merged actions"
@@ -286,9 +288,8 @@ msgid "Identifier already exists"
 msgstr "Tunniste on jo olemassa"
 
 #: actions/apps.py
-#, fuzzy
 msgid "Resubmit for moderation"
-msgstr "Lähetä uudelleen moderointia varten"
+msgstr "Lähetä uudelleen moderointiin"
 
 #: actions/apps.py
 msgid "Cancel moderation"
@@ -321,9 +322,8 @@ msgid "If format is 'Numeric', a unit must be set"
 msgstr "Jos muoto on 'numeerinen', yksikkö vaaditaan"
 
 #: actions/attribute_type_admin.py actions/category_admin.py
-#, fuzzy
 msgid "Order"
-msgstr "järjestys"
+msgstr "suomi"
 
 #: actions/attribute_type_admin.py
 msgid "This field already has values. If you want to change the format, you need to delete the existing values first."
@@ -354,9 +354,9 @@ msgid "%(attribute_type)s (text)"
 msgstr "%(attribute_type)s (teksti)"
 
 #: actions/attributes.py
-#, fuzzy, python-format
+#, python-format
 msgid "%(attribute_type)s"
-msgstr "ominaisuustyypit"
+msgstr "%(attribute_type)s"
 
 #: actions/blocks/__init__.py
 msgid "Related plans"
@@ -411,17 +411,14 @@ msgid "Label"
 msgstr "Selite"
 
 #: actions/blocks/action_content_blocks.py
-#, fuzzy
 msgid "Value"
 msgstr "arvo"
 
 #: actions/blocks/action_content_blocks.py actions/models/attributes.py
-#, fuzzy
 msgid "Choice"
-msgstr "ominaisuuden valintavaihtoehdot"
+msgstr "Valinta"
 
 #: actions/blocks/action_content_blocks.py
-#, fuzzy
 msgid "Field Label"
 msgstr "Kentän nimi"
 
@@ -432,39 +429,36 @@ msgstr "Teksti"
 
 #: actions/blocks/action_content_blocks.py
 msgid "Checkbox"
-msgstr ""
+msgstr "Valintaruutu"
 
 #: actions/blocks/action_content_blocks.py actions/blocks/filters.py
 msgid "Dropdown"
 msgstr "Alasvetovalikko"
 
 #: actions/blocks/action_content_blocks.py
-#, fuzzy
 msgid "Field Type"
-msgstr "Kentän nimi"
+msgstr "Kentän tyyppi"
 
 #: actions/blocks/action_content_blocks.py
 msgid "Required"
-msgstr ""
+msgstr "Pakollinen"
 
 #: actions/blocks/action_content_blocks.py
-#, fuzzy
 msgid "Choices"
-msgstr "ominaisuuden valintavaihtoehdot"
+msgstr "Valintavaihtoehdot"
 
 #: actions/blocks/action_content_blocks.py
-#, fuzzy
 msgid "Choices are only allowed for 'Dropdown' or 'Checkbox' field types."
-msgstr "Vain numeerisilla ominaisuustyypillä voi olla yksikkö"
+msgstr ""
+"Vain alasvetovalikoissa ja valintaruuduissa voi olla valintavaihtoehtoja."
 
 #: actions/blocks/action_content_blocks.py
 msgid "Choices must be provided for 'Dropdown' or 'Checkbox' field types."
-msgstr ""
+msgstr "Valintavaihtoehdot on annettava alasvetovalikoille ja valintaruuduille."
 
 #: actions/blocks/action_content_blocks.py
-#, fuzzy
 msgid "Form Field"
-msgstr "kentät"
+msgstr "Lomakekenttä"
 
 #: actions/blocks/action_content_blocks.py indicators/wagtail_admin.py
 #, fuzzy
@@ -473,53 +467,53 @@ msgstr "kuvaus"
 
 #: actions/blocks/action_content_blocks.py
 msgid "Feedback field visible"
-msgstr ""
+msgstr "Palautekenttä näkyvissä"
 
 #: actions/blocks/action_content_blocks.py
 msgid "Toggle visibility of the feedback field."
-msgstr ""
+msgstr "Aseta palautekentän näkyvyys."
 
 #: actions/blocks/action_content_blocks.py
-#, fuzzy
 msgid "Feedback required"
-msgstr "Palautetta vastaanotettu"
+msgstr "Palaute pakollinen"
 
 #: actions/blocks/action_content_blocks.py
 msgid "Make the feedback field required when visible."
-msgstr ""
+msgstr "Aseta palautekenttä pakolliseksi kun se on näkyvissä."
 
 #: actions/blocks/action_content_blocks.py
 msgid "Email field visible"
-msgstr ""
+msgstr "Sähköpostikenttä näkyvissä"
 
 #: actions/blocks/action_content_blocks.py
 msgid "Toggle visibility of the email field."
-msgstr ""
+msgstr "Aseta sähköpostikentän näkyvyys."
 
 #: actions/blocks/action_content_blocks.py
 msgid "Email required"
-msgstr ""
+msgstr "Sähköpostiosoite pakollinen"
 
 #: actions/blocks/action_content_blocks.py
 msgid "Make the email field required when visible."
-msgstr ""
+msgstr "Tee sähköpostikentästä pakollinen kun se on näkyvissä."
 
 #: actions/blocks/action_content_blocks.py
-#, fuzzy
 msgid "Additional form fields"
-msgstr "Toimenpiteen kenttä"
+msgstr "Muita lomakekenttiä"
 
 #: actions/blocks/action_content_blocks.py
 msgid "Form fields to be shown in addition to Name, Email and Comment fields"
 msgstr ""
+"Lomakekentät jotka näytetään kenttien \"nimi\", \"sähköposti\" ja "
+"\"kommentti\" lisäksi"
 
 #: actions/blocks/action_content_blocks.py
 msgid "Feedback can't be required if it's not visible."
-msgstr ""
+msgstr "Palautekenttä ei voi olla pakollinen jos se ei ole näkyvissä."
 
 #: actions/blocks/action_content_blocks.py
 msgid "Email can't be required if it's not visible."
-msgstr ""
+msgstr "Sähköpostikenttä ei voi olla pakollinen jos se ei ole näkyvissä."
 
 #: actions/blocks/action_content_blocks.py
 #: actions/blocks/category_page_layout.py
@@ -527,24 +521,20 @@ msgid "Contact form"
 msgstr "Yhteydenottolomake"
 
 #: actions/blocks/action_content_blocks.py
-#, fuzzy
 msgid "Indicator Causal Chain"
-msgstr "Toimenpiteen mittari"
+msgstr "Toimenpiteen kausaaliketju"
 
 #: actions/blocks/action_content_blocks.py
-#, fuzzy
 msgid "What heading should be used in the public UI for the dataset?"
-msgstr "Mitä selitettä julkisella sivustolla käytään virallisesta nimestä"
+msgstr "Mitä otsikkoa julkisella sivustolla käytään tietoaineistosta?"
 
 #: actions/blocks/action_content_blocks.py
-#, fuzzy
 msgid "Help text for the Dataset to be shown in the public UI"
-msgstr "Käyttöliittymässä näytettävän kentän ohjeteksti"
+msgstr "Julkisella sivustolla näytettävä ohjeteksti tietoaineistolle"
 
 #: actions/blocks/action_content_blocks.py
-#, fuzzy
 msgid "Datasets"
-msgstr "tietoaineistot"
+msgstr "Tietoaineistot"
 
 #: actions/blocks/action_content_blocks.py
 msgid "What label should be used in the public UI for the official name?"
@@ -571,7 +561,6 @@ msgid "Action highlights"
 msgstr "Toimenpidenostot"
 
 #: actions/blocks/action_list.py
-#, fuzzy
 msgid "What heading should be used in the public UI for the Action list?"
 msgstr "Mitä selitettä julkisella sivustolla käytään virallisesta nimestä"
 
@@ -5601,7 +5590,7 @@ msgstr "Luo salasanan palautuslinkki"
 
 #: people/wagtail_admin.py
 msgid "View site as it looks for this user"
-msgstr ""
+msgstr "Käytä palvelua tämän käyttäjän näkökulmasta"
 
 #: people/wagtail_admin.py
 msgid "Are you sure you want to deactivate this person?"
@@ -5739,7 +5728,7 @@ msgstr "On tavoitearvoja"
 
 #: reports/report_formatters.py
 msgid "empty"
-msgstr ""
+msgstr "tyhjä"
 
 #: reports/report_formatters.py
 msgid "Other responsible parties"
@@ -5752,7 +5741,7 @@ msgstr "ulkopuolinen linkki"
 
 #: reports/spreadsheets/action_print_layout.py
 msgid "Profiles"
-msgstr ""
+msgstr "Profiilit"
 
 #: reports/spreadsheets/action_print_layout.py
 msgid "Prepare for printing"
@@ -5772,7 +5761,7 @@ msgstr "Merkitty valmiiksi"
 
 #: reports/spreadsheets/excel_report.py
 msgid "Summary"
-msgstr ""
+msgstr "Yhteenveto"
 
 #: reports/templates/reports/mark_report_as_complete_confirmation.html
 #, python-format
@@ -5894,11 +5883,11 @@ msgstr "Muutokset tallennettu"
 
 #: templates/aplans/change_log_message_create.html
 msgid "Skip"
-msgstr ""
+msgstr "Ohita"
 
 #: templates/aplans/paths_sync_confirmation.html
 msgid "Please verify the correct node is connected to the indicator."
-msgstr ""
+msgstr "Varmista että oikea solmu on kytketty indikaattoriin."
 
 #: templates/aplans/paths_sync_confirmation.html
 #, fuzzy
@@ -5914,11 +5903,11 @@ msgstr "Viimeksi päivitetty"
 
 #: templates/aplans/paths_sync_confirmation.html
 msgid "Node"
-msgstr ""
+msgstr "Solmu"
 
 #: templates/aplans/paths_sync_confirmation.html
 msgid "Kausal Paths instance"
-msgstr ""
+msgstr "Kausal Paths -instanssi"
 
 #: templates/modeladmin/create.html templates/modeladmin/edit.html
 msgid "This page has unsaved changes."
