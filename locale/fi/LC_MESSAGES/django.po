@@ -12,7 +12,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-01-13 15:13+0100\n"
-"PO-Revision-Date: 2026-02-09 11:11+0000\n"
+"PO-Revision-Date: 2026-02-09 12:21+0000\n"
 "Last-Translator: Timo Tuominen <timo.tuominen@kausal.tech>\n"
 "Language-Team: Finnish <https://weblate.kausal.tech/projects/watch/django/"
 "fi/>\n"
@@ -321,7 +321,7 @@ msgstr "Jos muoto on 'numeerinen', yksikkö vaaditaan"
 
 #: actions/attribute_type_admin.py actions/category_admin.py
 msgid "Order"
-msgstr "suomi"
+msgstr "järjestys"
 
 #: actions/attribute_type_admin.py
 msgid "This field already has values. If you want to change the format, you need to delete the existing values first."
