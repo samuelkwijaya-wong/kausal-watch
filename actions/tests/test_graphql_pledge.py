@@ -881,6 +881,82 @@ class TestSetUserDataMutation:
         assert 'PledgeUser not found' in response['errors'][0]['message']
 
 
+class TestPledgeBodyField:
+    """Tests for the Pledge body StreamField GraphQL handling."""
+
+    @pytest.fixture(autouse=True)
+    def setup(self):
+        plan = PlanFactory.create()
+        plan.features.enable_community_engagement = True
+        plan.features.save()
+        self.plan = plan
+
+    def test_pledge_body_field_returns_typed_blocks(self, graphql_client_query_data):
+        """Test that the body field returns properly typed block data."""
+        from wagtail.rich_text import RichText
+
+        # Create a pledge with body content
+        pledge = PledgeFactory.create(plan=self.plan)
+        pledge.body = [
+            ('paragraph', RichText('<p>This is a test paragraph.</p>')),
+        ]
+        pledge.save()
+
+        query = """
+            query($plan: ID!, $id: ID) {
+                plan(id: $plan) {
+                    pledge(id: $id) {
+                        id
+                        body {
+                            __typename
+                            ... on RichTextBlock {
+                                value
+                            }
+                        }
+                    }
+                }
+            }
+        """
+
+        data = graphql_client_query_data(
+            query,
+            variables={'plan': self.plan.identifier, 'id': str(pledge.id)},
+        )
+
+        assert data['plan']['pledge'] is not None
+        assert data['plan']['pledge']['body'] is not None
+        assert len(data['plan']['pledge']['body']) == 1
+        assert data['plan']['pledge']['body'][0]['__typename'] == 'RichTextBlock'
+
+    def test_pledge_body_field_handles_null_value(self, graphql_client_query_data):
+        """Test that the body field handles null/empty values correctly."""
+        pledge = PledgeFactory.create(plan=self.plan)
+        pledge.body = None
+        pledge.save()
+
+        query = """
+            query($plan: ID!, $id: ID) {
+                plan(id: $plan) {
+                    pledge(id: $id) {
+                        id
+                        body {
+                            __typename
+                        }
+                    }
+                }
+            }
+        """
+
+        data = graphql_client_query_data(
+            query,
+            variables={'plan': self.plan.identifier, 'id': str(pledge.id)},
+        )
+
+        assert data['plan']['pledge'] is not None
+        # Empty/null StreamField returns empty list, not None
+        assert data['plan']['pledge']['body'] == []
+
+
 class TestPledgeUserQuery:
     """Tests for the pledgeUser GraphQL query."""
 

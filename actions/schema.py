@@ -31,6 +31,7 @@ from grapple.registry import registry as grapple_registry
 from grapple.types.interfaces import get_page_interface
 
 from kausal_common.datasets.models import Dataset
+from kausal_common.graphene.grapple import make_grapple_streamfield
 from kausal_common.graphene.graphql_helpers import UpdateModelInstanceMutation
 from kausal_common.graphene.registry import register_graphene_node
 from kausal_common.users import is_authenticated, user_or_none
@@ -1041,11 +1042,38 @@ class CommonCategoryNode(ResolveShortDescriptionFromLeadParagraphShim, DjangoNod
         fields = public_fields(CommonCategory)
 
 
+def _get_pledge_body_field() -> graphene.Field:
+    """
+    Create a typed GraphQL field for Pledge.body StreamField.
+
+    This uses grapple's make_grapple_streamfield to create a proper union type
+    for the body field's blocks (RichTextBlock, QuestionAnswerBlock, LargeImageBlock)
+    instead of returning generic stream data.
+    """
+    # TODO: We should probably make that generic and put it next to make_grapple_streamfield().
+    # Get the grapple field resolver
+    grapple_field_resolver = make_grapple_streamfield(lambda: Pledge, 'body')
+    result = grapple_field_resolver()
+
+    # Handle the result - can be GraphQLField or tuple of (GraphQLField, wrapper_callable)
+    if isinstance(result, tuple):
+        graphql_field, wrapper_callable = result
+        field_type = graphql_field.field_type
+        return wrapper_callable(field_type)
+    # Single block type case - return as graphene.Field directly
+    # Note: field_type is already wrapped with NonNull if required=True was passed to GraphQLField
+    graphql_field = result
+    return graphene.Field(graphql_field.field_type)
+
+
 @register_django_node
 class PledgeNode(AttributesMixin, DjangoNode[Pledge]):
     actions = graphene.List(graphene.NonNull('actions.schema.ActionNode'))
     image = graphene.Field('images.schema.ImageNode')
     commitment_count = graphene.Int(required=True, description='Number of commitments to this pledge')
+
+    # Use grapple's streamfield handling for typed body blocks
+    body = _get_pledge_body_field()
 
     class Meta:
         model = Pledge
@@ -1056,7 +1084,7 @@ class PledgeNode(AttributesMixin, DjangoNode[Pledge]):
             'slug',
             'description',
             'image',
-            'body',
+            # 'body' is defined as a class attribute above, not auto-converted
             'resident_count',
             'impact_statement',
             'local_equivalency',
