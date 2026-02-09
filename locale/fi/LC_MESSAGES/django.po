@@ -12,7 +12,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-01-13 15:13+0100\n"
-"PO-Revision-Date: 2026-02-09 09:21+0000\n"
+"PO-Revision-Date: 2026-02-09 11:11+0000\n"
 "Last-Translator: Timo Tuominen <timo.tuominen@kausal.tech>\n"
 "Language-Team: Finnish <https://weblate.kausal.tech/projects/watch/django/"
 "fi/>\n"
@@ -76,8 +76,6 @@ msgstr "Peru tämän toimenpiteen valmiiksi merkitseminen raporttia %s varten"
 #: actions/action_admin.py actions/apps.py actions/models/plan.py
 #: content/models.py indicators/wagtail_admin.py
 #: reports/spreadsheets/excel_report.py reports/tests/test_excel_roundtrip.py
-#, fuzzy
-#| msgid "Actions"
 msgctxt "Action model"
 msgid "Actions"
 msgstr "Toimenpiteet"
@@ -562,12 +560,11 @@ msgstr "Toimenpidenostot"
 
 #: actions/blocks/action_list.py
 msgid "What heading should be used in the public UI for the Action list?"
-msgstr "Mitä selitettä julkisella sivustolla käytään virallisesta nimestä"
+msgstr "Mitä otsikkoa julkisella sivustolla käytään toimenpideluettelosivulla?"
 
 #: actions/blocks/action_list.py
-#, fuzzy
 msgid "Help text for the Action list to be shown in the public UI"
-msgstr "Käyttöliittymässä näytettävän kentän ohjeteksti"
+msgstr "Käyttöliittymässä näytettävä  ohjeteksti toimenpideluettelolle"
 
 #: actions/blocks/action_list.py
 msgid "Filter on category"
@@ -575,12 +572,13 @@ msgstr "Rajaa luokan mukaan"
 
 #: actions/blocks/action_list.py actions/blocks/category_list.py
 msgid "Group by level"
-msgstr ""
+msgstr "Ryhmittele tason perusteella"
 
 #: actions/blocks/action_list.py actions/blocks/category_list.py
-#, fuzzy
 msgid "Use category level for tabbed grouping in the public UI"
-msgstr "Käyttöliittymässä näytettävän kentän ohjeteksti"
+msgstr ""
+"Käytä kategorian tasoa ryhmittelemään kategoriat välilehtiin julkisella "
+"sivustolla"
 
 #: actions/blocks/action_list.py
 msgid "Action list"
@@ -1085,15 +1083,11 @@ msgid "action"
 msgstr "toimenpidettä"
 
 #: actions/models/action.py
-#, fuzzy
-#| msgid "action"
 msgctxt "Action model"
 msgid "action"
 msgstr "toimenpide"
 
 #: actions/models/action.py
-#, fuzzy
-#| msgid "actions"
 msgctxt "Action model"
 msgid "actions"
 msgstr "toimenpiteet"
@@ -1321,8 +1315,6 @@ msgid "action impact classes"
 msgstr "toimenpiteen vaikuttavuusluokat"
 
 #: actions/models/action.py
-#, fuzzy
-#| msgid "action"
 msgctxt "action model"
 msgid "action"
 msgstr "toimenpide"
@@ -1345,29 +1337,22 @@ msgid "action links"
 msgstr "ulkopuoliset linkit"
 
 #: actions/models/action.py pages/models.py
-#, fuzzy
 msgid "revision"
-msgstr "mittarin dimensiot"
+msgstr "revisio"
 
 #: actions/models/action.py pages/models.py
-#, fuzzy
-#| msgid "Changes were saved"
 msgid "The revision this change history message is associated with"
-msgstr "Muutokset tallennettu"
+msgstr "Revisio johon tämä muutoskuvaus liittyy"
 
 #: actions/models/action.py
-#, fuzzy
-#| msgid "Action schedules"
 msgctxt "verbose name of model"
 msgid "action change history message"
-msgstr "Toimenpiteen aikataulu"
+msgstr "toimenpiteen muutoskuvaus"
 
 #: actions/models/action.py
-#, fuzzy
-#| msgid "Action schedules"
 msgctxt "verbose name plural of model"
 msgid "action change history messages"
-msgstr "Toimenpiteen aikataulu"
+msgstr "toimenpiteen muutoskuvaukset"
 
 #: actions/models/action.py indicators/models/action_links.py
 #: indicators/models/contact_persons.py indicators/models/indicator.py
@@ -1376,32 +1361,24 @@ msgid "indicator"
 msgstr "mittari"
 
 #: actions/models/action.py
-#, fuzzy
-#| msgid "Indicators assigned to me"
 msgid "indicator change history message"
-msgstr "Minulle osoitetut mittarit"
+msgstr "mittarin muutoskuvaus"
 
 #: actions/models/action.py
-#, fuzzy
-#| msgid "Indicators assigned to me"
 msgid "indicator change history messages"
-msgstr "Minulle osoitetut mittarit"
+msgstr "Mittarin muutoskuvaukset"
 
 #: actions/models/action.py actions/models/category.py feedback/models.py
 msgid "category"
 msgstr "luokka"
 
 #: actions/models/action.py
-#, fuzzy
-#| msgid "Category type pages"
 msgid "category change history message"
-msgstr "Luokkatyyppisivut"
+msgstr "Kategorian muutoskuvaus"
 
 #: actions/models/action.py
-#, fuzzy
-#| msgid "Category type pages"
 msgid "category change history messages"
-msgstr "Luokkatyyppisivut"
+msgstr "Kategorian muutoskuvaukset"
 
 #: actions/models/action.py indicators/models/values.py
 msgid "date"
@@ -1926,19 +1903,18 @@ msgid "Indicators open in modal"
 msgstr "Mittarin dimensiot"
 
 #: actions/models/features.py
-#, fuzzy
 msgid "Should indicators open only in a modal dialog in the public UI?"
-msgstr "Aseta jos yhteyshenkilöt näkyvät julkisessa käyttöliittymässä"
+msgstr "Pitäisikö mittarien avautua aina modaaliin julkisella sivustolla?"
 
 #: actions/models/features.py
-#, fuzzy
-#| msgid "category levels"
 msgid "Enable change history messages"
-msgstr "luokan tasot"
+msgstr "Ota muutoskuvaukset käyttöön"
 
 #: actions/models/features.py
 msgid "Prompt users to add a public change history message after editing actions, indicators, or categories."
 msgstr ""
+"Pyydä käyttäjiä lisäämään julkinen muutoskuvaus toimenpiteiden, "
+"indikaattorien, kategorioiden tai sivujen muokkauksen jälkeen."
 
 #: actions/models/features.py
 msgid "plan feature"
@@ -2283,6 +2259,8 @@ msgstr ""
 #: actions/models/plan.py
 msgid "Domain names that will be used to redirect to the main hostname. Multiple domains are separated by commas."
 msgstr ""
+"Verkkotunnukset, joista uudelleenohjataan pääasialliseen hostnameen. Useat "
+"verkkotunnukset erotetaan toisistaan pilkuilla."
 
 #: actions/models/plan.py
 msgid "Immediate override of publishing status"
@@ -2410,7 +2388,7 @@ msgstr "%(model_name)s '%(object)s' poistettu."
 #: actions/templates/wagtailadmin/notifications/workflow_state_approved_comment.txt
 #, fuzzy, python-format
 msgid "The page \"%(title)s\" has been approved in workflow \"%(workflow)s\" with a comment."
-msgstr "%(model_name)s '%(object)s' poistettu."
+msgstr "Sivu ”%(title)s” on hyväksytty  kommentilla työnkulussa ”%(workflow)s."
 
 #: actions/templates/wagtailadmin/notifications/workflow_state_approved_comment.html
 #: actions/templates/wagtailadmin/notifications/workflow_state_approved_comment.txt
@@ -2421,17 +2399,21 @@ msgstr ""
 #: actions/templates/wagtailadmin/notifications/workflow_state_approved_comment.txt
 #, fuzzy, python-format
 msgid "The %(model_name)s \"%(title)s\" has been approved in workflow \"%(workflow)s\" with a comment."
-msgstr "%(model_name)s '%(object)s' poistettu."
+msgstr ""
+"%(model_name)s ”%(title)s” on hyväksytty kommentilla työnkulussa ”%(workflow)"
+"s”."
 
 #: actions/templates/wagtailadmin/notifications/workflow_state_approved_comment_subject.txt
-#, fuzzy, python-format
+#, python-format
 msgid "The page \"%(title)s\" has been approved in \"%(workflow)s with a comment."
-msgstr "%(model_name)s '%(object)s' poistettu."
+msgstr "Sivu ”%(title)s” on hyväksytty  kommentilla työnkulussa ”%(workflow)s."
 
 #: actions/templates/wagtailadmin/notifications/workflow_state_approved_comment_subject.txt
-#, fuzzy, python-format
+#, python-format
 msgid "The %(model_name)s \"%(title)s\" has been approved in \"%(workflow)s\" with a comment."
-msgstr "%(model_name)s '%(object)s' poistettu."
+msgstr ""
+"%(model_name)s ”%(title)s” on hyväksytty kommentilla työnkulussa ”%(workflow)"
+"s”."
 
 #: actions/wagtail_admin.py
 msgid "Identifier already in use"
@@ -2506,25 +2488,19 @@ msgid "Plans"
 msgstr "Toimenpideohjelmat"
 
 #: actions/wagtail_admin.py
-#, fuzzy
-#| msgid "Action schedules"
 msgctxt "menu label"
 msgid "Action change history messages"
-msgstr "Toimenpiteen aikataulu"
+msgstr "Toimenpiteiden muutoskuvaukset"
 
 #: actions/wagtail_admin.py
-#, fuzzy
-#| msgid "Indicators assigned to me"
 msgctxt "menu label"
 msgid "Indicator change history messages"
-msgstr "Minulle osoitetut mittarit"
+msgstr "Mittareiden muutoskuvaukset"
 
 #: actions/wagtail_admin.py
-#, fuzzy
-#| msgid "Category type pages"
 msgctxt "menu label"
 msgid "Category change history messages"
-msgstr "Luokkatyyppisivut"
+msgstr "Luokkien muutoskuvaukset"
 
 #: admin_site/api.py
 msgid "Invalid email address"
@@ -2678,6 +2654,8 @@ msgstr "Kenttä '%(field)s' mallissa '%(model)s' suunnitelmassa '%(plan)s'"
 #: admin_site/models.py
 msgid "Please summarize the change you made. This message will be displayed publicly."
 msgstr ""
+"Kirjoita tiivistelmä tekemistäsi muutoksista. Tämä kuvaus näytetään "
+"julkisesti."
 
 #: admin_site/signals.py
 #, fuzzy, python-format
@@ -2691,7 +2669,7 @@ msgstr ""
 
 #: admin_site/templates/admin_site/chooser_results_empty.html
 msgid "There are no objects to choose from."
-msgstr ""
+msgstr "Valittavia kohteita ei löydy."
 
 #: admin_site/templates/admin_site/own_indicators_panel.html
 msgid "Indicators assigned to me"
@@ -2751,26 +2729,24 @@ msgstr "Kirjaudu sisään Kausal Watch -ylläpitoon"
 
 #: admin_site/templates/wagtailadmin/login.html
 msgid "Your Kausal Watch admin portal has moved."
-msgstr ""
+msgstr "Kausal Watch -ylläpitosivustosi on vaihtanut osoitetta."
 
 #: admin_site/templates/wagtailadmin/login.html
 #, python-brace-format
 msgid "Redirecting to {url} in {count}&nbsp;seconds..."
-msgstr ""
+msgstr "Uudelleenohjataan osoitteeseen {url} {count}&nbsp;sekunnin päästä..."
 
 #: admin_site/templates/wagtailadmin/login.html
 msgid "Go Now"
-msgstr ""
+msgstr "Siirry heti"
 
 #: admin_site/templates/wagtailadmin/login.html
-#, fuzzy
-#| msgid "You have been successfully logged out."
 msgid "You were successfully redirected"
-msgstr "Olet kirjautunut ulos."
+msgstr "Sinut ohjattiin oikealle sivulle"
 
 #: admin_site/templates/wagtailadmin/login.html
 msgid "Please bookmark this page for future use."
-msgstr ""
+msgstr "Lisää tämä sivu kirjanmerkkeihin myöhempää käyttöä varten."
 
 #: admin_site/templates/wagtailadmin/login.html
 msgid "Our apologies, the server is temporarily experiencing difficulties."
@@ -2802,25 +2778,20 @@ msgid "%s could not be created due to errors."
 msgstr "%s ei voitu tallentaa virheiden takia."
 
 #: admin_site/viewsets.py
-#, fuzzy, python-format
-#| msgid "Changes were saved"
+#, python-format
 msgctxt "page subtitle"
 msgid "Change history message: %(obj)s"
-msgstr "Muutokset tallennettu"
+msgstr "Muutoskuvaus: %(obj)s"
 
 #: admin_site/viewsets.py
-#, fuzzy
-#| msgid "Changes were saved"
 msgctxt "page subtitle"
 msgid "Change history message"
-msgstr "Muutokset tallennettu"
+msgstr "Muutoskuvaus"
 
 #: admin_site/viewsets.py
-#, fuzzy
-#| msgid "Changes were saved"
 msgctxt "page title"
 msgid "Add change history message"
-msgstr "Muutokset tallennettu"
+msgstr "Lisää muutoskuvaus"
 
 #: admin_site/wagtail.py
 #, python-format
@@ -2999,60 +2970,46 @@ msgstr "%(color)s ei ole oikeassa muodossa (esim. \"#112233\", \"red\" or \"rgb(
 
 #: aplans/utils.py
 msgid "Invalid JSON value"
-msgstr ""
+msgstr "Virheellinen JSON-arvo"
 
 #: aplans/utils.py
 msgid "updated by"
 msgstr "viimeksi päivittänyt"
 
 #: audit_logging/blocks.py
-#, fuzzy
-#| msgid "Category type pages"
 msgid "Latest change history message"
-msgstr "Luokkatyyppisivut"
+msgstr "Viimeisin muutoskuvaus"
 
 #: audit_logging/templates/site_history_results.html audit_logging/views.py
-#, fuzzy
-#| msgid "Category type"
 msgid "Item type"
-msgstr "Luokan tyyppi"
+msgstr "Kohteen tyyppi"
 
 #: audit_logging/templates/site_history_results.html audit_logging/views.py
-#, fuzzy
-#| msgid "created by"
 msgctxt "type of change (e.g., \"create\", \"edit\" or \"delete\")"
 msgid "Change"
-msgstr "luoja"
+msgstr "muutos"
 
 #: audit_logging/templates/site_history_results.html audit_logging/views.py
-#, fuzzy
-#| msgid "created by"
 msgid "Changed by"
-msgstr "luoja"
+msgstr "Muutoksen tekijä"
 
 #: audit_logging/templates/site_history_results.html
 msgid "Date / Time"
-msgstr ""
+msgstr "Päivämäärä / aika"
 
 #: audit_logging/templates/site_history_results.html
-#, fuzzy
-#| msgid "Edit this quantity"
 msgid "Edit this item"
-msgstr "Muokkaa tätä suuretta"
+msgstr "Muokkaa tätä kohdetta"
 
 #: audit_logging/views.py
-#, fuzzy
-#| msgid "Changes were saved"
 msgctxt "page title for history of changes"
 msgid "Change history"
-msgstr "Muutokset tallennettu"
+msgstr "Muutoshistoria"
 
 #: audit_logging/wagtail_hooks.py
-#, fuzzy
-#| msgid "Changes were saved"
 msgctxt "menu item for accessing history of changes"
 msgid "Change history"
-msgstr "Muutokset tallennettu"
+msgstr "Muutoshistoria"
 
 #: content/apps.py
 msgid "According to the action plan"
@@ -3063,8 +3020,6 @@ msgid "Content"
 msgstr "Sisältö"
 
 #: content/models.py feedback/models.py reports/spreadsheets/excel_report.py
-#, fuzzy
-#| msgid "Action"
 msgctxt "Action model"
 msgid "Action"
 msgstr "Toimenpide"
@@ -3407,39 +3362,28 @@ msgid "User feedback"
 msgstr "Käyttäjien palautteet"
 
 #: feedback/wagtail_hooks.py
-#, fuzzy
-#| msgid "user feedback"
 msgid "Receive feedback"
-msgstr "käyttäjän palaute"
+msgstr "Vastaanota palaute"
 
 #: feedback/wagtail_hooks.py
-#, fuzzy
 msgid "Feedback received"
-msgstr "Palautetta vastaanotettu"
+msgstr "Palaute vastaanotettu"
 
 #: feedback/wagtail_hooks.py
-#, fuzzy
-#| msgid "Mark user feedback as processed"
 msgid "Mark feedback as processed"
 msgstr "Merkitse palaute käsitellyksi"
 
 #: feedback/wagtail_hooks.py
-#, fuzzy
-#| msgid "Mark as processed"
 msgid "Feedback marked as processed"
-msgstr "Merkitse käsitellyksi"
+msgstr "Palaute merkitty käsitellyksi"
 
 #: feedback/wagtail_hooks.py
-#, fuzzy
-#| msgid "Mark user feedback as processed"
 msgid "Unmark feedback as processed"
-msgstr "Merkitse palaute käsitellyksi"
+msgstr "Merkitse palaute käsittelemättömäksi"
 
 #: feedback/wagtail_hooks.py
-#, fuzzy
-#| msgid "Mark as processed"
 msgid "Feedback unmarked as processed"
-msgstr "Merkitse käsitellyksi"
+msgstr "Palaute merkitty käsittelemättömäksi"
 
 #: images/image_formats.py
 msgid "Full width (zoomable) only if width > 1000 px"
@@ -3463,17 +3407,15 @@ msgstr "kuvat"
 
 #: images/wagtail_hooks.py
 msgid "Create or update file"
-msgstr ""
+msgstr "Luo tai päivitä tiedostoa"
 
 #: images/wagtail_hooks.py
-#, fuzzy
-#| msgid "created at"
 msgid "File created or updated"
-msgstr "luomisaika"
+msgstr "Tiedosto luotiin tai sitä päivitettiin"
 
 #: indicators/api.py indicators/blocks/layout.py
 msgid "Latest value"
-msgstr ""
+msgstr "Viimeisin arvo"
 
 #: indicators/blocks/__init__.py indicators/rich_text.py
 #: templates/aplans/paths_sync_confirmation.html
@@ -3481,9 +3423,8 @@ msgid "Indicator"
 msgstr "Mittari"
 
 #: indicators/blocks/__init__.py
-#, fuzzy
 msgid "Dimension"
-msgstr "mittarin dimensiot"
+msgstr "Dimensio"
 
 #: indicators/blocks/__init__.py
 msgid "Indicator highlights"
@@ -3508,202 +3449,170 @@ msgid "Help text for the field to be shown in the UI"
 msgstr "Käyttöliittymässä näytettävän kentän ohjeteksti"
 
 #: indicators/blocks/__init__.py
-#, fuzzy
 msgid "Choose the indicator for data visualization"
-msgstr "Valitse toinen toimenpide"
+msgstr "Valitse mittari tietojen visualisointia varten"
 
 #: indicators/blocks/__init__.py
 msgid "Choose the indicator dimension that will be used for categories in the visualization"
-msgstr ""
+msgstr "Valitse mittarin dimensio jota käytetään visualisaatiossa kategorioina."
 
 #: indicators/blocks/__init__.py
 #, python-format
 msgid "Dimension '%(dimension)s' is not valid for indicator '%(indicator)s'. Please choose a dimension that belongs to the indicator."
 msgstr ""
+"Dimensio '%(dimension)s' ei sovellu mittarille '%(indicator)s'. Valitse "
+"mittarille määritetty dimensio."
 
 #: indicators/blocks/__init__.py
 msgid "Stacked bars"
-msgstr ""
+msgstr "Pinotut pylväät"
 
 #: indicators/blocks/__init__.py
 msgid "Grouped bars"
-msgstr ""
+msgstr "Ryhmitetyt pylväät"
 
 #: indicators/blocks/__init__.py
-#, fuzzy
 msgid "Indicator: Bar Chart"
-msgstr "Toimenpiteen mittari"
+msgstr "Mittari: Pylväskaavio"
 
 #: indicators/blocks/__init__.py
 msgid "Indicator visualization as a bar chart"
-msgstr ""
+msgstr "MIttarin visualisaatio pylväskaaviona"
 
 #: indicators/blocks/__init__.py
-#, fuzzy
-#| msgid "show total line"
 msgid "Show total line"
-msgstr "näytä yhteensä-viiva"
+msgstr "Näytä yhteensä-kuvaaja"
 
 #: indicators/blocks/__init__.py
-#, fuzzy
-#| msgid "Indicator order"
 msgid "Indicator: Line Chart"
-msgstr "Mittareiden järjestys"
+msgstr "Mittari: Viivakaavio"
 
 #: indicators/blocks/__init__.py
 msgid "Indicator visualization as a line chart"
-msgstr ""
+msgstr "MIttarin visualisaatio viivakaaviona"
 
 #: indicators/blocks/__init__.py
-#, fuzzy
-#| msgid "Indicator order"
 msgid "Indicator: Area Chart"
-msgstr "Mittareiden järjestys"
+msgstr "Mittari: aluekaavio"
 
 #: indicators/blocks/__init__.py
 msgid "Indicator visualization as an area chart"
-msgstr ""
+msgstr "Mittarin visualisaatio aluekaaviona"
 
 #: indicators/blocks/__init__.py
 msgid "Enter the year you want to visualize"
-msgstr ""
+msgstr "Syötä vuosi jonka haluat visualisoida"
 
 #: indicators/blocks/__init__.py
-#, fuzzy
-#| msgid "Indicator order"
 msgid "Indicator: Pie Chart"
-msgstr "Mittareiden järjestys"
+msgstr "Mittari: Piirakkakaavio"
 
 #: indicators/blocks/__init__.py
 msgid "Indicator visualization as a pie chart"
-msgstr ""
+msgstr "Mittarin visualisaatio piirakkakaaviona"
 
 #: indicators/blocks/__init__.py
 #, python-format
 msgid "The selected year (%(selected_year)s) has no data for this indicator. Available years are: %(available_years)s"
 msgstr ""
+"Valitulle vuodelle (%(selected_year)s) ei ole arvoja tässä mittarissa. "
+"Saatavilla on seuraavat vuodet: %(available_years)s"
 
 #: indicators/blocks/__init__.py
-#, fuzzy
-#| msgid "Indicator order"
 msgid "Indicator: Summary"
-msgstr "Mittareiden järjestys"
+msgstr "Mittari: yhteenveto"
 
 #: indicators/blocks/__init__.py
-#, fuzzy
-#| msgid "Indicator list pages"
 msgid "Indicator key figures"
-msgstr "Mittariluettelosivut"
+msgstr "Mittarin avainarvot"
 
 #: indicators/blocks/__init__.py pages/models.py
 msgid "Paragraph"
 msgstr "Kappale"
 
 #: indicators/blocks/__init__.py
-#, fuzzy
-#| msgid "Dashboard"
 msgid "Dashboard Row"
-msgstr "Tilannekuva"
+msgstr "Mittariston rivi"
 
 #: indicators/blocks/__init__.py
 msgid "Dashboard row with 1-3 content blocks"
-msgstr ""
+msgstr "Mittariston rivi jossa on 1-3 sisältölohkoa"
 
 #: indicators/blocks/layout.py
 msgid "Value summary"
-msgstr ""
+msgstr "Arvon yhteenveto"
 
 #: indicators/blocks/layout.py
-#, fuzzy
-#| msgid "causal indicator"
 msgid "Causality navigation"
-msgstr "vaikuttava mittari"
+msgstr "Kausaliteettien navigointi"
 
 #: indicators/blocks/layout.py
-#, fuzzy
-#| msgid "Indicator actions"
 msgid "Indicator visualization"
-msgstr "Toimenpiteiden mittarit"
+msgstr "Mittarin visualisaatio"
 
 #: indicators/blocks/layout.py
-#, fuzzy
-#| msgid "related actions"
 msgid "Connected actions"
-msgstr "liittyvät toimenpiteet"
+msgstr "Liittyvät toimenpiteet"
 
 #: indicators/blocks/layout.py
-#, fuzzy
-#| msgid "Category levels"
 msgid "Category level"
-msgstr "Kategorian tasot"
+msgstr "Kategoriataso"
 
 #: indicators/blocks/layout.py
-#, fuzzy
-#| msgid "category level"
 msgid "Invalid category level"
-msgstr "luokan taso"
+msgstr "Virheellinen kategoriataso"
 
 #: indicators/blocks/layout.py
 msgid "Earliest value"
-msgstr ""
+msgstr "Aikaisin arvo"
 
 #: indicators/blocks/layout.py
 msgid "Reference value"
-msgstr ""
+msgstr "Vertailuarvo"
 
 #: indicators/blocks/layout.py
-#, fuzzy
-#| msgid "value"
 msgid "Goal value"
-msgstr "arvo"
+msgstr "Tavoitearvo"
 
 #: indicators/blocks/layout.py
-#, fuzzy
-#| msgid "default view"
 msgid "Default year"
-msgstr "oletusnäkymä"
+msgstr "Oletusvuosi"
 
 #: indicators/blocks/layout.py
 msgid "Default value year to pick for this column"
-msgstr ""
+msgstr "Oletusvuosi sarakkeen arvolle"
 
 #: indicators/blocks/layout.py
 msgid "Show reference value"
-msgstr ""
+msgstr "Näytä vertailuarvo"
 
 #: indicators/blocks/layout.py
 msgid "This shows the value from the reference year."
-msgstr ""
+msgstr "Näyttää oletusvertailuvuoden arvon."
 
 #: indicators/blocks/layout.py
 msgid "This can be set to override the default reference year."
-msgstr ""
+msgstr "Voidaan asettaa kumoamaan oletusvertailuvuosi."
 
 #: indicators/blocks/layout.py
-#, fuzzy
-#| msgid "show trendline"
 msgid "Show current value"
-msgstr "näytä nykytrendi-viiva"
+msgstr "Näytä nykyinen arvo"
 
 #: indicators/blocks/layout.py
-#, fuzzy
-#| msgid "show total line"
 msgid "Show goal value"
-msgstr "näytä yhteensä-viiva"
+msgstr "Näytä tavoitteen arvo"
 
 #: indicators/blocks/layout.py
 msgid "Default year to pick for the goal value."
-msgstr ""
+msgstr "Oletusvuosi tavoitteen arvolle."
 
 #: indicators/blocks/layout.py
-#, fuzzy
-#| msgid "Show all"
 msgid "Show goal gap"
-msgstr "Näytä kaikki"
+msgstr "Näytä vajaus suhteessa tavoitteeseen"
 
 #: indicators/blocks/layout.py
 msgid "This shows the difference between the goal and the current value."
-msgstr ""
+msgstr "Näyttää tavoitteen ja nykyisen arvon erotuksen."
 
 #: indicators/chooser.py
 msgid "Choose an indicator"
@@ -3714,26 +3623,20 @@ msgid "Choose another indicator"
 msgstr "Valitse toinen mittari"
 
 #: indicators/chooser.py
-#, fuzzy
-#| msgid "Choose a person"
 msgid "Choose a dimension"
-msgstr "Valitse henkilö"
+msgstr "Valitse dimensio"
 
 #: indicators/chooser.py
-#, fuzzy
-#| msgid "Choose another person"
 msgid "Choose another dimension"
-msgstr "Valitse toinen henkilö"
+msgstr "Valitse toinen dimensio"
 
 #: indicators/chooser.py
-#, fuzzy
 msgid "Choose a value"
-msgstr "Valitse ohjelma"
+msgstr "Valitse arvo"
 
 #: indicators/chooser.py
-#, fuzzy
 msgid "Choose another value"
-msgstr "Valitse toinen toimenpide"
+msgstr "Valitse toinen arvo"
 
 #: indicators/models/action_links.py indicators/models/relationships.py
 msgid "effect type"
@@ -3830,16 +3733,16 @@ msgstr "mittarin dimensiot"
 #, python-format
 msgid "Cannot delete dimension \"%(dimension)s\" because it is linked to multiple plans: %(plans)s"
 msgstr ""
+"Dimensiota \"%(dimension)s\" ei voida poistaa koska se on kytketty useisiin "
+"toimenpideohjelmiin: %(plans)s"
 
 #: indicators/models/dimensions.py
-#, fuzzy
-#| msgid "default view"
 msgid "default color"
-msgstr "oletusnäkymä"
+msgstr "oletusväri"
 
 #: indicators/models/dimensions.py
 msgid "Default color for this dimension category in charts"
-msgstr ""
+msgstr "Tämän dimension oletusväri kaavioissa"
 
 #: indicators/models/dimensions.py
 msgid "dimension category"
@@ -3850,16 +3753,12 @@ msgid "dimension categories"
 msgstr "dimension luokat"
 
 #: indicators/models/dimensions.py
-#, fuzzy
-#| msgid "dimension"
 msgid "plan dimension"
-msgstr "dimensio"
+msgstr "toimenpideohjelman dimensio"
 
 #: indicators/models/dimensions.py
-#, fuzzy
-#| msgid "dimensions"
 msgid "plan dimensions"
-msgstr "mittarin dimensiot"
+msgstr "toimenpideohjelman dimensiot"
 
 #: indicators/models/dimensions.py
 msgid "indicator dimension"
@@ -3879,31 +3778,23 @@ msgstr "yleisen mittarin dimensiot"
 
 #: indicators/models/import_log.py
 msgid "Kausal Paths"
-msgstr ""
+msgstr "Kausal Paths"
 
 #: indicators/models/import_log.py
-#, fuzzy
-#| msgid "indicator values"
 msgid "Indicator values import log"
-msgstr "mittarin arvot"
+msgstr "Mittarin arvojen tuontiloki"
 
 #: indicators/models/import_log.py
-#, fuzzy
-#| msgid "indicator values"
 msgid "Indicator values import logs"
-msgstr "mittarin arvot"
+msgstr "Mittarin arvojen tuontiloki"
 
 #: indicators/models/indicator.py
-#, fuzzy
-#| msgid "increases"
 msgid "Increase"
-msgstr "lisää"
+msgstr "Kasvaa"
 
 #: indicators/models/indicator.py
-#, fuzzy
-#| msgid "decreases"
 msgid "Decrease"
-msgstr "pienentää"
+msgstr "Vähenee"
 
 #: indicators/models/indicator.py
 msgid "year"
@@ -3935,7 +3826,7 @@ msgstr "minimiarvo"
 
 #: indicators/models/indicator.py
 msgid "Used in visualizations as the Y axis minimum"
-msgstr ""
+msgstr "Käytetään visualisaatioissa Y-akselin minimiarvona"
 
 #: indicators/models/indicator.py
 msgid "maximum value"
@@ -3943,22 +3834,21 @@ msgstr "maksimiarvo"
 
 #: indicators/models/indicator.py
 msgid "Used in visualizations as the Y axis maximum"
-msgstr ""
+msgstr "Käytetään visualisaatioissa Y-akselin maksimiarvona"
 
 #: indicators/models/indicator.py
-#, fuzzy
 msgid "visualizations"
-msgstr "heräteasetukset"
+msgstr "visualisaatiot"
 
 #: indicators/models/indicator.py
-#, fuzzy
-#| msgid "short name"
 msgid "sort key"
-msgstr "lyhenne"
+msgstr "järjestämisperuste"
 
 #: indicators/models/indicator.py
 msgid "If set, this will be used as the primary criterion for sorting indicators."
 msgstr ""
+"Jos asetettu, tätä käytetään pääasiallisena järjestämisperusteena "
+"toimenpiteille."
 
 #: indicators/models/indicator.py
 msgid "time resolution"
@@ -3970,7 +3860,7 @@ msgstr "mittarin päivityksen deadline"
 
 #: indicators/models/indicator.py
 msgid "reference value"
-msgstr ""
+msgstr "vertailuarvo"
 
 #: indicators/models/indicator.py indicators/models/metadata.py
 msgid "datasets"
@@ -3985,14 +3875,12 @@ msgid "What is the reference or source for this indicator?"
 msgstr ""
 
 #: indicators/models/indicator.py
-#, fuzzy
-#| msgid "show trendline"
 msgid "show trend line"
-msgstr "näytä nykytrendi-viiva"
+msgstr "näytä nykytrendi-suora"
 
 #: indicators/models/indicator.py
 msgid "Automatically create a trend line for the indicator's total value"
-msgstr ""
+msgstr "Piirrä automaattisesti trendisuora mittarin kokonaisarvolle"
 
 #: indicators/models/indicator.py
 msgid "desired trend"
@@ -4023,48 +3911,46 @@ msgstr "näytä yhteensä-viiva"
 #: indicators/models/indicator.py
 msgid "Data categories can be summed to form total for the indicator (draw stacked chart as default)"
 msgstr ""
+"Datan kategoriat voidaan laskea yhteen ja muodostaa mittarille summa "
+"(oletuksena piirretään pinottu kaavio)"
 
 #: indicators/models/indicator.py
-#, fuzzy
-#| msgid "Name of the owner of the site"
 msgid "Number of steps on the y-axis"
-msgstr "Sivuston omistajaorganisaation nimi"
+msgstr "Y-akselin askelten määrä"
 
 #: indicators/models/indicator.py
 msgid "Number of significant digits on y-axis ticks"
-msgstr ""
+msgstr "Merkitsevien numeroiden määrä y-akselin jakoviivoissa"
 
 #: indicators/models/indicator.py
 msgid "Number of significant digits when displaying indicator values"
-msgstr ""
+msgstr "Merkitsevien numeroiden määrä, kun mittarin arvoja näytetään"
 
 #: indicators/models/indicator.py
 msgid "Data categories can be summed to form a total for the indicator (draw a stacked chart as default)"
 msgstr ""
+"Datan kategoriat voidaan laskea yhteen ja muodostaa mittarille summa "
+"(oletuksena piirretään pinottu kaavio)"
 
 #: indicators/models/indicator.py
 msgid "non-quantified goal"
-msgstr ""
+msgstr "tavoite jota ei ole kvantifioitu"
 
 #: indicators/models/indicator.py
 msgid "non-quantified goal date"
-msgstr ""
+msgstr "päivämäärä tavoitteelle, jota ei ole kvantifioitu"
 
 #: indicators/models/indicator.py
-#, fuzzy
-#| msgid "description"
 msgid "goal description"
-msgstr "kuvaus"
+msgstr "tavoitteen kuvaus"
 
 #: indicators/models/indicator.py
-#, fuzzy
-#| msgid "identifier"
 msgid "Node identifier"
-msgstr "tunniste"
+msgstr "Solmun tunniste"
 
 #: indicators/models/indicator.py
 msgid "The node identifier of the node in Paths where this indicator's data is imported from."
-msgstr ""
+msgstr "Tunniste Pathsin solmulle, josta tämän mittarin arvot luetaan."
 
 #: indicators/models/indicator.py
 msgid "Has datasets"
@@ -4260,6 +4146,8 @@ msgstr "Muokkaa tätä suuretta"
 #, python-format
 msgid "Cannot delete dimension \"%(dimension)s\" at this time, please contact support."
 msgstr ""
+"Dimensiota \"%(dimension)s\" ei voida tällä hetkellä poistaa. Ota yhteyttä "
+"tukeen."
 
 #: indicators/wagtail_admin.py
 msgid "Indicator dimensions"
@@ -4300,10 +4188,8 @@ msgid "This indicator is linked to a common indicator, so quantity, unit and dim
 msgstr "Mittari on kytketty yleiseen mittariin, joten sen suuretta (%(quantity)s), yksikköä (%(unit)s) tai dimensioita (%(dimensions)s) ei voi muokata."
 
 #: indicators/wagtail_admin.py
-#, fuzzy
-#| msgid "Indicator actions"
 msgid "Indicator settings"
-msgstr "Toimenpiteiden mittarit"
+msgstr "Mittarin asetukset"
 
 #: indicators/wagtail_admin.py
 msgid "Classification"
@@ -4374,28 +4260,20 @@ msgid "This common indicator has indicators linked to it, so quantity, unit and 
 msgstr "Mittari on linkitetty muihin mittareihin, joten sen suuretta (%(quantity)s), yksikköä (%(unit)s) tai dimensioita (%(dimensions)s) ei voi muokata."
 
 #: indicators/wagtail_hooks.py
-#, fuzzy
-#| msgid "updated values due at"
 msgid "Update values"
-msgstr "mittarin päivityksen deadline"
+msgstr "Päivitä arvot"
 
 #: indicators/wagtail_hooks.py
-#, fuzzy
-#| msgid "Last updated"
 msgid "Values updated"
-msgstr "Viimeksi päivitetty"
+msgstr "Arvot päivitetty"
 
 #: indicators/wagtail_hooks.py
-#, fuzzy
-#| msgid "Updated at"
 msgid "Update goals"
-msgstr "Päivitysaika"
+msgstr "Päivitä tavoitteet"
 
 #: indicators/wagtail_hooks.py
-#, fuzzy
-#| msgid "Last updated"
 msgid "Goals updated"
-msgstr "Viimeksi päivitetty"
+msgstr "Tavoitteet päivitetty"
 
 #: notifications/apps.py notifications/wagtail_admin.py
 msgid "Notifications"
@@ -4846,10 +4724,8 @@ msgid "Add organization to active plan"
 msgstr "Lisää organisaatio toimenpideohjelmaan"
 
 #: orgs/views.py
-#, fuzzy
-#| msgid "Exclude this organization from the active plan"
 msgid "Exclude organization from active plan"
-msgstr "Poista tämä organisaatio aktiivisesta toimenpideohjelmasta"
+msgstr "Poista organisaatio aktiivisesta toimenpideohjelmasta"
 
 #: orgs/views.py
 #, python-format
@@ -4916,20 +4792,18 @@ msgid "Permissions"
 msgstr "Käyttöoikeudet"
 
 #: orgs/wagtail_admin.py
-#, fuzzy, python-format
-#| msgid "site title"
+#, python-format
 msgid "Edit '%(title)s'"
-msgstr "sivuston otsikko"
+msgstr "Muokkaa kohdetta '%(title)s'"
 
 #: orgs/wagtail_admin.py
-#, fuzzy
 msgid "Copy"
-msgstr "Valitse ohjelma"
+msgstr "Kopioi"
 
 #: orgs/wagtail_admin.py
 #, python-format
 msgid "Copy '%(title)s'"
-msgstr ""
+msgstr "Kopioi '%(title)s'"
 
 #: orgs/wagtail_admin.py templates/modeladmin/edit.html
 msgid "Delete"
@@ -4938,15 +4812,13 @@ msgstr "Poista"
 #: orgs/wagtail_admin.py
 #, python-format
 msgid "Delete '%(title)s'"
-msgstr ""
+msgstr "Poista '%(title)s'"
 
 #: orgs/wagtail_admin.py
 msgid "Add suborganization"
 msgstr "Lisää aliorganisaatio"
 
 #: orgs/wagtail_admin.py
-#, fuzzy
-#| msgid "Include in plan"
 msgid "Include in active plan"
 msgstr "Lisää toimenpideohjelmaan"
 
@@ -4955,8 +4827,6 @@ msgid "Include this organization in the active plan"
 msgstr "Lisää tämä organisaatio aktiiviseen toimenpideohjelmaan"
 
 #: orgs/wagtail_admin.py
-#, fuzzy
-#| msgid "Exclude from plan"
 msgid "Exclude from active plan"
 msgstr "Poista toimenpideohjelmasta"
 
@@ -4986,7 +4856,7 @@ msgstr "Koko"
 
 #: pages/blocks.py
 msgid "The source URL of the embed is invalid or not supported."
-msgstr ""
+msgstr "Upotukset lähteen URL-osoite on virheellinen tai sitä ei tueta."
 
 #: pages/blocks.py
 msgid "Title"
@@ -5343,22 +5213,16 @@ msgid "Enable to make this page include indicators from related plans."
 msgstr "Ota käyttöön jos haluat että sivulla näytetään toimenpiteitä tähän toimenpideohjelmaan kytketyistä muista toimenpideohjelmista"
 
 #: pages/models.py
-#, fuzzy
-#| msgid "Indicator list pages"
 msgid "Indicator list filters"
-msgstr "Mittariluettelosivut"
+msgstr "Mittariluettelosivun suodattimet"
 
 #: pages/models.py
-#, fuzzy
-#| msgid "Indicator list pages"
 msgid "Indicator list columns"
-msgstr "Mittariluettelosivut"
+msgstr "Mittariluettelosivun sarakkeet"
 
 #: pages/models.py
-#, fuzzy
-#| msgid "Indicator list page"
 msgid "Indicator details view"
-msgstr "Mittariluettelosivu"
+msgstr "Mittarin sivu"
 
 #: pages/models.py
 msgid "Indicator list page"
@@ -5401,41 +5265,34 @@ msgid "external plan links"
 msgstr "Ulkopuoliset linkit"
 
 #: pages/models.py
-#, fuzzy
 msgid "page"
-msgstr "ulkopuolinen linkki"
+msgstr "sivu"
 
 #: pages/models.py
-#, fuzzy
-#| msgid "Category type pages"
 msgid "page change history message"
-msgstr "Luokkatyyppisivut"
+msgstr "Sivun muutoskuvaus"
 
 #: pages/models.py
-#, fuzzy
-#| msgid "category levels"
 msgid "page change history messages"
-msgstr "luokan tasot"
+msgstr "sivun muutoskuvaukset"
 
 #: pages/wagtail_admin.py
 msgid "More"
 msgstr "Lisää"
 
 #: pages/wagtail_admin.py
-#, fuzzy
-#| msgid "category levels"
 msgctxt "menu label"
 msgid "Page change history messages"
-msgstr "luokan tasot"
+msgstr "Sivun muutoskuvaukset"
 
 #: paths_integration/indicators.py
 #, python-format
 msgid "Node %(node)s not found in Paths instance %(instance)s"
-msgstr ""
+msgstr "Solmua %(node)s ei löytynyt Paths-instanssista %(instance)s"
 
 #: paths_integration/indicators.py
 msgid "No values received for node %(node)s in Paths instance %(instance)"
-msgstr ""
+msgstr "Solmusta %(node)s Paths-instanssissa %(instance) ei saatu arvoja"
 
 #: people/apps.py people/wagtail_admin.py
 #, fuzzy
@@ -5735,9 +5592,8 @@ msgid "Other responsible parties"
 msgstr "Muut vastuutahot"
 
 #: reports/spreadsheets/action_print_layout.py
-#, fuzzy
 msgid "Page"
-msgstr "ulkopuolinen linkki"
+msgstr "Sivu"
 
 #: reports/spreadsheets/action_print_layout.py
 msgid "Profiles"
@@ -5876,10 +5732,8 @@ msgid "Report types"
 msgstr "Raporttityypit"
 
 #: templates/aplans/change_log_message_create.html
-#, fuzzy
-#| msgid "Changes were saved"
 msgid "Current change history message"
-msgstr "Muutokset tallennettu"
+msgstr "Nykyinen muutoskuvaus"
 
 #: templates/aplans/change_log_message_create.html
 msgid "Skip"
@@ -5890,16 +5744,12 @@ msgid "Please verify the correct node is connected to the indicator."
 msgstr "Varmista että oikea solmu on kytketty indikaattoriin."
 
 #: templates/aplans/paths_sync_confirmation.html
-#, fuzzy
-#| msgid "Edit this indicator"
 msgid "Edit indicator"
-msgstr "Muokkaa tätä mittaria"
+msgstr "Muokkaa mittaria"
 
 #: templates/aplans/paths_sync_confirmation.html
-#, fuzzy
-#| msgid "Last updated"
 msgid "Last imported"
-msgstr "Viimeksi päivitetty"
+msgstr "Tiedot tuotu viimeksi"
 
 #: templates/aplans/paths_sync_confirmation.html
 msgid "Node"
@@ -5914,10 +5764,8 @@ msgid "This page has unsaved changes."
 msgstr "Sivulla on tallentamattomia muutoksia"
 
 #: templates/modeladmin/create.html
-#, fuzzy
-#| msgid "Actions"
 msgid "Actions"
-msgstr "Toimenpiteet"
+msgstr "Toiminnot"
 
 #: templates/modeladmin/create.html templates/modeladmin/edit.html
 msgid "Saving…"
