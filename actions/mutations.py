@@ -156,6 +156,7 @@ def _strip_unset(**kwargs: Any) -> dict[str, Any]:
 @sb.type
 class PlanMutations:
     @sb.mutation(extensions=[PlanAdminOnlyMutation()], description='Create a new plan. Returns the newly created plan.')
+    @transaction.atomic
     def create_plan(self, input: PlanInput) -> PlanNode:
         from actions.models import Plan
         from orgs.models import Organization
