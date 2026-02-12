@@ -110,14 +110,14 @@ class Query(
         required=False,
     )
     person = graphene.Field(people_schema.PersonNode, id=graphene.ID(required=True), plan=graphene.ID(required=True))
-    me = graphene.Field(UserNode, required=False, description='The current user')
+    me = graphene.Field(UserNode, required=False, description="The current user")
 
-    @sb.field(description='Admin query namespace')
+    @sb.field(description="Admin query namespace")
     @staticmethod
     def admin(root, info: SBInfo) -> Annotated[AdminQuery, sb.lazy('actions.graphql_admin_schema')]:
         user = user_or_none(info.context.user)
         if user is None or not user.is_superuser:
-            raise PermissionError('Admin namespace requires authenticated access')
+            raise PermissionError("Admin namespace requires authenticated access")
         return get_admin_query()()
 
     def resolve_plan_organizations(
@@ -231,7 +231,7 @@ class Mutation(
 @sb.directive(
     locations=[DirectiveLocation.MUTATION],
     name='auth',
-    description='Provide authentication data',
+    description="Provide authentication data",
 )
 def auth_directive(info: SBInfo, uuid: str, token: str):
     return
@@ -244,11 +244,11 @@ class WorkflowStateDirective(GraphQLDirective):
         super().__init__(
             name='workflow',
             description=(
-                'Let the client request retrieving approved/unapproved '
-                'drafts or published versions of plan data (currently individual actions). '
-                'The actual response is dependent on user access rights, for example '
-                'a published version is always returned to unauthenticated users '
-                'or when no draft exists.'
+                "Let the client request retrieving approved/unapproved "
+                "drafts or published versions of plan data (currently individual actions). "
+                "The actual response is dependent on user access rights, for example "
+                "a published version is always returned to unauthenticated users "
+                "or when no draft exists."
             ),
             args={
                 'state':
@@ -272,7 +272,7 @@ class InstanceContextInput:
 @sb.directive(
     locations=[DirectiveLocation.QUERY, DirectiveLocation.MUTATION],
     name='context',
-    description='Paths instance context, including the selected locale',
+    description="Paths instance context, including the selected locale",
 )
 def context_directive(info: SBInfo, input: InstanceContextInput):
     return
@@ -282,11 +282,11 @@ def context_directive(info: SBInfo, input: InstanceContextInput):
     locations=[DirectiveLocation.QUERY],
     name='workflow',
     description=(
-        'Let the client request retrieving approved/unapproved '
-        'drafts or published versions of plan data (currently individual actions). '
-        'The actual response is dependent on user access rights, for example '
-        'a published version is always returned to unauthenticated users '
-        'or when no draft exists.'
+        "Let the client request retrieving approved/unapproved "
+        "drafts or published versions of plan data (currently individual actions). "
+        "The actual response is dependent on user access rights, for example "
+        "a published version is always returned to unauthenticated users "
+        "or when no draft exists."
     ),
 )
 def workflow_directive(
@@ -294,7 +294,7 @@ def workflow_directive(
     state: Annotated[
         WorkflowStateEnum,
         sb.argument(
-            description='State of content to show',
+            description="State of content to show",
         )
     ] = WorkflowStateEnum.PUBLISHED
 ):

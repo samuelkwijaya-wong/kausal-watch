@@ -957,7 +957,7 @@ def indicators_schema():
     return schema
 
 
-@strawberry_django.type(IndicatorCategoryRelationshipModel, description="A relationship between an indicator and a category.")
+@strawberry_django.type(IndicatorCategoryRelationshipModel, description="A relationship between an indicator and a category")
 class IndicatorCategoryRelationship:
     id: auto
     indicator: Annotated[IndicatorNode, strawberry.lazy('indicators.schema')]
@@ -2402,13 +2402,13 @@ class PledgeMutations(graphene.ObjectType[Any]):
     """Mutations related to pledges and community engagement."""
 
     register_user = RegisterPledgeUserMutation.Field(
-        description="Register a new anonymous pledge user. Returns the UUID for the created user.",
+        description="Register a new anonymous pledge user; returns the UUID for the created user",
     )
     commit_to_pledge = CommitToPledgeMutation.Field(
-        description="Commit to or uncommit from a pledge.",
+        description="Commit to or uncommit from a pledge",
     )
     set_user_data = SetUserDataMutation.Field(
-        description="Set a key-value pair in a PledgeUser's user_data.",
+        description="Set a key-value pair in a PledgeUser's user_data",
     )
 
 

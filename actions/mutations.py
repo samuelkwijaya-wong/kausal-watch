@@ -47,12 +47,12 @@ class PlanInput:
     organization_id: sb.ID
     primary_language: str = sb.field(
         default='en-US',
-        description='Primary language code (ISO 639-1, e.g. "en-US", "fi", "de-CH").',
+        description="Primary language code (ISO 639-1, e.g. \"en-US\", \"fi\", \"de-CH\")",
     )
     short_name: auto
     other_languages: list[str] = sb.field(
         default_factory=list,
-        description='Additional language codes (ISO 639-1).',
+        description="Additional language codes (ISO 639-1)",
     )
     theme_identifier: auto
     features: PlanFeaturesInput | None = None
@@ -84,9 +84,9 @@ class ChoiceOptionInput:
 
 @sb.input
 class AddRelatedOrganizationInput:
-    plan_id: sb.ID = sb.field(description='The pk or identifier of the plan.')
+    plan_id: sb.ID = sb.field(description="The PK or identifier of the plan")
     """The pk or identifier of the plan."""
-    organization_id: sb.ID = sb.field(description='The pk of the organization.')
+    organization_id: sb.ID = sb.field(description="The PK of the organization")
     """The pk of the organization."""
 
 
@@ -101,8 +101,8 @@ class CategoryTypeInput:
     hide_category_identifiers: sb.auto
     primary_action_classification: bool = sb.field(
         description=(
-            'Whether this category type is the primary action classification. '
-            'NOTE: A Plan must have exactly one primary action classification.'
+            "Whether this category type is the primary action classification. "
+            "NOTE: A Plan must have exactly one primary action classification."
         ),
         default=False,
     )
@@ -136,10 +136,10 @@ class PlanAdminOnlyMutation(FieldExtension):
     def resolve(self, next_: Callable[..., Any], source: Any, info: SBInfo, **kwargs: Any) -> Any:
         user = user_or_none(info.context.user)
         if user is None:
-            raise PermissionError('Authentication required for this operation.')
+            raise PermissionError("Authentication required for this operation")
         # Only superusers for now
         if not user.is_superuser:
-            raise PermissionError('Superuser required for this operation.')
+            raise PermissionError("Superuser required for this operation")
         return next_(source, info, **kwargs)
 
 
@@ -155,7 +155,7 @@ def _strip_unset(**kwargs: Any) -> dict[str, Any]:
 # Mutation classes
 @sb.type
 class PlanMutations:
-    @sb.mutation(extensions=[PlanAdminOnlyMutation()], description='Create a new plan. Returns the newly created plan.')
+    @sb.mutation(extensions=[PlanAdminOnlyMutation()], description="Create a new plan; returns the newly created plan")
     @transaction.atomic
     def create_plan(self, input: PlanInput) -> PlanNode:
         from actions.models import Plan
@@ -201,7 +201,7 @@ class PlanMutations:
         return cast('PlanNode', plan)  # pyright: ignore[reportInvalidCast]
 
     @sb.mutation(
-        extensions=[PlanAdminOnlyMutation()], description='Create a new category type. Returns the newly created category type.'
+        extensions=[PlanAdminOnlyMutation()], description="Create a new category type; returns the newly created category type"
     )
     @transaction.atomic
     def create_category_type(self, input: CategoryTypeInput) -> CategoryTypeNode:
@@ -209,7 +209,7 @@ class PlanMutations:
         plan = Plan.objects.get(pk=input.plan_id)
 
         if input.primary_action_classification and plan.primary_action_classification is not None:
-            raise ValidationError('A plan can only have one primary action classification.')
+            raise ValidationError("A plan can only have one primary action classification.")
 
         # Create category type. For new plans, default editability to match usability --
         # it doesn't make sense to restrict editing before categories exist. Editability
@@ -235,14 +235,14 @@ class PlanMutations:
         category_type = CategoryType.objects.get(pk=category_type.pk)
         return cast('CategoryTypeNode', category_type)  # pyright: ignore[reportInvalidCast]
 
-    @sb.mutation(extensions=[PlanAdminOnlyMutation()], description='Create a new category. Returns the newly created category.')
+    @sb.mutation(extensions=[PlanAdminOnlyMutation()], description="Create a new category; returns the newly created category")
     @transaction.atomic
     def create_category(self, input: CategoryInput) -> CategoryNode:
         # Get the category type
         category_type = CategoryType.objects.get(pk=input.type_id)
 
         if not category_type.editable_for_actions and not category_type.editable_for_indicators:
-            raise ValidationError('Categories of this type are not editable.')
+            raise ValidationError("Categories of this type are not editable.")
 
         # Get parent if provided
         parent: Category | None = None
@@ -297,13 +297,13 @@ class PlanMutations:
         if input.choice_options:
             if not needs_choices:
                 raise ValidationError(
-                    'Choice options are only allowed for ordered choice, unordered choice,'
-                    ' and optional choice with optional text attributes.'
+                    "Choice options are only allowed for ordered choice, unordered choice,"
+                    " and optional choice with optional text attributes."
                 )
         elif needs_choices:
             raise ValidationError(
-                'Choice options are required for ordered choice, unordered choice,'
-                ' and optional choice with optional text attributes.'
+                "Choice options are required for ordered choice, unordered choice,"
+                " and optional choice with optional text attributes."
             )
 
         # Create attribute type
@@ -333,7 +333,7 @@ class PlanMutations:
         attr_type = AttributeType.objects.get(pk=attr_type.pk)
         return cast('AttributeTypeNode', attr_type)  # pyright: ignore[reportInvalidCast]
 
-    @sb.mutation(extensions=[PlanAdminOnlyMutation()], description='Delete a recently created plan (must be < 2 days old)')
+    @sb.mutation(extensions=[PlanAdminOnlyMutation()], description="Delete a recently created plan (must be < 2 days old)")
     def delete_plan(self, id: sb.ID) -> bool:
         from datetime import timedelta
 
@@ -341,28 +341,28 @@ class PlanMutations:
 
         plan = Plan.objects.qs.by_id_or_identifier(id).first()
         if plan is None:
-            raise ValidationError('Plan not found.')
+            raise ValidationError("Plan not found")
 
         max_age = timedelta(days=2)
         if timezone.now() - plan.created_at > max_age:
             raise ValidationError(
-                f'Can only delete plans created within the last 2 days. This plan was created on {plan.created_at.date()}.'
+                f"Can only delete plans created within the last 2 days. This plan was created on {plan.created_at.date()}."
             )
 
         plan.delete()
         return True
 
-    @sb.mutation(extensions=[PlanAdminOnlyMutation()], description='Add a related organization to a plan')
+    @sb.mutation(extensions=[PlanAdminOnlyMutation()], description="Add a related organization to a plan")
     def add_related_organization(self, info: SBInfo, input: AddRelatedOrganizationInput) -> PlanNode:
         from orgs.models import Organization
 
         # Get the plan and organization
         plan = Plan.objects.qs.by_id_or_identifier(input.plan_id).first()
         if plan is None:
-            raise ValidationError('Plan not found.')
+            raise ValidationError("Plan not found")
         user = user_or_bust(info.context.user)
         if not user.is_general_admin_for_plan(plan):
-            raise PermissionError('Allowed only for general admins of the plan.')
+            raise PermissionError("Allowed only for general admins of the plan")
 
         organization = Organization.objects.get(pk=input.organization_id)
 
@@ -386,13 +386,13 @@ class ActionMutations:
         for cat_id in category_ids:
             cat_obj = cats_by_id.get(int(cat_id))
             if cat_obj is None:
-                raise ValidationError(f'Category {cat_id} does not belong to plan {plan.identifier}.')
+                raise ValidationError(f"Category {cat_id} does not belong to plan {plan.identifier}.")
             cats_by_type.setdefault(cat_obj.type, []).append(cat_obj)
 
         for cat_type, cats in cats_by_type.items():
             if cat_type.select_widget == cat_type.SelectWidget.SINGLE and len(cats) > 1:
                 raise ValidationError(
-                    f'Only one category can be assigned to a single-select category type (identifier: {cat_type.identifier}).'
+                    f"Only one category can be assigned to a single-select category type (identifier: {cat_type.identifier})."
                 )
             action.set_categories(cat_type, list(cats))
 
@@ -403,8 +403,8 @@ class ActionMutations:
             attr_type = plan.action_attribute_types.filter(pk=attr_val.attribute_type_id).first()
             if attr_type is None:
                 raise ValidationError(
-                    f'Attribute type {attr_val.attribute_type_id} does not belong to plan {plan.identifier} or '
-                    'is not usable for actions.'
+                    f"Attribute type {attr_val.attribute_type_id} does not belong to plan {plan.identifier} or "
+                    "is not usable for actions."
                 )
             choice = AttributeTypeChoiceOption.objects.get(pk=attr_val.choice_id, type=attr_type)
             AttributeChoice.objects.create(
@@ -433,7 +433,7 @@ class ActionMutations:
         plan = Plan.objects.get(pk=input.plan_id)
 
         if plan.actions_locked:
-            raise PermissionError('Actions are locked for this plan.')
+            raise PermissionError("Actions are locked for this plan.")
 
         # Get primary org if provided
         primary_org: Organization | None = None
@@ -451,11 +451,11 @@ class ActionMutations:
         # Generate or use provided identifier
         if input.identifier:
             if not plan.features.has_action_identifiers:
-                raise ValidationError('Action identifiers are not enabled for this plan.')
+                raise ValidationError("Action identifiers are not enabled for this plan.")
             action.identifier = input.identifier
         else:
             if plan.features.has_action_identifiers:
-                raise ValidationError('Action identifier required for this plan.')
+                raise ValidationError("Action identifier required for this plan.")
             action.generate_identifier()
 
         action.full_clean()
