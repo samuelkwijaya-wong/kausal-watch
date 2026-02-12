@@ -118,7 +118,7 @@ class AttributeType(
     help_text = models.TextField(verbose_name=_('help text'), blank=True)
     format = models.CharField[AttributeFormat, AttributeFormat](
         max_length=50, choices=AttributeFormat.choices, verbose_name=_('Format'),
-        help_text=_('The format of the attributes with this type.'),
+        help_text=_('The format of the attributes with this type'),
     )
     unit = models.ForeignKey(
         Unit, blank=True, null=True, on_delete=models.PROTECT, related_name='+',
