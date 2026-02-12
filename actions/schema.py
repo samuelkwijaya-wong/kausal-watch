@@ -50,7 +50,7 @@ from aplans.graphql_types import (
     register_django_node,
     set_active_plan,
 )
-from aplans.utils import get_hostname_redirect_hostname, hyphenate_fi, public_fields
+from aplans.utils import PlanRelatedModel, get_hostname_redirect_hostname, hyphenate_fi, public_fields
 
 from actions.action_admin import ActionAdmin
 from actions.action_status_summary import (
@@ -907,15 +907,15 @@ class AttributesMixin:
             *['choice_attributes__choice__type', 'choice_with_text_attributes__choice__type'],
         ],
     )
-    def resolve_attributes(root: Action | Category, info: GQLInfo, id: str | None = None):
+    def resolve_attributes(root: ModelWithAttributes, info: GQLInfo, id: str | None = None):
         request = info.context
 
         plan_identifier = info.variable_values.get('plan')
         if not is_plan_context_active(info):
-            if isinstance(root, Action):
-                obj_plan = root.plan
-            else:
-                obj_plan = root.type.plan
+            # All current ModelWithAttributes subclasses also inherit PlanRelatedModel, but Python can't express that
+            # intersection type in the method signature yet.
+            assert isinstance(root, PlanRelatedModel)
+            obj_plan = root.get_plans()[0]
             cache = info.context.cache.for_plan(obj_plan)
             plan = cache.plan
         else:
