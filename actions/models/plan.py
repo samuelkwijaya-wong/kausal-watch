@@ -20,7 +20,7 @@ from django.core.validators import MaxValueValidator, MinValueValidator, RegexVa
 from django.db import models, transaction
 from django.db.models import Q
 from django.db.models.aggregates import Max
-from django.db.models.functions import Cast, Substr
+from django.db.models.functions import Cast, Length, Substr
 from django.utils import timezone, translation
 from django.utils.formats import date_format
 from django.utils.functional import cached_property
@@ -1095,11 +1095,31 @@ class Plan(ClusterableModel, ModelWithPrimaryLanguage, PermissionedModel):  # ty
 
     def default_name_for_copying(self) -> str:
         """Get a name a copy of this plan should have by default."""
-        # Append string containing current date to this plan's name
         with translation.override(self.primary_language):
             now = self.now_in_local_timezone()
             today = date_format(now.date(), format='SHORT_DATE_FORMAT', use_l10n=True)
-            return _("%(plan)s (copy from %(date)s)") % {'plan': self.name, 'date': today}
+            candidate = _("%(plan)s (copy from %(date)s)") % {'plan': self.name, 'date': today}
+            if not Plan.objects.filter(name=candidate).exists():
+                return candidate
+            # Build a regex from the translated template to find existing numbered copies
+            num_marker = 'XNUMMARKERX'
+            template = _("%(plan)s (copy %(n)s from %(date)s)") % {
+                'plan': self.name, 'n': num_marker, 'date': today,
+            }
+            num_pos = template.index(num_marker)
+            chars_after_num = len(template) - num_pos - len(num_marker)
+            regex = '^' + re.escape(template).replace(num_marker, r'\d+') + '$'
+            max_copy_number = (
+                Plan.objects.filter(name__regex=regex)
+                .annotate(copy_number=Cast(
+                    Substr('name', num_pos + 1, Length('name') - num_pos - chars_after_num),
+                    models.IntegerField(),
+                ))
+                .aggregate(Max('copy_number'))['copy_number__max']
+            ) or 1
+            return _("%(plan)s (copy %(n)s from %(date)s)") % {
+                'plan': self.name, 'n': max_copy_number + 1, 'date': today,
+            }
 
     def default_version_name_for_copying(self) -> str:
         """Get a version name a copy of this plan should have by default."""

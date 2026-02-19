@@ -7,6 +7,7 @@ from django.core.exceptions import ValidationError
 from django.db.utils import IntegrityError
 from django.utils import timezone, translation
 from django.utils.formats import date_format
+from django.utils.translation import gettext as _
 from wagtail.models import Locale
 
 import pytest
@@ -545,6 +546,75 @@ def test_synchronizing_plan_root_collection(plan_factory):
     plan.save()
     new_plan = plan_factory(name='D')
     new_plan.save()
+
+
+class TestPlanDefaultNameForCopying:
+    FIXED_NOW = datetime(2025, 6, 15, 12, 0, tzinfo=UTC)
+
+    @pytest.fixture(autouse=True)
+    def _freeze_time(self):
+        with patch('django.utils.timezone.now', return_value=self.FIXED_NOW):
+            yield
+
+    def _get_expected_date(self, plan):
+        with translation.override(plan.primary_language):
+            now = plan.to_local_timezone(self.FIXED_NOW)
+            return date_format(now.date(), format='SHORT_DATE_FORMAT', use_l10n=True)
+
+    def test_first_copy_no_conflict(self, plan):
+        today = self._get_expected_date(plan)
+        result = plan.default_name_for_copying()
+        assert result == f'{plan.name} (copy from {today})'
+
+    def test_second_copy_gets_number_2(self, plan):
+        today = self._get_expected_date(plan)
+        # Create a plan with the unnumbered copy name
+        PlanFactory.create(name=f'{plan.name} (copy from {today})')
+        result = plan.default_name_for_copying()
+        assert result == f'{plan.name} (copy 2 from {today})'
+
+    def test_third_copy_gets_number_3(self, plan):
+        today = self._get_expected_date(plan)
+        PlanFactory.create(name=f'{plan.name} (copy from {today})')
+        PlanFactory.create(name=f'{plan.name} (copy 2 from {today})')
+        result = plan.default_name_for_copying()
+        assert result == f'{plan.name} (copy 3 from {today})'
+
+    def test_gap_in_numbers_uses_max_plus_one(self, plan):
+        """If copies 2 and 5 exist, the next should be 6 (not 3)."""
+        today = self._get_expected_date(plan)
+        PlanFactory.create(name=f'{plan.name} (copy from {today})')
+        PlanFactory.create(name=f'{plan.name} (copy 2 from {today})')
+        PlanFactory.create(name=f'{plan.name} (copy 5 from {today})')
+        result = plan.default_name_for_copying()
+        assert result == f'{plan.name} (copy 6 from {today})'
+
+    def test_different_plan_names_dont_conflict(self, plan):
+        today = self._get_expected_date(plan)
+        other_plan = PlanFactory.create(name='Other Plan')
+        PlanFactory.create(name=f'{other_plan.name} (copy from {today})')
+        # The original plan's copy name should still be free
+        result = plan.default_name_for_copying()
+        assert result == f'{plan.name} (copy from {today})'
+
+    def test_uses_plan_primary_language(self):
+        plan_fi = PlanFactory.create(primary_language='fi', other_languages=['en'])
+        today = self._get_expected_date(plan_fi)
+        result = plan_fi.default_name_for_copying()
+        with translation.override('fi'):
+            expected = _("%(plan)s (copy from %(date)s)") % {'plan': plan_fi.name, 'date': today}
+        assert result == expected
+
+    def test_numbered_copy_uses_plan_primary_language(self):
+        plan_fi = PlanFactory.create(primary_language='fi', other_languages=['en'])
+        today = self._get_expected_date(plan_fi)
+        with translation.override('fi'):
+            unnumbered = _("%(plan)s (copy from %(date)s)") % {'plan': plan_fi.name, 'date': today}
+        PlanFactory.create(name=unnumbered)
+        result = plan_fi.default_name_for_copying()
+        with translation.override('fi'):
+            expected = _("%(plan)s (copy %(n)s from %(date)s)") % {'plan': plan_fi.name, 'n': 2, 'date': today}
+        assert result == expected
 
 
 class TestPlanPublicationStatus:
