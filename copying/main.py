@@ -597,7 +597,7 @@ class UpdateReferencesVisitor(AbstractVisitor):
                 )
             else:
                 # Not sure if there are other cases, but I haven't accounted for any others...
-                assert isinstance(child_field, ForeignKey)
+                assert isinstance(child_field, (ForeignKey, GenericForeignKey))
                 setattr(referencing_object, child_field_name, copy)
             return True
 
