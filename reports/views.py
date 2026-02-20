@@ -22,8 +22,8 @@ from .models import ActionSnapshot, Report
 
 
 class MarkActionAsCompleteView(WMABaseView[Action]):
-    action_pk: str
-    report_pk: str
+    action_pk: str = ''
+    report_pk: str = ''
     complete = True
     template_name = 'aplans/confirmation.html'
 
@@ -81,7 +81,7 @@ class MarkActionAsCompleteView(WMABaseView[Action]):
 
 
 class MarkReportAsCompleteView(WMABaseView[Report]):
-    report_pk: str
+    report_pk: str = ''
     complete = True
     template_name = 'reports/mark_report_as_complete_confirmation.html'
 
