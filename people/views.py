@@ -26,7 +26,7 @@ if TYPE_CHECKING:
 
 class ResetPasswordView(WMABaseView[Person]):
     page_title = gettext_lazy("Reset password")
-    target_person_pk: str
+    target_person_pk: str = ''
     template_name = 'aplans/confirmation.html'
 
     def __init__(self, model_admin, target_person_pk):
@@ -110,7 +110,7 @@ class ResetPasswordView(WMABaseView[Person]):
 
 class ImpersonateUserView(WMABaseView[Person]):
     page_title = gettext_lazy("View as user")
-    target_person_pk: str
+    target_person_pk: str = ''
     template_name = 'people/view_as_user.html'
     post_url = reverse_lazy('hijack:acquire')
 
