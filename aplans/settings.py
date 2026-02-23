@@ -552,6 +552,7 @@ LANGUAGES = (
     ('es', _('Spanish')),
     ('es-US', _('Spanish (United States)')),
     ('fi', _('Finnish')),
+    ('fr', _('French')),
     ('lv', _('Latvian')),
     ('pt', _('Portuguese')),  # Use Brazilian Portuguese only for now
     ('pt-BR', _('Portuguese (Brazil)')),
@@ -589,9 +590,10 @@ PARLER_LANGUAGES = {
         {'code': 'sv'},
         {'code': 'de'},
         {'code': 'da'},
+        {'code': 'fr'},
     ),
     'default': {
-        'fallbacks': ['en', 'fi', 'sv', 'de', 'da'],
+        'fallbacks': ['en', 'fi', 'sv', 'de', 'da','fr'],
         'hide_untranslated': False,   # the default; let .active_translations() return fallbacks too.
     },
 }
@@ -802,6 +804,13 @@ if ELASTICSEARCH_URL:
             'analyzer': {
                 'default': {
                     'type': 'spanish',
+                },
+            },
+        },
+         'fr': {
+            'analyzer': {
+                'default': {
+                    'type': 'french',
                 },
             },
         },
