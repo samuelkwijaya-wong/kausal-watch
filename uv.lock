@@ -1849,7 +1849,7 @@ requires-dist = [
     { name = "httpx" },
     { name = "humanize" },
     { name = "jinja2" },
-    { name = "kausal-watch-extensions", marker = "extra == 'kausal'", specifier = ">=0.1.168" },
+    { name = "kausal-watch-extensions", marker = "extra == 'kausal'", specifier = ">=0.1.169" },
     { name = "libvoikko" },
     { name = "logfmter" },
     { name = "loguru" },
@@ -1947,11 +1947,11 @@ prod = [
 
 [[package]]
 name = "kausal-watch-extensions"
-version = "0.1.168"
+version = "0.1.169"
 source = { registry = "https://pypi.kausal.tech/" }
-sdist = { url = "https://pypi.kausal.tech/packages/kausal_watch_extensions-0.1.168.tar.gz", hash = "sha256:0bf0fd4f6b553d899b373be74ba445653898388761c24649c1d39cd8f3d3d911" }
+sdist = { url = "https://pypi.kausal.tech/packages/kausal_watch_extensions-0.1.169.tar.gz", hash = "sha256:16b8a6687e7bad31cab9a2c58c22aed02a345a9c634f753eb272dc1c779333a7" }
 wheels = [
-    { url = "https://pypi.kausal.tech/packages/kausal_watch_extensions-0.1.168-py3-none-any.whl", hash = "sha256:88d5f4eb278c596257e638c5d2a240e02ec2058b277e369985ad6edd594678db" },
+    { url = "https://pypi.kausal.tech/packages/kausal_watch_extensions-0.1.169-py3-none-any.whl", hash = "sha256:ecabe208fe4d02220c9044949685d9b95d74fdf714883044fb4c8de91d1bc54a" },
 ]
 
 [[package]]
