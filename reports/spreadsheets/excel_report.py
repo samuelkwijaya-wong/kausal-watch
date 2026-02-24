@@ -395,7 +395,7 @@ class ExcelReport:
             },
         ]
         # Pivot sheet: Category (level) x Implementation phase
-        category_labels = self.report.type.get_field_labels_for_type('category')
+        category_labels = self.report.type.get_field_labels_for_type('categories')
         implementation_phase_fields = self.report.type.get_fields_for_type('implementation_phase')
         if len(implementation_phase_fields) > 0:
             for label in category_labels:
