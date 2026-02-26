@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-01-13 15:13+0100\n"
+"POT-Creation-Date: 2026-02-26 17:48+0100\n"
 "PO-Revision-Date: 2025-04-02 07:20+0000\n"
 "Last-Translator: Matias Wargelin <matias.wargelin@kausal.tech>\n"
 "Language-Team: German (Switzerland) <https://weblate.kausal.tech/projects/watch/django/de_CH/>\n"
@@ -69,6 +69,11 @@ msgstr ""
 msgid "Undo marking this action as complete for the report %s"
 msgstr "Abschliessen für Bericht %s rückgängig machen"
 
+#: actions/action_admin.py
+#, python-format
+msgid "Attribute \"%(attribute_type)s\": %(message)s"
+msgstr ""
+
 #: actions/action_admin.py actions/apps.py actions/models/plan.py
 #: content/models.py indicators/wagtail_admin.py
 #: reports/spreadsheets/excel_report.py reports/tests/test_excel_roundtrip.py
@@ -98,9 +103,9 @@ msgstr ""
 msgid "External links"
 msgstr ""
 
-#: actions/action_admin.py actions/category_admin.py actions/wagtail_admin.py
-#: indicators/wagtail_admin.py notifications/wagtail_admin.py
-#: orgs/wagtail_admin.py
+#: actions/action_admin.py actions/category_admin.py actions/pledge_admin.py
+#: actions/wagtail_admin.py indicators/wagtail_admin.py
+#: notifications/wagtail_admin.py orgs/wagtail_admin.py
 msgid "Basic information"
 msgstr ""
 
@@ -287,6 +292,16 @@ msgstr ""
 msgid "Identifier already exists"
 msgstr ""
 
+#: actions/api.py
+#, python-format
+msgid "You do not have permission to change contact persons with role \"%(role)s\" on action \"%(action)s.\""
+msgstr ""
+
+#: actions/api.py
+#, python-format
+msgid "You do not have permission to change responsible parties with role \"%(role)s\" on action \"%(action)s.\""
+msgstr ""
+
 #: actions/apps.py
 msgid "Resubmit for moderation"
 msgstr ""
@@ -294,6 +309,43 @@ msgstr ""
 #: actions/apps.py
 msgid "Cancel moderation"
 msgstr ""
+
+#: actions/attribute_type_admin.py
+#, python-format
+msgid "%(count)d report"
+msgid_plural "%(count)d reports"
+msgstr[0] ""
+msgstr[1] ""
+
+#: actions/attribute_type_admin.py
+#, fuzzy, python-format
+#| msgid "continuous action"
+msgid "%(count)d published action"
+msgid_plural "%(count)d published actions"
+msgstr[0] "laufende Massnahme"
+msgstr[1] "laufende Massnahme"
+
+#: actions/attribute_type_admin.py
+#, fuzzy, python-format
+#| msgid "Action category"
+msgid "%(count)d category"
+msgid_plural "%(count)d categories"
+msgstr[0] "Massnahmenkategorie"
+msgstr[1] "Massnahmenkategorie"
+
+#: actions/attribute_type_admin.py
+#, python-format
+msgid "%(count)d pledge"
+msgid_plural "%(count)d pledges"
+msgstr[0] ""
+msgstr[1] ""
+
+#: actions/attribute_type_admin.py
+#, python-format
+msgid "%(count)d action draft"
+msgid_plural "%(count)d action drafts"
+msgstr[0] ""
+msgstr[1] ""
 
 #: actions/attribute_type_admin.py
 msgid "Object type"
@@ -344,6 +396,10 @@ msgid "General"
 msgstr ""
 
 #: actions/attributes.py
+msgid "A choice option used in this draft no longer exists. The selection has been cleared."
+msgstr ""
+
+#: actions/attributes.py
 #, python-format
 msgid "%(attribute_type)s (choice)"
 msgstr ""
@@ -356,6 +412,10 @@ msgstr ""
 #: actions/attributes.py
 #, python-format
 msgid "%(attribute_type)s"
+msgstr ""
+
+#: actions/attributes.py
+msgid "A field used in this draft no longer exists. The field and its value have been removed from the draft."
 msgstr ""
 
 #: actions/blocks/__init__.py
@@ -872,9 +932,9 @@ msgstr ""
 msgid "Implementation"
 msgstr ""
 
-#: actions/models/action.py actions/models/plan.py content/models.py
-#: feedback/models.py indicators/models/indicator.py notifications/models.py
-#: orgs/models.py pages/models.py
+#: actions/models/action.py actions/models/plan.py actions/models/pledge.py
+#: content/models.py feedback/models.py indicators/models/indicator.py
+#: notifications/models.py orgs/models.py pages/models.py
 msgid "plan"
 msgstr ""
 
@@ -884,7 +944,7 @@ msgstr ""
 
 #: actions/models/action.py actions/models/action_deps.py
 #: actions/models/attributes.py actions/models/category.py
-#: actions/models/plan.py feedback/models.py
+#: actions/models/plan.py actions/models/pledge.py feedback/models.py
 #: indicators/models/common_indicator.py indicators/models/dimensions.py
 #: indicators/models/indicator.py indicators/models/metadata.py
 #: reports/models.py
@@ -912,7 +972,7 @@ msgstr ""
 msgid "Lead paragraph"
 msgstr ""
 
-#: actions/models/action.py actions/models/plan.py
+#: actions/models/action.py actions/models/plan.py actions/models/pledge.py
 #: indicators/models/common_indicator.py indicators/models/indicator.py
 #: indicators/models/metadata.py
 msgid "description"
@@ -1021,8 +1081,8 @@ msgstr ""
 msgid "contact persons"
 msgstr ""
 
-#: actions/models/action.py admin_site/models.py aplans/utils.py
-#: reports/spreadsheets/excel_report.py
+#: actions/models/action.py actions/models/pledge.py admin_site/models.py
+#: aplans/utils.py reports/spreadsheets/excel_report.py
 msgid "updated at"
 msgstr ""
 
@@ -1282,8 +1342,8 @@ msgstr ""
 msgid "completed by"
 msgstr ""
 
-#: actions/models/action.py admin_site/models.py aplans/utils.py
-#: feedback/models.py
+#: actions/models/action.py actions/models/pledge.py admin_site/models.py
+#: aplans/utils.py feedback/models.py
 msgid "created at"
 msgstr ""
 
@@ -1483,6 +1543,10 @@ msgid "Format"
 msgstr ""
 
 #: actions/models/attributes.py
+msgid "The format of the attributes with this type"
+msgstr ""
+
+#: actions/models/attributes.py
 msgid "Unit (only if format is numeric)"
 msgstr ""
 
@@ -1518,6 +1582,10 @@ msgstr ""
 msgid "show in reporting tab"
 msgstr ""
 
+#: actions/models/attributes.py
+msgid "Icon"
+msgstr ""
+
 #: actions/models/attributes.py admin_site/models.py
 msgid "field"
 msgstr ""
@@ -1539,11 +1607,19 @@ msgid "This value is only allowed for action fields"
 msgstr ""
 
 #: actions/models/attributes.py
+msgid "Icon must be an SVG file"
+msgstr ""
+
+#: actions/models/attributes.py
 msgid "attribute choice option"
 msgstr ""
 
 #: actions/models/attributes.py
 msgid "attribute choice options"
+msgstr ""
+
+#: actions/models/attributes.py
+msgid "Missing value"
 msgstr ""
 
 #: actions/models/category.py
@@ -1932,6 +2008,14 @@ msgid "Prompt users to add a public change history message after editing actions
 msgstr ""
 
 #: actions/models/features.py
+msgid "Enable community engagement"
+msgstr ""
+
+#: actions/models/features.py
+msgid "Enable community engagement features such as pledges for this plan."
+msgstr ""
+
+#: actions/models/features.py
 msgid "plan feature"
 msgstr ""
 
@@ -2148,6 +2232,14 @@ msgstr ""
 msgid "UUID of the corresponding Kausal Paths instance for Kausal Paths integration"
 msgstr ""
 
+#: actions/models/plan.py
+msgid "is active"
+msgstr ""
+
+#: actions/models/plan.py
+msgid "Inactive plans are only visible to superusers."
+msgstr ""
+
 #: actions/models/plan.py indicators/models/indicator.py
 msgid "plans"
 msgstr ""
@@ -2184,9 +2276,46 @@ msgstr ""
 msgid "Accessibility"
 msgstr ""
 
+#: actions/models/plan.py aplans/utils.py
+msgid "Internal"
+msgstr ""
+
+#: actions/models/plan.py aplans/utils.py
+msgid "Public"
+msgstr ""
+
+#: actions/models/plan.py
+msgid "Scheduled"
+msgstr ""
+
 #: actions/models/plan.py
 #, python-format
+msgid "in %(days)d days %(hours)d hours"
+msgstr ""
+
+#: actions/models/plan.py
+#, python-format
+msgid "in %(hours)d hours %(minutes)d minutes"
+msgstr ""
+
+#: actions/models/plan.py
+#, python-format
+msgid "in %(minutes)d minutes"
+msgstr ""
+
+#: actions/models/plan.py
+#, python-format
+msgid "Scheduled at: %(date)s (%(remaining)s)"
+msgstr ""
+
+#: actions/models/plan.py actions/tests/test_models.py
+#, python-format
 msgid "%(plan)s (copy from %(date)s)"
+msgstr ""
+
+#: actions/models/plan.py actions/tests/test_models.py
+#, python-format
+msgid "%(plan)s (copy %(n)s from %(date)s)"
 msgstr ""
 
 #: actions/models/plan.py
@@ -2204,10 +2333,6 @@ msgstr ""
 
 #: actions/models/plan.py
 msgid "Unpublished"
-msgstr ""
-
-#: actions/models/plan.py
-msgid "Scheduled"
 msgstr ""
 
 #: actions/models/plan.py
@@ -2341,6 +2466,142 @@ msgstr ""
 msgid "monitoring quality points"
 msgstr ""
 
+#: actions/models/pledge.py
+msgid "slug"
+msgstr ""
+
+#: actions/models/pledge.py
+msgid "The unique part of the page's URL, usually based on the title. Use lowercase letters, numbers, and hyphens only (e.g., turn-off-electronics)."
+msgstr ""
+
+#: actions/models/pledge.py
+msgid "Brief description shown on pledge cards and at the top of the pledge page. Keep it under 2-3 sentences. Use the body content below for additional details."
+msgstr ""
+
+#: actions/models/pledge.py images/models.py
+msgid "image"
+msgstr ""
+
+#: actions/models/pledge.py
+msgid "body content"
+msgstr ""
+
+#: actions/models/pledge.py
+msgid "Detailed content about the pledge"
+msgstr ""
+
+#: actions/models/pledge.py
+msgid "number of residents committed"
+msgstr ""
+
+#: actions/models/pledge.py
+msgid "Choose a round number that makes the math easy but feels achievable (e.g., 50, 100, 200). This is used in the \"If [X] residents commit...\" messaging."
+msgstr ""
+
+#: actions/models/pledge.py
+msgid "environmental impact at scale"
+msgstr ""
+
+#: actions/models/pledge.py
+msgid "Describe the total environmental benefit if this many residents commit. Include specific numbers and units. Start with \"We save\" or \"We reduce\" for consistency. Example: \"We save 9,200kg CO₂e each year.\""
+msgstr ""
+
+#: actions/models/pledge.py
+msgid "local equivalency comparison"
+msgstr ""
+
+#: actions/models/pledge.py
+msgid "Translate the environmental impact into something relatable and specific to your community. Use local landmarks, familiar distances, or everyday activities. Start with \"That's equivalent to\" or \"That's like\" for consistency. Example: \"That's equivalent to avoiding 575 round trips between City Hall and the waterfront.\""
+msgstr ""
+
+#: actions/models/pledge.py
+#, fuzzy
+#| msgid "actions"
+msgid "actions"
+msgstr "Massnahmen"
+
+#: actions/models/pledge.py
+#, fuzzy
+#| msgid "Action list pages"
+msgid "Actions this pledge supports"
+msgstr "Massnahmenlistenseiten"
+
+#: actions/models/pledge.py feedback/models.py
+msgid "pledge"
+msgstr ""
+
+#: actions/models/pledge.py
+msgid "pledges"
+msgstr ""
+
+#: actions/models/pledge.py
+msgid "user data"
+msgstr ""
+
+#: actions/models/pledge.py
+msgid "Freeform key-value data about the user (e.g., zip_code)"
+msgstr ""
+
+#: actions/models/pledge.py
+msgid "pledge user"
+msgstr ""
+
+#: actions/models/pledge.py
+msgid "pledge users"
+msgstr ""
+
+#: actions/models/pledge.py
+msgid "pledge commitment"
+msgstr ""
+
+#: actions/models/pledge.py
+msgid "pledge commitments"
+msgstr ""
+
+#: actions/models/pledge.py
+#, fuzzy
+#| msgid "Merged actions"
+msgid "pledge action"
+msgstr "Zusammengeführte Massnahmen"
+
+#: actions/models/pledge.py
+#, fuzzy
+#| msgid "Merged actions"
+msgid "pledge actions"
+msgstr "Zusammengeführte Massnahmen"
+
+#: actions/pledge_admin.py
+#, fuzzy
+#| msgid "There is already an action with this identifier."
+msgid "There is already a pledge with this slug."
+msgstr "Es gibt bereits eine Massnahme mit dieser Kennung."
+
+#: actions/pledge_admin.py
+#, fuzzy
+#| msgid "Term to use for 'action'"
+msgid "Number of commitments"
+msgstr "Für 'Massnahme' zu verwendender Begriff"
+
+#: actions/pledge_admin.py pages/models.py
+msgid "Pledges"
+msgstr ""
+
+#: actions/pledge_admin.py
+msgid "Commitments"
+msgstr ""
+
+#: actions/pledge_admin.py
+#, fuzzy
+#| msgid "related actions"
+msgid "Updated at"
+msgstr "verbundene Massnahmen"
+
+#: actions/pledge_admin.py
+#, fuzzy
+#| msgid "Indicator for actions"
+msgid "Community Impact Visualization"
+msgstr "Indikator für Massnahmen"
+
 #: actions/templates/site_summary/actions.html
 #, fuzzy, python-format
 #| msgid ""
@@ -2458,7 +2719,7 @@ msgid "General administrators"
 msgstr ""
 
 #: actions/wagtail_admin.py
-msgid "Only set if explicitly required by customer. Use a color key from the UI theme's graphColors, for example red070 or grey030."
+msgid "Only set if explicitly required by the customer. Use a color key from the UI theme's graphColors, for example red070 or grey030."
 msgstr ""
 
 #: actions/wagtail_admin.py
@@ -2496,7 +2757,108 @@ msgid "Plan features"
 msgstr ""
 
 #: actions/wagtail_admin.py
+msgid "Plan features that plan admins are allowed to change"
+msgstr ""
+
+#: actions/wagtail_admin.py
+msgid "Plan features that only superusers are allowed to change"
+msgstr ""
+
+#: actions/wagtail_admin.py
 msgid "Plan notification settings"
+msgstr ""
+
+#: actions/wagtail_admin.py
+#, fuzzy
+#| msgid "action status"
+msgid "Publication status"
+msgstr "Massnahmenstatus"
+
+#: actions/wagtail_admin.py
+msgid "This plan is inactive and only visible to superusers."
+msgstr ""
+
+#: actions/wagtail_admin.py
+msgid "Publish"
+msgstr ""
+
+#: actions/wagtail_admin.py
+msgid "Publish this plan"
+msgstr ""
+
+#: actions/wagtail_admin.py
+msgid "Unpublish"
+msgstr ""
+
+#: actions/wagtail_admin.py
+msgid "Unpublish this plan"
+msgstr ""
+
+#: actions/wagtail_admin.py
+#, fuzzy
+#| msgid "Action"
+msgid "Active"
+msgstr "Massnahme"
+
+#: actions/wagtail_admin.py
+msgid "Inactive"
+msgstr ""
+
+#: actions/wagtail_admin.py
+msgid "All"
+msgstr ""
+
+#: actions/wagtail_admin.py
+#, fuzzy
+#| msgid "Action statuses"
+msgid "Active status"
+msgstr "Massnahmenstatus"
+
+#: actions/wagtail_admin.py actions/wagtail_hooks.py
+msgid "Publish plan"
+msgstr ""
+
+#: actions/wagtail_admin.py actions/wagtail_hooks.py
+msgid "Unpublish plan"
+msgstr ""
+
+#: actions/wagtail_admin.py
+#, python-format
+msgid "Confirm publishing %(plan)s"
+msgstr ""
+
+#: actions/wagtail_admin.py
+#, fuzzy, python-format
+#| msgid "Confirm excluding %(org)s from plan %(plan)s"
+msgid "Confirm unpublishing %(plan)s"
+msgstr "Bestätige Ausschliessen von %(org)s aus Plan %(plan)s"
+
+#: actions/wagtail_admin.py
+#, python-format
+msgid "Do you want to publish the plan '%(plan)s'? This will make it publicly accessible."
+msgstr ""
+
+#: actions/wagtail_admin.py
+#, python-format
+msgid "Do you want to unpublish the plan '%(plan)s'? This will make it inaccessible to the public."
+msgstr ""
+
+#: actions/wagtail_admin.py
+msgid "The plan is already published."
+msgstr ""
+
+#: actions/wagtail_admin.py
+msgid "The plan is already unpublished."
+msgstr ""
+
+#: actions/wagtail_admin.py
+#, python-format
+msgid "Plan '%(plan)s' has been published."
+msgstr ""
+
+#: actions/wagtail_admin.py
+#, python-format
+msgid "Plan '%(plan)s' has been unpublished."
 msgstr ""
 
 #: actions/wagtail_admin.py admin_site/wagtail_hooks.py
@@ -2523,6 +2885,14 @@ msgstr "Indikator für Massnahmen"
 msgctxt "menu label"
 msgid "Category change history messages"
 msgstr "Massnahmenzeitpläne"
+
+#: actions/wagtail_hooks.py
+msgid "Plan published"
+msgstr ""
+
+#: actions/wagtail_hooks.py
+msgid "Plan unpublished"
+msgstr ""
 
 #: admin_site/api.py
 msgid "Invalid email address"
@@ -2668,6 +3038,17 @@ msgstr ""
 msgid "Please summarize the change you made. This message will be displayed publicly."
 msgstr ""
 
+#: admin_site/models.py
+#, python-format
+msgid "%(verbose_name)s: \"%(instance)s\" (%(date)s)."
+msgstr ""
+
+#: admin_site/models.py
+#, fuzzy
+#| msgid "action schedules"
+msgid "change history message"
+msgstr "Massnahmenzeitpläne"
+
 #: admin_site/signals.py
 #, fuzzy, python-format
 #| msgid "Do you really want to exclude the organization '%(org)s' from the plan '%(plan)s'?"
@@ -2709,6 +3090,10 @@ msgid "%(time_period)s ago"
 msgstr ""
 
 #: admin_site/templates/admin_site/release_impersonation.html
+msgid "Viewing site as another user"
+msgstr ""
+
+#: admin_site/templates/admin_site/release_impersonation.html
 msgid "Back to own user"
 msgstr ""
 
@@ -2728,14 +3113,6 @@ msgstr "Kann alle Massnahmen verwalten"
 #| msgid "Related plans"
 msgid "locked plan"
 msgstr "Verbundene Pläne"
-
-#: admin_site/templates/wagtailadmin/base.html aplans/utils.py
-msgid "Public"
-msgstr ""
-
-#: admin_site/templates/wagtailadmin/base.html aplans/utils.py
-msgid "Internal"
-msgstr ""
 
 #: admin_site/templates/wagtailadmin/login.html
 msgid "Sign in to Kausal Watch admin"
@@ -2996,6 +3373,26 @@ msgstr ""
 msgid "Latest change history message"
 msgstr "Massnahmenzeitpläne"
 
+#: audit_logging/models.py
+msgid "plan scoped model log entry"
+msgstr ""
+
+#: audit_logging/models.py
+msgid "plan scoped model log entries"
+msgstr ""
+
+#: audit_logging/models.py
+msgid "plan scoped page log entry"
+msgstr ""
+
+#: audit_logging/models.py
+msgid "plan scoped page log entries"
+msgstr ""
+
+#: audit_logging/models.py
+msgid "Draft saved"
+msgstr ""
+
 #: audit_logging/templates/site_history_results.html audit_logging/views.py
 msgid "Item type"
 msgstr ""
@@ -3217,6 +3614,16 @@ msgid "Set if copies of actions should supersede their original"
 msgstr "Setzen, wenn diese Massnahme durch eine andere Massnahme ersetzt worden ist"
 
 #: copying/views.py
+#, fuzzy
+#| msgid "action indicators"
+msgid "Copy indicators"
+msgstr "Massnahmenindikatoren"
+
+#: copying/views.py
+msgid "Set if indicators should be copied instead of being shared with the original plan. Indicators can only be copied if no indicator is shared with another plan or is an instance of a common indicator."
+msgstr ""
+
+#: copying/views.py
 msgid "A plan with this identifier already exists"
 msgstr ""
 
@@ -3276,6 +3683,10 @@ msgstr ""
 
 #: documents/models.py
 msgid "documents"
+msgstr ""
+
+#: feedback/models.py
+msgid "Pledge"
 msgstr ""
 
 #: feedback/models.py indicators/models/action_links.py
@@ -3417,10 +3828,6 @@ msgid "Alt text"
 msgstr ""
 
 #: images/models.py
-msgid "image"
-msgstr ""
-
-#: images/models.py
 msgid "images"
 msgstr ""
 
@@ -3434,6 +3841,10 @@ msgstr ""
 
 #: indicators/api.py indicators/blocks/layout.py
 msgid "Latest value"
+msgstr ""
+
+#: indicators/api.py
+msgid "Level"
 msgstr ""
 
 #: indicators/blocks/__init__.py indicators/rich_text.py
@@ -3455,6 +3866,10 @@ msgstr ""
 
 #: indicators/blocks/__init__.py
 msgid "Animated"
+msgstr ""
+
+#: indicators/blocks/__init__.py
+msgid "How many significants digits to use for the values displayed"
 msgstr ""
 
 #: indicators/blocks/__init__.py
@@ -3886,10 +4301,6 @@ msgid "Used in visualizations as the Y axis maximum"
 msgstr ""
 
 #: indicators/models/indicator.py
-msgid "visualizations"
-msgstr ""
-
-#: indicators/models/indicator.py
 msgid "sort key"
 msgstr ""
 
@@ -3997,6 +4408,24 @@ msgstr "Zeige Massnahmenkennungen"
 
 #: indicators/models/indicator.py
 msgid "The node identifier of the node in Paths where this indicator's data is imported from."
+msgstr ""
+
+#: indicators/models/indicator.py
+msgid "Hide graph"
+msgstr ""
+
+#: indicators/models/indicator.py
+#, fuzzy
+#| msgid "action contact persons"
+msgid "Do not show the graph for this indicator on the indicator's own page."
+msgstr "Massnahmenansprechpersonen"
+
+#: indicators/models/indicator.py
+msgid "Hide table"
+msgstr ""
+
+#: indicators/models/indicator.py
+msgid "Do not show this indicator's values in a table on the indicator's own page."
 msgstr ""
 
 #: indicators/models/indicator.py
@@ -4121,6 +4550,18 @@ msgstr ""
 #: indicators/models/relationships.py
 msgid "How confident we are that the causal effect is present"
 msgstr ""
+
+#: indicators/models/values.py
+#, fuzzy
+#| msgid "Indicator for actions"
+msgid "indicator value category"
+msgstr "Indikator für Massnahmen"
+
+#: indicators/models/values.py
+#, fuzzy
+#| msgid "Indicator for actions"
+msgid "indicator value categories"
+msgstr "Indikator für Massnahmen"
 
 #: indicators/models/values.py
 msgid "value"
@@ -4251,8 +4692,10 @@ msgid "Classification"
 msgstr ""
 
 #: indicators/wagtail_admin.py
-msgid "Only used for raw visualization data exported from Plotly"
-msgstr ""
+#, fuzzy
+#| msgid "Indicator for actions"
+msgid "Indicator page settings"
+msgstr "Indikator für Massnahmen"
 
 #: indicators/wagtail_admin.py
 msgid "Visualization settings"
@@ -4690,7 +5133,8 @@ msgid "Notifications could not be set up due to errors."
 msgstr ""
 
 #: notifications/wagtail_admin.py
-msgid "The email message will be sent on the specified day at"
+#, python-brace-format
+msgid "The email message will be sent on the specified day at {time}."
 msgstr ""
 
 #: notifications/wagtail_admin.py
@@ -5255,6 +5699,24 @@ msgid "Indicator list pages"
 msgstr ""
 
 #: pages/models.py
+#, fuzzy
+#| msgid "Big image"
+msgid "Background image"
+msgstr "Grosses Bild"
+
+#: pages/models.py
+#, fuzzy
+#| msgid "Action list page"
+msgid "Pledge list page"
+msgstr "Massnahmenlistenseite"
+
+#: pages/models.py
+#, fuzzy
+#| msgid "Action list pages"
+msgid "Pledge list pages"
+msgstr "Massnahmenlistenseiten"
+
+#: pages/models.py
 msgid "Impact group page"
 msgstr ""
 
@@ -5354,10 +5816,12 @@ msgid "'%(instance_name)s' is currently connected to the following items. Please
 msgstr ""
 
 #: people/templates/people/delete.html
+#: templates/aplans/attribute_type_delete.html
 msgid "Yes, delete"
 msgstr ""
 
 #: people/templates/people/delete.html
+#: templates/aplans/attribute_type_delete.html
 msgid "No, don't delete"
 msgstr ""
 
@@ -5552,6 +6016,11 @@ msgstr ""
 msgid "report types"
 msgstr ""
 
+#: reports/models.py
+#, python-format
+msgid "Duplicate fields detected: %(duplicates)s. Each field type (attribute type, category type) can only be added once."
+msgstr ""
+
 #: reports/models.py reports/spreadsheets/excel_report.py
 msgid "complete"
 msgstr ""
@@ -5566,6 +6035,14 @@ msgstr ""
 
 #: reports/models.py
 msgid "Set if report can be shown to the public"
+msgstr ""
+
+#: reports/models.py
+msgid "Show in reporting tab"
+msgstr ""
+
+#: reports/models.py
+msgid "Set if the values from this report should be shown in reporting tab when editing the action. The values are shown only if this report has been marked as complete."
 msgstr ""
 
 #: reports/models.py
@@ -5754,6 +6231,20 @@ msgstr ""
 msgid "Report types"
 msgstr ""
 
+#: templates/aplans/_usage_tooltip_item.html
+#, python-format
+msgctxt "X more objects"
+msgid "... %(remaining)s more"
+msgstr ""
+
+#: templates/aplans/attribute_type_delete.html
+msgid "This field is currently in use. Deleting it will remove attribute values from the following objects:"
+msgstr ""
+
+#: templates/aplans/attribute_type_delete.html
+msgid "If you would like to keep the current value in reports even after deleting this field, please mark the reports as complete."
+msgstr ""
+
 #: templates/aplans/change_log_message_create.html
 #, fuzzy
 #| msgid "action schedules"
@@ -5762,6 +6253,18 @@ msgstr "Massnahmenzeitpläne"
 
 #: templates/aplans/change_log_message_create.html
 msgid "Skip"
+msgstr ""
+
+#: templates/aplans/panels/choice_option_usage_panel.html
+msgid "This choice option is currently in use. Changing or deleting it will affect the following objects:"
+msgstr ""
+
+#: templates/aplans/panels/choice_option_usage_panel.html
+msgid "Changing (or deleting) this choice option will change (or delete) the choice in all these objects."
+msgstr ""
+
+#: templates/aplans/panels/choice_option_usage_panel.html
+msgid "If you would like to keep the current value in reports even after changing or deleting this choice option, please mark the reports using this choice option as complete."
 msgstr ""
 
 #: templates/aplans/paths_sync_confirmation.html
@@ -5784,6 +6287,40 @@ msgstr ""
 
 #: templates/aplans/paths_sync_confirmation.html
 msgid "Kausal Paths instance"
+msgstr ""
+
+#: templates/aplans/plan_publish_confirmation.html
+#, python-format
+msgid "This plan is already scheduled for publication: <strong>%(info)s</strong>. Publishing now will override the scheduled date and make the plan public immediately."
+msgstr ""
+
+#: templates/aplans/plan_publish_confirmation.html
+msgid "The plan will be published to:"
+msgstr ""
+
+#: templates/aplans/plan_publish_confirmation.html
+#, python-format
+msgid "This plan will only be published at <strong><a href=\"%(preview_url)s\" target=\"_blank\">%(preview_url)s</a></strong> because no production domains have been configured."
+msgstr ""
+
+#: templates/aplans/plan_publish_confirmation.html
+msgid "No production domains have been configured for this plan."
+msgstr ""
+
+#: templates/aplans/plan_publish_confirmation.html
+msgid "Unpublishing this plan will make it inaccessible to the public immediately."
+msgstr ""
+
+#: templates/aplans/plan_publish_confirmation.html
+msgid "Yes, publish"
+msgstr ""
+
+#: templates/aplans/plan_publish_confirmation.html
+msgid "Yes, unpublish"
+msgstr ""
+
+#: templates/aplans/plan_publish_confirmation.html
+msgid "Cancel"
 msgstr ""
 
 #: templates/modeladmin/create.html templates/modeladmin/edit.html
@@ -5896,11 +6433,6 @@ msgstr ""
 #~| msgid "Exclude this organization from the active plan"
 #~ msgid "The organization responsible for the data source"
 #~ msgstr "Schliesse diese Organisation aus aktivem Plan aus"
-
-#, fuzzy
-#~| msgid "related actions"
-#~ msgid "Created at"
-#~ msgstr "verbundene Massnahmen"
 
 #, fuzzy
 #~| msgid "This will mark the following actions as complete:"
