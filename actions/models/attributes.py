@@ -119,7 +119,7 @@ class AttributeType(
     help_text = models.TextField(verbose_name=_('help text'), blank=True)
     format = models.CharField[AttributeFormat, AttributeFormat](
         max_length=50, choices=AttributeFormat.choices, verbose_name=_('Format'),
-        help_text=_('The format of the attributes with this type'),
+        help_text=_('The format of the fields with this type'),
     )
     unit = models.ForeignKey(
         Unit, blank=True, null=True, on_delete=models.PROTECT, related_name='+',
@@ -188,16 +188,16 @@ class AttributeType(
         from actions.models.action import Action
         super().clean()
         if self.unit is not None and self.format != self.AttributeFormat.NUMERIC:
-            raise ValidationError({'unit': _("Unit must only be used for numeric fields")})
+            raise ValidationError({'unit': _("A unit may only be set for numeric fields.")})
         if not self.primary_language and self.other_languages:
-            raise ValidationError(_("If no primary language is set, there must not be other languages"))
+            raise ValidationError(_("If no primary language is set, there may not be other languages."))
         action_ct = ContentType.objects.get_for_model(Action)
         if self.instance_editability_is_action_specific and self.object_content_type != action_ct:
-            raise ValidationError({'instances_editable_by': _("This value is only allowed for action fields")})
+            raise ValidationError({'instances_editable_by': _("This value is only allowed for action fields.")})
         if self.instance_visibility_is_action_specific and self.object_content_type != action_ct:
-            raise ValidationError({'instances_visible_for': _("This value is only allowed for action fields")})
+            raise ValidationError({'instances_visible_for': _("This value is only allowed for action fields.")})
         if self.icon and not self.icon.filename.endswith('.svg'):
-            raise ValidationError({'icon': _("Icon must be an SVG file")})
+            raise ValidationError({'icon': _("The icon must be an SVG file.")})
 
 
     def _get_plan(self) -> Plan | None:

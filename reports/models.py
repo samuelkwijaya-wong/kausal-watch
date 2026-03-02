@@ -191,7 +191,7 @@ class Report(PlanRelatedModelWithRevision):
         default=True,
         verbose_name=_('Show in reporting tab'),
         help_text=_(
-            'Set if the values from this report should be shown in reporting tab when editing the action. '
+            'Set if the values from this report should be shown in the reporting tab when editing the action. '
             'The values are shown only if this report has been marked as complete.'
         ),
     )

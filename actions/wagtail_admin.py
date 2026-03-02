@@ -11,6 +11,8 @@ from django.db.models import ProtectedError
 from django.shortcuts import redirect
 from django.urls import path, re_path, reverse
 from django.utils import timezone
+from django.utils.html import format_html
+from django.utils.safestring import mark_safe
 from django.utils.text import capfirst
 from django.utils.translation import gettext_lazy as _, pgettext_lazy
 from django.views.generic import TemplateView
@@ -873,9 +875,14 @@ class PlanPublishView(
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['production_urls'] = self.get_production_urls()
-        context['preview_url'] = self.get_preview_url()
         context['is_scheduled'] = self.is_scheduled()
         context['scheduled_info'] = self.object.publication_status_description if self.is_scheduled() else None
+        preview_url = self.get_preview_url()
+        context['preview_url'] = preview_url
+        context["preview_link_open"] = format_html(
+            '<strong><a href="{}" target="_blank">', preview_url
+        )
+        context["preview_link_close"] = mark_safe("</a></strong>")
         return context
 
     def post(self, request, *args, **kwargs):

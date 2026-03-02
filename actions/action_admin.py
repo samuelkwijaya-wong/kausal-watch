@@ -824,7 +824,7 @@ class ActionEditView(
             return
         for warning in draft_attributes.deserialization_warnings:
             if warning.attribute_type_name:
-                msg = _('Attribute "%(attribute_type)s": %(message)s') % {
+                msg = _('Field "%(attribute_type)s": %(message)s') % {
                     'attribute_type': warning.attribute_type_name,
                     'message': warning.message,
                 }

@@ -112,8 +112,8 @@ class PlanScopedModelLogEntry(BaseLogEntry):
 
     class Meta:
         ordering = ['-timestamp', '-id']
-        verbose_name = _('plan scoped model log entry')
-        verbose_name_plural = _('plan scoped model log entries')
+        verbose_name = _('plan-scoped model log entry')
+        verbose_name_plural = _('plan-scoped model log entries')
 
     def __str__(self):
         return 'PlanScopedModelLogEntry %d: \'%s\' on \'%s\' with id %s' % (
@@ -217,8 +217,8 @@ class PlanScopedPageLogEntry(BaseLogEntry):
 
     class Meta:
         ordering = ['-timestamp', '-id']
-        verbose_name = _('plan scoped page log entry')
-        verbose_name_plural = _('plan scoped page log entries')
+        verbose_name = _('plan-scoped page log entry')
+        verbose_name_plural = _('plan-scoped page log entries')
 
     def __str__(self):
         return 'PlanScopedPageLogEntry %d: \'%s\' on \'%s\' with id %s' % (

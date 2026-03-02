@@ -13,7 +13,7 @@
         <div class="nice-padding">
             {% if usage_info.has_usage %}
             <div class="help-block help-warning">
-                {% trans "This field is currently in use. Deleting it will remove attribute values from the following objects:" %}
+                {% trans "This field is currently in use. Deleting it will remove field values from the following objects:" %}
                 <ul>
                     {% if usage_info.published_count > 0 %}
                         {% include "aplans/_usage_tooltip_item.html" with label=usage_info.published_label names=usage_info.published_object_names %}

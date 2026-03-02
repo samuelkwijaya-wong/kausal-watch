@@ -325,18 +325,18 @@ class Indicator(
         unique=True,
         blank=True,
         null=True,
-        verbose_name=_('Node identifier'),  # TODO: change to Node UUID once it's actually a UUID
+        verbose_name=_("Node identifier"),  # TODO: change to Node UUID once it"s actually a UUID
         help_text=_("The node identifier of the node in Paths where this indicator's data is imported from."),
     )
 
     hide_indicator_graph = models.BooleanField(
         verbose_name=_('Hide graph'),
-        help_text=_("Do not show the graph for this indicator on the indicator's own page."),
+        help_text=_("Do not show the graph for this indicator on the indicator page."),
         default=False,
     )
     hide_indicator_table = models.BooleanField(
-        verbose_name=_('Hide table'),
-        help_text=_("Do not show this indicator's values in a table on the indicator's own page."),
+        verbose_name=_("Hide table"),
+        help_text=_("Do not show this indicator's values in a table on the indicator page."),
         default=False
     )
 

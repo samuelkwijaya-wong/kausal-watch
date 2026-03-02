@@ -7,7 +7,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import FieldDoesNotExist, ValidationError
 from django.db import models
 from django.utils import formats
-from django.utils.translation import gettext_lazy as _
+from django.utils.translation import gettext_lazy as _, pgettext_lazy
 from modelcluster.fields import ParentalKey
 from modelcluster.models import ClusterableModel
 from modeltrans.fields import TranslationField
@@ -276,7 +276,7 @@ class BaseChangeLogMessage(PlanRelatedModel):
         ordering = ('-created_at',)
 
     def get_str_template(self):
-        return _('%(verbose_name)s: "%(instance)s" (%(date)s).')
+        return pgettext_lazy('change log message', '%(verbose_name)s: "%(instance)s" (%(date)s).')
 
     def get_instance(self) -> models.Model:
         raise NotImplementedError()

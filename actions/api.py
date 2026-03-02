@@ -1138,7 +1138,7 @@ class ActionSerializer(  # type: ignore[misc]
         )
         if violating_roles:
             raise serializers.ValidationError(_(
-                'You do not have permission to change contact persons with role "%(role)s" on action "%(action)s."'
+                'You do not have permission to change contact persons with role "%(role)s" on action "%(action)s".'
             ) % {'role': violating_roles[0], 'action': self._instance})
         return value
 
@@ -1154,7 +1154,7 @@ class ActionSerializer(  # type: ignore[misc]
         )
         if violating_roles:
             raise serializers.ValidationError(_(
-                'You do not have permission to change responsible parties with role "%(role)s" on action "%(action)s."'
+                'You do not have permission to change responsible parties with role "%(role)s" on action "%(action)s".'
             ) % {'role': violating_roles[0], 'action': self._instance})
         return value
 
