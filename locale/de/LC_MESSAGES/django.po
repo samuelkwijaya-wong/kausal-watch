@@ -11,9 +11,10 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-03-02 12:22+0100\n"
-"PO-Revision-Date: 2026-03-02 11:21+0000\n"
+"PO-Revision-Date: 2026-03-02 13:21+0000\n"
 "Last-Translator: Bernhard Bliem <bernhard.bliem@kausal.tech>\n"
-"Language-Team: German <https://weblate.kausal.tech/projects/watch/django/de/>\n"
+"Language-Team: German <https://weblate.kausal.tech/projects/watch/django/de/>"
+"\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -70,10 +71,9 @@ msgid "Undo marking this action as complete for the report %s"
 msgstr "Mache das Markieren dieser Maßnahme als für den Bericht %s abgeschlossen rückgängig"
 
 #: actions/action_admin.py
-#, fuzzy, python-format
-#| msgid "%(attribute_type)s (text)"
+#, python-format
 msgid "Field \"%(attribute_type)s\": %(message)s"
-msgstr "%(attribute_type)s (Text)"
+msgstr "Feld „%(attribute_type)s“: %(message)s"
 
 #: actions/action_admin.py actions/apps.py actions/models/plan.py
 #: content/models.py indicators/wagtail_admin.py
@@ -300,16 +300,18 @@ msgid "Identifier already exists"
 msgstr "Kennung existiert bereits"
 
 #: actions/api.py
-#, fuzzy, python-format
-#| msgid "You do not have permission to change contact persons with role \"%(role)s\" on action \"%(action)s.\""
+#, python-format
 msgid "You do not have permission to change contact persons with role \"%(role)s\" on action \"%(action)s\"."
-msgstr "Sie haben keine Berechtigung, Ansprechpersonen mit der Rolle „%(role)s” für die Maßnahme „%(action)s” zu ändern."
+msgstr ""
+"Sie haben keine Berechtigung, Ansprechpersonen mit der Rolle „%(role)s” für "
+"die Maßnahme „%(action)s” zu ändern."
 
 #: actions/api.py
-#, fuzzy, python-format
-#| msgid "You do not have permission to change responsible parties with role \"%(role)s\" on action \"%(action)s.\""
+#, python-format
 msgid "You do not have permission to change responsible parties with role \"%(role)s\" on action \"%(action)s\"."
-msgstr "Sie haben keine Berechtigung, die zuständigen Stellen mit der Rolle „%(role)s” für die Maßnahme „%(action)s” zu ändern."
+msgstr ""
+"Sie haben keine Berechtigung, die zuständigen Stellen mit der Rolle „%(role)s"
+"” für die Maßnahme „%(action)s” zu ändern."
 
 #: actions/attribute_type_admin.py
 #, python-format
@@ -1493,7 +1495,7 @@ msgstr "Format"
 
 #: actions/models/attributes.py
 msgid "The format of the fields with this type"
-msgstr ""
+msgstr "Das Format der Felder dieses Typs"
 
 #: actions/models/attributes.py
 msgid "Unit (only if format is numeric)"
@@ -1544,26 +1546,22 @@ msgid "fields"
 msgstr "Felder"
 
 #: actions/models/attributes.py
-#, fuzzy
-#| msgid "Unit must only be used for numeric fields"
 msgid "A unit may only be set for numeric fields."
-msgstr "Einheit darf nur für numerische Felder verwendet werden"
+msgstr "Eine Einheit kann nur für numerische Felder festgelegt werden."
 
 #: actions/models/attributes.py
-#, fuzzy
-#| msgid "If no primary language is set, there must not be other languages"
 msgid "If no primary language is set, there may not be other languages."
-msgstr "Wenn keine Hauptsprache eingestellt ist, dürfen keine weiteren Sprachen vorhanden sein"
+msgstr ""
+"Wenn keine Hauptsprache eingestellt ist, dürfen keine weiteren Sprachen "
+"vorhanden sein."
 
 #: actions/models/attributes.py
-#, fuzzy
-#| msgid "This value is only allowed for action fields"
 msgid "This value is only allowed for action fields."
-msgstr "Dieser Wert ist nur für Maßnahmenfelder zulässig"
+msgstr "Dieser Wert ist nur für Maßnahmenfelder zulässig."
 
 #: actions/models/attributes.py
 msgid "The icon must be an SVG file."
-msgstr ""
+msgstr "Das Symbol muss eine SVG-Datei sein."
 
 #: actions/models/attributes.py
 msgid "attribute choice option"
@@ -2503,7 +2501,7 @@ msgstr "Teilnahmen"
 
 #: actions/pledge_admin.py
 msgid "Updated at"
-msgstr "Aktualisiert am"
+msgstr "Aktualisiert"
 
 #: actions/pledge_admin.py
 msgid "Community Impact Visualization"
@@ -2780,7 +2778,7 @@ msgstr "Plan zurückgezogen"
 
 #: actions/wagtail_hooks.py templates/modeladmin/create.html
 msgid "Actions"
-msgstr "Aktionen"
+msgstr "Maßnahmen"
 
 #: admin_site/api.py
 msgid "Invalid email address"
@@ -2927,8 +2925,7 @@ msgid "Please summarize the change you made. This message will be displayed publ
 msgstr "Fassen Sie die vorgenommene Änderung zusammen. Diese Nachricht wird öffentlich angezeigt."
 
 #: admin_site/models.py
-#, fuzzy, python-format
-#| msgid "%(verbose_name)s: \"%(instance)s\" (%(date)s)."
+#, python-format
 msgctxt "change log message"
 msgid "%(verbose_name)s: \"%(instance)s\" (%(date)s)."
 msgstr "%(verbose_name)s: \"%(instance)s\" (%(date)s)."
@@ -3250,26 +3247,18 @@ msgid "Latest change history message"
 msgstr "Letzter Eintrag im Änderungsverlauf"
 
 #: audit_logging/models.py
-#, fuzzy
-#| msgid "plan scoped model log entry"
 msgid "plan-scoped model log entry"
 msgstr "Plangebundener Modellprotokolleintrag"
 
 #: audit_logging/models.py
-#, fuzzy
-#| msgid "plan scoped model log entries"
 msgid "plan-scoped model log entries"
 msgstr "Plangebundene Modellprotokolleinträge"
 
 #: audit_logging/models.py
-#, fuzzy
-#| msgid "plan scoped page log entry"
 msgid "plan-scoped page log entry"
 msgstr "Plangebundener Seitenprotokolleintrag"
 
 #: audit_logging/models.py
-#, fuzzy
-#| msgid "plan scoped page log entries"
 msgid "plan-scoped page log entries"
 msgstr "Plangebundene Seitenprotokolleinträge"
 
@@ -4231,20 +4220,18 @@ msgid "Hide graph"
 msgstr "Graph ausblenden"
 
 #: indicators/models/indicator.py
-#, fuzzy
-#| msgid "Choose how to order indicators in the action pages"
 msgid "Do not show the graph for this indicator on the indicator page."
-msgstr "Wählen Sie, wie die Indikatoren auf den Maßnahmenseiten sortiert werden sollen"
+msgstr "Zeige den Graphen für diesen Indikator nicht auf der Indikatorseite an."
 
 #: indicators/models/indicator.py
 msgid "Hide table"
-msgstr "Tabelle ausblenden"
+msgstr "Datentabelle ausblenden"
 
 #: indicators/models/indicator.py
-#, fuzzy
-#| msgid "Choose how to order indicators in the action pages"
 msgid "Do not show this indicator's values in a table on the indicator page."
-msgstr "Wählen Sie, wie die Indikatoren auf den Maßnahmenseiten sortiert werden sollen"
+msgstr ""
+"Die Werte dieses Indikators nicht in einer Tabelle auf der Indikatorseite "
+"anzeigen."
 
 #: indicators/models/indicator.py
 msgid "Has datasets"
@@ -5787,10 +5774,11 @@ msgid "Show in reporting tab"
 msgstr "In Registerkarte \"Berichterstattung\" anzeigen"
 
 #: reports/models.py
-#, fuzzy
-#| msgid "Set if the values from this report should be shown in reporting tab when editing the action. The values are shown only if this report has been marked as complete."
 msgid "Set if the values from this report should be shown in the reporting tab when editing the action. The values are shown only if this report has been marked as complete."
-msgstr "Setzen, wenn die Werte aus diesem Bericht bei der Bearbeitung der Maßnahme in der Registerkarte „Berichterstattung“ angezeigt werden sollen. Die Werte werden nur angezeigt, wenn dieser Bericht als abgeschlossen markiert wurde."
+msgstr ""
+"Setzen, wenn die Werte aus diesem Bericht bei der Bearbeitung der Maßnahme "
+"in der Registerkarte „Berichterstattung“ angezeigt werden sollen. Die Werte "
+"werden nur angezeigt, wenn dieser Bericht als abgeschlossen markiert wurde."
 
 #: reports/models.py
 msgid "report"
@@ -5985,10 +5973,10 @@ msgid "... %(remaining)s more"
 msgstr "... %(remaining)s weitere"
 
 #: templates/aplans/attribute_type_delete.html
-#, fuzzy
-#| msgid "This field is currently in use. Deleting it will remove attribute values from the following objects:"
 msgid "This field is currently in use. Deleting it will remove field values from the following objects:"
-msgstr "Dieses Feld wird derzeit verwendet. Durch das Löschen werden Werte in Feldern aus den folgenden Objekten entfernt:"
+msgstr ""
+"Dieses Feld wird derzeit verwendet. Durch das Löschen werden Werte in "
+"Feldern aus den folgenden Objekten entfernt:"
 
 #: templates/aplans/attribute_type_delete.html
 msgid "If you would like to keep the current value in reports even after deleting this field, please mark the reports as complete."
@@ -6038,18 +6026,22 @@ msgstr "Kausal-Paths-Instanz"
 #, python-format
 msgid "This plan is already scheduled for publication: %(bold_open)s%(info)s%(bold_close)s. Publishing now will override the scheduled date and make the plan public immediately."
 msgstr ""
+"Die Veröffentlichung dieses Plans ist bereits geplant: %(bold_open)s%(info)s%"
+"(bold_close)s. Durch die sofortige Veröffentlichung wird das geplante Datum "
+"außer Kraft gesetzt und der Plan sofort öffentlich zugänglich gemacht."
 
 #: templates/aplans/plan_publish_confirmation.html
-#, fuzzy
-#| msgid "The plan is already published."
 msgctxt "URLs"
 msgid "The plan will be published at:"
-msgstr "Der Plan ist bereits veröffentlicht."
+msgstr "Der Plan wird veröffentlicht unter:"
 
 #: templates/aplans/plan_publish_confirmation.html
 #, python-format
 msgid "This plan will only be published at %(preview_link_open)s%(preview_url)s%(preview_link_close)s because no production domains have been configured."
 msgstr ""
+"Dieser Plan wird nur unter %(preview_link_open)s%(preview_url)s%"
+"(preview_link_close)s veröffentlicht, da keine Produktionsdomänen "
+"konfiguriert wurden."
 
 #: templates/aplans/plan_publish_confirmation.html
 msgid "No production domains have been configured for this plan."
