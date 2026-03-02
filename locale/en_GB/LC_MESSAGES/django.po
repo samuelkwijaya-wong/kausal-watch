@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-02-26 17:48+0100\n"
+"POT-Creation-Date: 2026-03-02 12:22+0100\n"
 "PO-Revision-Date: 2025-04-02 07:20+0000\n"
 "Last-Translator: Matias Wargelin <matias.wargelin@kausal.tech>\n"
 "Language-Team: English (United Kingdom) <https://weblate.kausal.tech/projects/watch/django/en_GB/>\n"
@@ -71,7 +71,7 @@ msgstr ""
 
 #: actions/action_admin.py
 #, python-format
-msgid "Attribute \"%(attribute_type)s\": %(message)s"
+msgid "Field \"%(attribute_type)s\": %(message)s"
 msgstr ""
 
 #: actions/action_admin.py actions/apps.py actions/models/plan.py
@@ -130,6 +130,18 @@ msgstr ""
 
 #: actions/action_admin.py
 msgid "Dependencies"
+msgstr ""
+
+#: actions/action_admin.py
+msgid "Resubmit for moderation"
+msgstr ""
+
+#: actions/action_admin.py
+msgid "Cancel moderation"
+msgstr ""
+
+#: actions/action_admin.py orgs/wagtail_admin.py templates/modeladmin/edit.html
+msgid "Delete"
 msgstr ""
 
 #: actions/action_admin_mixins.py
@@ -288,20 +300,12 @@ msgstr ""
 
 #: actions/api.py
 #, python-format
-msgid "You do not have permission to change contact persons with role \"%(role)s\" on action \"%(action)s.\""
+msgid "You do not have permission to change contact persons with role \"%(role)s\" on action \"%(action)s\"."
 msgstr ""
 
 #: actions/api.py
 #, python-format
-msgid "You do not have permission to change responsible parties with role \"%(role)s\" on action \"%(action)s.\""
-msgstr ""
-
-#: actions/apps.py
-msgid "Resubmit for moderation"
-msgstr ""
-
-#: actions/apps.py
-msgid "Cancel moderation"
+msgid "You do not have permission to change responsible parties with role \"%(role)s\" on action \"%(action)s\"."
 msgstr ""
 
 #: actions/attribute_type_admin.py
@@ -1513,7 +1517,7 @@ msgid "Format"
 msgstr ""
 
 #: actions/models/attributes.py
-msgid "The format of the attributes with this type"
+msgid "The format of the fields with this type"
 msgstr ""
 
 #: actions/models/attributes.py
@@ -1565,19 +1569,19 @@ msgid "fields"
 msgstr ""
 
 #: actions/models/attributes.py
-msgid "Unit must only be used for numeric fields"
+msgid "A unit may only be set for numeric fields."
 msgstr ""
 
 #: actions/models/attributes.py
-msgid "If no primary language is set, there must not be other languages"
+msgid "If no primary language is set, there may not be other languages."
 msgstr ""
 
 #: actions/models/attributes.py
-msgid "This value is only allowed for action fields"
+msgid "This value is only allowed for action fields."
 msgstr ""
 
 #: actions/models/attributes.py
-msgid "Icon must be an SVG file"
+msgid "The icon must be an SVG file."
 msgstr ""
 
 #: actions/models/attributes.py
@@ -2837,6 +2841,12 @@ msgstr ""
 msgid "Plan unpublished"
 msgstr ""
 
+#: actions/wagtail_hooks.py templates/modeladmin/create.html
+#, fuzzy
+#| msgid "Organizations"
+msgid "Actions"
+msgstr "Organisations"
+
 #: admin_site/api.py
 msgid "Invalid email address"
 msgstr ""
@@ -2985,6 +2995,7 @@ msgstr ""
 
 #: admin_site/models.py
 #, python-format
+msgctxt "change log message"
 msgid "%(verbose_name)s: \"%(instance)s\" (%(date)s)."
 msgstr ""
 
@@ -3314,19 +3325,19 @@ msgid "Latest change history message"
 msgstr "Action and indicator categorisation"
 
 #: audit_logging/models.py
-msgid "plan scoped model log entry"
+msgid "plan-scoped model log entry"
 msgstr ""
 
 #: audit_logging/models.py
-msgid "plan scoped model log entries"
+msgid "plan-scoped model log entries"
 msgstr ""
 
 #: audit_logging/models.py
-msgid "plan scoped page log entry"
+msgid "plan-scoped page log entry"
 msgstr ""
 
 #: audit_logging/models.py
-msgid "plan scoped page log entries"
+msgid "plan-scoped page log entries"
 msgstr ""
 
 #: audit_logging/models.py
@@ -4315,7 +4326,7 @@ msgstr ""
 #: indicators/models/indicator.py
 #, fuzzy
 #| msgid "usable for indicator categorization"
-msgid "Do not show the graph for this indicator on the indicator's own page."
+msgid "Do not show the graph for this indicator on the indicator page."
 msgstr "usable for indicator categorisation"
 
 #: indicators/models/indicator.py
@@ -4323,8 +4334,10 @@ msgid "Hide table"
 msgstr ""
 
 #: indicators/models/indicator.py
-msgid "Do not show this indicator's values in a table on the indicator's own page."
-msgstr ""
+#, fuzzy
+#| msgid "usable for indicator categorization"
+msgid "Do not show this indicator's values in a table on the indicator page."
+msgstr "usable for indicator categorisation"
 
 #: indicators/models/indicator.py
 msgid "Has datasets"
@@ -5159,10 +5172,6 @@ msgstr ""
 msgid "Copy '%(title)s'"
 msgstr ""
 
-#: orgs/wagtail_admin.py templates/modeladmin/edit.html
-msgid "Delete"
-msgstr ""
-
 #: orgs/wagtail_admin.py
 #, python-format
 msgid "Delete '%(title)s'"
@@ -5921,7 +5930,7 @@ msgid "Show in reporting tab"
 msgstr ""
 
 #: reports/models.py
-msgid "Set if the values from this report should be shown in reporting tab when editing the action. The values are shown only if this report has been marked as complete."
+msgid "Set if the values from this report should be shown in the reporting tab when editing the action. The values are shown only if this report has been marked as complete."
 msgstr ""
 
 #: reports/models.py
@@ -6119,7 +6128,7 @@ msgid "... %(remaining)s more"
 msgstr ""
 
 #: templates/aplans/attribute_type_delete.html
-msgid "This field is currently in use. Deleting it will remove attribute values from the following objects:"
+msgid "This field is currently in use. Deleting it will remove field values from the following objects:"
 msgstr ""
 
 #: templates/aplans/attribute_type_delete.html
@@ -6172,16 +6181,17 @@ msgstr ""
 
 #: templates/aplans/plan_publish_confirmation.html
 #, python-format
-msgid "This plan is already scheduled for publication: <strong>%(info)s</strong>. Publishing now will override the scheduled date and make the plan public immediately."
+msgid "This plan is already scheduled for publication: %(bold_open)s%(info)s%(bold_close)s. Publishing now will override the scheduled date and make the plan public immediately."
 msgstr ""
 
 #: templates/aplans/plan_publish_confirmation.html
-msgid "The plan will be published to:"
+msgctxt "URLs"
+msgid "The plan will be published at:"
 msgstr ""
 
 #: templates/aplans/plan_publish_confirmation.html
 #, python-format
-msgid "This plan will only be published at <strong><a href=\"%(preview_url)s\" target=\"_blank\">%(preview_url)s</a></strong> because no production domains have been configured."
+msgid "This plan will only be published at %(preview_link_open)s%(preview_url)s%(preview_link_close)s because no production domains have been configured."
 msgstr ""
 
 #: templates/aplans/plan_publish_confirmation.html
@@ -6203,16 +6213,6 @@ msgstr ""
 #: templates/aplans/plan_publish_confirmation.html
 msgid "Cancel"
 msgstr ""
-
-#: templates/modeladmin/create.html templates/modeladmin/edit.html
-msgid "This page has unsaved changes."
-msgstr ""
-
-#: templates/modeladmin/create.html
-#, fuzzy
-#| msgid "Organizations"
-msgid "Actions"
-msgstr "Organisations"
 
 #: templates/modeladmin/create.html templates/modeladmin/edit.html
 msgid "Saving…"

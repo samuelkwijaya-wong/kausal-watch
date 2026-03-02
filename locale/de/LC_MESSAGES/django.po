@@ -10,11 +10,10 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-02-26 17:48+0100\n"
+"POT-Creation-Date: 2026-03-02 12:22+0100\n"
 "PO-Revision-Date: 2026-03-02 11:21+0000\n"
 "Last-Translator: Bernhard Bliem <bernhard.bliem@kausal.tech>\n"
-"Language-Team: German <https://weblate.kausal.tech/projects/watch/django/de/>"
-"\n"
+"Language-Team: German <https://weblate.kausal.tech/projects/watch/django/de/>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -73,7 +72,7 @@ msgstr "Mache das Markieren dieser Maßnahme als für den Bericht %s abgeschloss
 #: actions/action_admin.py
 #, fuzzy, python-format
 #| msgid "%(attribute_type)s (text)"
-msgid "Attribute \"%(attribute_type)s\": %(message)s"
+msgid "Field \"%(attribute_type)s\": %(message)s"
 msgstr "%(attribute_type)s (Text)"
 
 #: actions/action_admin.py actions/apps.py actions/models/plan.py
@@ -133,6 +132,18 @@ msgstr "Abhängige Maßnahmen"
 #: actions/action_admin.py
 msgid "Dependencies"
 msgstr "Abhängigkeiten"
+
+#: actions/action_admin.py
+msgid "Resubmit for moderation"
+msgstr "Erneut zur Moderation vorlegen"
+
+#: actions/action_admin.py
+msgid "Cancel moderation"
+msgstr "Moderation abbrechen"
+
+#: actions/action_admin.py orgs/wagtail_admin.py templates/modeladmin/edit.html
+msgid "Delete"
+msgstr "Löschen"
 
 #: actions/action_admin_mixins.py
 #, python-format
@@ -289,26 +300,16 @@ msgid "Identifier already exists"
 msgstr "Kennung existiert bereits"
 
 #: actions/api.py
-#, python-format
-msgid "You do not have permission to change contact persons with role \"%(role)s\" on action \"%(action)s.\""
-msgstr ""
-"Sie haben keine Berechtigung, Ansprechpersonen mit der Rolle „%(role)s” für "
-"die Maßnahme „%(action)s” zu ändern."
+#, fuzzy, python-format
+#| msgid "You do not have permission to change contact persons with role \"%(role)s\" on action \"%(action)s.\""
+msgid "You do not have permission to change contact persons with role \"%(role)s\" on action \"%(action)s\"."
+msgstr "Sie haben keine Berechtigung, Ansprechpersonen mit der Rolle „%(role)s” für die Maßnahme „%(action)s” zu ändern."
 
 #: actions/api.py
-#, python-format
-msgid "You do not have permission to change responsible parties with role \"%(role)s\" on action \"%(action)s.\""
-msgstr ""
-"Sie haben keine Berechtigung, die zuständigen Stellen mit der Rolle „%(role)s"
-"” für die Maßnahme „%(action)s” zu ändern."
-
-#: actions/apps.py
-msgid "Resubmit for moderation"
-msgstr "Erneut zur Moderation vorlegen"
-
-#: actions/apps.py
-msgid "Cancel moderation"
-msgstr "Moderation abbrechen"
+#, fuzzy, python-format
+#| msgid "You do not have permission to change responsible parties with role \"%(role)s\" on action \"%(action)s.\""
+msgid "You do not have permission to change responsible parties with role \"%(role)s\" on action \"%(action)s\"."
+msgstr "Sie haben keine Berechtigung, die zuständigen Stellen mit der Rolle „%(role)s” für die Maßnahme „%(action)s” zu ändern."
 
 #: actions/attribute_type_admin.py
 #, python-format
@@ -395,9 +396,7 @@ msgstr "Allgemein"
 
 #: actions/attributes.py
 msgid "A choice option used in this draft no longer exists. The selection has been cleared."
-msgstr ""
-"Eine in diesem Entwurf verwendete Wahlmöglichkeit existiert nicht mehr. Die "
-"Auswahl wurde gelöscht."
+msgstr "Eine in diesem Entwurf verwendete Wahlmöglichkeit existiert nicht mehr. Die Auswahl wurde gelöscht."
 
 #: actions/attributes.py
 #, python-format
@@ -416,9 +415,7 @@ msgstr "%(attribute_type)s"
 
 #: actions/attributes.py
 msgid "A field used in this draft no longer exists. The field and its value have been removed from the draft."
-msgstr ""
-"Ein in diesem Entwurf verwendetes Feld existiert nicht mehr. Das Feld und "
-"sein Wert wurden aus dem Entwurf entfernt."
+msgstr "Ein in diesem Entwurf verwendetes Feld existiert nicht mehr. Das Feld und sein Wert wurden aus dem Entwurf entfernt."
 
 #: actions/blocks/__init__.py
 msgid "Related plans"
@@ -1495,7 +1492,7 @@ msgid "Format"
 msgstr "Format"
 
 #: actions/models/attributes.py
-msgid "The format of the attributes with this type"
+msgid "The format of the fields with this type"
 msgstr ""
 
 #: actions/models/attributes.py
@@ -1547,19 +1544,25 @@ msgid "fields"
 msgstr "Felder"
 
 #: actions/models/attributes.py
-msgid "Unit must only be used for numeric fields"
+#, fuzzy
+#| msgid "Unit must only be used for numeric fields"
+msgid "A unit may only be set for numeric fields."
 msgstr "Einheit darf nur für numerische Felder verwendet werden"
 
 #: actions/models/attributes.py
-msgid "If no primary language is set, there must not be other languages"
+#, fuzzy
+#| msgid "If no primary language is set, there must not be other languages"
+msgid "If no primary language is set, there may not be other languages."
 msgstr "Wenn keine Hauptsprache eingestellt ist, dürfen keine weiteren Sprachen vorhanden sein"
 
 #: actions/models/attributes.py
-msgid "This value is only allowed for action fields"
+#, fuzzy
+#| msgid "This value is only allowed for action fields"
+msgid "This value is only allowed for action fields."
 msgstr "Dieser Wert ist nur für Maßnahmenfelder zulässig"
 
 #: actions/models/attributes.py
-msgid "Icon must be an SVG file"
+msgid "The icon must be an SVG file."
 msgstr ""
 
 #: actions/models/attributes.py
@@ -1781,8 +1784,7 @@ msgstr "Sollen Benutzer authentifizierte Sitzungen in der öffentlichen Oberflä
 
 #: actions/models/features.py
 msgid "Expose unpublished plan only to authenticated users"
-msgstr ""
-"Unveröffentlichten Plan nur authentifizierten Benutzern zugänglich machen"
+msgstr "Unveröffentlichten Plan nur authentifizierten Benutzern zugänglich machen"
 
 #: actions/models/features.py
 msgid "Should the plan be exposed only to authenticated users if not published?"
@@ -1950,9 +1952,7 @@ msgstr "Bürgerengagement aktivieren"
 
 #: actions/models/features.py
 msgid "Enable community engagement features such as pledges for this plan."
-msgstr ""
-"Aktiviere Funktionen für das Bürgerengagement, wie z. B. Mitmach-Aktionen, "
-"für diesen Plan."
+msgstr "Aktiviere Funktionen für das Bürgerengagement, wie z. B. Mitmach-Aktionen, für diesen Plan."
 
 #: actions/models/features.py
 msgid "plan feature"
@@ -2395,17 +2395,11 @@ msgstr "Slug"
 
 #: actions/models/pledge.py
 msgid "The unique part of the page's URL, usually based on the title. Use lowercase letters, numbers, and hyphens only (e.g., turn-off-electronics)."
-msgstr ""
-"Der eindeutige Teil der URL der Seite, der in der Regel auf dem Titel "
-"basiert. Verwenden Sie nur Kleinbuchstaben, Zahlen und Bindestriche (z. B. "
-"elektronische-geraete-ausschalten)."
+msgstr "Der eindeutige Teil der URL der Seite, der in der Regel auf dem Titel basiert. Verwenden Sie nur Kleinbuchstaben, Zahlen und Bindestriche (z. B. elektronische-geraete-ausschalten)."
 
 #: actions/models/pledge.py
 msgid "Brief description shown on pledge cards and at the top of the pledge page. Keep it under 2-3 sentences. Use the body content below for additional details."
-msgstr ""
-"Kurzbeschreibung auf den Karten für Mitmach-Aktionen und oben auf der "
-"Mitmach-Aktionen-Seite. Beschränken Sie sich auf 2–3 Sätze. Verwenden Sie "
-"den Textkörper unten für weitere Details."
+msgstr "Kurzbeschreibung auf den Karten für Mitmach-Aktionen und oben auf der Mitmach-Aktionen-Seite. Beschränken Sie sich auf 2–3 Sätze. Verwenden Sie den Textkörper unten für weitere Details."
 
 #: actions/models/pledge.py images/models.py
 msgid "image"
@@ -2425,10 +2419,7 @@ msgstr "Anzahl engagierter Einwohner"
 
 #: actions/models/pledge.py
 msgid "Choose a round number that makes the math easy but feels achievable (e.g., 50, 100, 200). This is used in the \"If [X] residents commit...\" messaging."
-msgstr ""
-"Wählen Sie eine runde Zahl, die einfache Berechnungen ermöglicht, aber "
-"dennoch erreichbar erscheint (z. B. 50, 100, 200). Diese Zahl wird in der "
-"Nachricht „Wenn [X] Einwohner mitmachen, ...” verwendet."
+msgstr "Wählen Sie eine runde Zahl, die einfache Berechnungen ermöglicht, aber dennoch erreichbar erscheint (z. B. 50, 100, 200). Diese Zahl wird in der Nachricht „Wenn [X] Einwohner mitmachen, ...” verwendet."
 
 #: actions/models/pledge.py
 msgid "environmental impact at scale"
@@ -2436,11 +2427,7 @@ msgstr "Umweltauswirkungen in großem Maßstab"
 
 #: actions/models/pledge.py
 msgid "Describe the total environmental benefit if this many residents commit. Include specific numbers and units. Start with \"We save\" or \"We reduce\" for consistency. Example: \"We save 9,200kg CO₂e each year.\""
-msgstr ""
-"Beschreiben Sie den gesamten Umweltnutzen, wenn diese Anzahl von Einwohnern "
-"mitmacht. Geben Sie konkrete Zahlen und Einheiten an. Beginnen Sie aus "
-"Gründen der Einheitlichkeit mit „Wir sparen“ oder „Wir reduzieren“. "
-"Beispiel: „Wir sparen jährlich 9.200 kg CO₂e.“"
+msgstr "Beschreiben Sie den gesamten Umweltnutzen, wenn diese Anzahl von Einwohnern mitmacht. Geben Sie konkrete Zahlen und Einheiten an. Beginnen Sie aus Gründen der Einheitlichkeit mit „Wir sparen“ oder „Wir reduzieren“. Beispiel: „Wir sparen jährlich 9.200 kg CO₂e.“"
 
 #: actions/models/pledge.py
 msgid "local equivalency comparison"
@@ -2448,13 +2435,7 @@ msgstr "lokaler Äquivalenzvergleich"
 
 #: actions/models/pledge.py
 msgid "Translate the environmental impact into something relatable and specific to your community. Use local landmarks, familiar distances, or everyday activities. Start with \"That's equivalent to\" or \"That's like\" for consistency. Example: \"That's equivalent to avoiding 575 round trips between City Hall and the waterfront.\""
-msgstr ""
-"Übersetzen Sie die Umweltauswirkungen in etwas, das für Ihre Gemeinde "
-"nachvollziehbar und konkret ist. Verwenden Sie lokale Sehenswürdigkeiten, "
-"bekannte Entfernungen oder alltägliche Aktivitäten. Beginnen Sie mit „Das "
-"entspricht“ oder „Das ist wie“, um Konsistenz zu gewährleisten. Beispiel: „"
-"Das entspricht einer Einsparung von 575 Hin- und Rückfahrten zwischen dem "
-"Rathaus und der Uferpromenade.“"
+msgstr "Übersetzen Sie die Umweltauswirkungen in etwas, das für Ihre Gemeinde nachvollziehbar und konkret ist. Verwenden Sie lokale Sehenswürdigkeiten, bekannte Entfernungen oder alltägliche Aktivitäten. Beginnen Sie mit „Das entspricht“ oder „Das ist wie“, um Konsistenz zu gewährleisten. Beispiel: „Das entspricht einer Einsparung von 575 Hin- und Rückfahrten zwischen dem Rathaus und der Uferpromenade.“"
 
 #: actions/models/pledge.py
 msgid "actions"
@@ -2638,10 +2619,7 @@ msgstr "Allgemeine Administratoren"
 
 #: actions/wagtail_admin.py
 msgid "Only set if explicitly required by the customer. Use a color key from the UI theme's graphColors, for example red070 or grey030."
-msgstr ""
-"Nur setzen, wenn vom Kunden ausdrücklich gewünscht. Verwenden Sie einen "
-"Farbschlüssel aus den graphColors des UI-Themas, zum Beispiel red070 oder "
-"grey030."
+msgstr "Nur setzen, wenn vom Kunden ausdrücklich gewünscht. Verwenden Sie einen Farbschlüssel aus den graphColors des UI-Themas, zum Beispiel red070 oder grey030."
 
 #: actions/wagtail_admin.py
 msgid "Domains"
@@ -2748,16 +2726,12 @@ msgstr "Zurückziehung von %(plan)s bestätigen"
 #: actions/wagtail_admin.py
 #, python-format
 msgid "Do you want to publish the plan '%(plan)s'? This will make it publicly accessible."
-msgstr ""
-"Möchten Sie den Plan „%(plan)s” veröffentlichen? Dadurch wird er öffentlich "
-"zugänglich."
+msgstr "Möchten Sie den Plan „%(plan)s” veröffentlichen? Dadurch wird er öffentlich zugänglich."
 
 #: actions/wagtail_admin.py
 #, python-format
 msgid "Do you want to unpublish the plan '%(plan)s'? This will make it inaccessible to the public."
-msgstr ""
-"Möchten Sie den Plan „%(plan)s” zurückziehen? Dadurch wird er für die "
-"Öffentlichkeit nicht mehr zugänglich sein."
+msgstr "Möchten Sie den Plan „%(plan)s” zurückziehen? Dadurch wird er für die Öffentlichkeit nicht mehr zugänglich sein."
 
 #: actions/wagtail_admin.py
 msgid "The plan is already published."
@@ -2803,6 +2777,10 @@ msgstr "Plan veröffentlicht"
 #: actions/wagtail_hooks.py
 msgid "Plan unpublished"
 msgstr "Plan zurückgezogen"
+
+#: actions/wagtail_hooks.py templates/modeladmin/create.html
+msgid "Actions"
+msgstr "Aktionen"
 
 #: admin_site/api.py
 msgid "Invalid email address"
@@ -2949,7 +2927,9 @@ msgid "Please summarize the change you made. This message will be displayed publ
 msgstr "Fassen Sie die vorgenommene Änderung zusammen. Diese Nachricht wird öffentlich angezeigt."
 
 #: admin_site/models.py
-#, python-format
+#, fuzzy, python-format
+#| msgid "%(verbose_name)s: \"%(instance)s\" (%(date)s)."
+msgctxt "change log message"
 msgid "%(verbose_name)s: \"%(instance)s\" (%(date)s)."
 msgstr "%(verbose_name)s: \"%(instance)s\" (%(date)s)."
 
@@ -3270,19 +3250,27 @@ msgid "Latest change history message"
 msgstr "Letzter Eintrag im Änderungsverlauf"
 
 #: audit_logging/models.py
-msgid "plan scoped model log entry"
+#, fuzzy
+#| msgid "plan scoped model log entry"
+msgid "plan-scoped model log entry"
 msgstr "Plangebundener Modellprotokolleintrag"
 
 #: audit_logging/models.py
-msgid "plan scoped model log entries"
+#, fuzzy
+#| msgid "plan scoped model log entries"
+msgid "plan-scoped model log entries"
 msgstr "Plangebundene Modellprotokolleinträge"
 
 #: audit_logging/models.py
-msgid "plan scoped page log entry"
+#, fuzzy
+#| msgid "plan scoped page log entry"
+msgid "plan-scoped page log entry"
 msgstr "Plangebundener Seitenprotokolleintrag"
 
 #: audit_logging/models.py
-msgid "plan scoped page log entries"
+#, fuzzy
+#| msgid "plan scoped page log entries"
+msgid "plan-scoped page log entries"
 msgstr "Plangebundene Seitenprotokolleinträge"
 
 #: audit_logging/models.py
@@ -3499,11 +3487,7 @@ msgstr "Indikatoren kopieren"
 
 #: copying/views.py
 msgid "Set if indicators should be copied instead of being shared with the original plan. Indicators can only be copied if no indicator is shared with another plan or is an instance of a common indicator."
-msgstr ""
-"Setzen, wenn Indikatoren kopiert werden sollen, anstatt sie mit dem "
-"ursprünglichen Plan zu teilen. Indikatoren können nur kopiert werden, wenn "
-"kein Indikator mit einem anderen Plan geteilt wird oder eine Instanz eines "
-"gemeinsamen Indikators ist."
+msgstr "Setzen, wenn Indikatoren kopiert werden sollen, anstatt sie mit dem ursprünglichen Plan zu teilen. Indikatoren können nur kopiert werden, wenn kein Indikator mit einem anderen Plan geteilt wird oder eine Instanz eines gemeinsamen Indikators ist."
 
 #: copying/views.py
 msgid "A plan with this identifier already exists"
@@ -3746,9 +3730,7 @@ msgstr "Animiert"
 
 #: indicators/blocks/__init__.py
 msgid "How many significants digits to use for the values displayed"
-msgstr ""
-"Wie viele signifikante Stellen für die angezeigten Werte verwendet werden "
-"sollen"
+msgstr "Wie viele signifikante Stellen für die angezeigten Werte verwendet werden sollen"
 
 #: indicators/blocks/__init__.py
 msgid "Indicator showcase"
@@ -4251,7 +4233,7 @@ msgstr "Graph ausblenden"
 #: indicators/models/indicator.py
 #, fuzzy
 #| msgid "Choose how to order indicators in the action pages"
-msgid "Do not show the graph for this indicator on the indicator's own page."
+msgid "Do not show the graph for this indicator on the indicator page."
 msgstr "Wählen Sie, wie die Indikatoren auf den Maßnahmenseiten sortiert werden sollen"
 
 #: indicators/models/indicator.py
@@ -4259,8 +4241,10 @@ msgid "Hide table"
 msgstr "Tabelle ausblenden"
 
 #: indicators/models/indicator.py
-msgid "Do not show this indicator's values in a table on the indicator's own page."
-msgstr ""
+#, fuzzy
+#| msgid "Choose how to order indicators in the action pages"
+msgid "Do not show this indicator's values in a table on the indicator page."
+msgstr "Wählen Sie, wie die Indikatoren auf den Maßnahmenseiten sortiert werden sollen"
 
 #: indicators/models/indicator.py
 msgid "Has datasets"
@@ -5073,10 +5057,6 @@ msgstr "Kopieren"
 msgid "Copy '%(title)s'"
 msgstr "Kopiere '%(title)s'"
 
-#: orgs/wagtail_admin.py templates/modeladmin/edit.html
-msgid "Delete"
-msgstr "Löschen"
-
 #: orgs/wagtail_admin.py
 #, python-format
 msgid "Delete '%(title)s'"
@@ -5784,9 +5764,7 @@ msgstr "Berichtstypen"
 #: reports/models.py
 #, python-format
 msgid "Duplicate fields detected: %(duplicates)s. Each field type (attribute type, category type) can only be added once."
-msgstr ""
-"Doppelte Felder erkannt: %(duplicates)s. Jeder Feldtyp (Feld, Kategorietyp) "
-"kann nur einmal hinzugefügt werden."
+msgstr "Doppelte Felder erkannt: %(duplicates)s. Jeder Feldtyp (Feld, Kategorietyp) kann nur einmal hinzugefügt werden."
 
 #: reports/models.py reports/spreadsheets/excel_report.py
 msgid "complete"
@@ -5809,11 +5787,10 @@ msgid "Show in reporting tab"
 msgstr "In Registerkarte \"Berichterstattung\" anzeigen"
 
 #: reports/models.py
-msgid "Set if the values from this report should be shown in reporting tab when editing the action. The values are shown only if this report has been marked as complete."
-msgstr ""
-"Setzen, wenn die Werte aus diesem Bericht bei der Bearbeitung der Maßnahme "
-"in der Registerkarte „Berichterstattung“ angezeigt werden sollen. Die Werte "
-"werden nur angezeigt, wenn dieser Bericht als abgeschlossen markiert wurde."
+#, fuzzy
+#| msgid "Set if the values from this report should be shown in reporting tab when editing the action. The values are shown only if this report has been marked as complete."
+msgid "Set if the values from this report should be shown in the reporting tab when editing the action. The values are shown only if this report has been marked as complete."
+msgstr "Setzen, wenn die Werte aus diesem Bericht bei der Bearbeitung der Maßnahme in der Registerkarte „Berichterstattung“ angezeigt werden sollen. Die Werte werden nur angezeigt, wenn dieser Bericht als abgeschlossen markiert wurde."
 
 #: reports/models.py
 msgid "report"
@@ -6008,16 +5985,14 @@ msgid "... %(remaining)s more"
 msgstr "... %(remaining)s weitere"
 
 #: templates/aplans/attribute_type_delete.html
-msgid "This field is currently in use. Deleting it will remove attribute values from the following objects:"
-msgstr ""
-"Dieses Feld wird derzeit verwendet. Durch das Löschen werden Werte in "
-"Feldern aus den folgenden Objekten entfernt:"
+#, fuzzy
+#| msgid "This field is currently in use. Deleting it will remove attribute values from the following objects:"
+msgid "This field is currently in use. Deleting it will remove field values from the following objects:"
+msgstr "Dieses Feld wird derzeit verwendet. Durch das Löschen werden Werte in Feldern aus den folgenden Objekten entfernt:"
 
 #: templates/aplans/attribute_type_delete.html
 msgid "If you would like to keep the current value in reports even after deleting this field, please mark the reports as complete."
-msgstr ""
-"Wenn Sie den aktuellen Wert in Berichten auch nach dem Löschen dieses Feldes "
-"beibehalten möchten, markieren Sie die Berichte bitte als abgeschlossen."
+msgstr "Wenn Sie den aktuellen Wert in Berichten auch nach dem Löschen dieses Feldes beibehalten möchten, markieren Sie die Berichte bitte als abgeschlossen."
 
 #: templates/aplans/change_log_message_create.html
 msgid "Current change history message"
@@ -6029,22 +6004,15 @@ msgstr "Überspringen"
 
 #: templates/aplans/panels/choice_option_usage_panel.html
 msgid "This choice option is currently in use. Changing or deleting it will affect the following objects:"
-msgstr ""
-"Diese Wahlmöglichkeit wird derzeit verwendet. Eine Änderung oder Löschung "
-"wirkt sich auf folgende Objekte aus:"
+msgstr "Diese Wahlmöglichkeit wird derzeit verwendet. Eine Änderung oder Löschung wirkt sich auf folgende Objekte aus:"
 
 #: templates/aplans/panels/choice_option_usage_panel.html
 msgid "Changing (or deleting) this choice option will change (or delete) the choice in all these objects."
-msgstr ""
-"Durch Ändern (oder Löschen) dieser Wahlmöglichkeit wird die Auswahl in allen "
-"diesen Objekten geändert (oder gelöscht)."
+msgstr "Durch Ändern (oder Löschen) dieser Wahlmöglichkeit wird die Auswahl in allen diesen Objekten geändert (oder gelöscht)."
 
 #: templates/aplans/panels/choice_option_usage_panel.html
 msgid "If you would like to keep the current value in reports even after changing or deleting this choice option, please mark the reports using this choice option as complete."
-msgstr ""
-"Wenn Sie den aktuellen Wert in Berichten auch nach dem Ändern oder Löschen "
-"dieser Wahlmöglichkeit beibehalten möchten, markieren Sie bitte die "
-"Berichte, die diese Wahlmöglichkeit verwenden, als abgeschlossen."
+msgstr "Wenn Sie den aktuellen Wert in Berichten auch nach dem Ändern oder Löschen dieser Wahlmöglichkeit beibehalten möchten, markieren Sie bitte die Berichte, die diese Wahlmöglichkeit verwenden, als abgeschlossen."
 
 #: templates/aplans/paths_sync_confirmation.html
 msgid "Please verify the correct node is connected to the indicator."
@@ -6068,16 +6036,19 @@ msgstr "Kausal-Paths-Instanz"
 
 #: templates/aplans/plan_publish_confirmation.html
 #, python-format
-msgid "This plan is already scheduled for publication: <strong>%(info)s</strong>. Publishing now will override the scheduled date and make the plan public immediately."
+msgid "This plan is already scheduled for publication: %(bold_open)s%(info)s%(bold_close)s. Publishing now will override the scheduled date and make the plan public immediately."
 msgstr ""
 
 #: templates/aplans/plan_publish_confirmation.html
-msgid "The plan will be published to:"
-msgstr ""
+#, fuzzy
+#| msgid "The plan is already published."
+msgctxt "URLs"
+msgid "The plan will be published at:"
+msgstr "Der Plan ist bereits veröffentlicht."
 
 #: templates/aplans/plan_publish_confirmation.html
 #, python-format
-msgid "This plan will only be published at <strong><a href=\"%(preview_url)s\" target=\"_blank\">%(preview_url)s</a></strong> because no production domains have been configured."
+msgid "This plan will only be published at %(preview_link_open)s%(preview_url)s%(preview_link_close)s because no production domains have been configured."
 msgstr ""
 
 #: templates/aplans/plan_publish_confirmation.html
@@ -6086,9 +6057,7 @@ msgstr "Für diesen Plan wurden keine Produktionsdomänen konfiguriert."
 
 #: templates/aplans/plan_publish_confirmation.html
 msgid "Unpublishing this plan will make it inaccessible to the public immediately."
-msgstr ""
-"Durch das Zurückziehen dieses Plans wird er für die Öffentlichkeit sofort "
-"unzugänglich."
+msgstr "Durch das Zurückziehen dieses Plans wird er für die Öffentlichkeit sofort unzugänglich."
 
 #: templates/aplans/plan_publish_confirmation.html
 msgid "Yes, publish"
@@ -6101,14 +6070,6 @@ msgstr "Ja, zurückziehen"
 #: templates/aplans/plan_publish_confirmation.html
 msgid "Cancel"
 msgstr "Abbrechen"
-
-#: templates/modeladmin/create.html templates/modeladmin/edit.html
-msgid "This page has unsaved changes."
-msgstr "Diese Seite hat ungespeicherte Änderungen."
-
-#: templates/modeladmin/create.html
-msgid "Actions"
-msgstr "Aktionen"
 
 #: templates/modeladmin/create.html templates/modeladmin/edit.html
 msgid "Saving…"
@@ -6125,6 +6086,9 @@ msgstr "Benutzer"
 #: users/models.py
 msgid "No permission to remove the user belonging to plans you are not managing."
 msgstr "Keine Berechtigung zum Entfernen von Benutzern, die zu Plänen gehören, die Sie nicht verwalten."
+
+#~ msgid "This page has unsaved changes."
+#~ msgstr "Diese Seite hat ungespeicherte Änderungen."
 
 #~ msgid "visualizations"
 #~ msgstr "Visualisierungen"
