@@ -59,24 +59,48 @@ if TYPE_CHECKING:
     from wagtail.documents.models import AbstractDocument
     from wagtail.images.models import AbstractImage
 
-    from relations_iterator import TreeNode
+    from relations_iterator import TreeNode  # type: ignore
 
-type CloneStructure = dict[str, CloneStructure]
+class Excluded:
+    """Sentinel: marks a relation as deliberately excluded from copying."""
+
+
+EXCLUDED = Excluded()
+
+type CloneEntry = CloneStructure | Excluded
+type CloneStructure = dict[str, CloneEntry]
 
 # TODO: Models from other apps: budget, feedback, etc.
 PLAN_CLONE_STRUCTURE: CloneStructure = {
-    'action_decision_levels': {},
-    'action_dependency_roles': {},
-    'action_impacts': {},
-    'action_implementation_phases': {},
-    'action_schedules': {},
-    'action_statuses': {},
+    'action_decision_levels': {
+        'actions': EXCLUDED,  # Action already copied via Plan → actions
+    },
+    'action_dependency_roles': {
+        'actions': EXCLUDED,  # Action already copied via Plan → actions
+    },
+    'action_impacts': {
+        'actions': EXCLUDED,  # Action already copied via Plan → actions
+    },
+    'action_implementation_phases': {
+        'actions': EXCLUDED,  # Action already copied via Plan → actions
+        'action': EXCLUDED,  # reverse OneToOne from Action.latest_phase; Action already copied
+    },
+    'action_schedules': {
+        'action': EXCLUDED,  # reverse M2M accessor; Action already copied via Plan → actions
+        'actionschedulethrough': EXCLUDED,  # ActionScheduleThrough already copied via actions → action_schedule_through
+    },
+    'action_statuses': {
+        'actions': EXCLUDED,  # Action already copied via Plan → actions
+        'action': EXCLUDED,  # reverse OneToOne from Action.latest_status; Action already copied
+    },
     'features': {},
     'actions': {
         'action_category_through': {},
         'action_monitoring_quality_points_through': {},
         'action_schedule_through': {},
-        'contact_persons': {},
+        'contact_persons': {
+            'notification_preferences': EXCLUDED,  # notification preferences are personal/runtime state, not plan content
+        },
         'dependent_relationships': {},
         'impact_groups': {},
         'links': {},
@@ -85,19 +109,48 @@ PLAN_CLONE_STRUCTURE: CloneStructure = {
         'responsible_parties': {},
         'status_updates': {},
         'tasks': {},
+        'preceding_relationships': EXCLUDED,  # reverse of dependent_relationships; already covered from the dependent side
+        'merged_actions': EXCLUDED,
+        'superseded_actions': EXCLUDED,
+        'copies': EXCLUDED,
+        'relatedactionsthrough': EXCLUDED,  # reverse of RelatedActionsThrough.to_action; covered via related_actions_through
+        'change_log_messages': EXCLUDED,
+        'pledge': EXCLUDED,
+        'pledgeactionthrough': EXCLUDED,
+        'user_feedbacks': EXCLUDED,
     },
     'built_in_field_customizations': {},
     'category_types': {
         'categories': {
             'indicator_category_through': {},  # We don't copy the indicators themselves
+            'icons': EXCLUDED,  # TODO: should likely be copied
+            'children': EXCLUDED,  # all categories are already copied via category_type → categories
+            'indicator_relationships': EXCLUDED,  # handled via the indicator side
+            'actions': EXCLUDED,  # reverse M2M; ActionCategoryThrough already copied via actions → action_category_through
+            'actioncategorythrough': EXCLUDED,  # same
+            'change_log_messages': EXCLUDED,
+            'user_feedbacks': EXCLUDED,
+            'indicators': EXCLUDED,  # reverse M2M; IndicatorCategoryThrough already copied via indicator_category_through
+            'category_pages': EXCLUDED,  # pages handled separately by Wagtail's copy mechanism
         },
-        'levels': {},
+        'levels': {
+            'level_layouts': EXCLUDED,  # pages handled separately by Wagtail's copy mechanism
+        },
+        'primary_classification_for_plan': EXCLUDED,  # back-reference to Plan (the root), not traversed from here
+        'secondary_classification_for_plan': EXCLUDED,  # same
+        'category_type_pages': EXCLUDED,  # pages handled separately by Wagtail's copy mechanism
+        'actionlistpage': EXCLUDED,  # same
     },
     'clients': {},
-    # 'domains': {},  # deliberately don't copy domains because hostname + base path should be unique
-    'general_admins_ordered': {},
+    'domains': EXCLUDED,  # deliberately not copied: hostname + base path must be unique per plan
+    'general_admins_ordered': {
+        'notification_preferences': EXCLUDED,  # notification preferences are personal/runtime state, not plan content
+    },
     'general_content': {},
-    'impact_groups': {},
+    'impact_groups': {
+        'actions': EXCLUDED,  # ImpactGroupAction already copied via actions → impact_groups
+        'children': EXCLUDED,  # all ImpactGroups are already copied via plan → impact_groups
+    },
     'indicator_levels': {},  # We copy the indicators themselves separately and optionally
     'notification_settings': {},
     'plan_common_category_types_through': {},
@@ -108,17 +161,37 @@ PLAN_CLONE_STRUCTURE: CloneStructure = {
         # original plan within the serialized data, and (b) it might be justifiable for many use cases to skip copying
         # reports. We could do something about (a) by meddling with the serialized data, but it's going to be an
         # error-prone ordeal, so maybe this is fine for now.
-        # 'reports': {
-        #     'action_snapshots': {},  # As we don't copy `action_version`, original action will be linked to snapshot
-        # },
+        'reports': EXCLUDED,  # deliberately not copied (see comment above)
     },
     'scenarios': {},
     # Note that `Dimension` instances are copied separately when `copy_indicators` is true.
     'dimensions': {},  # copies through model (`PlanDimension`) instances, not `Dimension` instances
+    'actionchangelogmessage_set': EXCLUDED,
+    'indicatorchangelogmessage_set': EXCLUDED,
+    'categorychangelogmessage_set': EXCLUDED,
+    'pagechangelogmessage_set': EXCLUDED,
+    'children': EXCLUDED,  # child plans are independent plans
+    'superseded_plans': EXCLUDED,
+    'copies': EXCLUDED,
+    'monitoring_quality_points': EXCLUDED,  # TODO: should likely be copied
+    'pledges': EXCLUDED,
+    'documentation_root_pages': EXCLUDED,  # handled separately by _copy_documentation_pages
+    'user_feedbacks': EXCLUDED,
+    'plan_common_indicator_through': EXCLUDED,  # common indicator assignments are not plan-owned
+    'indicators': EXCLUDED,  # handled separately via the copy_indicators parameter
+    'notification_base_template': EXCLUDED,  # TODO: should likely be copied
+    'organization_plan_admins': EXCLUDED,
+    'links': EXCLUDED,  # TODO: should likely be copied (PlanLink is a cluster child)
+    'planscopedmodellogentry': EXCLUDED,
+    'planscopedpagelogentry': EXCLUDED,
 }
 
 ATTRIBUTE_TYPE_CLONE_STRUCTURE: CloneStructure = {
-    'choice_options': {},
+    'choice_options': {
+        'choice_attributes': EXCLUDED,  # AttributeChoice already copied via AttributeType → choice_attributes
+        # AttributeChoiceWithText already copied via AttributeType → choice_with_text_attributes
+        'choice_with_text_attributes': EXCLUDED,
+    },
     'category_choice_attributes': {},
     'choice_attributes': {},
     'choice_with_text_attributes': {},
@@ -137,6 +210,8 @@ INDICATOR_CLONE_STRUCTURE: CloneStructure = {
     'contact_persons': {},
     'values': {
         'category_links': {},  # copies through model instances, not `DimensionCategory` instances
+        # back-reference to Indicator.reference_value; Indicator is the copy root, not traversed from here
+        'reference_for_indicator': EXCLUDED,
     },
     # 'related_actions': {},  # ActionIndicator instances are already copied in PLAN_CLONE_STRUCTURE
     'related_causes': {},
@@ -144,10 +219,25 @@ INDICATOR_CLONE_STRUCTURE: CloneStructure = {
     # twice as it's already done due to `related_causes`.
     'goals': {},
     'dimensions': {},  # copies through model (`IndicatorDimension`) instances, not `Dimension` instances
+    'category_relationships': EXCLUDED,  # handled via the category side
+    'actions': EXCLUDED,  # reverse M2M; ActionIndicator already copied via actions → related_indicators
+    'change_log_messages': EXCLUDED,
+    'related_effects': EXCLUDED,  # only related_causes is copied to avoid duplicating RelatedIndicator instances
+    'related_actions': EXCLUDED,  # ActionIndicator already copied via actions → related_indicators
+    'values_import_logs': EXCLUDED,
+    'graphs': EXCLUDED,
+    'indicator_category_through': EXCLUDED,  # copied via Category → indicator_category_through
+    'levels': EXCLUDED,  # IndicatorLevel copied via PLAN_CLONE_STRUCTURE['indicator_levels']
 }
 
 DIMENSION_CLONE_STRUCTURE: CloneStructure = {
-    'categories': {},
+    'categories': {
+        'indicator_value_links': EXCLUDED,  # IndicatorValueCategory already copied via IndicatorValue → category_links
+        'values': EXCLUDED,  # reverse M2M; IndicatorValue already copied via Indicator → values
+    },
+    'plans': EXCLUDED,  # PlanDimension copied via PLAN_CLONE_STRUCTURE['dimensions']
+    'instances': EXCLUDED,  # IndicatorDimension copied via INDICATOR_CLONE_STRUCTURE['dimensions']
+    'common_indicators': EXCLUDED,  # CommonIndicator is not plan-scoped
 }
 
 # Models that are not scoped by a plan and thus deliberately excluded from copying. References to these models are
@@ -1269,7 +1359,11 @@ def update_references_in_indicators(indicators: list[Indicator], clone_visitor: 
         visit_tree(indicator, INDICATOR_CLONE_STRUCTURE, update_references_visitor)
 
 
-def visit_tree(root: Model, config: dict, visitor: AbstractVisitor) -> None:
-    tree = ConfigurableRelationTree(root=root, structure=config)
+def _to_copy_structure(structure: CloneStructure) -> dict:
+    return {k: _to_copy_structure(v) for k, v in structure.items() if not isinstance(v, Excluded)}
+
+
+def visit_tree(root: Model, config: CloneStructure, visitor: AbstractVisitor) -> None:
+    tree = ConfigurableRelationTree(root=root, structure=_to_copy_structure(config))
     for node in RelationTreeIterator(tree=tree):
         visitor.visit(node)
