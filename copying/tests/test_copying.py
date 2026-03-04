@@ -48,6 +48,8 @@ from indicators.tests.factories import (
     IndicatorValueFactory,
     RelatedIndicatorFactory,
 )
+from notifications.models import ContentBlock
+from notifications.tests.factories import AutomaticNotificationTemplateFactory, BaseTemplateFactory
 from pages.models import StaticPage
 from pages.tests.factories import CategoryTypePageLevelLayoutFactory
 from reports.tests.factories import ReportTypeFactory
@@ -738,3 +740,69 @@ class TestUpdateReferenceIndexImmediately:
         assert body_value is not None
         assert body_value.source == html_with_references([doc])
         assert body_value.source != html_with_references([doc_copy])
+
+
+def test_copy_plan_copies_base_level_content_block(plan_with_pages):
+    """ContentBlock with template=None is copied and its base points to the copy of BaseTemplate."""
+    base = BaseTemplateFactory.create(plan=plan_with_pages)
+    ContentBlock.objects.create(base=base, template=None, identifier='intro', content='<p>Intro</p>')
+
+    plan_copy = copy_plan(plan_with_pages)
+
+    base_copy = plan_copy.notification_base_template
+    assert base_copy != base
+    assert base_copy.content_blocks.count() == 1
+    block_copy = base_copy.content_blocks.get()
+    assert block_copy.base == base_copy
+    assert block_copy.template is None
+    assert block_copy.identifier == 'intro'
+
+
+def test_copy_plan_copies_template_specific_content_block(plan_with_pages):
+    """ContentBlock with template!=None is copied; both base and template point to their copies."""
+    base = BaseTemplateFactory.create(plan=plan_with_pages)
+    template = AutomaticNotificationTemplateFactory.create(base=base)
+    ContentBlock.objects.create(base=base, template=template, identifier='intro', content='<p>Template intro</p>')
+
+    plan_copy = copy_plan(plan_with_pages)
+
+    base_copy = plan_copy.notification_base_template
+    assert base_copy != base
+    template_copy = base_copy.templates.get()
+    assert template_copy != template
+    assert base_copy.content_blocks.count() == 1
+    block_copy = base_copy.content_blocks.get()
+    assert block_copy.base == base_copy
+    assert block_copy.template == template_copy
+    # ContentBlock.save() enforces this invariant; verify the copy satisfies it
+    assert block_copy.template.base == block_copy.base
+    assert block_copy.identifier == 'intro'
+
+
+def test_copy_plan_does_not_duplicate_template_specific_content_block(plan_with_pages):
+    """
+    Template-specific ContentBlocks must not be copied twice.
+
+    Since base.content_blocks returns ALL ContentBlocks (including template-specific ones), traversing both base ->
+    content_blocks and base -> templates -> content_blocks in the clone structure would register the same block twice,
+    which would cause an AssertionError in register_copy.
+    """
+    base = BaseTemplateFactory.create(plan=plan_with_pages)
+    template = AutomaticNotificationTemplateFactory.create(base=base)
+    ContentBlock.objects.create(base=base, template=None, identifier='outro', content='<p>Base outro</p>')
+    ContentBlock.objects.create(base=base, template=template, identifier='intro', content='<p>Template intro</p>')
+
+    plan_copy = copy_plan(plan_with_pages)
+
+    base_copy = plan_copy.notification_base_template
+    template_copy = base_copy.templates.get()
+    # Each original block must produce exactly one copy
+    assert base_copy.content_blocks.count() == 2
+    base_block = base_copy.content_blocks.get(template__isnull=True)
+    assert base_block.base == base_copy
+    assert base_block.identifier == 'outro'
+    template_block = ContentBlock.objects.get(base=base_copy, template=template_copy)
+    assert template_block.base == base_copy
+    assert template_block.template == template_copy
+    assert template_block.template.base == template_block.base
+    assert template_block.identifier == 'intro'
