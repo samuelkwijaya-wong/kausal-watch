@@ -34,6 +34,8 @@ if typing.TYPE_CHECKING:
 
     from modelcluster.fields import PK
 
+    from kausal_common.models.types import FK, RevMany
+
     from actions.models.plan import Plan
     from admin_site.models import Client
 
@@ -199,6 +201,11 @@ class BaseTemplate(ClusterableModel, PlanRelatedModelWithRevision):
 
     verbose_name_partitive = pgettext_lazy('partitive', 'base templates')
 
+    # Type annotations for related models etc.
+    templates: RevMany[AutomaticNotificationTemplate]
+    manually_scheduled_notification_templates: RevMany[ManuallyScheduledNotificationTemplate]
+    content_blocks: RevMany[ContentBlock]
+
     class Meta:
         verbose_name = _('base template')
         verbose_name_plural = _('base templates')
@@ -341,6 +348,9 @@ class AutomaticNotificationTemplate(NotificationTemplate):
         blank=True,
         choices=ContactPersonFallbackChain.choices,
     )
+
+    # Type annotations for related models etc.
+    content_blocks: RevMany[ContentBlock]
 
     def clean(self):
         if self.send_to_contact_persons and not self.concerns_action and not self.concerns_indicator:
@@ -519,8 +529,9 @@ class ContentBlockManager(models.Manager):
 class ContentBlock(models.Model):
     content = RichTextField(verbose_name=_('content'), help_text=_('HTML content for the block'))
 
-    base = ParentalKey(BaseTemplate, on_delete=models.CASCADE, related_name='content_blocks', editable=False)
-    template = models.ForeignKey(
+    base_id: int
+    base: FK[BaseTemplate] = ParentalKey(BaseTemplate, on_delete=models.CASCADE, related_name='content_blocks', editable=False)
+    template: FK[AutomaticNotificationTemplate | None] = models.ForeignKey(
         AutomaticNotificationTemplate,
         null=True,
         blank=True,

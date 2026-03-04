@@ -6,7 +6,7 @@ from contextlib import ExitStack, contextmanager
 from copy import copy as shallow_copy
 from functools import singledispatchmethod, wraps
 from itertools import chain
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, cast
 from uuid import uuid4
 
 import wagtail.signal_handlers
@@ -48,6 +48,7 @@ from indicators.models.common_indicator import CommonIndicator
 from indicators.models.dimensions import Dimension
 from indicators.models.indicator import Indicator
 from indicators.models.metadata import Quantity, Unit
+from notifications.models import AutomaticNotificationTemplate, BaseTemplate, ContentBlock
 from orgs.models import Organization
 from pages.models import PlanRootPage
 from people.models import Person
@@ -123,7 +124,7 @@ PLAN_CLONE_STRUCTURE: CloneStructure = {
     'category_types': {
         'categories': {
             'indicator_category_through': {},  # We don't copy the indicators themselves
-            'icons': EXCLUDED,  # TODO: should likely be copied
+            'icons': {},
             'children': EXCLUDED,  # all categories are already copied via category_type → categories
             'indicator_relationships': EXCLUDED,  # handled via the indicator side
             'actions': EXCLUDED,  # reverse M2M; ActionCategoryThrough already copied via actions → action_category_through
@@ -173,13 +174,27 @@ PLAN_CLONE_STRUCTURE: CloneStructure = {
     'children': EXCLUDED,  # child plans are independent plans
     'superseded_plans': EXCLUDED,
     'copies': EXCLUDED,
-    'monitoring_quality_points': EXCLUDED,  # TODO: should likely be copied
+    'monitoring_quality_points': EXCLUDED,  # legacy
     'pledges': EXCLUDED,
     'documentation_root_pages': EXCLUDED,  # handled separately by _copy_documentation_pages
     'user_feedbacks': EXCLUDED,
     'plan_common_indicator_through': EXCLUDED,  # common indicator assignments are not plan-owned
     'indicators': EXCLUDED,  # handled separately via the copy_indicators parameter
-    'notification_base_template': EXCLUDED,  # TODO: should likely be copied
+    'notification_base_template': {
+        # templates must be copied before content_blocks so that template-specific ContentBlocks
+        # can look up their template copy in CloneVisitor.pre_visit for ContentBlock.
+        'templates': {
+            # Exclude template-specific content blocks from copying here. Each content block in
+            # notification_base_template -> templates -> content_blocks also occurs in notification_base_template ->
+            # content_blocks, and thus will be copied due to the declaration for the second path below.
+            'content_blocks': EXCLUDED,
+        },
+        # All ContentBlocks (both base-level and template-specific) are reachable via
+        # base.content_blocks, so we copy them all in one pass here. Template-specific ones
+        # have their template FK remapped to the copy in CloneVisitor.pre_visit for ContentBlock.
+        'content_blocks': {},
+        'manually_scheduled_notification_templates': {},
+    },
     'organization_plan_admins': EXCLUDED,
     'links': EXCLUDED,  # TODO: should likely be copied (PlanLink is a cluster child)
     'planscopedmodellogentry': EXCLUDED,
@@ -417,6 +432,38 @@ class CloneVisitor(AbstractVisitor):
         # `always_update=True` and is unique per plan. So when saving the copy, it references the same plan as the
         # original, thus getting a suffix appended to the slug to make it unique.
         instance.scope = self.get_copy(instance.scope)  # type: ignore
+
+    @pre_visit.register
+    def _(self, instance: ContentBlock) -> None:
+        self.prepare_instance_for_copy(instance)
+        # All ContentBlocks are copied via the base → content_blocks path, which covers both
+        # base-level blocks (template=None) and template-specific blocks (template!=None), since
+        # BaseTemplate.content_blocks returns all blocks regardless of template.
+        #
+        # For template-specific ContentBlocks, two FK references need fixing before save():
+        #
+        # 1. base: Although visit() will set base_id to the copy's PK via the joining-field
+        #    logic, Django's FK cache may still hold the original (or already-modified in-memory)
+        #    BaseTemplate object. We set base to the copy explicitly to be safe.
+        #
+        # 2. template: visit() only updates the joining field (base, for this path), so
+        #    template_id still points to the original template. ContentBlock.save() checks
+        #    self.template.base == self.base; if template still refers to the original,
+        #    self.template.base is the original BaseTemplate while self.base is the copy →
+        #    mismatch exception. AutomaticNotificationTemplate copies exist by this point
+        #    because `templates` precedes `content_blocks` in the clone structure dict.
+        #
+        # We use the raw _id integer fields rather than the FK accessors because Django's FK
+        # cache may hold already-modified in-memory parent objects whose PK has been changed to
+        # the copy's PK. self.copies is keyed by original PK, so the stored integer (which
+        # reflects the original DB value and is never mutated by in-memory object changes) is
+        # the only reliable key.
+        if instance.template_id is not None:
+            instance.base = cast('BaseTemplate', self.copies[(BaseTemplate, instance.base_id)])
+            instance.template = cast(
+                'AutomaticNotificationTemplate',
+                self.copies[(AutomaticNotificationTemplate, instance.template_id)],
+            )
 
     @pre_visit.register
     def _(self, instance: Plan) -> None:
