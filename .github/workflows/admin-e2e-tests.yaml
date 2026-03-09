@@ -69,6 +69,7 @@ jobs:
           ENABLE_TEST_MODE: 1
           CI: 1
           SECRET_KEY: abcd
+          SENTRY_DSN: ${{ vars.SENTRY_DSN }}
 
     container:
       image: harbor.kausal.tech/library/playwright:v1.58.1
