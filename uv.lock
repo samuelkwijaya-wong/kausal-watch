@@ -2017,11 +2017,11 @@ prod = [
 
 [[package]]
 name = "kausal-watch-extensions"
-version = "0.1.171"
+version = "0.2.0"
 source = { registry = "https://pypi.kausal.tech/" }
-sdist = { url = "https://pypi.kausal.tech/packages/kausal_watch_extensions-0.1.171.tar.gz", hash = "sha256:47fabe2791d0c349bb17fd97c13600b83a435b3be73fd08222fdd690bb761582" }
+sdist = { url = "https://pypi.kausal.tech/packages/kausal_watch_extensions-0.2.0.tar.gz", hash = "sha256:95ca24bafe9fd7ed1c2d7ff127275fbeed9f52fa315d8aa05a12a9741db9e540" }
 wheels = [
-    { url = "https://pypi.kausal.tech/packages/kausal_watch_extensions-0.1.171-py3-none-any.whl", hash = "sha256:f911ed671877cbfaeeca708c33ed2b391dbc4ed10bc8f4eb2c0559bad6793f41" },
+    { url = "https://pypi.kausal.tech/packages/kausal_watch_extensions-0.2.0-py3-none-any.whl", hash = "sha256:cb55f14be3819cb3fd85e2412749c7b63d4bcfb2bcc57dd4fa25ca0422d6c4b9" },
 ]
 
 [[package]]
