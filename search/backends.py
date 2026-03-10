@@ -14,6 +14,8 @@ from wagtail.search.backends.elasticsearch8 import (
     Elasticsearch8SearchResults,
 )
 
+from elasticsearch import dsl as es_dsl
+from elasticsearch.dsl.types import LikeDocument
 from modelsearch import index
 from modelsearch.backends.database.postgres.postgres import PostgresSearchBackend
 from modelsearch.backends.elasticsearch8 import Elasticsearch8Mapping
@@ -24,7 +26,11 @@ from aplans.context_vars import ctx_request, get_admin_cache, has_admin_cache
 from search.context import set_index_language
 
 if TYPE_CHECKING:
-    from django.db.models import Model
+    from collections.abc import Generator
+
+    from django.db.models import Model, QuerySet
+
+    from elasticsearch.dsl.response.hit import Hit
 
     from actions.models.plan import Plan
 
@@ -85,11 +91,52 @@ class WatchAutocompleteQueryCompiler(Elasticsearch8AutocompleteQueryCompiler):
         return super()._process_filter(field_attname, lookup, value, check_only)
 
 
+def es_results_from_hits[M: Model](
+    hits: list[dict[str, Any]], qs: QuerySet[M], score_field: str | None = None
+) -> Generator[M]:
+    """Yield Django model instances from a page of hits returned by Elasticsearch."""
+
+    pks = [hit['fields']['pk'][0] for hit in hits]
+    scores = {str(hit['fields']['pk'][0]): hit['_score'] for hit in hits}
+    highlights = {str(hit['fields']['pk'][0]): hit.get('highlight', {}).get('_all_text', None) for hit in hits}
+    results: dict[str, M | None] = {str(pk): None for pk in pks}
+    for obj in qs.filter(pk__in=pks):
+        results[str(obj.pk)] = obj
+        if score_field:
+            setattr(obj, score_field, scores.get(str(obj.pk)))
+        setattr(obj, '_highlights', highlights.get(str(obj.pk)))  # noqa: B010
+
+    # Yield results in order given by Elasticsearch
+    for pk in pks:
+        result = results[str(pk)]
+        if result:
+            yield result
+
+def es_results_from_more_like_this[M: Model](
+    hits: list[Hit], qs: QuerySet[M], score_field: str | None = None
+) -> Generator[M]:
+    """Yield Django model instances from a page of hits returned by Elasticsearch."""
+
+    pks = [hit.pk for hit in hits]
+    scores = {str(hit.pk): hit.meta.score for hit in hits}
+    results: dict[str, M | None] = {str(pk): None for pk in pks}
+    for obj in qs.filter(pk__in=pks):
+        results[str(obj.pk)] = obj
+        if score_field:
+            setattr(obj, score_field, scores.get(str(obj.pk)))
+
+    for pk in pks:
+        result = results[str(pk)]
+        if result:
+            yield result
+
 class WatchSearchResults(Elasticsearch8SearchResults):
+    _score_field: str | None
+
     def _backend_do_search(self, body, **kwargs):  # noqa: ANN202
         return super()._backend_do_search(body, **kwargs)
 
-    def _get_es_body(self, for_count=False):
+    def _get_es_body(self, for_count=False) -> dict[str, Any]:
         body = super()._get_es_body(for_count)
         if not for_count:
             body["highlight"] = {
@@ -100,30 +147,10 @@ class WatchSearchResults(Elasticsearch8SearchResults):
             }
         return body
 
-    def _get_results_from_hits(self, hits):
+    def _get_results_from_hits(self, hits) -> Generator[Model]:
         """Yield Django model instances from a page of hits returned by Elasticsearch."""
 
-        # Get pks from results
-        pks = [hit['fields']['pk'][0] for hit in hits]
-        scores = {str(hit['fields']['pk'][0]): hit['_score'] for hit in hits}
-        highlights = {str(hit['fields']['pk'][0]): hit.get('highlight', {}).get('_all_text', None) for hit in hits}
-
-        # Initialise results dictionary
-        results = {str(pk): None for pk in pks}
-
-        # Find objects in database and add them to dict
-        for obj in self.query_compiler.queryset.filter(pk__in=pks):
-            results[str(obj.pk)] = obj
-
-            if self._score_field:
-                setattr(obj, self._score_field, scores.get(str(obj.pk)))
-            obj._highlights = highlights.get(str(obj.pk))
-
-        # Yield results in order given by Elasticsearch
-        for pk in pks:
-            result = results[str(pk)]
-            if result:
-                yield result
+        yield from es_results_from_hits(hits, self.query_compiler.queryset, self._score_field)
 
 
 class WatchSearchBackend(Elasticsearch8SearchBackend):
@@ -145,6 +172,16 @@ class WatchSearchBackend(Elasticsearch8SearchBackend):
 
     def autocomplete(self, query, model_or_queryset, fields=None, operator=None, order_by_relevance=True):
         return super().autocomplete(query, model_or_queryset, fields, operator, order_by_relevance)
+
+    def more_like_this[M: Model](self, obj: M, qs: QuerySet[M]):
+        index = self.get_index_for_model(type(obj))
+        s = es_dsl.Search(using=self.es).index(index.name)
+        like = LikeDocument(_index=index.name, _id=str(obj.pk))
+        s = s.query(es_dsl.query.MoreLikeThis(fields=['_all_text'], like=[like]))
+        s = s.source(['pk'])
+        resp = s.execute()
+        hits = resp.hits
+        return es_results_from_more_like_this(hits, qs, score_field='relevance')
 
 
 SearchBackend = WatchSearchBackend

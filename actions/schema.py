@@ -101,7 +101,7 @@ from orgs.models import Organization, OrganizationQuerySet
 from pages import schema as pages_schema
 from pages.models import ActionListPage, AplansPage, CategoryPage, IndicatorListPage, PageChangeLogMessage
 from people.models import Person
-from search.backends import get_search_backend
+from search.backends import WatchSearchBackend, get_search_backend
 
 from .models import (
     ActionChangeLogMessage,
@@ -1678,12 +1678,15 @@ class ActionNode(ModelAdminAdminButtonsMixin, AttributesMixin, DjangoNode[Action
         return root.get_redacted_contact_persons(user, show_all_contact_persons, cache)
 
     @staticmethod
-    def resolve_similar_actions(root: Action, _info: GQLInfo):
-        backend = get_search_backend()
-        if backend is None:
+    def resolve_similar_actions(root: Action, info: GQLInfo) -> list[Action]:
+        if not (lang := info.context.graphql_query_language):
             return []
-        backend.more_like_this(root)
-        return []
+        backend = get_search_backend(lang)
+        if backend is None or not isinstance(backend, WatchSearchBackend):
+            return []
+        act_qs = Action.objects.get_queryset().visible_for_user(info.context.user)
+        actions = list(backend.more_like_this(root, act_qs))
+        return actions
 
     @staticmethod
     @gql_optimizer.resolver_hints(

@@ -15,7 +15,7 @@ from loguru import logger
 
 from actions.models import Action, Plan
 from actions.schema import ActionNode
-from indicators.models import Indicator, IndicatorQuerySet
+from indicators.models import Indicator
 from indicators.schema import IndicatorNode
 from pages.models import AplansPage, PlanRootPage
 
@@ -25,6 +25,7 @@ if TYPE_CHECKING:
     from aplans.graphql_types import GQLInfo
 
     from actions.models.action import ActionQuerySet
+    from indicators.models import IndicatorQuerySet
 
 
 class SearchHitObject(graphene.Union):
