@@ -287,8 +287,8 @@ extra-paths = ['kausal_common/typings']
 
 [tool.uv]
 environments = [
-  "python_full_version >= '3.13' and sys_platform == 'linux' and platform_machine == 'x86_64'",
-  "python_full_version >= '3.13' and sys_platform == 'darwin' and platform_machine == 'arm64'",
+  "python_full_version >= '3.14' and sys_platform == 'linux' and platform_machine == 'x86_64'",
+  "python_full_version >= '3.14' and sys_platform == 'darwin' and platform_machine == 'arm64'",
 ]
 
 [[tool.uv.index]]
@@ -316,6 +316,7 @@ dev = [
     "pdbr>=0.9.7",
     "prek>=0.2.12",
     "turms>=0.10.1",
+    "types-factory-boy>=0.4.1",
     "uv",
     "virtualenvwrapper>=6.1.1",
     "viztracer",
@@ -334,6 +335,7 @@ lint = [
     "mypy[faster-cache]",
     "ondivi",
     "ruff",
+    "types-factory-boy>=0.4.1",
     "types-jwcrypto>=1.5.0.20251102",
     "types-oauthlib",
     "types-psutil",
