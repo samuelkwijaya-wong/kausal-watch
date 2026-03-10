@@ -19,6 +19,7 @@ from kausal_common.datasets.models import (
 
 from aplans.factories import ModelFactory
 
+from actions.models import Action, Plan
 from actions.tests.factories import ActionFactory, PlanFactory
 
 
@@ -31,7 +32,7 @@ class DimensionFactory(ModelFactory[Dimension]):
 
 class DimensionCategoryFactory(ModelFactory[DimensionCategory]):
     uuid = LazyFunction(uuid.uuid4)
-    dimension = SubFactory(DimensionFactory)
+    dimension = SubFactory[DimensionCategory, Dimension](DimensionFactory)
     label = Sequence(lambda i: f"Dimension category {i}")
 
     class Meta:
@@ -39,10 +40,10 @@ class DimensionCategoryFactory(ModelFactory[DimensionCategory]):
 
 
 class DimensionScopeFactory(ModelFactory[DimensionScope]):
-    dimension = SubFactory(DimensionFactory)
-    scope_content_type = LazyAttribute(lambda obj: ContentType.objects.get_for_model(obj.scope))
-    scope_id = LazyAttribute(lambda obj: obj.scope.id)
-    scope = SubFactory(PlanFactory)
+    dimension = SubFactory[DimensionScope, Dimension](DimensionFactory)
+    scope_content_type = LazyAttribute[DimensionScope, ContentType](lambda obj: ContentType.objects.get_for_model(obj.scope))
+    scope_id = LazyAttribute[DimensionScope, int](lambda obj: obj.scope.id)
+    scope = SubFactory[DimensionScope, Plan](PlanFactory)
 
     class Meta:
         model = DimensionScope
@@ -58,8 +59,8 @@ class DatasetSchemaFactory(ModelFactory[DatasetSchema]):
 
 
 class DatasetSchemaDimensionFactory(ModelFactory[DatasetSchemaDimension]):
-    dimension = SubFactory(DimensionFactory)
-    schema = SubFactory(DatasetSchemaFactory)
+    dimension = SubFactory[DatasetSchemaDimension, Dimension](DimensionFactory)
+    schema = SubFactory[DatasetSchemaDimension, DatasetSchema](DatasetSchemaFactory)
 
     class Meta:
         model = DatasetSchemaDimension
@@ -67,27 +68,27 @@ class DatasetSchemaDimensionFactory(ModelFactory[DatasetSchemaDimension]):
 
 class DatasetFactory(ModelFactory[Dataset]):
     uuid = LazyFunction(uuid.uuid4)
-    schema = SubFactory(DatasetSchemaFactory)
-    scope_content_type = LazyAttribute(lambda obj: ContentType.objects.get_for_model(obj.scope))
-    scope_id = LazyAttribute(lambda obj: obj.scope.id)
-    scope = SubFactory(ActionFactory)
+    schema = SubFactory[Dataset, DatasetSchema](DatasetSchemaFactory)
+    scope_content_type = LazyAttribute[Dataset, ContentType](lambda obj: ContentType.objects.get_for_model(obj.scope))
+    scope_id = LazyAttribute[Dataset, int](lambda obj: obj.scope.id)
+    scope = SubFactory[Dataset, Action](ActionFactory)
 
     class Meta:
         model = Dataset
 
 
 class DatasetSchemaScopeFactory(ModelFactory[DatasetSchemaScope]):
-    schema = SubFactory(DatasetSchemaFactory)
-    scope_content_type = LazyAttribute(lambda obj: ContentType.objects.get_for_model(obj.scope))
-    scope_id = LazyAttribute(lambda obj: obj.scope.id)
-    scope = SubFactory(PlanFactory)
+    schema = SubFactory[DatasetSchemaScope, DatasetSchema](DatasetSchemaFactory)
+    scope_content_type = LazyAttribute[DatasetSchemaScope, ContentType](lambda obj: ContentType.objects.get_for_model(obj.scope))
+    scope_id = LazyAttribute[DatasetSchemaScope, int](lambda obj: obj.scope.id)
+    scope = SubFactory[DatasetSchemaScope, Plan](PlanFactory)
 
     class Meta:
         model = DatasetSchemaScope
 
 
 class DatasetMetricFactory(ModelFactory[DatasetMetric]):
-    schema = SubFactory(DatasetSchemaFactory)
+    schema = SubFactory[DatasetMetric, DatasetSchema](DatasetSchemaFactory)
     name = Sequence(lambda i: f"Dataset metric {i}")
     unit = Sequence(lambda i: f"Dataset metric unit {i}")
 
@@ -97,8 +98,8 @@ class DatasetMetricFactory(ModelFactory[DatasetMetric]):
 
 class DataPointFactory(ModelFactory[DataPoint]):
     uuid = LazyFunction(uuid.uuid4)
-    dataset = SubFactory(DatasetFactory)
-    metric = SubFactory(DatasetMetricFactory)
+    dataset = SubFactory[DataPoint, Dataset](DatasetFactory)
+    metric = SubFactory[DataPoint, DatasetMetric](DatasetMetricFactory)
     date = Sequence(lambda i: date(2023, 1, i+1))
     value = Sequence(lambda i: float(i))
 

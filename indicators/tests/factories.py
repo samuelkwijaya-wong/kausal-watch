@@ -1,5 +1,4 @@
 import datetime
-from typing import TYPE_CHECKING
 
 from wagtail.rich_text import RichText
 from wagtail.test.utils.wagtail_factories import ListBlockFactory, StructBlockFactory
@@ -8,6 +7,7 @@ from factory.declarations import SelfAttribute, Sequence, SubFactory
 from factory.django import DjangoModelFactory
 from factory.helpers import post_generation
 
+from actions.models import Action, Plan
 from actions.tests.factories import ActionFactory, PlanFactory
 from indicators.blocks import IndicatorBlock, IndicatorGroupBlock, IndicatorShowcaseBlock
 from indicators.models import (
@@ -28,12 +28,12 @@ from indicators.models import (
     Unit,
 )
 from indicators.models.dimensions import PlanDimension
+from orgs.models import Organization
 from orgs.tests.factories import OrganizationFactory
+from pages.blocks import PageLinkBlock
 from pages.tests.factories import PageLinkBlockFactory
+from people.models import Person
 from people.tests.factories import PersonFactory
-
-if TYPE_CHECKING:
-    from actions.models import Plan
 
 
 class UnitFactory(DjangoModelFactory[Unit]):
@@ -61,17 +61,17 @@ class CommonIndicatorFactory(DjangoModelFactory[CommonIndicator]):
     identifier = Sequence(lambda i: f'common-indicator-{i}')
     name = Sequence(lambda i: f"Common indicator {i}")
     description = RichText("<p>Common indicator description</p>")
-    quantity = SubFactory(QuantityFactory)
-    unit = SubFactory(UnitFactory)
+    quantity = SubFactory[CommonIndicator, Quantity](QuantityFactory)
+    unit = SubFactory[CommonIndicator, Unit](UnitFactory)
 
 
 class CommonIndicatorNormalizatorFactory(DjangoModelFactory[CommonIndicatorNormalizator]):
     class Meta:
         model = 'indicators.CommonIndicatorNormalizator'
 
-    normalizable = SubFactory(CommonIndicatorFactory)
-    normalizer = SubFactory(CommonIndicatorFactory)
-    unit = SubFactory(UnitFactory)
+    normalizable = SubFactory[CommonIndicatorNormalizator, CommonIndicator](CommonIndicatorFactory)
+    normalizer = SubFactory[CommonIndicatorNormalizator, CommonIndicator](CommonIndicatorFactory)
+    unit = SubFactory[CommonIndicatorNormalizator, Unit](UnitFactory)
     unit_multiplier = 1000.0
 
 
@@ -80,12 +80,14 @@ class IndicatorFactory(DjangoModelFactory[Indicator]):
         model = 'indicators.Indicator'
         skip_postgeneration_save = True
 
-    organization = SubFactory(OrganizationFactory)
+    organization = SubFactory[Indicator, Organization](OrganizationFactory)
     identifier = Sequence(lambda i: f"indicator{i}")
     name = Sequence(lambda i: f"Indicator {i}")
-    unit = SubFactory(UnitFactory)
-    quantity = SubFactory(QuantityFactory)
-    common = SubFactory(CommonIndicatorFactory, unit=SelfAttribute('..unit'), quantity=SelfAttribute('..quantity'))
+    unit = SubFactory[Indicator, Unit](UnitFactory)
+    quantity = SubFactory[Indicator, Quantity](QuantityFactory)
+    common = SubFactory[Indicator, CommonIndicator](
+        CommonIndicatorFactory, unit=SelfAttribute('..unit'), quantity=SelfAttribute('..quantity')
+    )
     description = "Indicator description"
     min_value = 0.0
     max_value = 100.0
@@ -113,8 +115,8 @@ class IndicatorLevelFactory(DjangoModelFactory[IndicatorLevel]):
     class Meta:
         model = 'indicators.IndicatorLevel'
 
-    indicator = SubFactory(IndicatorFactory)
-    plan = SubFactory(PlanFactory)
+    indicator = SubFactory[IndicatorLevel, Indicator](IndicatorFactory)
+    plan = SubFactory[IndicatorLevel, Plan](PlanFactory)
     level = 'strategic'
 
 
@@ -122,8 +124,8 @@ class ActionIndicatorFactory(DjangoModelFactory[ActionIndicator]):
     class Meta:
         model = 'indicators.ActionIndicator'
 
-    action = SubFactory(ActionFactory)
-    indicator = SubFactory(IndicatorFactory)
+    action = SubFactory[ActionIndicator, Action](ActionFactory)
+    indicator = SubFactory[ActionIndicator, Indicator](IndicatorFactory)
     effect_type = 'increases'
     indicates_action_progress = True
 
@@ -132,7 +134,7 @@ class IndicatorGraphFactory(DjangoModelFactory[IndicatorGraph]):
     class Meta:
         model = 'indicators.IndicatorGraph'
 
-    indicator = SubFactory(IndicatorFactory)
+    indicator = SubFactory[IndicatorGraph, Indicator](IndicatorFactory)
     data = {"foo": "bar"}
 
 
@@ -140,7 +142,7 @@ class IndicatorBlockFactory(StructBlockFactory):
     class Meta:
         model = IndicatorBlock
 
-    indicator = SubFactory(IndicatorFactory)
+    indicator = SubFactory[IndicatorBlock, Indicator](IndicatorFactory)
     style = 'graph'
 
 
@@ -158,16 +160,16 @@ class IndicatorShowcaseBlockFactory(StructBlockFactory):
 
     title = "Indicator showcase block title"
     body = RichText("<p>Indicator showcase block body</p>")
-    indicator = SubFactory(IndicatorFactory)
-    link_button = SubFactory(PageLinkBlockFactory)
+    indicator = SubFactory[IndicatorShowcaseBlock, Indicator](IndicatorFactory)
+    link_button = SubFactory[IndicatorShowcaseBlock, PageLinkBlock](PageLinkBlockFactory)
 
 
 class RelatedIndicatorFactory(DjangoModelFactory[RelatedIndicator]):
     class Meta:
         model = 'indicators.RelatedIndicator'
 
-    causal_indicator = SubFactory(IndicatorFactory)
-    effect_indicator = SubFactory(IndicatorFactory)
+    causal_indicator = SubFactory[RelatedIndicator, Indicator](IndicatorFactory)
+    effect_indicator = SubFactory[RelatedIndicator, Indicator](IndicatorFactory)
     effect_type = RelatedIndicator.EFFECT_TYPES[0][0]
     confidence_level = RelatedIndicator.CONFIDENCE_LEVELS[0][0]
 
@@ -183,7 +185,7 @@ class DimensionCategoryFactory(DjangoModelFactory[DimensionCategory]):
     class Meta:
         model = 'indicators.DimensionCategory'
 
-    dimension = SubFactory(DimensionFactory)
+    dimension = SubFactory[DimensionCategory, Dimension](DimensionFactory)
     name = Sequence(lambda i: f"Dimension category {i}")
 
 
@@ -191,16 +193,16 @@ class IndicatorDimensionFactory(DjangoModelFactory[IndicatorDimension]):
     class Meta:
         model = 'indicators.IndicatorDimension'
 
-    dimension = SubFactory(DimensionFactory)
-    indicator = SubFactory(IndicatorFactory)
+    dimension = SubFactory[IndicatorDimension, Dimension](DimensionFactory)
+    indicator = SubFactory[IndicatorDimension, Indicator](IndicatorFactory)
 
 
 class PlanDimensionFactory(DjangoModelFactory[PlanDimension]):
     class Meta:
         model = 'indicators.PlanDimension'
 
-    dimension = SubFactory(DimensionFactory)
-    plan = SubFactory(PlanFactory)
+    dimension = SubFactory[PlanDimension, Dimension](DimensionFactory)
+    plan = SubFactory[PlanDimension, Plan](PlanFactory)
 
 
 class IndicatorValueFactory(DjangoModelFactory[IndicatorValue]):
@@ -208,7 +210,7 @@ class IndicatorValueFactory(DjangoModelFactory[IndicatorValue]):
         model = 'indicators.IndicatorValue'
         skip_postgeneration_save = True
 
-    indicator = SubFactory(IndicatorFactory)
+    indicator = SubFactory[IndicatorValue, Indicator](IndicatorFactory)
     value = 1.23
     date = datetime.date(2020, 12, 31)
 
@@ -225,7 +227,7 @@ class IndicatorGoalFactory(DjangoModelFactory[IndicatorGoal]):
     class Meta:
         model = 'indicators.IndicatorGoal'
 
-    indicator = SubFactory(IndicatorFactory)
+    indicator = SubFactory[IndicatorGoal, Indicator](IndicatorFactory)
     value = 1.23
     date = datetime.date(2020, 12, 31)
 
@@ -236,5 +238,5 @@ class IndicatorContactFactory(DjangoModelFactory[IndicatorContactPerson]):
     class Meta:
         model = 'indicators.IndicatorContactPerson'
 
-    indicator = SubFactory(IndicatorFactory)
-    person = SubFactory(PersonFactory, organization=SelfAttribute('..indicator.organization'))
+    indicator = SubFactory[IndicatorContactPerson, Indicator](IndicatorFactory)
+    person = SubFactory[IndicatorContactPerson, Person](PersonFactory, organization=SelfAttribute('..indicator.organization'))

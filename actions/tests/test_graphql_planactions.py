@@ -60,13 +60,15 @@ ACTION_FRAGMENT = """
 
 
 def test_planactions(graphql_client_query_data):
-    plan = PlanFactory()
-    schedule = ActionScheduleFactory(plan=plan)
-    category = CategoryFactory()
-    action = ActionFactory(plan=plan,
-                           categories=[category],
-                           schedule=[schedule])
-    responsible_party = ActionResponsiblePartyFactory(action=action, organization=plan.organization)
+    plan = PlanFactory.create()
+    schedule = ActionScheduleFactory.create(plan=plan)
+    category = CategoryFactory.create()
+    action = ActionFactory.create(
+        plan=plan,
+        categories=[category],
+        schedule=[schedule],
+    )
+    responsible_party = ActionResponsiblePartyFactory.create(action=action, organization=plan.organization)
     data = graphql_client_query_data(
         """
         query($plan: ID!) {
@@ -77,6 +79,9 @@ def test_planactions(graphql_client_query_data):
         """ + ACTION_FRAGMENT,
         variables=dict(plan=plan.identifier),
     )
+    assert action.status is not None
+    assert action.implementation_phase is not None
+    assert action.impact is not None
     expected = {
         'planActions': [{
             'id': str(action.id),

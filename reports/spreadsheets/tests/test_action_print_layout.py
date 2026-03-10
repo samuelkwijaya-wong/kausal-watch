@@ -4,6 +4,7 @@ from pytest_factoryboy import register
 
 from aplans.factories import ModelFactory
 
+from actions.models import Plan
 from actions.tests.factories import PlanFactory
 from reports.spreadsheets.action_print_layout import ReportActionPrintLayoutCustomization
 
@@ -11,12 +12,12 @@ pytestmark = pytest.mark.django_db
 
 
 class ReportActionPrintLayoutCustomizationFactory(ModelFactory[ReportActionPrintLayoutCustomization]):
-    plan = SubFactory(PlanFactory)
-    max_columns=None,
-    width_needed=None,
-    approximate_chars_per_line=None,
-    approximate_lines_per_page=None,
-    min_split_chars=None
+    plan = SubFactory[ReportActionPrintLayoutCustomization, Plan](PlanFactory)
+    max_columns: int | None = None
+    width_needed: list[list[int]] | None = None
+    approximate_chars_per_line: int | None = None
+    approximate_lines_per_page: int | None = None
+    min_split_chars: int | None = None
 
 
 

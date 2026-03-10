@@ -448,7 +448,9 @@ class IndicatorIndexView(AplansIndexView[Indicator]):
         return qs
 
 
-class IndicatorEditHandler(BuiltInFieldCustomizationAwareEditHandlerMixin, AplansTabbedInterface[Indicator, IndicatorForm]):  # type: ignore[misc]
+class IndicatorEditHandler(
+    BuiltInFieldCustomizationAwareEditHandlerMixin[Indicator, IndicatorForm], AplansTabbedInterface[Indicator, IndicatorForm]
+):
     def get_form_class(self):
         request = ctx_request.get_admin_request()
         instance = ctx_instance.get_as_type(Indicator)

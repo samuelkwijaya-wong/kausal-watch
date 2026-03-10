@@ -101,7 +101,7 @@ class ActionResponsiblePartyReportFieldBlock(FieldBlockWithHelpPanel):
             'In addition to the organization itself, an organizational unit containing the organization '
             'is included in the report. Counting from the top-level root organisation at level 1, which level '
             'in the organizational hierarchy should be used to find this containing organization? '
-            'If left empty, don\'t add the containing organization to the report.',
+            "If left empty, don't add the containing organization to the report.",
         ),
     )
 
@@ -121,7 +121,6 @@ Whenever possible, try to use the existing report block classes
 that can be retrieved from the action_registry simply with the
 field name, instead of implenting a custom ReportFieldBlock from scratch.
 """
-
 ReportFieldBlock = generate_stream_block(
     'ReportFieldBlock',
     fields = (

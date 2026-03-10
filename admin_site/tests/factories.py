@@ -5,19 +5,20 @@ from factory.django import DjangoModelFactory
 
 from aplans.utils import InstancesEditableByMixin, InstancesVisibleForMixin
 
+from actions.models import Plan
 from actions.tests.factories import PlanFactory
-from admin_site.models import Client
+from admin_site.models import BuiltInFieldCustomization, Client, ClientPlan, EmailDomains
 
 
-class EmailDomainsFactory(DjangoModelFactory):
+class EmailDomainsFactory(DjangoModelFactory[EmailDomains]):
     class Meta:
         model = 'admin_site.EmailDomains'
 
-    client = SubFactory('admin_site.tests.factories.ClientFactory')
+    client = SubFactory[EmailDomains, Client]('admin_site.tests.factories.ClientFactory')
     domain = 'example.com'
 
 
-class ClientFactory(DjangoModelFactory):
+class ClientFactory(DjangoModelFactory[Client]):
     class Meta:
         model = 'admin_site.Client'
 
@@ -25,20 +26,22 @@ class ClientFactory(DjangoModelFactory):
     auth_backend = Client.AuthBackend.AZURE_AD
 
 
-class ClientPlanFactory(DjangoModelFactory):
+class ClientPlanFactory(DjangoModelFactory[ClientPlan]):
     class Meta:
         model = 'admin_site.ClientPlan'
 
-    client = SubFactory(ClientFactory)
-    plan = SubFactory('actions.tests.factories.PlanFactory')
+    client = SubFactory[ClientPlan, Client](ClientFactory)
+    plan = SubFactory[ClientPlan, Plan]('actions.tests.factories.PlanFactory')
 
 
-class BuiltInFieldCustomizationFactory(DjangoModelFactory):
+class BuiltInFieldCustomizationFactory(DjangoModelFactory[BuiltInFieldCustomization]):
     class Meta:
         model = 'admin_site.BuiltInFieldCustomization'
 
-    plan = SubFactory(PlanFactory)
-    content_type = LazyAttribute(lambda _: ContentType.objects.get(app_label='actions', model='action'))
+    plan = SubFactory[BuiltInFieldCustomization, Plan](PlanFactory)
+    content_type = LazyAttribute[BuiltInFieldCustomization, ContentType](
+        lambda _: ContentType.objects.get(app_label='actions', model='action')
+    )
     field_name = 'identifier'
     help_text_override = 'overridden help text'
     label_override = 'overridden label'

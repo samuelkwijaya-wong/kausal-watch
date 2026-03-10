@@ -24,7 +24,7 @@ from wagtail_color_panel.fields import ColorField
 
 from kausal_common.i18n.helpers import get_supported_languages
 from kausal_common.models.language import ModelWithPrimaryLanguage
-from kausal_common.models.types import FK, RevManyQS, RevManyToManyQS, manager_from_mlqs
+from kausal_common.models.types import manager_from_mlqs
 
 from aplans.utils import (
     IdentifierField,
@@ -35,16 +35,17 @@ from aplans.utils import (
     generate_identifier,
 )
 
-from ..attributes import AttributeFieldPanel, AttributeType
-from .attributes import AttributeType as AttributeTypeModel, AttributeTypeQuerySet, ModelWithAttributes
+from ..attributes import AttributeType
+from .attributes import AttributeType as AttributeTypeModel, ModelWithAttributes
 
 if TYPE_CHECKING:
     from collections.abc import Iterable, Sequence
 
     from django.db.models import QuerySet
     from django.db.models.manager import Manager
+    from wagtail.query import PageQuerySet
 
-    from kausal_common.models.types import MLMM, RevMany
+    from kausal_common.models.types import FK, MLMM, RevMany, RevManyQS, RevManyToManyQS
     from kausal_common.users import UserOrAnon
 
     from actions.models.action import BaseChangeLogMessage
@@ -52,7 +53,9 @@ if TYPE_CHECKING:
     from indicators.models import Indicator
     from pages.models import CategoryPage, CategoryTypePage, CategoryTypePageLevelLayout
 
+    from ..attributes import AttributeFieldPanel
     from .action import Action, ActionCategoryThrough, ActionQuerySet
+    from .attributes import AttributeTypeQuerySet
 
 
 class CategoryTypeBase(models.Model):
@@ -221,7 +224,7 @@ class CategoryType(
 
     categories: RevMany[Category]
     levels: RevMany[CategoryLevel]
-    category_type_pages: RevMany[CategoryTypePage]
+    category_type_pages: RevManyQS[CategoryTypePage, PageQuerySet]
 
     id: int
     name_i18n: str

@@ -5,7 +5,9 @@ from factory.django import DjangoModelFactory
 
 from aplans.factories import ModelFactory
 
+from actions.models import Plan
 from orgs.models import Namespace, Organization, OrganizationClass, OrganizationIdentifier, OrganizationPlanAdmin
+from people.models import Person
 from people.tests.factories import PersonFactory
 
 
@@ -29,7 +31,7 @@ class OrganizationFactory(ModelFactory[Organization]):
     class Meta:
         model = Organization
 
-    classification = SubFactory(OrganizationClassFactory)
+    classification = SubFactory[Organization, OrganizationClass](OrganizationClassFactory)
     name = Sequence(lambda i: f"Organization {i}")
     abbreviation = Sequence(lambda i: f'org{i}')
     description = RichText("<p>Description</p>")
@@ -48,15 +50,15 @@ class OrganizationIdentifierFactory(DjangoModelFactory['OrganizationIdentifier']
     class Meta:
         model = OrganizationIdentifier
 
-    organization = SubFactory(OrganizationFactory)
+    organization = SubFactory[OrganizationIdentifier, Organization](OrganizationFactory)
     identifier = Sequence(lambda i: f'org{i}')
-    namespace = SubFactory(NamespaceFactory)
+    namespace = SubFactory[OrganizationIdentifier, Namespace](NamespaceFactory)
 
 
 class OrganizationPlanAdminFactory(DjangoModelFactory['OrganizationPlanAdmin']):
     class Meta:
         model = OrganizationPlanAdmin
 
-    organization = SubFactory(OrganizationFactory)
-    plan = SubFactory('actions.tests.factories.PlanFactory')
-    person = SubFactory(PersonFactory)
+    organization = SubFactory[OrganizationPlanAdmin, Organization](OrganizationFactory)
+    plan = SubFactory[OrganizationPlanAdmin, Plan]('actions.tests.factories.PlanFactory')
+    person = SubFactory[OrganizationPlanAdmin, Person](PersonFactory)

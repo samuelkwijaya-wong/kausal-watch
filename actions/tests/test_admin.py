@@ -11,6 +11,7 @@ from pytest_django.asserts import assertContains
 
 from actions.action_admin import ActionAdmin
 from actions.attribute_type_admin import AttributeTypeAdmin
+from actions.models import AttributeType, CategoryType
 from actions.tests.factories import (
     ActionFactory,
     AttributeTypeFactory,
@@ -294,7 +295,7 @@ class TestAttributeTypeAdminButtonHelper:
         request.user = plan_admin_user
 
         view = Mock()
-        view.model = AttributeTypeFactory._meta.model
+        view.model = AttributeType._meta.model
         view.url_helper = Mock()
         view.url_helper.get_action_url = Mock(
             side_effect=lambda action, pk: f'/admin/{action}/{pk}/'
@@ -366,7 +367,7 @@ class TestCategoryAdminButtonHelper:
         request.user = plan_admin_user
 
         view = Mock()
-        view.model = CategoryTypeFactory._meta.model
+        view.model = CategoryType._meta.model
         view.url_helper = Mock()
         view.url_helper.get_action_url = Mock(
             side_effect=lambda action, pk: f'/admin/{action}/{pk}/'

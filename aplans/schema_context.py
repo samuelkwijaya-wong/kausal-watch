@@ -3,7 +3,7 @@ from __future__ import annotations
 from contextlib import ExitStack, contextmanager
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Any, cast
-from typing_extensions import deprecated
+from warnings import deprecated
 
 from django.conf import settings
 from django.utils import translation
@@ -25,7 +25,7 @@ from aplans.graphene_views import PLAN_DOMAIN_HEADER, PLAN_IDENTIFIER_HEADER
 
 from actions.models import Plan
 
-from .cache import PlanSpecificCache, WatchObjectCache
+from .cache import WatchObjectCache
 
 if TYPE_CHECKING:
     from collections.abc import Generator
@@ -34,6 +34,8 @@ if TYPE_CHECKING:
     from graphql.language import DirectiveNode, OperationDefinitionNode
 
     from actions.models.plan import PlanQuerySet
+
+    from .cache import PlanSpecificCache
 
 logger = logger.bind(markup=True)
 

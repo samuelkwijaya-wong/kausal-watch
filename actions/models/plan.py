@@ -500,7 +500,8 @@ class Plan(ClusterableModel, ModelWithPrimaryLanguage, PermissionedModel, Search
 
     def __rich_repr__(self):
         yield self.name
-        yield 'version_name', self.version_name
+        if self.version_name:
+            yield 'version_name', self.version_name
         yield 'identifier', self.identifier
 
     def get_last_action_identifier(self):

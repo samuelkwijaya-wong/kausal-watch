@@ -2,32 +2,32 @@ import datetime
 
 from django.db.models.signals import post_save
 
-import factory
 from factory.declarations import SubFactory
 from factory.django import DjangoModelFactory
 
+from actions.models import Plan
 from actions.tests.factories import PlanFactory, mute_signals
 from notifications.models import (
     AutomaticNotificationTemplate,
     BaseTemplate,
     ManuallyScheduledNotificationTemplate,
     NotificationSettings,
-    NotificationType,
 )
+from notifications.notifications import NotificationType
 
 
 class BaseTemplateFactory(DjangoModelFactory[BaseTemplate]):
     class Meta:
         model = 'notifications.BaseTemplate'
 
-    plan = SubFactory(PlanFactory)
+    plan = SubFactory[BaseTemplate, Plan](PlanFactory)
 
 
 class AutomaticNotificationTemplateFactory(DjangoModelFactory[AutomaticNotificationTemplate]):
     class Meta:
         model = 'notifications.AutomaticNotificationTemplate'
 
-    base = SubFactory(BaseTemplateFactory)
+    base = SubFactory[AutomaticNotificationTemplate, BaseTemplate](BaseTemplateFactory)
     subject = "Test"
     # Use the first notification type by default
     type = next(iter(NotificationType)).identifier
@@ -41,7 +41,7 @@ class ManuallyScheduledNotificationTemplateFactory(DjangoModelFactory[ManuallySc
     class Meta:
         model = 'notifications.ManuallyScheduledNotificationTemplate'
 
-    base = SubFactory(BaseTemplateFactory)
+    base = SubFactory[ManuallyScheduledNotificationTemplate, BaseTemplate](BaseTemplateFactory)
     subject = "Test"
     date = datetime.date(2021, 1, 1)
     custom_email = 'test@example.com'
@@ -57,5 +57,5 @@ class NotificationSettingsFactory(DjangoModelFactory[NotificationSettings]):
     class Meta:
         model = 'notifications.NotificationSettings'
 
-    plan = SubFactory(PlanFactory, notification_settings=None)
+    plan = SubFactory[NotificationSettings, Plan](PlanFactory, notification_settings=None)
     notifications_enabled = False

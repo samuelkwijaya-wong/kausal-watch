@@ -58,13 +58,13 @@ from aplans.utils import (
 
 from actions.models.category import Category
 from admin_site.models import BaseChangeLogMessage
-from indicators.models import ActionIndicator, ActionIndicatorQuerySet, Indicator, IndicatorQuerySet
+from indicators.models import Indicator
 from orgs.models import Organization
 from search.backends import TranslatedAutocompleteField, TranslatedSearchField
 from search.models import SearchableModel
 from users.models import User
 
-from ..action_status_summary import ActionStatusSummaryIdentifier, ActionTimelinessIdentifier, SummaryContext
+from ..action_status_summary import ActionStatusSummaryIdentifier, ActionTimelinessIdentifier
 from ..attributes import AttributeFieldPanel, AttributeType
 from ..monitoring_quality import determine_monitoring_quality
 from .action_deps import ActionDependencyRelationship
@@ -96,8 +96,10 @@ if typing.TYPE_CHECKING:
 
     from actions.attributes import DraftAttributes
     from actions.models.category import CategoryType
+    from indicators.models import ActionIndicator, ActionIndicatorQuerySet, IndicatorQuerySet
     from people.models import Person
 
+    from ..action_status_summary import SummaryContext
     from .action_deps import ActionDependencyRelationshipQuerySet, ActionDependencyRole
     from .plan import MonitoringQualityPoint, Plan
 
@@ -816,6 +818,13 @@ class Action(
         s += self.name_i18n
         return s
 
+    def __rich_repr__(self):
+        yield 'id', self.id
+        yield 'plan', self.plan
+        if self.plan.features.has_action_identifiers:
+            yield 'identifier', self.identifier
+        yield 'name', self.name
+
     def clean(self):
         if self.merged_with is not None:
             other = self.merged_with
@@ -1533,6 +1542,8 @@ class ActionResponsibleParty(OrderedModel, ModelWithRole['ActionResponsibleParty
         help_text=_('The responsibility domain for the organization'),
     )
 
+    id: int
+
     public_fields: ClassVar = [
         'id',
         'action',
@@ -1703,6 +1714,8 @@ class ActionSchedule(PlanRelatedModelWithRevision):
     begins_at = models.DateField()
     ends_at = models.DateField(null=True, blank=True)
     i18n = TranslationField(fields=('name',), default_language_field='plan__primary_language_lowercase')
+
+    id: int
 
     public_fields: ClassVar = [
         'id',

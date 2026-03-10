@@ -20,13 +20,13 @@ from actions.models.attributes import AttributeType as AttributeTypeModel
 from actions.tests.factories import (
     ActionContactFactory,
     ActionFactory,
-    AplansImageFactory,
     AttributeTextFactory,
     AttributeTypeFactory,
     CategoryFactory,
     CategoryTypeFactory,
     PlanFactory,
 )
+from images.tests.factories import AplansImageFactory
 from pages.models import CategoryPage, CategoryTypePage
 
 pytestmark = pytest.mark.django_db
@@ -76,7 +76,7 @@ def test_action_no_duplicate_identifier_per_plan(plan):
 
 @pytest.mark.parametrize('color', ['invalid', '#fffffg', '#00'])
 def test_category_color_invalid(color):
-    category = CategoryFactory()
+    category = CategoryFactory.create()
     category.color = color
     with pytest.raises(ValidationError):
         category.full_clean()
@@ -84,7 +84,7 @@ def test_category_color_invalid(color):
 
 @pytest.mark.parametrize('color', ['#ffFFff'])
 def test_category_color_valid(color):
-    category = CategoryFactory()
+    category = CategoryFactory.create()
     category.color = color
     category.full_clean()
 
@@ -101,23 +101,23 @@ def test_category_type_synchronize_pages_when_synchronization_activated(plan_wit
 
 
 def test_category_type_synchronize_pages_translated(plan_with_pages):
-    category = CategoryFactory(type__synchronize_with_pages=True, type__plan=plan_with_pages)
+    category = CategoryFactory.create(type__synchronize_with_pages=True, type__plan=plan_with_pages)
     plan = plan_with_pages
     language = plan.other_languages[0]
     locale = Locale.objects.get(language_code__iexact=language)
     translated_root_page = plan.root_page.get_translation(locale)
     category.type.synchronize_pages()
-    ct_page = category.type.category_type_pages.child_of(translated_root_page).get()
+    ct_page = category.type.category_type_pages.get_queryset().child_of(translated_root_page).get()
     assert ct_page.title == category.type.name
     page = ct_page.get_children().get()
     assert page.title == getattr(category, f'name_{language}')
 
 
 def test_category_type_synchronize_pages_exists(plan_with_pages):
-    category = CategoryFactory(type__synchronize_with_pages=True, type__plan=plan_with_pages)
+    category = CategoryFactory.create(type__synchronize_with_pages=True, type__plan=plan_with_pages)
     plan = plan_with_pages
     category.type.synchronize_pages()
-    ct_page = category.type.category_type_pages.child_of(plan.root_page).get()
+    ct_page = category.type.category_type_pages.get_queryset().child_of(plan.root_page).get()
     old_page_title = ct_page.title
     category.type.name = "Changed category type name"
     category.type.save()
@@ -131,9 +131,9 @@ def test_category_type_synchronize_pages_exists(plan_with_pages):
 
 
 def test_category_type_creating_category_creates_page(plan_with_pages):
-    category_type = CategoryTypeFactory(synchronize_with_pages=True, plan=plan_with_pages)
+    category_type = CategoryTypeFactory.create(synchronize_with_pages=True, plan=plan_with_pages)
     category_type.synchronize_pages()
-    ct_page = category_type.category_type_pages.child_of(category_type.plan.root_page).get()
+    ct_page = category_type.category_type_pages.get_queryset().child_of(category_type.plan.root_page).get()
     assert not ct_page.get_children().exists()
     CategoryFactory(type=category_type)
     ct_page.refresh_from_db()
@@ -141,32 +141,42 @@ def test_category_type_creating_category_creates_page(plan_with_pages):
 
 
 def test_category_move_to_new_parent_changes_page_hierarchy(plan_with_pages):
-    category_type = CategoryTypeFactory(synchronize_with_pages=True, plan=plan_with_pages)
+    category_type = CategoryTypeFactory.create(synchronize_with_pages=True, plan=plan_with_pages)
     locale = Locale.objects.get(language_code=plan_with_pages.primary_language)
     ct_page = category_type.category_type_pages.filter(locale=locale).get()
-    cat1 = CategoryFactory(type=category_type)
-    cat2 = CategoryFactory(type=category_type)
-    assert cat1.category_pages.filter(locale=locale).get().get_parent().specific == ct_page
-    assert cat2.category_pages.filter(locale=locale).get().get_parent().specific == ct_page
+    cat1 = CategoryFactory.create(type=category_type)
+    cat2 = CategoryFactory.create(type=category_type)
+    cat1_parent_page = cat1.category_pages.filter(locale=locale).get().get_parent()
+    cat2_parent_page = cat2.category_pages.filter(locale=locale).get().get_parent()
+    assert cat1_parent_page is not None
+    assert cat2_parent_page is not None
+    assert cat1_parent_page.specific == ct_page
+    assert cat2_parent_page.specific == ct_page
     cat2.parent = cat1
     cat2.save()
-    assert cat1.category_pages.filter(locale=locale).get().get_parent().specific == ct_page
-    assert (cat2.category_pages.filter(locale=locale).get().get_parent().specific ==
+    cat1_parent_page = cat1.category_pages.filter(locale=locale).get().get_parent()
+    cat2_parent_page = cat2.category_pages.filter(locale=locale).get().get_parent()
+    assert cat1_parent_page is not None
+    assert cat2_parent_page is not None
+    assert cat1_parent_page.specific == ct_page
+    assert (cat2_parent_page.specific ==
             cat1.category_pages.filter(locale=locale).get())
 
 
 def test_category_move_to_new_sibling_changes_page_hierarchy(plan_with_pages):
-    category_type = CategoryTypeFactory(synchronize_with_pages=True, plan=plan_with_pages)
+    category_type = CategoryTypeFactory.create(synchronize_with_pages=True, plan=plan_with_pages)
     locale = Locale.objects.get(language_code=plan_with_pages.primary_language)
-    cat1 = CategoryFactory(type=category_type)
-    cat2 = CategoryFactory(type=category_type)
+    cat1 = CategoryFactory.create(type=category_type)
+    cat2 = CategoryFactory.create(type=category_type)
     assert cat1.order < cat2.order
-    assert (cat1.category_pages.filter(locale=locale).get().get_next_sibling().specific ==
-            cat2.category_pages.filter(locale=locale).get())
+    next_sibling = cat1.category_pages.filter(locale=locale).get().get_next_sibling()
+    assert next_sibling is not None
+    assert next_sibling.specific == cat2.category_pages.filter(locale=locale).get()
     cat1.order = cat2.order + 1
     cat1.save()
-    assert (cat2.category_pages.filter(locale=locale).get().get_next_sibling().specific ==
-            cat1.category_pages.filter(locale=locale).get())
+    next_sibling = cat2.category_pages.filter(locale=locale).get().get_next_sibling()
+    assert next_sibling is not None
+    assert next_sibling.specific == cat1.category_pages.filter(locale=locale).get()
 
 
 @pytest.fixture
@@ -300,7 +310,7 @@ def test_plan_should_trigger_daily_notifications_due(plan):
 ])
 def test_category_type_does_not_accept_action_specific_editability(editable_by):
     with pytest.raises(ValidationError):
-        CategoryTypeFactory(instances_editable_by=editable_by).full_clean()
+        CategoryTypeFactory.create(instances_editable_by=editable_by).full_clean()
 
 
 @pytest.mark.parametrize('editable_by', [
@@ -309,7 +319,7 @@ def test_category_type_does_not_accept_action_specific_editability(editable_by):
     InstancesEditableByMixin.EditableBy.NOT_EDITABLE,
 ])
 def test_category_type_accepts_non_action_specific_editability(editable_by):
-    CategoryTypeFactory(instances_editable_by=editable_by).full_clean()
+    CategoryTypeFactory.create(instances_editable_by=editable_by).full_clean()
 
 
 @pytest.mark.parametrize('model,scope_factory,editable_by_accepted,editable_by_raises', [
@@ -338,14 +348,14 @@ def test_category_type_accepts_non_action_specific_editability(editable_by):
 def test_attribute_type_editability_validation(model, scope_factory, editable_by_accepted, editable_by_raises):
     scope = scope_factory()
     for editable_by in editable_by_accepted:
-        AttributeTypeFactory(
+        AttributeTypeFactory.create(
            object_content_type=ContentType.objects.get(app_label='actions', model=model),
            scope=scope,
            instances_editable_by=editable_by,
         ).full_clean()
     for editable_by in editable_by_raises:
         with pytest.raises(ValidationError):
-            AttributeTypeFactory(
+            AttributeTypeFactory.create(
                object_content_type=ContentType.objects.get(app_label='actions', model=model),
                scope=scope,
                instances_editable_by=editable_by,
@@ -378,14 +388,14 @@ def test_attribute_type_editability_validation(model, scope_factory, editable_by
 def test_attribute_type_visibility_validation(model, scope_factory, visible_for_accepted, visible_for_raises):
     scope = scope_factory()
     for visible_for in visible_for_accepted:
-        AttributeTypeFactory(
+        AttributeTypeFactory.create(
            object_content_type=ContentType.objects.get(app_label='actions', model=model),
            scope=scope,
            instances_visible_for=visible_for,
         ).full_clean()
     for visible_for in visible_for_raises:
         with pytest.raises(ValidationError):
-            AttributeTypeFactory(
+            AttributeTypeFactory.create(
                object_content_type=ContentType.objects.get(app_label='actions', model=model),
                scope=scope,
                instances_visible_for=visible_for,
@@ -393,21 +403,21 @@ def test_attribute_type_visibility_validation(model, scope_factory, visible_for_
 
 
 def test_attribute_type_visibility_contact_person_particular_action(plan, action, person):
-    ac = ActionContactFactory(action__plan=plan, person=person, role=ActionContactPerson.Role.MODERATOR)
+    ac = ActionContactFactory.create(action__plan=plan, person=person, role=ActionContactPerson.Role.MODERATOR)
     assert ac.action != action
     assert not action.contact_persons.exists()
-    at = AttributeTypeFactory(
+    at = AttributeTypeFactory.create(
         object_content_type=ContentType.objects.get_for_model(Action),
         scope=plan,
         instances_visible_for=InstancesVisibleForMixin.VisibleFor.CONTACT_PERSONS,
     )
     # Attribute for an action that `person` is a contact person for
-    visible_attr = AttributeTextFactory(
+    visible_attr = AttributeTextFactory.create(
         type=at,
         content_object=ac.action,
     )
     # Attribute for an action that `person` is not a contact person for
-    invisible_attr = AttributeTextFactory(
+    invisible_attr = AttributeTextFactory.create(
         type=at,
         content_object=action,
     )

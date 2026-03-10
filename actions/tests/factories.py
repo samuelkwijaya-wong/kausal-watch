@@ -18,7 +18,8 @@ from factory.helpers import post_generation
 
 from aplans.factories import ModelFactory
 
-from actions.blocks import ActionListBlock, CategoryListBlock
+from actions.blocks.action_list import ActionListBlock
+from actions.blocks.category_list import CategoryListBlock
 from actions.blocks.category_page_layout import CategoryPageAttributeTypeBlock, CategoryPageProgressBlock
 from actions.blocks.choosers import AttributeTypeChooserBlock
 from actions.models import (
@@ -55,9 +56,15 @@ from actions.models import (
     Scenario,
 )
 from actions.models.action_deps import ActionDependencyRelationship, ActionDependencyRole
+from content.models import SiteGeneralContent
+from images.models import AplansImage
 from images.tests.factories import AplansImageFactory
+from notifications.models import NotificationSettings
+from orgs.models import Organization
 from orgs.tests.factories import OrganizationFactory
+from people.models import Person
 from people.tests.factories import PersonFactory
+from users.models import User
 from users.tests.factories import UserFactory
 
 if TYPE_CHECKING:
@@ -66,26 +73,30 @@ if TYPE_CHECKING:
     from django.dispatch.dispatcher import Signal
 
     from indicators.models import Unit
-    from people.models import Person
+
     def mute_signals[X](signal: Signal) -> Callable[[X], X]: ...
 else:
     mute_signals = factory.django.mute_signals
 
+
 @mute_signals(post_save)
 class PlanFactory(ModelFactory[Plan]):
-    organization = SubFactory(OrganizationFactory)
-    name = Sequence(lambda i: f"Plan {i}")
+    organization = SubFactory[Plan, Organization](OrganizationFactory)
+    name = Sequence(lambda i: f'Plan {i}')
     identifier = Sequence(lambda i: f'plan{i}')
-    image = SubFactory(AplansImageFactory)
+    image = SubFactory[Plan, AplansImage](AplansImageFactory)
     site_url = Sequence(lambda i: f'https://plan{i}.example.com')
     accessibility_statement_url = 'https://example.com'
     primary_language = 'en'
     other_languages = ['fi']
     published_at = make_aware(datetime.datetime(2021, 1, 1))  # noqa: DTZ001
-    general_content = RelatedFactory('content.tests.factories.SiteGeneralContentFactory', factory_related_name='plan')
-    features = RelatedFactory('actions.tests.factories.PlanFeaturesFactory', factory_related_name='plan')
-    notification_settings = RelatedFactory(
-        'notifications.tests.factories.NotificationSettingsFactory', factory_related_name='plan',
+    general_content = RelatedFactory[Plan, SiteGeneralContent](
+        'content.tests.factories.SiteGeneralContentFactory', factory_related_name='plan'
+    )
+    features = RelatedFactory[Plan, PlanFeatures]('actions.tests.factories.PlanFeaturesFactory', factory_related_name='plan')
+    notification_settings = RelatedFactory[Plan, NotificationSettings](
+        'notifications.tests.factories.NotificationSettingsFactory',
+        factory_related_name='plan',
     )
     kausal_paths_instance_uuid = 'paths_uuid'
 
@@ -100,74 +111,75 @@ class PlanFactory(ModelFactory[Plan]):
         return super()._create(model_class, *args, **kwargs)
 
     if TYPE_CHECKING:
+
         @classmethod
         def create(cls, *args, **kwargs) -> Plan: ...
 
 
 @mute_signals(post_save)
 class PlanFeaturesFactory(ModelFactory[PlanFeatures]):
-    plan = SubFactory(PlanFactory, features=None)
+    plan = SubFactory[PlanFeatures, Plan](PlanFactory, features=None)
 
 
 @mute_signals(post_save)
 class PlanDomainFactory(ModelFactory[PlanDomain]):
-    plan = SubFactory(PlanFactory, _domain=None)
+    plan = SubFactory[PlanDomain, Plan](PlanFactory, _domain=None)
     hostname = Sequence(lambda i: f'plandomain{i}.example.org')
     redirect_to_hostname = ''
 
 
 class ActionDependencyRoleFactory(ModelFactory[ActionDependencyRole]):
-    plan = SubFactory(PlanFactory)
-    name = Sequence(lambda i: f"Action dependency role {i}")
+    plan = SubFactory[ActionDependencyRole, Plan](PlanFactory)
+    name = Sequence(lambda i: f'Action dependency role {i}')
     order = Sequence(lambda i: i)
 
 
 class ActionStatusFactory(ModelFactory[ActionStatus]):
-    plan = SubFactory(PlanFactory)
-    name = Sequence(lambda i: f"Action status {i}")
+    plan = SubFactory[ActionStatus, Plan](PlanFactory)
+    name = Sequence(lambda i: f'Action status {i}')
     identifier = Sequence(lambda i: f'action-status-{i}')
 
 
 class ActionImplementationPhaseFactory(ModelFactory[ActionImplementationPhase]):
-    plan = SubFactory(PlanFactory)
-    name = Sequence(lambda i: f"Action implementation phase {i}")
+    plan = SubFactory[ActionImplementationPhase, Plan](PlanFactory)
+    name = Sequence(lambda i: f'Action implementation phase {i}')
     identifier = Sequence(lambda i: f'aip{i}')
 
 
 class ActionScheduleFactory(ModelFactory[ActionSchedule]):
-    plan = SubFactory(PlanFactory)
-    name = "Test action schedule"
+    plan = SubFactory[ActionSchedule, Plan](PlanFactory)
+    name = 'Test action schedule'
     begins_at = datetime.date(2020, 1, 1)
     ends_at = datetime.date(2021, 1, 1)
 
 
 class ActionImpactFactory(ModelFactory[ActionImpact]):
-    plan = SubFactory(PlanFactory)
+    plan = SubFactory[ActionImpact, Plan](PlanFactory)
     identifier = Sequence(lambda i: f'action-impact-{i}')
-    name = Sequence(lambda i: f"Action impact {i}")
+    name = Sequence(lambda i: f'Action impact {i}')
 
 
 class ActionLinkFactory(ModelFactory[ActionLink]):
-    action = SubFactory('actions.tests.factories.ActionFactory')
+    action = SubFactory[ActionLink, Action]('actions.tests.factories.ActionFactory')
     url = Sequence(lambda i: f'https://plan{i}.example.com')
-    title = "Action link"
+    title = 'Action link'
 
 
 class CommonCategoryTypeFactory(ModelFactory[CommonCategoryType]):
     primary_language = 'en'
     identifier = Sequence(lambda i: f'cct{i}')
-    name = Sequence(lambda i: f"Common category type {i}")
-    lead_paragraph = "foo"
-    help_text = "bar"
+    name = Sequence(lambda i: f'Common category type {i}')
+    lead_paragraph = 'foo'
+    help_text = 'bar'
 
 
 class CategoryTypeFactory(ModelFactory[CategoryType]):
-    plan = SubFactory(PlanFactory)
+    plan = SubFactory[CategoryType, Plan](PlanFactory)
     identifier = Sequence(lambda i: f'ct{i}')
-    name = Sequence(lambda i: f"Category type {i}")
-    lead_paragraph = "foo"
-    help_text = "bar"
-    common = SubFactory(CommonCategoryTypeFactory)
+    name = Sequence(lambda i: f'Category type {i}')
+    lead_paragraph = 'foo'
+    help_text = 'bar'
+    common = SubFactory[CategoryType, CommonCategoryType](CommonCategoryTypeFactory)
     synchronize_with_pages = False
 
 
@@ -175,13 +187,13 @@ class AttributeTypeFactory(ModelFactory[AttributeType]):
     class Meta:
         exclude = ['scope']
 
-    object_content_type = LazyAttribute(lambda _: ContentType.objects.get_for_model(Category))
-    scope = SubFactory(CategoryTypeFactory)
-    scope_content_type = LazyAttribute(lambda o: ContentType.objects.get_for_model(o.scope))
-    scope_id = SelfAttribute('scope.id')
+    object_content_type = LazyAttribute[AttributeType, ContentType](lambda _: ContentType.objects.get_for_model(Category))
+    scope = SubFactory[AttributeType, CategoryType](CategoryTypeFactory)
+    scope_content_type = LazyAttribute[AttributeType, ContentType](lambda o: ContentType.objects.get_for_model(o.scope))
+    scope_id = SelfAttribute[AttributeType, int]('scope.id')
     identifier = Sequence(lambda i: f'ctm{i}')
-    name = Sequence(lambda i: f"Category attribute type {i}")
-    help_text = "foo"
+    name = Sequence(lambda i: f'Category attribute type {i}')
+    help_text = 'foo'
     format: AttributeType.AttributeFormat = AttributeType.AttributeFormat.RICH_TEXT
     unit: Unit | None = None
     attribute_category_type: CategoryType | None = None
@@ -190,31 +202,33 @@ class AttributeTypeFactory(ModelFactory[AttributeType]):
 
 
 class AttributeTypeChoiceOptionFactory(ModelFactory[AttributeTypeChoiceOption]):
-    type = SubFactory(AttributeTypeFactory, format=AttributeType.AttributeFormat.ORDERED_CHOICE)
+    type = SubFactory[AttributeTypeChoiceOption, AttributeType](
+        AttributeTypeFactory, format=AttributeType.AttributeFormat.ORDERED_CHOICE
+    )
     identifier = Sequence(lambda i: f'ctmc{i}')
-    name = Sequence(lambda i: f"Attribute type choice option {i}")
+    name = Sequence(lambda i: f'Attribute type choice option {i}')
 
 
 class CommonCategoryFactory(ModelFactory[CommonCategory]):
-    type = SubFactory(CommonCategoryTypeFactory)
+    type = SubFactory[CommonCategory, CommonCategoryType](CommonCategoryTypeFactory)
     identifier = Sequence(lambda i: f'categorytype{i}')
-    name = Sequence(lambda i: f"Category type {i}")
-    name_fi = Sequence(lambda i: f"Category type {i} (FI)")
-    image = SubFactory(AplansImageFactory)
-    lead_paragraph = "foo"
-    help_text = "bar"
+    name = Sequence(lambda i: f'Category type {i}')
+    name_fi = Sequence(lambda i: f'Category type {i} (FI)')
+    image = SubFactory[CommonCategory, AplansImage](AplansImageFactory)
+    lead_paragraph = 'foo'
+    help_text = 'bar'
 
 
 class CategoryFactory(ModelFactory[Category]):
-    type = SubFactory(CategoryTypeFactory)
+    type = SubFactory[Category, CategoryType](CategoryTypeFactory)
     identifier = Sequence(lambda i: f'category{i}')
-    name = Sequence(lambda i: f"Category {i}")
-    name_fi = Sequence(lambda i: f"Category {i} (FI)")
-    image = SubFactory(AplansImageFactory)
-    common = SubFactory(CommonCategoryFactory)
-    lead_paragraph = "foo"
-    help_text = "bar"
-    kausal_paths_node_uuid = "kausal_paths_node_uuid"
+    name = Sequence(lambda i: f'Category {i}')
+    name_fi = Sequence(lambda i: f'Category {i} (FI)')
+    image = SubFactory[Category, AplansImage](AplansImageFactory)
+    common = SubFactory[Category, CommonCategory](CommonCategoryFactory)
+    lead_paragraph = 'foo'
+    help_text = 'bar'
+    kausal_paths_node_uuid = 'kausal_paths_node_uuid'
 
 
 class AttributeCategoryChoiceFactory(ModelFactory[AttributeCategoryChoice]):
@@ -222,10 +236,14 @@ class AttributeCategoryChoiceFactory(ModelFactory[AttributeCategoryChoice]):
         exclude = ['content_object']
         skip_postgeneration_save = True
 
-    type = SubFactory(AttributeTypeFactory, format=AttributeType.AttributeFormat.CATEGORY_CHOICE)
-    content_object = SubFactory(CategoryFactory)
-    content_type = LazyAttribute(lambda o: ContentType.objects.get_for_model(o.content_object))
-    object_id = SelfAttribute('content_object.id')
+    type = SubFactory[AttributeCategoryChoice, AttributeType](
+        AttributeTypeFactory, format=AttributeType.AttributeFormat.CATEGORY_CHOICE
+    )
+    content_object = SubFactory[AttributeCategoryChoice, Category](CategoryFactory)
+    content_type = LazyAttribute[AttributeCategoryChoice, ContentType](
+        lambda o: ContentType.objects.get_for_model(o.content_object)
+    )
+    object_id = SelfAttribute[AttributeCategoryChoice, int]('content_object.id')
 
     @post_generation
     @staticmethod
@@ -242,10 +260,10 @@ class AttributeTextFactory(ModelFactory[AttributeText]):
     class Meta:
         exclude = ['content_object']
 
-    type = SubFactory(AttributeTypeFactory, format=AttributeType.AttributeFormat.TEXT)
-    content_object = SubFactory(CategoryFactory)
-    content_type = LazyAttribute(lambda o: ContentType.objects.get_for_model(o.content_object))
-    object_id = SelfAttribute('content_object.id')
+    type = SubFactory[AttributeText, AttributeType](AttributeTypeFactory, format=AttributeType.AttributeFormat.TEXT)
+    content_object = SubFactory[AttributeText, Category](CategoryFactory)
+    content_type = LazyAttribute[AttributeText, ContentType](lambda o: ContentType.objects.get_for_model(o.content_object))
+    object_id = SelfAttribute[AttributeText, int]('content_object.id')
     text = Sequence(lambda i: f'AttributeText {i}')
 
 
@@ -253,21 +271,23 @@ class AttributeNumericValueFactory(ModelFactory[AttributeNumericValue]):
     class Meta:
         exclude = ['content_object']
 
-    type = SubFactory(AttributeTypeFactory, format=AttributeType.AttributeFormat.NUMERIC)
-    content_object = SubFactory(CategoryFactory)
-    content_type = LazyAttribute(lambda o: ContentType.objects.get_for_model(o.content_object))
-    object_id = SelfAttribute('content_object.id')
-    value = Sequence(lambda i: float(i/100))
+    type = SubFactory[AttributeNumericValue, AttributeType](AttributeTypeFactory, format=AttributeType.AttributeFormat.NUMERIC)
+    content_object = SubFactory[AttributeNumericValue, Category](CategoryFactory)
+    content_type = LazyAttribute[AttributeNumericValue, ContentType](
+        lambda o: ContentType.objects.get_for_model(o.content_object)
+    )
+    object_id = SelfAttribute[AttributeNumericValue, int]('content_object.id')
+    value = Sequence(lambda i: float(i / 100))
 
 
 class AttributeRichTextFactory(ModelFactory[AttributeRichText]):
     class Meta:
         exclude = ['content_object']
 
-    type = SubFactory(AttributeTypeFactory, format=AttributeType.AttributeFormat.RICH_TEXT)
-    content_object = SubFactory(CategoryFactory)
-    content_type = LazyAttribute(lambda o: ContentType.objects.get_for_model(o.content_object))
-    object_id = SelfAttribute('content_object.id')
+    type = SubFactory[AttributeRichText, AttributeType](AttributeTypeFactory, format=AttributeType.AttributeFormat.RICH_TEXT)
+    content_object = SubFactory[AttributeRichText, Category](CategoryFactory)
+    content_type = LazyAttribute[AttributeRichText, ContentType](lambda o: ContentType.objects.get_for_model(o.content_object))
+    object_id = SelfAttribute[AttributeRichText, int]('content_object.id')
     text = Sequence(lambda i: f'AttributeRichText {i}')
 
 
@@ -275,50 +295,54 @@ class AttributeChoiceFactory(ModelFactory[AttributeChoice]):
     class Meta:
         exclude = ['content_object']
 
-    type = SubFactory(AttributeTypeFactory, format=AttributeType.AttributeFormat.ORDERED_CHOICE)
-    content_object = SubFactory(CategoryFactory)
-    content_type = LazyAttribute(lambda o: ContentType.objects.get_for_model(o.content_object))
-    object_id = SelfAttribute('content_object.id')
-    choice = SubFactory(AttributeTypeChoiceOptionFactory)
+    type = SubFactory[AttributeChoice, AttributeType](AttributeTypeFactory, format=AttributeType.AttributeFormat.ORDERED_CHOICE)
+    content_object = SubFactory[AttributeChoice, Category](CategoryFactory)
+    content_type = LazyAttribute[AttributeChoice, ContentType](lambda o: ContentType.objects.get_for_model(o.content_object))
+    object_id = SelfAttribute[AttributeChoice, int]('content_object.id')
+    choice = SubFactory[AttributeChoice, AttributeTypeChoiceOption](AttributeTypeChoiceOptionFactory)
 
 
 class AttributeChoiceWithTextFactory(ModelFactory[AttributeChoiceWithText]):
     class Meta:
         exclude = ['content_object']
 
-    type = SubFactory(AttributeTypeFactory, format=AttributeType.AttributeFormat.OPTIONAL_CHOICE_WITH_TEXT)
-    content_object = SubFactory(CategoryFactory)
-    content_type = LazyAttribute(lambda o: ContentType.objects.get_for_model(o.content_object))
-    object_id = SelfAttribute('content_object.id')
-    choice = SubFactory(AttributeTypeChoiceOptionFactory)
+    type = SubFactory[AttributeChoiceWithText, AttributeType](
+        AttributeTypeFactory, format=AttributeType.AttributeFormat.OPTIONAL_CHOICE_WITH_TEXT
+    )
+    content_object = SubFactory[AttributeChoiceWithText, Category](CategoryFactory)
+    content_type = LazyAttribute[AttributeChoiceWithText, ContentType](
+        lambda o: ContentType.objects.get_for_model(o.content_object)
+    )
+    object_id = SelfAttribute[AttributeChoiceWithText, int]('content_object.id')
+    choice = SubFactory[AttributeChoiceWithText, AttributeTypeChoiceOption](AttributeTypeChoiceOptionFactory)
     text = Sequence(lambda i: f'AttributeChoiceText {i}')
 
 
 class CategoryLevelFactory(ModelFactory[CategoryLevel]):
-    type = SubFactory(CategoryTypeFactory)
-    name = Sequence(lambda i: f"Category level name {i}")
+    type = SubFactory[CategoryLevel, CategoryType](CategoryTypeFactory)
+    name = Sequence(lambda i: f'Category level name {i}')
     name_plural = Sequence(lambda i: f'Category level name plural {i}')
 
 
 class ScenarioFactory(ModelFactory[Scenario]):
-    plan = SubFactory(PlanFactory)
-    name = Sequence(lambda i: f"Scenario {i}")
+    plan = SubFactory[Scenario, Plan](PlanFactory)
+    name = Sequence(lambda i: f'Scenario {i}')
     identifier = Sequence(lambda i: f'scenario{i}')
-    description = "Scenario description"
+    description = 'Scenario description'
 
 
 class ActionStatusUpdateFactory(ModelFactory[ActionStatusUpdate]):
-    action = SubFactory('actions.tests.factories.ActionFactory')
-    title = "Action status update"
+    action = SubFactory[ActionStatusUpdate, Action]('actions.tests.factories.ActionFactory')
+    title = 'Action status update'
     date = datetime.date(2020, 1, 1)
-    author = SubFactory(PersonFactory)
-    content = "Action status update content"
-    created_by = SubFactory(UserFactory)
+    author = SubFactory[ActionStatusUpdate, Person](PersonFactory)
+    content = 'Action status update content'
+    created_by = SubFactory[ActionStatusUpdate, User](UserFactory)
 
 
 class ImpactGroupFactory(ModelFactory[ImpactGroup]):
-    plan = SubFactory(PlanFactory)
-    name = Sequence(lambda i: f"Impact group {i}")
+    plan = SubFactory[ImpactGroup, Plan](PlanFactory)
+    name = Sequence(lambda i: f'Impact group {i}')
     identifier = Sequence(lambda i: f'impact-group-{i}')
     parent: ImpactGroup | None = None
     weight = 1.0
@@ -326,25 +350,27 @@ class ImpactGroupFactory(ModelFactory[ImpactGroup]):
 
 
 class MonitoringQualityPointFactory(ModelFactory[MonitoringQualityPoint]):
-    name = Sequence(lambda i: f"Monitoring quality point {i}")
-    description_yes = "Yes"
-    description_no = "No"
-    plan = SubFactory(PlanFactory)
+    name = Sequence(lambda i: f'Monitoring quality point {i}')
+    description_yes = 'Yes'
+    description_no = 'No'
+    plan = SubFactory[MonitoringQualityPoint, Plan](PlanFactory)
     identifier = Sequence(lambda i: f'monitoring-quality-point-{i}')
 
 
 class ActionFactory(ModelFactory[Action]):
-    plan = SubFactory(PlanFactory)
-    name = Sequence(lambda i: f"Action {i}")
+    plan = SubFactory[Action, Plan](PlanFactory)
+    name = Sequence(lambda i: f'Action {i}')
     identifier = Sequence(lambda i: f'action{i}')
     official_name = name
-    image = SubFactory(AplansImageFactory)
-    description = "<p>Action description</p>"
-    impact = SubFactory(ActionImpactFactory, plan=SelfAttribute('..plan'))
-    status = SubFactory(ActionStatusFactory, plan=SelfAttribute('..plan'))
-    implementation_phase = SubFactory(ActionImplementationPhaseFactory, plan=SelfAttribute('..plan'))
+    image = SubFactory[Action, AplansImage](AplansImageFactory)
+    description = '<p>Action description</p>'
+    impact = SubFactory[Action, ActionImpact](ActionImpactFactory, plan=SelfAttribute('..plan'))
+    status = SubFactory[Action, ActionStatus](ActionStatusFactory, plan=SelfAttribute('..plan'))
+    implementation_phase = SubFactory[Action, ActionImplementationPhase](
+        ActionImplementationPhaseFactory, plan=SelfAttribute('..plan')
+    )
     manual_status = True
-    manual_status_reason = "Because this is a test."
+    manual_status_reason = 'Because this is a test.'
     completion = 99
 
     class Meta:
@@ -376,10 +402,10 @@ class ActionFactory(ModelFactory[Action]):
 
 
 class ActionTaskFactory(ModelFactory[ActionTask]):
-    action = SubFactory(ActionFactory)
-    name = Sequence(lambda i: f"Action task {i}")
+    action = SubFactory[ActionTask, Action](ActionFactory)
+    name = Sequence(lambda i: f'Action task {i}')
     state = ActionTask.NOT_STARTED
-    comment = "Comment"
+    comment = 'Comment'
     due_at = datetime.date(2020, 1, 1)
     completed_at: datetime.date | None = None
     completed_by: Person | None = None
@@ -388,44 +414,44 @@ class ActionTaskFactory(ModelFactory[ActionTask]):
 
 
 class ImpactGroupActionFactory(ModelFactory[ImpactGroupAction]):
-    group = SubFactory(ImpactGroupFactory)
-    action = SubFactory(ActionFactory, plan=SelfAttribute('..group.plan'))
-    impact = SubFactory(ActionImpactFactory, plan=SelfAttribute('..group.plan'))
+    group = SubFactory[ImpactGroupAction, ImpactGroup](ImpactGroupFactory)
+    action = SubFactory[ImpactGroupAction, Action](ActionFactory, plan=SelfAttribute('..group.plan'))
+    impact = SubFactory[ImpactGroupAction, ActionImpact](ActionImpactFactory, plan=SelfAttribute('..group.plan'))
 
 
 class ActionResponsiblePartyFactory(ModelFactory[ActionResponsibleParty]):
-    action = SubFactory(ActionFactory)
-    organization = SubFactory(OrganizationFactory)
+    action = SubFactory[ActionResponsibleParty, Action](ActionFactory)
+    organization = SubFactory[ActionResponsibleParty, Organization](OrganizationFactory)
     role = ActionResponsibleParty.Role.PRIMARY
-    specifier = "foo"
+    specifier = 'foo'
 
 
 # FIXME: The factory name does not correspond to the model name because this would suggest that we build a Person
 # object. We might want to consider renaming the model ActionContactPerson to ActionContact or similar.
 class ActionContactFactory(ModelFactory[ActionContactPerson]):
-    action = SubFactory(ActionFactory)
-    person = SubFactory(PersonFactory, organization=SelfAttribute('..action.plan.organization'))
+    action = SubFactory[ActionContactPerson, Action](ActionFactory)
+    person = SubFactory[ActionContactPerson, Person](PersonFactory, organization=SelfAttribute('..action.plan.organization'))
     role = ActionContactPerson.Role.MODERATOR
 
 
 class ActionDependencyRelationshipFactory(ModelFactory[ActionDependencyRelationship]):
-    preceding = SubFactory(ActionFactory)
-    dependent = SubFactory(ActionFactory, plan=SelfAttribute('..preceding.plan'))
+    preceding = SubFactory[ActionDependencyRelationship, Action](ActionFactory)
+    dependent = SubFactory[ActionDependencyRelationship, Action](ActionFactory, plan=SelfAttribute('..preceding.plan'))
 
 
 class ActionListBlockFactory(StructBlockFactory):
     class Meta:
         model = ActionListBlock
 
-    category_filter = SubFactory(CategoryFactory)
+    category_filter = SubFactory[ActionListBlock, Category](CategoryFactory)
 
 
 class CategoryListBlockFactory(StructBlockFactory):
     class Meta:
         model = CategoryListBlock
 
-    heading = "Category list heading"
-    lead = RichText("<p>Category list lead</p>")
+    heading = 'Category list heading'
+    lead = RichText('<p>Category list lead</p>')
     style = 'cards'
 
 
@@ -433,14 +459,14 @@ class AttributeTypeChooserBlockFactory(BlockFactory):
     class Meta:
         model = AttributeTypeChooserBlock
 
-    value = SubFactory('actions.tests.factories.AttributeTypeFactory')
+    value = SubFactory[AttributeTypeChooserBlock, AttributeType]('actions.tests.factories.AttributeTypeFactory')
 
 
 class CategoryPageAttributeTypeBlockFactory(StructBlockFactory):
     class Meta:
         model = CategoryPageAttributeTypeBlock
 
-    attribute_type = SubFactory(AttributeTypeChooserBlockFactory)
+    attribute_type = SubFactory[CategoryPageAttributeTypeBlock, AttributeTypeChooserBlock](AttributeTypeChooserBlockFactory)
 
 
 class CategoryPageProgressBlockFactory(StructBlockFactory):
@@ -470,18 +496,18 @@ class WorkflowTaskFactory(ModelFactory[WorkflowTask]):
     class Meta:
         model = WorkflowTask
 
-    workflow = SubFactory(WorkflowFactory)
-    task = SubFactory(WagtailTaskFactory)
+    workflow = SubFactory[WorkflowTask, Workflow](WorkflowFactory)
+    task = SubFactory[WorkflowTask, WagtailTask](WagtailTaskFactory)
 
 
 @mute_signals(post_save)
 class PledgeFactory(ModelFactory[Pledge]):
-    plan = SubFactory(PlanFactory)
-    name = Sequence(lambda i: f"Pledge {i}")
+    plan = SubFactory[Pledge, Plan](PlanFactory)
+    name = Sequence(lambda i: f'Pledge {i}')
     slug = Sequence(lambda i: f'pledge-{i}')
-    description = "A test pledge description"
+    description = 'A test pledge description'
     resident_count = 100
-    impact_statement = "We save 100kg CO₂e each year."
+    impact_statement = 'We save 100kg CO₂e each year.'
     local_equivalency = "That's equivalent to 10 round trips."
 
     class Meta:

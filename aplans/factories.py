@@ -10,7 +10,7 @@ from factory.django import DjangoModelFactory
 
 
 class BaseFactoryMeta(FactoryMetaClass):
-    def __new__(mcs, class_name, bases: list[type], attrs):
+    def __new__(mcs, class_name, bases: tuple[type, ...], attrs):
         orig_bases = attrs.get("__orig_bases__", [])
         for t in orig_bases:
             if t.__name__ == "ModelFactory" and t.__module__ == __name__:
@@ -20,7 +20,7 @@ class BaseFactoryMeta(FactoryMetaClass):
                         attrs["Meta"] = type("Meta", (), {})
                     attrs["Meta"].model = type_args[0]
                     attrs["Meta"].abstract = False  # not in original snippet
-        return super().__new__(mcs, class_name, bases, attrs)
+        return super().__new__(mcs, class_name, bases, attrs)  # type: ignore[arg-type]
 
 
 class ModelFactory[T: Model](DjangoModelFactory[T], metaclass=BaseFactoryMeta):

@@ -4,9 +4,11 @@ from factory.declarations import Sequence, SubFactory
 from factory.django import DjangoModelFactory
 from factory.helpers import post_generation
 
+from orgs.models import Organization
+from people.models import Person
+
 if TYPE_CHECKING:
     from actions.models import Action, Plan
-    from people.models import Person
     from users.models import User
 
 
@@ -18,7 +20,7 @@ class PersonFactory(DjangoModelFactory['Person']):
     first_name = 'John'
     last_name = 'Frum'
     email = Sequence(lambda i: f'person{i}@example.com')
-    organization = SubFactory('actions.tests.factories.OrganizationFactory')
+    organization = SubFactory[Person, Organization]('actions.tests.factories.OrganizationFactory')
     user: User | None = None  # will be created by Person.save() because it calls Person.create_corresponding_user()
 
     @post_generation

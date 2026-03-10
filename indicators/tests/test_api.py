@@ -86,7 +86,7 @@ def assert_goals_match(indicator, goals):
 
 
 def test_all_values_get_replaced(client, plan, plan_admin_user):
-    indicator = IndicatorFactory(plans=[plan])
+    indicator = IndicatorFactory.create(plans=[plan])
     assert not indicator.values.exists()
     for values in [[VALUE_2019, VALUE_2020], [VALUE_2021, VALUE_2022]]:
         # post_values(indicator, values)
@@ -106,9 +106,9 @@ def test_all_goals_get_replaced(client, plan, plan_admin_user):
 @pytest.mark.parametrize("test_goals_instead", [False, True])
 def test_values_get_normalized(client, plan, plan_admin_user, reverse_request_order, test_goals_instead):
     # Normalize emissions by population
-    emissions = IndicatorFactory(plans=[plan])
-    population = IndicatorFactory(plans=[plan], organization=emissions.organization)
-    normalizator = CommonIndicatorNormalizatorFactory(
+    emissions = IndicatorFactory.create(plans=[plan])
+    population = IndicatorFactory.create(plans=[plan], organization=emissions.organization)
+    normalizator = CommonIndicatorNormalizatorFactory.create(
         normalizable=emissions.common,
         normalizer=population.common,
     )
@@ -134,6 +134,7 @@ def test_values_get_normalized(client, plan, plan_admin_user, reverse_request_or
     for indicator, values in request_data:
         post(client, plan, plan_admin_user, path, indicator, values)
     expected_value = emissions_value['value'] / population_value['value'] * normalizator.unit_multiplier
+    assert population.common is not None
     expected = [{str(population.common.id): expected_value}]
     if test_goals_instead:
         result = list(emissions.goals.values_list('normalized_values', flat=True))
@@ -313,7 +314,7 @@ def test_get_indicator_with_categories(api_client, plan, plan_admin_user, indica
 
 
 def test_get_indicator_with_contact_persons(api_client, plan_admin_user, indicator, indicator_detail_url):
-    contact = IndicatorContactFactory(indicator=indicator)
+    contact = IndicatorContactFactory.create(indicator=indicator)
 
     api_client.force_login(plan_admin_user)
     response = api_client.get(indicator_detail_url)

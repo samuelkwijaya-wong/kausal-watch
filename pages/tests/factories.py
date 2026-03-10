@@ -1,4 +1,7 @@
 from wagtail.blocks import PageChooserBlock, RichTextBlock
+from wagtail.fields import StreamField
+from wagtail.images.blocks import ImageChooserBlock
+from wagtail.models import Page
 from wagtail.rich_text import RichText
 from wagtail.test.utils.wagtail_factories import (
     CharBlockFactory,
@@ -17,7 +20,10 @@ from aplans.factories import ModelFactory
 
 import pages.blocks
 import pages.models
+from actions.blocks.category_page_layout import CategoryPageAttributeTypeBlock, CategoryPageProgressBlock
+from actions.models import Category, CategoryLevel, CategoryType
 from actions.tests.factories import CategoryLevelFactory, CategoryPageAttributeTypeBlockFactory, CategoryPageProgressBlockFactory
+from images.models import AplansImage
 from images.tests.factories import AplansImageFactory
 
 
@@ -25,7 +31,7 @@ class PageChooserBlockFactory(BlockFactory):
     class Meta:
         model = PageChooserBlock
 
-    value = SubFactory('pages.tests.factories.StaticPageFactory')
+    value = SubFactory[PageChooserBlock, pages.models.StaticPage]('pages.tests.factories.StaticPageFactory')
 
 
 # wagtail-factories doesn't support rich text blocks.
@@ -65,7 +71,7 @@ class FrontPageHeroBlockFactory(StructBlockFactory):
         model = pages.blocks.FrontPageHeroBlock
 
     layout = 'big_image'
-    image = SubFactory(ImageChooserBlockFactory)
+    image = SubFactory[pages.blocks.FrontPageHeroBlock, ImageChooserBlock](ImageChooserBlockFactory)
     heading = "Front page hero block heading"
     lead = RichText("<p>Front page hero block lead</p>")
 
@@ -75,14 +81,14 @@ class PageLinkBlockFactory(StructBlockFactory):
         model = pages.blocks.PageLinkBlock
 
     text = "Page link block text"
-    page = SubFactory(PageChooserBlockFactory)
+    page = SubFactory[pages.blocks.PageLinkBlock, PageChooserBlock](PageChooserBlockFactory)
 
 
 class StaticPageFactory(PageFactory):
     class Meta:
         model = pages.models.StaticPage
 
-    header_image = SubFactory(AplansImageFactory)
+    header_image = SubFactory[pages.models.StaticPage, AplansImage](AplansImageFactory)
     lead_paragraph = "Lead paragraph"
     # Used to work but then got broken at some point
     # body = [
@@ -110,8 +116,8 @@ class CategoryPageFactory(PageFactory):
     class Meta:
         model = pages.models.CategoryPage
 
-    title = LazyAttribute(lambda obj: f'Page for Category {obj.category.id}')
-    category = SubFactory('actions.tests.factories.CategoryFactory', _category_page=None)
+    title = LazyAttribute[pages.models.CategoryPage, str](lambda obj: f'Page for Category {obj.category.id}')
+    category = SubFactory[pages.models.CategoryPage, Category]('actions.tests.factories.CategoryFactory', _category_page=None)
     # This was the old version and after a Wagtail upgrade the `qa_section` part in StaticPageFactory broke, but maybe
     # it works as done below? We tried to use it that way already some time ago anyway, but there seemed to be some
     # problem back then.
@@ -126,22 +132,22 @@ class CategoryPageFactory(PageFactory):
         ('text', RichText("<p>Hello</p>")),
     ]
     # A category page must have a parent (assumed in CategoryPage.set_url_path)
-    parent = SelfAttribute('category.type.plan.root_page')
+    parent = SelfAttribute[pages.models.CategoryPage, Page]('category.type.plan.root_page')
 
 
 class CategoryTypePageFactory(StaticPageFactory):
     class Meta:
         model = pages.models.CategoryTypePage
 
-    category_type = SubFactory('actions.tests.factories.CategoryTypeFactory')
+    category_type = SubFactory[pages.models.CategoryTypePage, CategoryType]('actions.tests.factories.CategoryTypeFactory')
 
 
 class CategoryTypePageLevelLayoutFactory(ModelFactory[pages.models.CategoryTypePageLevelLayout]):
-    page = SubFactory(CategoryTypePageFactory)
-    level = SubFactory(CategoryLevelFactory)
+    page = SubFactory[pages.models.CategoryTypePageLevelLayout, pages.models.CategoryTypePage](CategoryTypePageFactory)
+    level = SubFactory[pages.models.CategoryTypePageLevelLayout, CategoryLevel](CategoryLevelFactory)
     layout_main_top = StreamFieldFactory({
-        'attribute': SubFactory(CategoryPageAttributeTypeBlockFactory),
-        'progress': SubFactory(CategoryPageProgressBlockFactory),
+        'attribute': SubFactory[StreamField, CategoryPageAttributeTypeBlock](CategoryPageAttributeTypeBlockFactory),
+        'progress': SubFactory[StreamField, CategoryPageProgressBlock](CategoryPageProgressBlockFactory),
     })
     # If we wanted this factory to create an example layout:
     # layout_main_top__0__attribute__attribute_type__name = 'foo'
@@ -152,7 +158,7 @@ class CardBlockFactory(StructBlockFactory):
     class Meta:
         model = pages.blocks.CardBlock
 
-    image = SubFactory(ImageChooserBlockFactory)
+    image = SubFactory[pages.blocks.CardBlock, ImageChooserBlock](ImageChooserBlockFactory)
     heading = "Card block heading"
     content = "Card block content"
     link = 'http://example.com'
