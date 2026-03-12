@@ -1,11 +1,12 @@
+import typing
 from datetime import date
 
 import pytest
 
-from actions.models.action import Action
 from datasets.tests.factories import (
     DataPointFactory,
     DatasetFactory,
+    DatasetMetricFactory,
     DatasetSchemaDimensionFactory,
     DatasetSchemaFactory,
     DatasetSchemaScopeFactory,
@@ -13,6 +14,9 @@ from datasets.tests.factories import (
     DimensionFactory,
     DimensionScopeFactory,
 )
+
+if typing.TYPE_CHECKING:
+    from actions.models.action import Action
 
 pytestmark = pytest.mark.django_db
 
@@ -550,3 +554,249 @@ def test_integration_for_action(graphql_client_query_data, action: Action):
     }
 
     assert data == expected
+
+
+def test_dataset_metric_node(graphql_client_query_data, plan, category):
+    schema = DatasetSchemaFactory.create()
+    metric = DatasetMetricFactory.create(schema=schema, label='CO2 emissions', name='co2', unit='t')
+    DatasetFactory.create(scope=category, schema=schema)
+    data = graphql_client_query_data(
+        """
+        query($plan: ID!) {
+          planCategories(plan: $plan) {
+            datasets {
+              schema {
+                metrics {
+                  __typename
+                  uuid
+                  name
+                  label
+                  unit
+                  order
+                  schema {
+                    __typename
+                    uuid
+                  }
+                }
+              }
+            }
+          }
+        }
+        """,
+        variables={'plan': plan.identifier},
+    )
+    expected = {
+        'planCategories': [{
+            'datasets': [{
+                'schema': {
+                    'metrics': [{
+                        '__typename': 'DatasetMetricNode',
+                        'uuid': str(metric.uuid),
+                        'name': metric.name,
+                        'label': metric.label,
+                        'unit': metric.unit,
+                        'order': metric.order,
+                        'schema': {
+                            '__typename': 'DatasetSchema',
+                            'uuid': str(schema.uuid),
+                        },
+                    }],
+                },
+            }],
+        }],
+    }
+    assert data == expected
+
+
+def test_dimension_node_categories(graphql_client_query_data, plan, category):
+    dimension = DimensionFactory.create()
+    dim_category = DimensionCategoryFactory.create(dimension=dimension)
+    schema = DatasetSchemaFactory.create()
+    DatasetSchemaDimensionFactory.create(schema=schema, dimension=dimension)
+    DatasetFactory.create(scope=category, schema=schema)
+    data = graphql_client_query_data(
+        """
+        query($plan: ID!) {
+          planCategories(plan: $plan) {
+            datasets {
+              schema {
+                dimensions {
+                  dimension {
+                    categories {
+                      __typename
+                      uuid
+                      label
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+        """,
+        variables={'plan': plan.identifier},
+    )
+    expected = {
+        'planCategories': [{
+            'datasets': [{
+                'schema': {
+                    'dimensions': [{
+                        'dimension': {
+                            'categories': [{
+                                '__typename': 'DatasetsDimensionCategory',
+                                'uuid': str(dim_category.uuid),
+                                'label': dim_category.label,
+                            }],
+                        },
+                    }],
+                },
+            }],
+        }],
+    }
+    assert data == expected
+
+
+def test_dimension_category_dimension_field(graphql_client_query_data, plan, category):
+    from datetime import date as date_type
+    dimension = DimensionFactory.create()
+    dim_category = DimensionCategoryFactory.create(dimension=dimension)
+    schema = DatasetSchemaFactory.create()
+    DatasetSchemaDimensionFactory.create(schema=schema, dimension=dimension)
+    dataset = DatasetFactory.create(scope=category, schema=schema)
+    dp = DataPointFactory.create(dataset=dataset, date=date_type(2024, 6, 1), value=1.0)
+    dp.dimension_categories.set([dim_category])
+    data = graphql_client_query_data(
+        """
+        query($plan: ID!) {
+          planCategories(plan: $plan) {
+            datasets {
+              dataPoints {
+                dimensionCategories {
+                  dimension {
+                    __typename
+                    uuid
+                    name
+                  }
+                }
+              }
+            }
+          }
+        }
+        """,
+        variables={'plan': plan.identifier},
+    )
+    dim_result = data['planCategories'][0]['datasets'][0]['dataPoints'][0]['dimensionCategories'][0]['dimension']
+    assert dim_result == {
+        '__typename': 'DatasetsDimension',
+        'uuid': str(dimension.uuid),
+        'name': dimension.name,
+    }
+
+
+def test_dataset_schema_dimension_order_and_schema(graphql_client_query_data, plan, category):
+    schema = DatasetSchemaFactory.create()
+    dimension = DimensionFactory.create()
+    schema_dim = DatasetSchemaDimensionFactory.create(schema=schema, dimension=dimension)
+    DatasetFactory.create(scope=category, schema=schema)
+    data = graphql_client_query_data(
+        """
+        query($plan: ID!) {
+          planCategories(plan: $plan) {
+            datasets {
+              schema {
+                dimensions {
+                  __typename
+                  order
+                  schema {
+                    __typename
+                    uuid
+                  }
+                }
+              }
+            }
+          }
+        }
+        """,
+        variables={'plan': plan.identifier},
+    )
+    expected = {
+        'planCategories': [{
+            'datasets': [{
+                'schema': {
+                    'dimensions': [{
+                        '__typename': 'DatasetSchemaDimension',
+                        'order': schema_dim.order,
+                        'schema': {
+                            '__typename': 'DatasetSchema',
+                            'uuid': str(schema.uuid),
+                        },
+                    }],
+                },
+            }],
+        }],
+    }
+    assert data == expected
+
+
+def test_dimension_scope_plan_type(graphql_client_query_data, plan, category):
+    scope = DimensionScopeFactory.create(scope=plan)
+    dimension = scope.dimension
+    schema = DatasetSchemaFactory.create()
+    DatasetSchemaDimensionFactory.create(schema=schema, dimension=dimension)
+    DatasetFactory.create(scope=category, schema=schema)
+    data = graphql_client_query_data(
+        """
+        query($plan: ID!) {
+          planCategories(plan: $plan) {
+            datasets {
+              schema {
+                dimensions {
+                  dimension {
+                    scopes {
+                      scope {
+                        __typename
+                        ... on Plan {
+                          id
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+        """,
+        variables={'plan': plan.identifier},
+    )
+    scopes = data['planCategories'][0]['datasets'][0]['schema']['dimensions'][0]['dimension']['scopes']
+    assert scopes == [{'scope': {'__typename': 'Plan', 'id': plan.identifier}}]
+
+
+def test_dataset_schema_scope_plan_type(graphql_client_query_data, plan, category):
+    scope = DatasetSchemaScopeFactory.create(scope=plan)
+    schema = scope.schema
+    DatasetFactory.create(scope=category, schema=schema)
+    data = graphql_client_query_data(
+        """
+        query($plan: ID!) {
+          planCategories(plan: $plan) {
+            datasets {
+              schema {
+                scopes {
+                  scope {
+                    __typename
+                    ... on Plan {
+                      id
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+        """,
+        variables={'plan': plan.identifier},
+    )
+    scopes = data['planCategories'][0]['datasets'][0]['schema']['scopes']
+    assert scopes == [{'scope': {'__typename': 'Plan', 'id': plan.identifier}}]
