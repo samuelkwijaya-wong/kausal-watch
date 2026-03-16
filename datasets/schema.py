@@ -22,7 +22,6 @@ from kausal_common.datasets.models import (
 from kausal_common.strawberry.registry import register_strawberry_type
 
 from actions.schema import ActionNode, CategoryNode, CategoryTypeNode, PlanNode
-from indicators.schema import IndicatorNode
 
 if TYPE_CHECKING:
     from strawberry import auto
@@ -109,7 +108,7 @@ class DatasetMetricNode:
 
     @strawberry_django.field
     def is_computed(self: DatasetMetric) -> bool:
-        return self.computed_by.exists()
+        return self.is_computed
 
 
 @register_strawberry_type
