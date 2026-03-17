@@ -104,15 +104,14 @@ class TestComputeDatasetValues:
 
         assert compute_dataset_values(dataset) == []
 
-    def test_missing_operand_returns_none_value(self):
+    def test_missing_operand_returns_no_result(self):
         dataset, metric_a, _metric_b, _target = _create_schema_with_computation('add')
         d = datetime.date(2024, 1, 1)
         DataPoint.objects.create(dataset=dataset, metric=metric_a, date=d, value=Decimal(5))
 
         results = compute_dataset_values(dataset)
 
-        assert len(results) == 1
-        assert results[0].value is None
+        assert results == []
 
     def test_multiple_dates(self):
         dataset, metric_a, metric_b, _target = _create_schema_with_computation('add')
@@ -180,8 +179,5 @@ class TestComputeDatasetGoalValues:
         actual_results = compute_dataset_values(dataset)
         goal_results = compute_dataset_goal_values(dataset)
 
-        assert len(actual_results) == 1
-        assert actual_results[0].value is None  # metric_b missing from actuals
-
-        assert len(goal_results) == 1
-        assert goal_results[0].value is None  # metric_a missing from goals
+        assert actual_results == []  # metric_b missing from actuals
+        assert goal_results == []  # metric_a missing from goals
