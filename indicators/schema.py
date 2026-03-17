@@ -3,11 +3,14 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Any, ClassVar, cast
 
 import graphene
+from django.contrib.contenttypes.models import ContentType
 from django.forms import ModelForm
 from graphql.error import GraphQLError
 from wagtail.rich_text import RichText
 
 import graphene_django_optimizer as gql_optimizer
+
+from kausal_common.datasets.models import Dataset
 
 from aplans.graphql_types import DjangoNode, get_plan_from_context, order_queryset, register_django_node
 from aplans.utils import RestrictedVisibilityModel, public_fields
@@ -17,7 +20,6 @@ from actions.schema import ScenarioNode
 from indicators.models import (
     ActionIndicator,
     CommonIndicator,
-    CommonIndicatorNormalizator,
     Dimension,
     DimensionCategory,
     Framework,
@@ -27,8 +29,6 @@ from indicators.models import (
     IndicatorGoal,
     IndicatorGraph,
     IndicatorLevel,
-    IndicatorLevelQuerySet,
-    IndicatorQuerySet,
     IndicatorValue,
     Quantity,
     RelatedCommonIndicator,
@@ -46,6 +46,7 @@ if TYPE_CHECKING:
     from actions.models.action import ActionQuerySet
     from actions.models.plan import Plan, PlanQuerySet
     from admin_site.models import BaseChangeLogMessage
+    from indicators.models import CommonIndicatorNormalizator, IndicatorLevelQuerySet, IndicatorQuerySet
 
 
 class UnitNode(DjangoNode[Unit]):
@@ -254,6 +255,16 @@ class IndicatorNode(DjangoNode[Indicator]):
     level = graphene.String(plan=graphene.ID())
     actions = graphene.List(graphene.NonNull('actions.schema.ActionNode'), plan=graphene.ID(), required=True)
     change_log_message = graphene.Field('actions.schema.ChangeLogMessageInterface')
+
+    datasets = graphene.List(graphene.NonNull('datasets.schema.DatasetNode'), required=True)
+
+    @staticmethod
+    def resolve_datasets(root: Indicator, info) -> QuerySet[Dataset]:
+        indicator_content_type = ContentType.objects.get_for_model(Indicator)
+        return Dataset.objects.filter(
+            scope_content_type=indicator_content_type,
+            scope_id=root.id,
+        )
 
     class Meta:
         fields = public_fields(Indicator)
