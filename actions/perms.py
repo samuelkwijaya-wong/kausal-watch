@@ -7,7 +7,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.models import ContentType
 from django.db.models.query_utils import Q
-from wagtail.models import PAGE_PERMISSION_TYPES, GroupPagePermission, Page
+from wagtail.models import PAGE_PERMISSION_TYPES, GroupPagePermission
 
 from loguru import logger
 from treelib import Tree
@@ -18,8 +18,6 @@ from audit_logging.models import PlanScopedModelLogEntry, PlanScopedPageLogEntry
 from content.models import SiteGeneralContent
 from indicators.models import (
     ActionIndicator,
-    Dataset,
-    DatasetLicense,
     Dimension,
     DimensionCategory,
     Indicator,
@@ -72,6 +70,7 @@ if typing.TYPE_CHECKING:
 
     from django.db.models.base import Model
     from django.db.models.query import QuerySet
+    from wagtail.models import Page
     from wagtail.models.media import Collection
 
     from users.models import User as UserModel
@@ -300,8 +299,6 @@ PLAN_ADMIN_PERMS: tuple[tuple[type[Model], tuple[str, ...]], ...] = (
     (RelatedIndicator, ALL_PERMS),
     (Unit, ALL_PERMS),
     (Quantity, ALL_PERMS),
-    (Dataset, ALL_PERMS),
-    (DatasetLicense, ALL_PERMS),
     (Dimension, ALL_PERMS),
     (DimensionCategory, ALL_PERMS),
     (IndicatorDimension, ALL_PERMS),

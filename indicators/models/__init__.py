@@ -53,8 +53,6 @@ from indicators.models.indicator import (
 # Import and expose all models for backwards compatibility
 # Metadata models
 from indicators.models.metadata import (
-    Dataset,
-    DatasetLicense,
     Framework,
     Quantity,
     Unit,
@@ -81,8 +79,6 @@ __all__ = [
     'CommonIndicator',
     'CommonIndicatorDimension',
     'CommonIndicatorNormalizator',
-    'Dataset',
-    'DatasetLicense',
     'DatasetMetricComputation',
     'Dimension',
     'DimensionCategory',

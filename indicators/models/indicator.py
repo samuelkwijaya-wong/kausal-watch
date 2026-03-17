@@ -59,7 +59,7 @@ if typing.TYPE_CHECKING:
     from indicators.models.action_links import ActionIndicator
     from indicators.models.contact_persons import IndicatorContactPerson
     from indicators.models.dimensions import IndicatorDimension
-    from indicators.models.metadata import Dataset, Unit
+    from indicators.models.metadata import Unit
     from indicators.models.relationships import RelatedIndicator
     from indicators.models.values import IndicatorGoal
     from paths_integration._generated_.graphql_client.node_values import NodeValuesNodeMetricDim
@@ -235,11 +235,6 @@ class Indicator(
         verbose_name=_('reference value'),
         on_delete=models.SET_NULL,
     )
-    datasets: M2M[Dataset, Any] = models.ManyToManyField(
-        'indicators.Dataset',
-        blank=True,
-        verbose_name=_('datasets'),
-    )
     dataset_schema: OneToOne[DatasetSchema | None] = models.OneToOneField(
         'datasets.DatasetSchema',
         null=True,
@@ -380,7 +375,6 @@ class Indicator(
         'time_resolution',
         'latest_value',
         'latest_graph',
-        'datasets',
         'updated_at',
         'created_at',
         'values',
@@ -513,10 +507,6 @@ class Indicator(
     def has_current_goals(self):
         now = timezone.now()
         return self.goals.filter(date__gte=now).exists()
-
-    @display(boolean=True, description=_('Has datasets'))
-    def has_datasets(self):
-        return self.datasets.exists()
 
     @display(boolean=True, description=_('Has data'))
     def has_data(self):

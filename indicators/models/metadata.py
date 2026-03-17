@@ -92,44 +92,6 @@ class Unit(ClusterableModel, ModificationTracking):
         return str(self)
 
 
-class DatasetLicense(models.Model):
-    name = models.CharField(max_length=50, verbose_name=_('name'), unique=True)
-
-    class Meta:
-        verbose_name = _('dataset license')
-        verbose_name_plural = _('dataset licenses')
-
-    def __str__(self):
-        return self.name
-
-
-class Dataset(ClusterableModel):
-    name = models.CharField(max_length=100, verbose_name=_('name'))
-    description = models.TextField(blank=True, verbose_name=_('description'))
-    url = models.URLField(null=True, blank=True, verbose_name=_('URL'))
-    last_retrieved_at = models.DateField(
-        null=True, blank=True, verbose_name=_('last retrieved at'),
-    )
-    owner = models.ForeignKey(
-        'orgs.Organization', null=True, blank=True, verbose_name=_('owner'), on_delete=models.SET_NULL,
-    )
-    owner_name = models.CharField(
-        max_length=100, null=True, blank=True, verbose_name=_('owner name'),
-        help_text=_('Set if owner organization is not available'),
-    )
-    license = models.ForeignKey(
-        'indicators.DatasetLicense', null=True, blank=True, verbose_name=_('license'),
-        on_delete=models.SET_NULL,
-    )
-
-    class Meta:
-        verbose_name = _('dataset')
-        verbose_name_plural = _('datasets')
-
-    def __str__(self):
-        return self.name
-
-
 class Framework(ClusterableModel):
     identifier = IdentifierField(unique=True)
     name = models.CharField(max_length=200, verbose_name=_('name'))
