@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-02 12:22+0100\n"
+"POT-Creation-Date: 2026-03-17 08:21+0200\n"
 "PO-Revision-Date: 2025-04-02 07:20+0000\n"
 "Last-Translator: Matias Wargelin <matias.wargelin@kausal.tech>\n"
 "Language-Team: Portuguese (Brazil) <https://weblate.kausal.tech/projects/watch/django/pt_BR/>\n"
@@ -940,8 +940,8 @@ msgstr ""
 msgid "Icons"
 msgstr "Ícones"
 
-#: actions/category_admin.py actions/models/plan.py indicators/apps.py
-#: indicators/blocks/__init__.py indicators/wagtail_admin.py
+#: actions/category_admin.py actions/models/plan.py content/models.py
+#: indicators/apps.py indicators/blocks/__init__.py indicators/wagtail_admin.py
 #: reports/report_formatters.py
 #, fuzzy
 msgid "Indicators"
@@ -1317,6 +1317,10 @@ msgid "Other action is merged with this one"
 msgstr "Outra ação foi mesclada com esta"
 
 #: actions/models/action.py
+msgid "Lead paragraph is not allowed for actions in this plan"
+msgstr ""
+
+#: actions/models/action.py
 #, fuzzy
 msgid "Has contact persons"
 msgstr "Tem pessoas de contato"
@@ -1489,12 +1493,11 @@ msgstr "cancelada"
 msgid "state"
 msgstr "estado"
 
-#: actions/models/action.py feedback/models.py
-#, fuzzy
-msgid "comment"
-msgstr "comentário"
+#: actions/models/action.py
+msgid "details"
+msgstr ""
 
-#: actions/models/action.py reports/report_formatters.py
+#: actions/models/action.py
 #, fuzzy
 msgid "due date"
 msgstr "data de vencimento"
@@ -3950,6 +3953,20 @@ msgstr "Organizações"
 msgid "Divisions"
 msgstr "Divisões"
 
+#: content/models.py indicators/blocks/__init__.py indicators/rich_text.py
+#: templates/aplans/paths_sync_confirmation.html
+#, fuzzy
+msgid "Indicator"
+msgstr "Indicador"
+
+#: content/models.py
+msgid "Measure"
+msgstr ""
+
+#: content/models.py
+msgid "Measures"
+msgstr ""
+
 #: content/models.py
 #, fuzzy
 msgid "site title"
@@ -4019,6 +4036,11 @@ msgstr "Termo a ser usado para \"tarefa"
 #, fuzzy
 msgid "Term to use for 'organization'"
 msgstr "Termo a ser usado para \"organização"
+
+#: content/models.py
+#, fuzzy
+msgid "Term to use for 'indicator'"
+msgstr "Termo a ser usado para \"ação"
 
 #: content/models.py
 #, fuzzy
@@ -4178,6 +4200,11 @@ msgstr "ação"
 #, fuzzy
 msgid "email address"
 msgstr "endereço de e-mail"
+
+#: feedback/models.py
+#, fuzzy
+msgid "comment"
+msgstr "comentário"
 
 #: feedback/models.py
 #, fuzzy
@@ -4352,12 +4379,6 @@ msgstr ""
 #, fuzzy
 msgid "Level"
 msgstr "nível"
-
-#: indicators/blocks/__init__.py indicators/rich_text.py
-#: templates/aplans/paths_sync_confirmation.html
-#, fuzzy
-msgid "Indicator"
-msgstr "Indicador"
 
 #: indicators/blocks/__init__.py
 #, fuzzy
@@ -4741,7 +4762,7 @@ msgstr ""
 msgid "dimension category"
 msgstr "categoria de dimensão"
 
-#: indicators/models/dimensions.py
+#: indicators/models/dimensions.py indicators/models/goal_data_point.py
 #, fuzzy
 msgid "dimension categories"
 msgstr "categorias de dimensão"
@@ -4775,6 +4796,37 @@ msgstr "dimensão do indicador comum"
 #, fuzzy
 msgid "common indicator dimensions"
 msgstr "dimensões comuns dos indicadores"
+
+#: indicators/models/goal_data_point.py indicators/models/metadata.py
+#, fuzzy
+msgid "dataset"
+msgstr "conjunto de dados"
+
+#: indicators/models/goal_data_point.py
+#, fuzzy
+#| msgid "Metrics"
+msgid "metric"
+msgstr "Métricas"
+
+#: indicators/models/goal_data_point.py
+#, fuzzy
+msgid "indicator goal data point"
+msgstr "meta do indicador"
+
+#: indicators/models/goal_data_point.py
+#, fuzzy
+msgid "indicator goal data points"
+msgstr "metas de indicadores"
+
+#: indicators/models/goal_data_point.py
+#, fuzzy
+msgid "indicator goal dimension category"
+msgstr "categoria de dimensão"
+
+#: indicators/models/goal_data_point.py
+#, fuzzy
+msgid "indicator goal dimension categories"
+msgstr "categorias de dimensão"
 
 #: indicators/models/import_log.py
 msgid "Kausal Paths"
@@ -4875,6 +4927,15 @@ msgstr ""
 #, fuzzy
 msgid "datasets"
 msgstr "conjuntos de dados"
+
+#: indicators/models/indicator.py
+#, fuzzy
+msgid "dataset schema"
+msgstr "licença do conjunto de dados"
+
+#: indicators/models/indicator.py
+msgid "If set, this indicator uses the dataset system instead of legacy indicator values"
+msgstr ""
 
 #: indicators/models/indicator.py
 msgid "reference"
@@ -5077,11 +5138,6 @@ msgstr "Definir se a organização do proprietário não estiver disponível"
 #, fuzzy
 msgid "license"
 msgstr "licença"
-
-#: indicators/models/metadata.py
-#, fuzzy
-msgid "dataset"
-msgstr "conjunto de dados"
 
 #: indicators/models/metadata.py
 #, fuzzy
@@ -6896,11 +6952,6 @@ msgid "Other responsible parties"
 msgstr "Outros responsáveis"
 
 #: reports/spreadsheets/action_print_layout.py
-#, fuzzy
-msgid "Page"
-msgstr "Link da página"
-
-#: reports/spreadsheets/action_print_layout.py
 msgid "Profiles"
 msgstr ""
 
@@ -7170,6 +7221,10 @@ msgid "No permission to remove the user belonging to plans you are not managing.
 msgstr "Nenhuma permissão para remover o usuário pertencente a planos que você não está gerenciando."
 
 #, fuzzy
+#~ msgid "Page"
+#~ msgstr "Link da página"
+
+#, fuzzy
 #~ msgid "This page has unsaved changes."
 #~ msgstr "Esta página tem alterações não salvas."
 
@@ -7266,9 +7321,6 @@ msgstr "Nenhuma permissão para remover o usuário pertencente a planos que voc�
 #~ msgid "Initial date"
 #~ msgstr "data de início"
 
-#~ msgid "Metrics"
-#~ msgstr "Métricas"
-
 #, fuzzy
 #~ msgid "Person permissions"
 #~ msgstr "Permissões"
@@ -7276,10 +7328,6 @@ msgstr "Nenhuma permissão para remover o usuário pertencente a planos que voc�
 #, fuzzy
 #~ msgid "Group permissions"
 #~ msgstr "Permissões"
-
-#, fuzzy
-#~ msgid "dataset schema"
-#~ msgstr "licença do conjunto de dados"
 
 #, fuzzy
 #~ msgid "dataset schemas"
@@ -7316,14 +7364,6 @@ msgstr "Nenhuma permissão para remover o usuário pertencente a planos que voc�
 #, fuzzy
 #~ msgid "data points"
 #~ msgstr "Último ponto de dados"
-
-#, fuzzy
-#~ msgid "data point dimension category"
-#~ msgstr "categoria de dimensão"
-
-#, fuzzy
-#~ msgid "data point dimension categories"
-#~ msgstr "categorias de dimensão"
 
 #, fuzzy
 #~ msgid "Sticky comment"

@@ -10,11 +10,10 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-02 12:22+0100\n"
+"POT-Creation-Date: 2026-03-17 08:21+0200\n"
 "PO-Revision-Date: 2026-03-02 13:21+0000\n"
 "Last-Translator: Bernhard Bliem <bernhard.bliem@kausal.tech>\n"
-"Language-Team: German <https://weblate.kausal.tech/projects/watch/django/de/>"
-"\n"
+"Language-Team: German <https://weblate.kausal.tech/projects/watch/django/de/>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -302,16 +301,12 @@ msgstr "Kennung existiert bereits"
 #: actions/api.py
 #, python-format
 msgid "You do not have permission to change contact persons with role \"%(role)s\" on action \"%(action)s\"."
-msgstr ""
-"Sie haben keine Berechtigung, Ansprechpersonen mit der Rolle „%(role)s” für "
-"die Maßnahme „%(action)s” zu ändern."
+msgstr "Sie haben keine Berechtigung, Ansprechpersonen mit der Rolle „%(role)s” für die Maßnahme „%(action)s” zu ändern."
 
 #: actions/api.py
 #, python-format
 msgid "You do not have permission to change responsible parties with role \"%(role)s\" on action \"%(action)s\"."
-msgstr ""
-"Sie haben keine Berechtigung, die zuständigen Stellen mit der Rolle „%(role)s"
-"” für die Maßnahme „%(action)s” zu ändern."
+msgstr "Sie haben keine Berechtigung, die zuständigen Stellen mit der Rolle „%(role)s” für die Maßnahme „%(action)s” zu ändern."
 
 #: actions/attribute_type_admin.py
 #, python-format
@@ -831,8 +826,8 @@ msgstr "Während der Bearbeitung dieses Kategorietyps haben Sie zu einem anderen
 msgid "Icons"
 msgstr "Symbole"
 
-#: actions/category_admin.py actions/models/plan.py indicators/apps.py
-#: indicators/blocks/__init__.py indicators/wagtail_admin.py
+#: actions/category_admin.py actions/models/plan.py content/models.py
+#: indicators/apps.py indicators/blocks/__init__.py indicators/wagtail_admin.py
 #: reports/report_formatters.py
 msgid "Indicators"
 msgstr "Indikatoren"
@@ -1139,6 +1134,10 @@ msgid "Other action is merged with this one"
 msgstr "Andere Maßnahme ist mit dieser zusammengeführt"
 
 #: actions/models/action.py
+msgid "Lead paragraph is not allowed for actions in this plan"
+msgstr ""
+
+#: actions/models/action.py
 msgid "Has contact persons"
 msgstr "Hat Ansprechpersonen"
 
@@ -1281,11 +1280,11 @@ msgstr "gestrichen"
 msgid "state"
 msgstr "Status"
 
-#: actions/models/action.py feedback/models.py
-msgid "comment"
-msgstr "Kommentar"
+#: actions/models/action.py
+msgid "details"
+msgstr ""
 
-#: actions/models/action.py reports/report_formatters.py
+#: actions/models/action.py
 msgid "due date"
 msgstr "Frist"
 
@@ -1551,9 +1550,7 @@ msgstr "Eine Einheit kann nur für numerische Felder festgelegt werden."
 
 #: actions/models/attributes.py
 msgid "If no primary language is set, there may not be other languages."
-msgstr ""
-"Wenn keine Hauptsprache eingestellt ist, dürfen keine weiteren Sprachen "
-"vorhanden sein."
+msgstr "Wenn keine Hauptsprache eingestellt ist, dürfen keine weiteren Sprachen vorhanden sein."
 
 #: actions/models/attributes.py
 msgid "This value is only allowed for action fields."
@@ -3358,6 +3355,19 @@ msgstr "Organisationen"
 msgid "Divisions"
 msgstr "Abteilungen"
 
+#: content/models.py indicators/blocks/__init__.py indicators/rich_text.py
+#: templates/aplans/paths_sync_confirmation.html
+msgid "Indicator"
+msgstr "Indikator"
+
+#: content/models.py
+msgid "Measure"
+msgstr ""
+
+#: content/models.py
+msgid "Measures"
+msgstr ""
+
 #: content/models.py
 msgid "site title"
 msgstr "Seitentitel"
@@ -3413,6 +3423,12 @@ msgstr "Für 'Aufgabe' zu verwendender Begriff"
 #: content/models.py
 msgid "Term to use for 'organization'"
 msgstr "Für 'Organisation' zu verwendender Begriff"
+
+#: content/models.py
+#, fuzzy
+#| msgid "Term to use for 'action'"
+msgid "Term to use for 'indicator'"
+msgstr "Für 'Maßnahme' zu verwendender Begriff"
 
 #: content/models.py
 msgid "Sitewide announcement"
@@ -3545,6 +3561,10 @@ msgstr "Maßnahme"
 #: feedback/models.py users/models.py
 msgid "email address"
 msgstr "E-Mail-Adresse"
+
+#: feedback/models.py
+msgid "comment"
+msgstr "Kommentar"
 
 #: feedback/models.py
 msgid "page id"
@@ -3695,11 +3715,6 @@ msgstr "Letzter Wert"
 #: indicators/api.py
 msgid "Level"
 msgstr "Stufe"
-
-#: indicators/blocks/__init__.py indicators/rich_text.py
-#: templates/aplans/paths_sync_confirmation.html
-msgid "Indicator"
-msgstr "Indikator"
 
 #: indicators/blocks/__init__.py
 msgid "Dimension"
@@ -4023,7 +4038,7 @@ msgstr "Standardfarbe für diese Dimensionskategorie in Diagrammen"
 msgid "dimension category"
 msgstr "Dimensionskategorie"
 
-#: indicators/models/dimensions.py
+#: indicators/models/dimensions.py indicators/models/goal_data_point.py
 msgid "dimension categories"
 msgstr "Dimensionskategorien"
 
@@ -4050,6 +4065,38 @@ msgstr "Gemeinsamer-Indikator-Dimension"
 #: indicators/models/dimensions.py
 msgid "common indicator dimensions"
 msgstr "Gemeinsamer-Indikator-Dimensionen"
+
+#: indicators/models/goal_data_point.py indicators/models/metadata.py
+msgid "dataset"
+msgstr "Datensatz"
+
+#: indicators/models/goal_data_point.py
+msgid "metric"
+msgstr "Messgröße"
+
+#: indicators/models/goal_data_point.py
+#, fuzzy
+#| msgid "indicator goal"
+msgid "indicator goal data point"
+msgstr "Indikatorziel"
+
+#: indicators/models/goal_data_point.py
+#, fuzzy
+#| msgid "indicator goals"
+msgid "indicator goal data points"
+msgstr "Indikatorziele"
+
+#: indicators/models/goal_data_point.py
+#, fuzzy
+#| msgid "data point dimension category"
+msgid "indicator goal dimension category"
+msgstr "Datenpunkt-Dimensionskategorie"
+
+#: indicators/models/goal_data_point.py
+#, fuzzy
+#| msgid "data point dimension categories"
+msgid "indicator goal dimension categories"
+msgstr "Datenpunkt-Dimensionskategorien"
 
 #: indicators/models/import_log.py
 msgid "Kausal Paths"
@@ -4134,6 +4181,14 @@ msgstr "Referenzwert"
 #: indicators/models/indicator.py indicators/models/metadata.py
 msgid "datasets"
 msgstr "Datensätze"
+
+#: indicators/models/indicator.py
+msgid "dataset schema"
+msgstr "Datensatzschema"
+
+#: indicators/models/indicator.py
+msgid "If set, this indicator uses the dataset system instead of legacy indicator values"
+msgstr ""
 
 #: indicators/models/indicator.py
 msgid "reference"
@@ -4229,9 +4284,7 @@ msgstr "Datentabelle ausblenden"
 
 #: indicators/models/indicator.py
 msgid "Do not show this indicator's values in a table on the indicator page."
-msgstr ""
-"Die Werte dieses Indikators nicht in einer Tabelle auf der Indikatorseite "
-"anzeigen."
+msgstr "Die Werte dieses Indikators nicht in einer Tabelle auf der Indikatorseite anzeigen."
 
 #: indicators/models/indicator.py
 msgid "Has datasets"
@@ -4311,10 +4364,6 @@ msgstr "Setzen, wenn Inhaberorganisation nicht verfügbar ist"
 #: indicators/models/metadata.py
 msgid "license"
 msgstr "Lizenz"
-
-#: indicators/models/metadata.py
-msgid "dataset"
-msgstr "Datensatz"
 
 #: indicators/models/metadata.py
 msgid "frameworks"
@@ -5775,10 +5824,7 @@ msgstr "In Registerkarte \"Berichterstattung\" anzeigen"
 
 #: reports/models.py
 msgid "Set if the values from this report should be shown in the reporting tab when editing the action. The values are shown only if this report has been marked as complete."
-msgstr ""
-"Setzen, wenn die Werte aus diesem Bericht bei der Bearbeitung der Maßnahme "
-"in der Registerkarte „Berichterstattung“ angezeigt werden sollen. Die Werte "
-"werden nur angezeigt, wenn dieser Bericht als abgeschlossen markiert wurde."
+msgstr "Setzen, wenn die Werte aus diesem Bericht bei der Bearbeitung der Maßnahme in der Registerkarte „Berichterstattung“ angezeigt werden sollen. Die Werte werden nur angezeigt, wenn dieser Bericht als abgeschlossen markiert wurde."
 
 #: reports/models.py
 msgid "report"
@@ -5825,10 +5871,6 @@ msgstr "Leer"
 #: reports/report_formatters.py
 msgid "Other responsible parties"
 msgstr "Andere Verantwortliche"
-
-#: reports/spreadsheets/action_print_layout.py
-msgid "Page"
-msgstr "Seite"
 
 #: reports/spreadsheets/action_print_layout.py
 msgid "Profiles"
@@ -5974,9 +6016,7 @@ msgstr "... %(remaining)s weitere"
 
 #: templates/aplans/attribute_type_delete.html
 msgid "This field is currently in use. Deleting it will remove field values from the following objects:"
-msgstr ""
-"Dieses Feld wird derzeit verwendet. Durch das Löschen werden Werte in "
-"Feldern aus den folgenden Objekten entfernt:"
+msgstr "Dieses Feld wird derzeit verwendet. Durch das Löschen werden Werte in Feldern aus den folgenden Objekten entfernt:"
 
 #: templates/aplans/attribute_type_delete.html
 msgid "If you would like to keep the current value in reports even after deleting this field, please mark the reports as complete."
@@ -6025,10 +6065,7 @@ msgstr "Kausal-Paths-Instanz"
 #: templates/aplans/plan_publish_confirmation.html
 #, python-format
 msgid "This plan is already scheduled for publication: %(bold_open)s%(info)s%(bold_close)s. Publishing now will override the scheduled date and make the plan public immediately."
-msgstr ""
-"Die Veröffentlichung dieses Plans ist bereits geplant: %(bold_open)s%(info)s%"
-"(bold_close)s. Durch die sofortige Veröffentlichung wird das geplante Datum "
-"außer Kraft gesetzt und der Plan sofort öffentlich zugänglich gemacht."
+msgstr "Die Veröffentlichung dieses Plans ist bereits geplant: %(bold_open)s%(info)s%(bold_close)s. Durch die sofortige Veröffentlichung wird das geplante Datum außer Kraft gesetzt und der Plan sofort öffentlich zugänglich gemacht."
 
 #: templates/aplans/plan_publish_confirmation.html
 msgctxt "URLs"
@@ -6038,10 +6075,7 @@ msgstr "Der Plan wird veröffentlicht unter:"
 #: templates/aplans/plan_publish_confirmation.html
 #, python-format
 msgid "This plan will only be published at %(preview_link_open)s%(preview_url)s%(preview_link_close)s because no production domains have been configured."
-msgstr ""
-"Dieser Plan wird nur unter %(preview_link_open)s%(preview_url)s%"
-"(preview_link_close)s veröffentlicht, da keine Produktionsdomänen "
-"konfiguriert wurden."
+msgstr "Dieser Plan wird nur unter %(preview_link_open)s%(preview_url)s%(preview_link_close)s veröffentlicht, da keine Produktionsdomänen konfiguriert wurden."
 
 #: templates/aplans/plan_publish_confirmation.html
 msgid "No production domains have been configured for this plan."
@@ -6078,6 +6112,9 @@ msgstr "Benutzer"
 #: users/models.py
 msgid "No permission to remove the user belonging to plans you are not managing."
 msgstr "Keine Berechtigung zum Entfernen von Benutzern, die zu Plänen gehören, die Sie nicht verwalten."
+
+#~ msgid "Page"
+#~ msgstr "Seite"
 
 #~ msgid "This page has unsaved changes."
 #~ msgstr "Diese Seite hat ungespeicherte Änderungen."
@@ -6198,9 +6235,6 @@ msgstr "Keine Berechtigung zum Entfernen von Benutzern, die zu Plänen gehören,
 #~ msgid "Grants permissions on datasets of this schema to certain person groups"
 #~ msgstr "Erteilt bestimmten Personengruppen Berechtigungen für Datensätze dieses Schemas"
 
-#~ msgid "dataset schema"
-#~ msgstr "Datensatzschema"
-
 #~ msgid "dataset schemas"
 #~ msgstr "Datensatzschemas"
 
@@ -6231,20 +6265,11 @@ msgstr "Keine Berechtigung zum Entfernen von Benutzern, die zu Plänen gehören,
 #~ msgid "Date of this data point in context of the dataset's time resolution"
 #~ msgstr "Datum dieses Datenpunkts im Zusammenhang mit der zeitlichen Auflösung des Datensatzes"
 
-#~ msgid "metric"
-#~ msgstr "Messgröße"
-
 #~ msgid "data point"
 #~ msgstr "Datenpunkt"
 
 #~ msgid "data points"
 #~ msgstr "Datenpunkte"
-
-#~ msgid "data point dimension category"
-#~ msgstr "Datenpunkt-Dimensionskategorie"
-
-#~ msgid "data point dimension categories"
-#~ msgstr "Datenpunkt-Dimensionskategorien"
 
 #~ msgid "Resolved"
 #~ msgstr "Gelöst"

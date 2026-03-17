@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-02 12:22+0100\n"
+"POT-Creation-Date: 2026-03-17 08:21+0200\n"
 "PO-Revision-Date: 2025-04-02 07:20+0000\n"
 "Last-Translator: Matias Wargelin <matias.wargelin@kausal.tech>\n"
 "Language-Team: Latvian <https://weblate.kausal.tech/projects/watch/django/lv/>\n"
@@ -891,8 +891,8 @@ msgstr ""
 msgid "Icons"
 msgstr "Ikonas"
 
-#: actions/category_admin.py actions/models/plan.py indicators/apps.py
-#: indicators/blocks/__init__.py indicators/wagtail_admin.py
+#: actions/category_admin.py actions/models/plan.py content/models.py
+#: indicators/apps.py indicators/blocks/__init__.py indicators/wagtail_admin.py
 #: reports/report_formatters.py
 msgid "Indicators"
 msgstr "Rādītāji"
@@ -1215,6 +1215,10 @@ msgid "Other action is merged with this one"
 msgstr "Cita rīcība ir apvienota ar šo rīcību"
 
 #: actions/models/action.py
+msgid "Lead paragraph is not allowed for actions in this plan"
+msgstr ""
+
+#: actions/models/action.py
 msgid "Has contact persons"
 msgstr "Ir kontaktpersonas"
 
@@ -1357,11 +1361,11 @@ msgstr "atcelts"
 msgid "state"
 msgstr "statuss"
 
-#: actions/models/action.py feedback/models.py
-msgid "comment"
-msgstr "komentārs"
+#: actions/models/action.py
+msgid "details"
+msgstr ""
 
-#: actions/models/action.py reports/report_formatters.py
+#: actions/models/action.py
 msgid "due date"
 msgstr "termiņš"
 
@@ -3640,6 +3644,19 @@ msgstr "Organizācijas"
 msgid "Divisions"
 msgstr "Nodaļas"
 
+#: content/models.py indicators/blocks/__init__.py indicators/rich_text.py
+#: templates/aplans/paths_sync_confirmation.html
+msgid "Indicator"
+msgstr "Indikators"
+
+#: content/models.py
+msgid "Measure"
+msgstr ""
+
+#: content/models.py
+msgid "Measures"
+msgstr ""
+
 #: content/models.py
 msgid "site title"
 msgstr "vietnes nosaukums"
@@ -3695,6 +3712,12 @@ msgstr "Termins, ko lietot terminam \"uzdevums"
 #: content/models.py
 msgid "Term to use for 'organization'"
 msgstr "Termins, ko lietot terminam \"organizācija"
+
+#: content/models.py
+#, fuzzy
+#| msgid "Term to use for 'action'"
+msgid "Term to use for 'indicator'"
+msgstr "Termins, ko lietot, lai apzīmētu \"rīcību\""
 
 #: content/models.py
 msgid "Sitewide announcement"
@@ -3855,6 +3878,10 @@ msgstr "rīcība"
 #: feedback/models.py users/models.py
 msgid "email address"
 msgstr "e-pasta adrese"
+
+#: feedback/models.py
+msgid "comment"
+msgstr "komentārs"
 
 #: feedback/models.py
 #, fuzzy
@@ -4023,11 +4050,6 @@ msgstr ""
 #| msgid "level"
 msgid "Level"
 msgstr "līmenis"
-
-#: indicators/blocks/__init__.py indicators/rich_text.py
-#: templates/aplans/paths_sync_confirmation.html
-msgid "Indicator"
-msgstr "Indikators"
 
 #: indicators/blocks/__init__.py
 #, fuzzy
@@ -4401,7 +4423,7 @@ msgstr ""
 msgid "dimension category"
 msgstr "dimensiju kategorija"
 
-#: indicators/models/dimensions.py
+#: indicators/models/dimensions.py indicators/models/goal_data_point.py
 msgid "dimension categories"
 msgstr "dimensiju kategorijas"
 
@@ -4432,6 +4454,40 @@ msgstr "kopējā rādītāja dimensija"
 #: indicators/models/dimensions.py
 msgid "common indicator dimensions"
 msgstr "kopējie indikatoru izmēri"
+
+#: indicators/models/goal_data_point.py indicators/models/metadata.py
+msgid "dataset"
+msgstr "datu kopa"
+
+#: indicators/models/goal_data_point.py
+#, fuzzy
+#| msgid "Metrics"
+msgid "metric"
+msgstr "Metrikas"
+
+#: indicators/models/goal_data_point.py
+#, fuzzy
+#| msgid "indicator goal"
+msgid "indicator goal data point"
+msgstr "rādītājs mērķis"
+
+#: indicators/models/goal_data_point.py
+#, fuzzy
+#| msgid "indicator goals"
+msgid "indicator goal data points"
+msgstr "rādītāju mērķi"
+
+#: indicators/models/goal_data_point.py
+#, fuzzy
+#| msgid "dimension category"
+msgid "indicator goal dimension category"
+msgstr "dimensiju kategorija"
+
+#: indicators/models/goal_data_point.py
+#, fuzzy
+#| msgid "dimension categories"
+msgid "indicator goal dimension categories"
+msgstr "dimensiju kategorijas"
 
 #: indicators/models/import_log.py
 msgid "Kausal Paths"
@@ -4526,6 +4582,16 @@ msgstr ""
 #: indicators/models/indicator.py indicators/models/metadata.py
 msgid "datasets"
 msgstr "datu kopas"
+
+#: indicators/models/indicator.py
+#, fuzzy
+#| msgid "dataset license"
+msgid "dataset schema"
+msgstr "datu kopas licence"
+
+#: indicators/models/indicator.py
+msgid "If set, this indicator uses the dataset system instead of legacy indicator values"
+msgstr ""
 
 #: indicators/models/indicator.py
 msgid "reference"
@@ -4719,10 +4785,6 @@ msgstr "Iestatīts, ja īpašnieka organizācija nav pieejama"
 #: indicators/models/metadata.py
 msgid "license"
 msgstr "licence"
-
-#: indicators/models/metadata.py
-msgid "dataset"
-msgstr "datu kopa"
 
 #: indicators/models/metadata.py
 msgid "frameworks"
@@ -6321,12 +6383,6 @@ msgid "Other responsible parties"
 msgstr "Citi atbildīgie"
 
 #: reports/spreadsheets/action_print_layout.py
-#, fuzzy
-#| msgid "Page link"
-msgid "Page"
-msgstr "Lapas saite"
-
-#: reports/spreadsheets/action_print_layout.py
 msgid "Profiles"
 msgstr ""
 
@@ -6581,6 +6637,11 @@ msgstr "Lietotāji"
 msgid "No permission to remove the user belonging to plans you are not managing."
 msgstr "Nav atļauts noņemt lietotājus, kas pieder pie plāniem, kurus jūs neapsaimniekojat."
 
+#, fuzzy
+#~| msgid "Page link"
+#~ msgid "Page"
+#~ msgstr "Lapas saite"
+
 #~ msgid "This page has unsaved changes."
 #~ msgstr "Šajā lapā ir nesaglabātas izmaiņas."
 
@@ -6693,9 +6754,6 @@ msgstr "Nav atļauts noņemt lietotājus, kas pieder pie plāniem, kurus jūs ne
 #~ msgid "Initial date"
 #~ msgstr "sākuma datums"
 
-#~ msgid "Metrics"
-#~ msgstr "Metrikas"
-
 #, fuzzy
 #~| msgid "Permissions"
 #~ msgid "Person permissions"
@@ -6705,11 +6763,6 @@ msgstr "Nav atļauts noņemt lietotājus, kas pieder pie plāniem, kurus jūs ne
 #~| msgid "Permissions"
 #~ msgid "Group permissions"
 #~ msgstr "Atļaujas"
-
-#, fuzzy
-#~| msgid "dataset license"
-#~ msgid "dataset schema"
-#~ msgstr "datu kopas licence"
 
 #, fuzzy
 #~| msgid "dataset license"
@@ -6755,16 +6808,6 @@ msgstr "Nav atļauts noņemt lietotājus, kas pieder pie plāniem, kurus jūs ne
 #~| msgid "Last data point"
 #~ msgid "data points"
 #~ msgstr "Pēdējais datu punkts"
-
-#, fuzzy
-#~| msgid "dimension category"
-#~ msgid "data point dimension category"
-#~ msgstr "dimensiju kategorija"
-
-#, fuzzy
-#~| msgid "dimension categories"
-#~ msgid "data point dimension categories"
-#~ msgstr "dimensiju kategorijas"
 
 #, fuzzy
 #~| msgid "comment"

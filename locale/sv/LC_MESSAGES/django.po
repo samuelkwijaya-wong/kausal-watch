@@ -10,11 +10,10 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-02 12:22+0100\n"
+"POT-Creation-Date: 2026-03-17 08:21+0200\n"
 "PO-Revision-Date: 2026-03-11 10:21+0000\n"
 "Last-Translator: Ida Sihvonen <ida.sihvonen@kausal.tech>\n"
-"Language-Team: Swedish <https://weblate.kausal.tech/projects/watch/django/"
-"sv/>\n"
+"Language-Team: Swedish <https://weblate.kausal.tech/projects/watch/django/sv/>\n"
 "Language: sv\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -34,9 +33,7 @@ msgstr "%s anges flera gånger i åtgärden."
 #: actions/action_admin.py
 #, python-format
 msgid "While editing this action you have switched to a different plan. This action was still saved with the original plan \"%s\"."
-msgstr ""
-"När du redigerade denna åtgärd bytte du till en annan plan. Åtgärden "
-"sparades ändå med den ursprungliga planen ”%s”."
+msgstr "När du redigerade denna åtgärd bytte du till en annan plan. Åtgärden sparades ändå med den ursprungliga planen ”%s”."
 
 #: actions/action_admin.py actions/models/action.py
 msgid "Unspecified"
@@ -885,8 +882,8 @@ msgstr ""
 msgid "Icons"
 msgstr "Ikoner"
 
-#: actions/category_admin.py actions/models/plan.py indicators/apps.py
-#: indicators/blocks/__init__.py indicators/wagtail_admin.py
+#: actions/category_admin.py actions/models/plan.py content/models.py
+#: indicators/apps.py indicators/blocks/__init__.py indicators/wagtail_admin.py
 #: reports/report_formatters.py
 msgid "Indicators"
 msgstr "Indikatorer"
@@ -1210,6 +1207,10 @@ msgid "Other action is merged with this one"
 msgstr "Andra åtgärder slås samman med den här"
 
 #: actions/models/action.py
+msgid "Lead paragraph is not allowed for actions in this plan"
+msgstr ""
+
+#: actions/models/action.py
 msgid "Has contact persons"
 msgstr "Har kontaktpersoner"
 
@@ -1352,11 +1353,11 @@ msgstr "inställt"
 msgid "state"
 msgstr "stat"
 
-#: actions/models/action.py feedback/models.py
-msgid "comment"
-msgstr "kommentar"
+#: actions/models/action.py
+msgid "details"
+msgstr ""
 
-#: actions/models/action.py reports/report_formatters.py
+#: actions/models/action.py
 msgid "due date"
 msgstr "förfallodatum"
 
@@ -3697,6 +3698,19 @@ msgstr "Organisationer"
 msgid "Divisions"
 msgstr "mått"
 
+#: content/models.py indicators/blocks/__init__.py indicators/rich_text.py
+#: templates/aplans/paths_sync_confirmation.html
+msgid "Indicator"
+msgstr "Indikator"
+
+#: content/models.py
+msgid "Measure"
+msgstr ""
+
+#: content/models.py
+msgid "Measures"
+msgstr ""
+
 #: content/models.py
 msgid "site title"
 msgstr "Sidans Titel"
@@ -3754,6 +3768,11 @@ msgstr "redigerbar för åtgärder"
 #: content/models.py
 #, fuzzy
 msgid "Term to use for 'organization'"
+msgstr "redigerbar för åtgärder"
+
+#: content/models.py
+#, fuzzy
+msgid "Term to use for 'indicator'"
 msgstr "redigerbar för åtgärder"
 
 #: content/models.py
@@ -3907,6 +3926,10 @@ msgstr "åtgärd"
 #: feedback/models.py users/models.py
 msgid "email address"
 msgstr "e-postadress"
+
+#: feedback/models.py
+msgid "comment"
+msgstr "kommentar"
 
 #: feedback/models.py
 #, fuzzy
@@ -4076,11 +4099,6 @@ msgstr ""
 #| msgid "level"
 msgid "Level"
 msgstr "nivå"
-
-#: indicators/blocks/__init__.py indicators/rich_text.py
-#: templates/aplans/paths_sync_confirmation.html
-msgid "Indicator"
-msgstr "Indikator"
 
 #: indicators/blocks/__init__.py
 #, fuzzy
@@ -4453,7 +4471,7 @@ msgstr ""
 msgid "dimension category"
 msgstr "dimensionskategori"
 
-#: indicators/models/dimensions.py
+#: indicators/models/dimensions.py indicators/models/goal_data_point.py
 msgid "dimension categories"
 msgstr "dimensionskategorier"
 
@@ -4486,6 +4504,40 @@ msgstr "indikator dimension"
 #, fuzzy
 msgid "common indicator dimensions"
 msgstr "indikator dimensioner"
+
+#: indicators/models/goal_data_point.py indicators/models/metadata.py
+msgid "dataset"
+msgstr "dataset"
+
+#: indicators/models/goal_data_point.py
+#, fuzzy
+#| msgid "Metrics"
+msgid "metric"
+msgstr "Mätvärden"
+
+#: indicators/models/goal_data_point.py
+#, fuzzy
+#| msgid "indicator goal"
+msgid "indicator goal data point"
+msgstr "indikatormål"
+
+#: indicators/models/goal_data_point.py
+#, fuzzy
+#| msgid "indicator goals"
+msgid "indicator goal data points"
+msgstr "indikatormål"
+
+#: indicators/models/goal_data_point.py
+#, fuzzy
+#| msgid "dimension category"
+msgid "indicator goal dimension category"
+msgstr "dimensionskategori"
+
+#: indicators/models/goal_data_point.py
+#, fuzzy
+#| msgid "dimension categories"
+msgid "indicator goal dimension categories"
+msgstr "dimensionskategorier"
 
 #: indicators/models/import_log.py
 msgid "Kausal Paths"
@@ -4581,6 +4633,16 @@ msgstr "referens"
 #: indicators/models/indicator.py indicators/models/metadata.py
 msgid "datasets"
 msgstr "datauppsättningar"
+
+#: indicators/models/indicator.py
+#, fuzzy
+#| msgid "dataset license"
+msgid "dataset schema"
+msgstr "dataset-licens"
+
+#: indicators/models/indicator.py
+msgid "If set, this indicator uses the dataset system instead of legacy indicator values"
+msgstr ""
 
 #: indicators/models/indicator.py
 #, fuzzy
@@ -4776,10 +4838,6 @@ msgstr "Ange om ägareorganisation inte är tillgänglig"
 #: indicators/models/metadata.py
 msgid "license"
 msgstr "licens"
-
-#: indicators/models/metadata.py
-msgid "dataset"
-msgstr "dataset"
 
 #: indicators/models/metadata.py
 msgid "frameworks"
@@ -6440,12 +6498,6 @@ msgstr "Andra ansvariga"
 
 #: reports/spreadsheets/action_print_layout.py
 #, fuzzy
-#| msgid "Page link"
-msgid "Page"
-msgstr "Sidolänk"
-
-#: reports/spreadsheets/action_print_layout.py
-#, fuzzy
 msgid "Profiles"
 msgstr "Profiler"
 
@@ -6709,6 +6761,11 @@ msgstr "Användare"
 msgid "No permission to remove the user belonging to plans you are not managing."
 msgstr "Inget tillstånd att ta bort användaren som tillhör planer som du inte hanterar."
 
+#, fuzzy
+#~| msgid "Page link"
+#~ msgid "Page"
+#~ msgstr "Sidolänk"
+
 #~ msgid "This page has unsaved changes."
 #~ msgstr "Denna sida har ändringar som inte sparats."
 
@@ -6818,9 +6875,6 @@ msgstr "Inget tillstånd att ta bort användaren som tillhör planer som du inte
 #~ msgid "Initial date"
 #~ msgstr "Startdatum för implementering"
 
-#~ msgid "Metrics"
-#~ msgstr "Mätvärden"
-
 #, fuzzy
 #~| msgid "Permissions"
 #~ msgid "Person permissions"
@@ -6830,11 +6884,6 @@ msgstr "Inget tillstånd att ta bort användaren som tillhör planer som du inte
 #~| msgid "Permissions"
 #~ msgid "Group permissions"
 #~ msgstr "Behörigheter"
-
-#, fuzzy
-#~| msgid "dataset license"
-#~ msgid "dataset schema"
-#~ msgstr "dataset-licens"
 
 #, fuzzy
 #~| msgid "dataset license"
@@ -6880,16 +6929,6 @@ msgstr "Inget tillstånd att ta bort användaren som tillhör planer som du inte
 #~| msgid "Last data point"
 #~ msgid "data points"
 #~ msgstr "Sista datapunkten"
-
-#, fuzzy
-#~| msgid "dimension category"
-#~ msgid "data point dimension category"
-#~ msgstr "dimensionskategori"
-
-#, fuzzy
-#~| msgid "dimension categories"
-#~ msgid "data point dimension categories"
-#~ msgstr "dimensionskategorier"
 
 #, fuzzy
 #~| msgid "comment"

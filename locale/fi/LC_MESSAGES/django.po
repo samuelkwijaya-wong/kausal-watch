@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-02 12:22+0100\n"
+"POT-Creation-Date: 2026-03-17 08:21+0200\n"
 "PO-Revision-Date: 2026-02-25 16:13+0200\n"
 "Last-Translator: Timo Tuominen <timo.tuominen@kausal.tech>\n"
 "Language-Team: Finnish <https://weblate.kausal.tech/projects/watch/django/fi/>\n"
@@ -842,8 +842,8 @@ msgstr ""
 msgid "Icons"
 msgstr "Ikonit"
 
-#: actions/category_admin.py actions/models/plan.py indicators/apps.py
-#: indicators/blocks/__init__.py indicators/wagtail_admin.py
+#: actions/category_admin.py actions/models/plan.py content/models.py
+#: indicators/apps.py indicators/blocks/__init__.py indicators/wagtail_admin.py
 #: reports/report_formatters.py
 msgid "Indicators"
 msgstr "Mittarit"
@@ -1157,6 +1157,10 @@ msgid "Other action is merged with this one"
 msgstr "Toinen toimenpide on jo yhdistetty tähän"
 
 #: actions/models/action.py
+msgid "Lead paragraph is not allowed for actions in this plan"
+msgstr ""
+
+#: actions/models/action.py
 msgid "Has contact persons"
 msgstr "Yhteyshenkilöt nimetty"
 
@@ -1299,11 +1303,11 @@ msgstr "peruttu"
 msgid "state"
 msgstr "tila"
 
-#: actions/models/action.py feedback/models.py
-msgid "comment"
-msgstr "kommentti"
+#: actions/models/action.py
+msgid "details"
+msgstr ""
 
-#: actions/models/action.py reports/report_formatters.py
+#: actions/models/action.py
 msgid "due date"
 msgstr "tavoitepäivämäärä"
 
@@ -3515,6 +3519,19 @@ msgstr "Organisaatiot"
 msgid "Divisions"
 msgstr "mittarin dimensiot"
 
+#: content/models.py indicators/blocks/__init__.py indicators/rich_text.py
+#: templates/aplans/paths_sync_confirmation.html
+msgid "Indicator"
+msgstr "Mittari"
+
+#: content/models.py
+msgid "Measure"
+msgstr ""
+
+#: content/models.py
+msgid "Measures"
+msgstr ""
+
 #: content/models.py
 msgid "site title"
 msgstr "sivuston otsikko"
@@ -3571,6 +3588,12 @@ msgstr "Nimi, jolla kutsutaan toimenpiteitä"
 #: content/models.py
 #, fuzzy
 msgid "Term to use for 'organization'"
+msgstr "Nimi, jolla kutsutaan toimenpiteitä"
+
+#: content/models.py
+#, fuzzy
+#| msgid "Term to use for 'action'"
+msgid "Term to use for 'indicator'"
 msgstr "Nimi, jolla kutsutaan toimenpiteitä"
 
 #: content/models.py
@@ -3719,6 +3742,10 @@ msgstr "toimenpide"
 #: feedback/models.py users/models.py
 msgid "email address"
 msgstr "sähköpostiosoite"
+
+#: feedback/models.py
+msgid "comment"
+msgstr "kommentti"
 
 #: feedback/models.py
 #, fuzzy
@@ -3872,11 +3899,6 @@ msgstr "Viimeisin arvo"
 #| msgid "level"
 msgid "Level"
 msgstr "taso"
-
-#: indicators/blocks/__init__.py indicators/rich_text.py
-#: templates/aplans/paths_sync_confirmation.html
-msgid "Indicator"
-msgstr "Mittari"
 
 #: indicators/blocks/__init__.py
 msgid "Dimension"
@@ -4202,7 +4224,7 @@ msgstr "Tämän dimension oletusväri kaavioissa"
 msgid "dimension category"
 msgstr "dimension luokka"
 
-#: indicators/models/dimensions.py
+#: indicators/models/dimensions.py indicators/models/goal_data_point.py
 msgid "dimension categories"
 msgstr "dimension luokat"
 
@@ -4229,6 +4251,40 @@ msgstr "yleisen mittarin dimensio"
 #: indicators/models/dimensions.py
 msgid "common indicator dimensions"
 msgstr "yleisen mittarin dimensiot"
+
+#: indicators/models/goal_data_point.py indicators/models/metadata.py
+msgid "dataset"
+msgstr "tietoaineisto"
+
+#: indicators/models/goal_data_point.py
+#, fuzzy
+#| msgid "Metrics"
+msgid "metric"
+msgstr "Metriikat"
+
+#: indicators/models/goal_data_point.py
+#, fuzzy
+#| msgid "indicator goal"
+msgid "indicator goal data point"
+msgstr "mittarin tavoite"
+
+#: indicators/models/goal_data_point.py
+#, fuzzy
+#| msgid "indicator goals"
+msgid "indicator goal data points"
+msgstr "mittarin tavoitteet"
+
+#: indicators/models/goal_data_point.py
+#, fuzzy
+#| msgid "dimension category"
+msgid "indicator goal dimension category"
+msgstr "dimension luokka"
+
+#: indicators/models/goal_data_point.py
+#, fuzzy
+#| msgid "dimension categories"
+msgid "indicator goal dimension categories"
+msgstr "dimension luokat"
 
 #: indicators/models/import_log.py
 msgid "Kausal Paths"
@@ -4313,6 +4369,15 @@ msgstr "vertailuarvo"
 #: indicators/models/indicator.py indicators/models/metadata.py
 msgid "datasets"
 msgstr "tietoaineistot"
+
+#: indicators/models/indicator.py
+#, fuzzy
+msgid "dataset schema"
+msgstr "tietoaineiston lisenssi"
+
+#: indicators/models/indicator.py
+msgid "If set, this indicator uses the dataset system instead of legacy indicator values"
+msgstr ""
 
 #: indicators/models/indicator.py
 msgid "reference"
@@ -4496,10 +4561,6 @@ msgstr "Aseta jos omistajaorganisaatiota ei löydy"
 #: indicators/models/metadata.py
 msgid "license"
 msgstr "lisenssi"
-
-#: indicators/models/metadata.py
-msgid "dataset"
-msgstr "tietoaineisto"
 
 #: indicators/models/metadata.py
 msgid "frameworks"
@@ -6103,10 +6164,6 @@ msgid "Other responsible parties"
 msgstr "Muut vastuutahot"
 
 #: reports/spreadsheets/action_print_layout.py
-msgid "Page"
-msgstr "Sivu"
-
-#: reports/spreadsheets/action_print_layout.py
 msgid "Profiles"
 msgstr "Profiilit"
 
@@ -6355,6 +6412,9 @@ msgstr "Käyttäjät"
 msgid "No permission to remove the user belonging to plans you are not managing."
 msgstr "Ei oikeuksia poistaa käyttäjä joka kuuluu toimenpideohjelmiin, joita et hallinnoi."
 
+#~ msgid "Page"
+#~ msgstr "Sivu"
+
 #~ msgid "This page has unsaved changes."
 #~ msgstr "Sivulla on tallentamattomia muutoksia"
 
@@ -6460,9 +6520,6 @@ msgstr "Ei oikeuksia poistaa käyttäjä joka kuuluu toimenpideohjelmiin, joita 
 #~ msgid "Initial date"
 #~ msgstr "alkupäivämäärä"
 
-#~ msgid "Metrics"
-#~ msgstr "Metriikat"
-
 #, fuzzy
 #~| msgid "Permissions"
 #~ msgid "Person permissions"
@@ -6472,10 +6529,6 @@ msgstr "Ei oikeuksia poistaa käyttäjä joka kuuluu toimenpideohjelmiin, joita 
 #~| msgid "Permissions"
 #~ msgid "Group permissions"
 #~ msgstr "Käyttöoikeudet"
-
-#, fuzzy
-#~ msgid "dataset schema"
-#~ msgstr "tietoaineiston lisenssi"
 
 #, fuzzy
 #~ msgid "dataset schemas"
@@ -6515,16 +6568,6 @@ msgstr "Ei oikeuksia poistaa käyttäjä joka kuuluu toimenpideohjelmiin, joita 
 #, fuzzy
 #~ msgid "data points"
 #~ msgstr "Viimeisin datapiste"
-
-#, fuzzy
-#~| msgid "dimension category"
-#~ msgid "data point dimension category"
-#~ msgstr "dimension luokka"
-
-#, fuzzy
-#~| msgid "dimension categories"
-#~ msgid "data point dimension categories"
-#~ msgstr "dimension luokat"
 
 #, fuzzy
 #~| msgid "comment"

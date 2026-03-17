@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-02 12:22+0100\n"
+"POT-Creation-Date: 2026-03-17 08:21+0200\n"
 "PO-Revision-Date: 2025-04-02 07:20+0000\n"
 "Last-Translator: Matias Wargelin <matias.wargelin@kausal.tech>\n"
 "Language-Team: Spanish <https://weblate.kausal.tech/projects/watch/django/es/>\n"
@@ -857,8 +857,8 @@ msgstr ""
 msgid "Icons"
 msgstr "Iconos"
 
-#: actions/category_admin.py actions/models/plan.py indicators/apps.py
-#: indicators/blocks/__init__.py indicators/wagtail_admin.py
+#: actions/category_admin.py actions/models/plan.py content/models.py
+#: indicators/apps.py indicators/blocks/__init__.py indicators/wagtail_admin.py
 #: reports/report_formatters.py
 msgid "Indicators"
 msgstr "Indicadores"
@@ -1173,6 +1173,10 @@ msgid "Other action is merged with this one"
 msgstr "La otra acción se fusiona con ésta"
 
 #: actions/models/action.py
+msgid "Lead paragraph is not allowed for actions in this plan"
+msgstr ""
+
+#: actions/models/action.py
 msgid "Has contact persons"
 msgstr "Tiene personas de contacto"
 
@@ -1315,11 +1319,11 @@ msgstr "cancelado"
 msgid "state"
 msgstr "estado"
 
-#: actions/models/action.py feedback/models.py
-msgid "comment"
-msgstr "comentario"
+#: actions/models/action.py
+msgid "details"
+msgstr ""
 
-#: actions/models/action.py reports/report_formatters.py
+#: actions/models/action.py
 msgid "due date"
 msgstr "fecha de vencimiento"
 
@@ -3559,6 +3563,19 @@ msgstr "Organizaciones"
 msgid "Divisions"
 msgstr "Divisiones"
 
+#: content/models.py indicators/blocks/__init__.py indicators/rich_text.py
+#: templates/aplans/paths_sync_confirmation.html
+msgid "Indicator"
+msgstr "Indicador"
+
+#: content/models.py
+msgid "Measure"
+msgstr ""
+
+#: content/models.py
+msgid "Measures"
+msgstr ""
+
 #: content/models.py
 msgid "site title"
 msgstr "título del sitio"
@@ -3614,6 +3631,12 @@ msgstr "Término a utilizar para \"tarea"
 #: content/models.py
 msgid "Term to use for 'organization'"
 msgstr "Término a utilizar para \"organización"
+
+#: content/models.py
+#, fuzzy
+#| msgid "Term to use for 'action'"
+msgid "Term to use for 'indicator'"
+msgstr "Término a utilizar para \"acción"
 
 #: content/models.py
 msgid "Sitewide announcement"
@@ -3766,6 +3789,10 @@ msgstr "acción"
 #: feedback/models.py users/models.py
 msgid "email address"
 msgstr "dirección de correo electrónico"
+
+#: feedback/models.py
+msgid "comment"
+msgstr "comentario"
 
 #: feedback/models.py
 msgid "page id"
@@ -3932,11 +3959,6 @@ msgstr ""
 #| msgid "level"
 msgid "Level"
 msgstr "nivel"
-
-#: indicators/blocks/__init__.py indicators/rich_text.py
-#: templates/aplans/paths_sync_confirmation.html
-msgid "Indicator"
-msgstr "Indicador"
 
 #: indicators/blocks/__init__.py
 #, fuzzy
@@ -4316,7 +4338,7 @@ msgstr ""
 msgid "dimension category"
 msgstr "categoría de dimensión"
 
-#: indicators/models/dimensions.py
+#: indicators/models/dimensions.py indicators/models/goal_data_point.py
 msgid "dimension categories"
 msgstr "categorías de dimensión"
 
@@ -4347,6 +4369,40 @@ msgstr "indicador común dimensión"
 #: indicators/models/dimensions.py
 msgid "common indicator dimensions"
 msgstr "dimensiones comunes de los indicadores"
+
+#: indicators/models/goal_data_point.py indicators/models/metadata.py
+msgid "dataset"
+msgstr "conjunto de datos"
+
+#: indicators/models/goal_data_point.py
+#, fuzzy
+#| msgid "Metrics"
+msgid "metric"
+msgstr "Métricas"
+
+#: indicators/models/goal_data_point.py
+#, fuzzy
+#| msgid "indicator goal"
+msgid "indicator goal data point"
+msgstr "indicador objetivo"
+
+#: indicators/models/goal_data_point.py
+#, fuzzy
+#| msgid "indicator goals"
+msgid "indicator goal data points"
+msgstr "objetivos de los indicadores"
+
+#: indicators/models/goal_data_point.py
+#, fuzzy
+#| msgid "dimension category"
+msgid "indicator goal dimension category"
+msgstr "categoría de dimensión"
+
+#: indicators/models/goal_data_point.py
+#, fuzzy
+#| msgid "dimension categories"
+msgid "indicator goal dimension categories"
+msgstr "categorías de dimensión"
 
 #: indicators/models/import_log.py
 #, fuzzy
@@ -4445,6 +4501,16 @@ msgstr "referencia"
 #: indicators/models/indicator.py indicators/models/metadata.py
 msgid "datasets"
 msgstr "conjuntos de datos"
+
+#: indicators/models/indicator.py
+#, fuzzy
+#| msgid "Dataset Schema"
+msgid "dataset schema"
+msgstr "Esquema del conjunto de datos"
+
+#: indicators/models/indicator.py
+msgid "If set, this indicator uses the dataset system instead of legacy indicator values"
+msgstr ""
 
 #: indicators/models/indicator.py
 msgid "reference"
@@ -4634,10 +4700,6 @@ msgstr "Establecer si la organización propietaria no está disponible"
 #: indicators/models/metadata.py
 msgid "license"
 msgstr "licencia"
-
-#: indicators/models/metadata.py
-msgid "dataset"
-msgstr "conjunto de datos"
 
 #: indicators/models/metadata.py
 msgid "frameworks"
@@ -6201,12 +6263,6 @@ msgid "Other responsible parties"
 msgstr "Otros responsables"
 
 #: reports/spreadsheets/action_print_layout.py
-#, fuzzy
-#| msgid "Page link"
-msgid "Page"
-msgstr "Enlace de página"
-
-#: reports/spreadsheets/action_print_layout.py
 msgid "Profiles"
 msgstr "Perfiles"
 
@@ -6465,6 +6521,11 @@ msgstr "Usuarios"
 msgid "No permission to remove the user belonging to plans you are not managing."
 msgstr "Sin permiso para eliminar el usuario perteneciente a planes que no gestiona."
 
+#, fuzzy
+#~| msgid "Page link"
+#~ msgid "Page"
+#~ msgstr "Enlace de página"
+
 #~ msgid "This page has unsaved changes."
 #~ msgstr "Esta página tiene cambios sin guardar."
 
@@ -6571,9 +6632,6 @@ msgstr "Sin permiso para eliminar el usuario perteneciente a planes que no gesti
 #~ msgid "Initial date"
 #~ msgstr "fecha de inicio"
 
-#~ msgid "Metrics"
-#~ msgstr "Métricas"
-
 #, fuzzy
 #~| msgid "Permissions"
 #~ msgid "Person permissions"
@@ -6583,11 +6641,6 @@ msgstr "Sin permiso para eliminar el usuario perteneciente a planes que no gesti
 #~| msgid "Permissions"
 #~ msgid "Group permissions"
 #~ msgstr "Permisos"
-
-#, fuzzy
-#~| msgid "Dataset Schema"
-#~ msgid "dataset schema"
-#~ msgstr "Esquema del conjunto de datos"
 
 #, fuzzy
 #~| msgid "Dataset Schema"
@@ -6635,16 +6688,6 @@ msgstr "Sin permiso para eliminar el usuario perteneciente a planes que no gesti
 
 #~ msgid "data points"
 #~ msgstr "puntos de datos"
-
-#, fuzzy
-#~| msgid "dimension category"
-#~ msgid "data point dimension category"
-#~ msgstr "categoría de dimensión"
-
-#, fuzzy
-#~| msgid "dimension categories"
-#~ msgid "data point dimension categories"
-#~ msgstr "categorías de dimensión"
 
 #, fuzzy
 #~| msgid "comment"

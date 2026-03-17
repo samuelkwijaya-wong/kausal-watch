@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-02 12:22+0100\n"
+"POT-Creation-Date: 2026-03-17 08:21+0200\n"
 "PO-Revision-Date: 2025-04-02 07:20+0000\n"
 "Last-Translator: Matias Wargelin <matias.wargelin@kausal.tech>\n"
 "Language-Team: German (Switzerland) <https://weblate.kausal.tech/projects/watch/django/de_CH/>\n"
@@ -850,8 +850,8 @@ msgstr ""
 msgid "Icons"
 msgstr ""
 
-#: actions/category_admin.py actions/models/plan.py indicators/apps.py
-#: indicators/blocks/__init__.py indicators/wagtail_admin.py
+#: actions/category_admin.py actions/models/plan.py content/models.py
+#: indicators/apps.py indicators/blocks/__init__.py indicators/wagtail_admin.py
 #: reports/report_formatters.py
 msgid "Indicators"
 msgstr ""
@@ -1172,6 +1172,10 @@ msgid "Other action is merged with this one"
 msgstr "Andere Massnahme ist mit dieser zusammengeführt"
 
 #: actions/models/action.py
+msgid "Lead paragraph is not allowed for actions in this plan"
+msgstr ""
+
+#: actions/models/action.py
 msgid "Has contact persons"
 msgstr ""
 
@@ -1314,11 +1318,11 @@ msgstr ""
 msgid "state"
 msgstr ""
 
-#: actions/models/action.py feedback/models.py
-msgid "comment"
+#: actions/models/action.py
+msgid "details"
 msgstr ""
 
-#: actions/models/action.py reports/report_formatters.py
+#: actions/models/action.py
 msgid "due date"
 msgstr ""
 
@@ -3504,6 +3508,19 @@ msgstr ""
 msgid "Divisions"
 msgstr ""
 
+#: content/models.py indicators/blocks/__init__.py indicators/rich_text.py
+#: templates/aplans/paths_sync_confirmation.html
+msgid "Indicator"
+msgstr ""
+
+#: content/models.py
+msgid "Measure"
+msgstr ""
+
+#: content/models.py
+msgid "Measures"
+msgstr ""
+
 #: content/models.py
 msgid "site title"
 msgstr ""
@@ -3559,6 +3576,12 @@ msgstr ""
 #: content/models.py
 msgid "Term to use for 'organization'"
 msgstr ""
+
+#: content/models.py
+#, fuzzy
+#| msgid "Term to use for 'action'"
+msgid "Term to use for 'indicator'"
+msgstr "Für 'Massnahme' zu verwendender Begriff"
 
 #: content/models.py
 msgid "Sitewide announcement"
@@ -3709,6 +3732,10 @@ msgid "email address"
 msgstr ""
 
 #: feedback/models.py
+msgid "comment"
+msgstr ""
+
+#: feedback/models.py
 msgid "page id"
 msgstr ""
 
@@ -3856,11 +3883,6 @@ msgstr ""
 
 #: indicators/api.py
 msgid "Level"
-msgstr ""
-
-#: indicators/blocks/__init__.py indicators/rich_text.py
-#: templates/aplans/paths_sync_confirmation.html
-msgid "Indicator"
 msgstr ""
 
 #: indicators/blocks/__init__.py
@@ -4219,7 +4241,7 @@ msgstr ""
 msgid "dimension category"
 msgstr ""
 
-#: indicators/models/dimensions.py
+#: indicators/models/dimensions.py indicators/models/goal_data_point.py
 msgid "dimension categories"
 msgstr ""
 
@@ -4246,6 +4268,40 @@ msgstr ""
 #: indicators/models/dimensions.py
 msgid "common indicator dimensions"
 msgstr ""
+
+#: indicators/models/goal_data_point.py indicators/models/metadata.py
+msgid "dataset"
+msgstr ""
+
+#: indicators/models/goal_data_point.py
+#, fuzzy
+#| msgid "Choose a quantity"
+msgid "metric"
+msgstr "Wähle eine Grösse"
+
+#: indicators/models/goal_data_point.py
+#, fuzzy
+#| msgid "Indicator for actions"
+msgid "indicator goal data point"
+msgstr "Indikator für Massnahmen"
+
+#: indicators/models/goal_data_point.py
+#, fuzzy
+#| msgid "Indicator for actions"
+msgid "indicator goal data points"
+msgstr "Indikator für Massnahmen"
+
+#: indicators/models/goal_data_point.py
+#, fuzzy
+#| msgid "Indicator for actions"
+msgid "indicator goal dimension category"
+msgstr "Indikator für Massnahmen"
+
+#: indicators/models/goal_data_point.py
+#, fuzzy
+#| msgid "Indicator for actions"
+msgid "indicator goal dimension categories"
+msgstr "Indikator für Massnahmen"
 
 #: indicators/models/import_log.py
 msgid "Kausal Paths"
@@ -4333,6 +4389,16 @@ msgstr ""
 
 #: indicators/models/indicator.py indicators/models/metadata.py
 msgid "datasets"
+msgstr ""
+
+#: indicators/models/indicator.py
+#, fuzzy
+#| msgid "Choose a quantity"
+msgid "dataset schema"
+msgstr "Wähle eine Grösse"
+
+#: indicators/models/indicator.py
+msgid "If set, this indicator uses the dataset system instead of legacy indicator values"
 msgstr ""
 
 #: indicators/models/indicator.py
@@ -4518,10 +4584,6 @@ msgstr ""
 
 #: indicators/models/metadata.py
 msgid "license"
-msgstr ""
-
-#: indicators/models/metadata.py
-msgid "dataset"
 msgstr ""
 
 #: indicators/models/metadata.py
@@ -6101,10 +6163,6 @@ msgid "Other responsible parties"
 msgstr ""
 
 #: reports/spreadsheets/action_print_layout.py
-msgid "Page"
-msgstr ""
-
-#: reports/spreadsheets/action_print_layout.py
 msgid "Profiles"
 msgstr ""
 
@@ -6391,17 +6449,7 @@ msgstr ""
 
 #, fuzzy
 #~| msgid "Choose a quantity"
-#~ msgid "dataset schema"
-#~ msgstr "Wähle eine Grösse"
-
-#, fuzzy
-#~| msgid "Choose a quantity"
 #~ msgid "dataset schemas"
-#~ msgstr "Wähle eine Grösse"
-
-#, fuzzy
-#~| msgid "Choose a quantity"
-#~ msgid "dataset metric"
 #~ msgstr "Wähle eine Grösse"
 
 #, fuzzy

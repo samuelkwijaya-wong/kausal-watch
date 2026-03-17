@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-02 12:22+0100\n"
+"POT-Creation-Date: 2026-03-17 08:21+0200\n"
 "PO-Revision-Date: 2025-04-02 07:20+0000\n"
 "Last-Translator: Matias Wargelin <matias.wargelin@kausal.tech>\n"
 "Language-Team: Danish <https://weblate.kausal.tech/projects/watch/django/da/>\n"
@@ -943,8 +943,8 @@ msgstr ""
 msgid "Icons"
 msgstr "Ikoner"
 
-#: actions/category_admin.py actions/models/plan.py indicators/apps.py
-#: indicators/blocks/__init__.py indicators/wagtail_admin.py
+#: actions/category_admin.py actions/models/plan.py content/models.py
+#: indicators/apps.py indicators/blocks/__init__.py indicators/wagtail_admin.py
 #: reports/report_formatters.py
 msgid "Indicators"
 msgstr "Indikatorer"
@@ -1274,6 +1274,10 @@ msgid "Other action is merged with this one"
 msgstr "Anden handling er sammenkoblet med denne"
 
 #: actions/models/action.py
+msgid "Lead paragraph is not allowed for actions in this plan"
+msgstr ""
+
+#: actions/models/action.py
 msgid "Has contact persons"
 msgstr "Har kontaktpersoner"
 
@@ -1420,11 +1424,11 @@ msgstr "annulleret"
 msgid "state"
 msgstr "stat"
 
-#: actions/models/action.py feedback/models.py
-msgid "comment"
-msgstr "kommentar"
+#: actions/models/action.py
+msgid "details"
+msgstr ""
 
-#: actions/models/action.py reports/report_formatters.py
+#: actions/models/action.py
 msgid "due date"
 msgstr "Afleveringsdato"
 
@@ -3816,6 +3820,19 @@ msgstr "Organisationer"
 msgid "Divisions"
 msgstr "dimensioner"
 
+#: content/models.py indicators/blocks/__init__.py indicators/rich_text.py
+#: templates/aplans/paths_sync_confirmation.html
+msgid "Indicator"
+msgstr "Indikator"
+
+#: content/models.py
+msgid "Measure"
+msgstr ""
+
+#: content/models.py
+msgid "Measures"
+msgstr ""
+
 #: content/models.py
 msgid "site title"
 msgstr "webstedets titel"
@@ -3874,6 +3891,12 @@ msgstr "Udtryk, der skal bruges for \"handling\""
 #, fuzzy
 #| msgid "Term to use for 'action'"
 msgid "Term to use for 'organization'"
+msgstr "Udtryk, der skal bruges for \"handling\""
+
+#: content/models.py
+#, fuzzy
+#| msgid "Term to use for 'action'"
+msgid "Term to use for 'indicator'"
 msgstr "Udtryk, der skal bruges for \"handling\""
 
 #: content/models.py
@@ -4035,6 +4058,10 @@ msgstr "handling"
 #: feedback/models.py users/models.py
 msgid "email address"
 msgstr "email adresse"
+
+#: feedback/models.py
+msgid "comment"
+msgstr "kommentar"
 
 #: feedback/models.py
 #, fuzzy
@@ -4205,11 +4232,6 @@ msgstr ""
 #| msgid "level"
 msgid "Level"
 msgstr "niveau"
-
-#: indicators/blocks/__init__.py indicators/rich_text.py
-#: templates/aplans/paths_sync_confirmation.html
-msgid "Indicator"
-msgstr "Indikator"
 
 #: indicators/blocks/__init__.py
 #, fuzzy
@@ -4587,7 +4609,7 @@ msgstr ""
 msgid "dimension category"
 msgstr "dimensionskategori"
 
-#: indicators/models/dimensions.py
+#: indicators/models/dimensions.py indicators/models/goal_data_point.py
 msgid "dimension categories"
 msgstr "dimensionskategorier"
 
@@ -4618,6 +4640,40 @@ msgstr "fælles indikatordimension"
 #: indicators/models/dimensions.py
 msgid "common indicator dimensions"
 msgstr "almindelige indikatordimensioner"
+
+#: indicators/models/goal_data_point.py indicators/models/metadata.py
+msgid "dataset"
+msgstr "datasæt"
+
+#: indicators/models/goal_data_point.py
+#, fuzzy
+#| msgid "Metrics"
+msgid "metric"
+msgstr "Metrikker"
+
+#: indicators/models/goal_data_point.py
+#, fuzzy
+#| msgid "indicator goal"
+msgid "indicator goal data point"
+msgstr "indikator mål"
+
+#: indicators/models/goal_data_point.py
+#, fuzzy
+#| msgid "indicator goals"
+msgid "indicator goal data points"
+msgstr "indikator mål"
+
+#: indicators/models/goal_data_point.py
+#, fuzzy
+#| msgid "dimension category"
+msgid "indicator goal dimension category"
+msgstr "dimensionskategori"
+
+#: indicators/models/goal_data_point.py
+#, fuzzy
+#| msgid "dimension categories"
+msgid "indicator goal dimension categories"
+msgstr "dimensionskategorier"
 
 #: indicators/models/import_log.py
 msgid "Kausal Paths"
@@ -4713,6 +4769,16 @@ msgstr "reference"
 #: indicators/models/indicator.py indicators/models/metadata.py
 msgid "datasets"
 msgstr "datasæt"
+
+#: indicators/models/indicator.py
+#, fuzzy
+#| msgid "dataset license"
+msgid "dataset schema"
+msgstr "datasætlicens"
+
+#: indicators/models/indicator.py
+msgid "If set, this indicator uses the dataset system instead of legacy indicator values"
+msgstr ""
 
 #: indicators/models/indicator.py
 #, fuzzy
@@ -4908,10 +4974,6 @@ msgstr "Indstil hvis ejerorganisation ikke er tilgængelig"
 #: indicators/models/metadata.py
 msgid "license"
 msgstr "licens"
-
-#: indicators/models/metadata.py
-msgid "dataset"
-msgstr "datasæt"
 
 #: indicators/models/metadata.py
 msgid "frameworks"
@@ -6652,12 +6714,6 @@ msgstr "Andre ansvarlige"
 
 #: reports/spreadsheets/action_print_layout.py
 #, fuzzy
-#| msgid "action link"
-msgid "Page"
-msgstr "handlingslink"
-
-#: reports/spreadsheets/action_print_layout.py
-#, fuzzy
 msgid "Profiles"
 msgstr "Profiler"
 
@@ -6930,6 +6986,11 @@ msgstr "Brugere"
 msgid "No permission to remove the user belonging to plans you are not managing."
 msgstr "Ingen tilladelse til at fjerne den bruger, der tilhører planer, du ikke administrerer."
 
+#, fuzzy
+#~| msgid "action link"
+#~ msgid "Page"
+#~ msgstr "handlingslink"
+
 #~ msgid "This page has unsaved changes."
 #~ msgstr "Denne side har ikke-gemte ændringer."
 
@@ -7039,9 +7100,6 @@ msgstr "Ingen tilladelse til at fjerne den bruger, der tilhører planer, du ikke
 #~ msgid "Initial date"
 #~ msgstr "start dato"
 
-#~ msgid "Metrics"
-#~ msgstr "Metrikker"
-
 #, fuzzy
 #~| msgid "Permission denied"
 #~ msgid "Person permissions"
@@ -7051,11 +7109,6 @@ msgstr "Ingen tilladelse til at fjerne den bruger, der tilhører planer, du ikke
 #~| msgid "Permission denied"
 #~ msgid "Group permissions"
 #~ msgstr "Adgang nægtet"
-
-#, fuzzy
-#~| msgid "dataset license"
-#~ msgid "dataset schema"
-#~ msgstr "datasætlicens"
 
 #, fuzzy
 #~| msgid "dataset license"
@@ -7101,16 +7154,6 @@ msgstr "Ingen tilladelse til at fjerne den bruger, der tilhører planer, du ikke
 #~| msgid "Last data point"
 #~ msgid "data points"
 #~ msgstr "Sidste datapunkt"
-
-#, fuzzy
-#~| msgid "dimension category"
-#~ msgid "data point dimension category"
-#~ msgstr "dimensionskategori"
-
-#, fuzzy
-#~| msgid "dimension categories"
-#~ msgid "data point dimension categories"
-#~ msgstr "dimensionskategorier"
 
 #, fuzzy
 #~| msgid "comment"
