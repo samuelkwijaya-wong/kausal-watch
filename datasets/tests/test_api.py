@@ -1,16 +1,19 @@
 """
-Tests for the dataset REST API, focusing on the DataPoint duplicate-detection logic.
+Tests for the dataset REST API, focusing on the DataPoint duplicate-detection logic
+and the computed_data_points endpoint.
 
 Key behaviours verified:
   - Yearly datasets: duplicate = same calendar year (unchanged)
   - Monthly datasets: duplicate = same calendar year **and** month (new)
   - Monthly datasets: two points in different months of the same year are allowed
     (previously blocked by a ValueError that has been removed)
+  - computed_data_points: no result when only one operand has a data point (bug fix)
 """
 
 from __future__ import annotations
 
 from datetime import date
+from decimal import Decimal
 from unittest.mock import MagicMock
 
 from rest_framework import serializers as drf_serializers
@@ -18,7 +21,7 @@ from rest_framework import serializers as drf_serializers
 import pytest
 
 from kausal_common.datasets.api import DataPointSerializer
-from kausal_common.datasets.models import DatasetSchema
+from kausal_common.datasets.models import DatasetMetricComputation, DatasetSchema
 
 from datasets.tests.factories import (
     DataPointFactory,
@@ -384,3 +387,97 @@ class TestDataPointAPIMonthly:
             },
         )
         assert r2.status_code == 201, r2.json_data
+
+
+# ---------------------------------------------------------------------------
+# computed_data_points endpoint
+# ---------------------------------------------------------------------------
+
+def _make_computation_setup():
+    """
+    Create a schema with three metrics (a, b, c) where c = a * b,
+    and return (dataset, metric_a, metric_b, metric_c).
+    """
+    schema = DatasetSchemaFactory.create()
+    metric_a = DatasetMetricFactory.create(schema=schema)
+    metric_b = DatasetMetricFactory.create(schema=schema)
+    metric_c = DatasetMetricFactory.create(schema=schema)
+    DatasetMetricComputation.objects.create(
+        schema=schema,
+        operation='multiply',
+        operand_a=metric_a,
+        operand_b=metric_b,
+        target_metric=metric_c,
+    )
+    dataset = DatasetFactory.create(schema=schema)
+    return dataset, metric_a, metric_b, metric_c
+
+
+class TestComputedDataPoints:
+    """Tests for GET /v1/datasets/{uuid}/computed_data_points/."""
+
+    def _url(self, dataset_uuid) -> str:
+        return f'/v1/datasets/{dataset_uuid}/computed_data_points/'
+
+    def test_no_result_when_only_one_operand_has_data(self, api_client, superuser):
+        """
+        When only one operand of a computation has a data point, no computed
+        result should be returned — not even a null value.
+
+        This guards against the bug where _compute_metric_values() emitted a
+        null ComputedValue whenever any one operand was present, even if the
+        other operand had no data point at all.
+        """
+        dataset, metric_a, _metric_b, _metric_c = _make_computation_setup()
+        DataPointFactory.create(dataset=dataset, metric=metric_a, date=date(2024, 1, 1), value=Decimal('3'))
+
+        api_client.force_login(superuser)
+        response = api_client.get(self._url(dataset.uuid))
+
+        assert response.status_code == 200
+        assert response.json_data == []
+
+    def test_computed_value_returned_when_both_operands_present(self, api_client, superuser):
+        """When both operands have data points the computed result must be returned."""
+        dataset, metric_a, metric_b, metric_c = _make_computation_setup()
+        DataPointFactory.create(dataset=dataset, metric=metric_a, date=date(2024, 1, 1), value=Decimal('3'))
+        DataPointFactory.create(dataset=dataset, metric=metric_b, date=date(2024, 1, 1), value=Decimal('5'))
+
+        api_client.force_login(superuser)
+        response = api_client.get(self._url(dataset.uuid))
+
+        assert response.status_code == 200
+        assert len(response.json_data) == 1
+        result = response.json_data[0]
+        assert result['date'] == '2024-01-01'
+        assert Decimal(result['value']) == Decimal('15')
+        assert result['metric'] == str(metric_c.uuid)
+
+    def test_no_result_when_dataset_has_no_data_points(self, api_client, superuser):
+        """An empty dataset must return an empty list."""
+        dataset, _metric_a, _metric_b, _metric_c = _make_computation_setup()  # noqa: F841
+
+        api_client.force_login(superuser)
+        response = api_client.get(self._url(dataset.uuid))
+
+        assert response.status_code == 200
+        assert response.json_data == []
+
+    def test_partial_dates_produce_no_null_results(self, api_client, superuser):
+        """
+        If operand a has data for two dates but operand b only covers one of
+        them, only the date with both operands present should yield a result.
+        """
+        dataset, metric_a, metric_b, metric_c = _make_computation_setup()
+        DataPointFactory.create(dataset=dataset, metric=metric_a, date=date(2023, 1, 1), value=Decimal('2'))
+        DataPointFactory.create(dataset=dataset, metric=metric_a, date=date(2024, 1, 1), value=Decimal('4'))
+        DataPointFactory.create(dataset=dataset, metric=metric_b, date=date(2024, 1, 1), value=Decimal('5'))
+
+        api_client.force_login(superuser)
+        response = api_client.get(self._url(dataset.uuid))
+
+        assert response.status_code == 200
+        assert len(response.json_data) == 1
+        result = response.json_data[0]
+        assert result['date'] == '2024-01-01'
+        assert Decimal(result['value']) == Decimal('20')
