@@ -14,12 +14,7 @@ PYTHONPATH = "{{ config_root }}"
 
 [prepare.uv]
 auto = true
-
-[prepare.sync-all-groups]
-auto = true
-run = "uv sync --all-groups"
-sources = ["uv.lock"]
-outputs = [".venv/lib/python*/site-packages/mypy/"]
+run = "uv sync --all-group --all-extras"
 
 [plugins]
 fnox-env = "https://github.com/jdx/mise-env-fnox"
