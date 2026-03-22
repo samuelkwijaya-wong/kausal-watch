@@ -5,13 +5,14 @@ default_install_hook_types = ["pre-commit", "pre-push"]
 [[repos]]
 repo = "local"
 
-# [[repos.hooks]]
-# id = "ruff-format"
-# types = ["python"]
-# stages = ["pre-commit", "manual"]
-# language = "script"
-# require_serial = true
-# entry = "ruff format --fix"
+[[repos.hooks]]
+id = "ruff-format"
+name = "Format Python files with Ruff"
+types = ["python"]
+stages = ["pre-commit", "manual"]
+language = "system"
+require_serial = true
+entry = "ruff format --force-exclude"
 
 [[repos.hooks]]
 id = "run-ruff"
@@ -29,7 +30,6 @@ types = ["toml"]
 files = "^pyproject\\.toml$"
 stages = ["pre-commit", "manual"]
 language = "system"
-pass_filenames = true
 entry = "uv tool run pyproject-fmt"
 
 # [[repos.hooks]]
