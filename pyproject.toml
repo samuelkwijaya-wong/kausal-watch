@@ -1,151 +1,190 @@
 [build-system]
-requires = ["setuptools>=61.2"]
 build-backend = "setuptools.build_meta"
+requires = [ "setuptools>=61.2" ]
 
 [project]
 name = "kausal-watch"
-requires-python = ">= 3.14"
 version = "1.0.0"
+requires-python = ">=3.14"
+classifiers = [
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.14",
+]
 dependencies = [
-    "asgi-cors",
-    "babel",
-    "celery",
-    "channels",
-    "channels-redis",
-    "coreapi",
-    "cryptography",
-    "dal-admin-filters",
-    "diffsync",
-    "django",
-    "django-anymail[mailgun,mailjet,sendgrid]",
-    "django-autocomplete-light",
-    "django-autoslug",
-    "django-cors-headers",
-    "django-countries",
-    "django-environ",
-    "django-extensions",
-    "django-filter",
-    "django-hijack",
-    "django-image-cropping",
-    "django-modeltrans",
-    "django-npm",
-    "django-oauth-toolkit",
-    "django-parler",
-    "django-redis",
-    "django-relations-iterator",
-    "django-reversion",
-    "django-storages[s3]",
-    "django-stubs-ext",
-    "djangorestframework",
-    "dnspython",
-    "drf-nested-routers",
-    "drf-spectacular",
-    "easy-thumbnails",
-    "elasticsearch",
-    "elasticsearch-dsl",
-    "factory-boy",
-    "fastmcp>=3.1",
-    "graphene-django",
-    "graphene-django-optimizer",
-    "graphene-pydantic",
-    "graphql-core",
-    "graphql-relay",
-    "html2text",
-    "httpx",
-    "humanize",
-    "jinja2",
-    "libvoikko",
-    "logfmter",
-    "loguru",
-    "lxml",
-    "markdown",
-    "nanoid",
-    "networkx",
-    "opentelemetry-exporter-otlp-proto-http",
-    "opentelemetry-exporter-prometheus",
-    "opentelemetry-instrumentation-django",
-    "opentelemetry-instrumentation-psycopg",
-    "opentelemetry-instrumentation-redis",
-    "opentelemetry-instrumentation-threading",
-    "opentelemetry-sdk",
-    "orjson",
-    "pillow",
-    "polars[xlsx2csv]",
-    "psutil",
-    "psycopg[pool,binary]",
-    "pycryptodome",
-    "pygithub",
-    "pygments-graphql",
-    "pytest-cov",
-    "pytest-django",
-    "pytest-env",
-    "pytest-factoryboy",
-    "pytest-html",
-    "pyyaml",
-    "requests",
-    "rich",
-    "s3cmd",
-    "sentry-sdk[opentelemetry]",
-    "setuptools<80",
-    "social-auth-app-django",
-    "starlette",
-    "strawberry-graphql",
-    "strawberry-graphql-django",
-    "tinycss2",
-    "treelib",
-    "tzdata",
-    "unidecode",
-    "uritemplate",
-    "uuid-utils",
-    "uvicorn",
-    "wagtail",
-    "wagtail-autocomplete",
-    "wagtail-color-panel",
-    "wagtail-generic-chooser",
-    "wagtail-grapple",
-    "wagtail-localize",
-    "wagtail-modeladmin",
-    "wagtail-orderable",
-    "wagtailgeowidget",
-    "xlsxwriter",
+  "asgi-cors",
+  "babel",
+  "celery",
+  "channels",
+  "channels-redis",
+  "coreapi",
+  "cryptography",
+  "dal-admin-filters",
+  "diffsync",
+  "django",
+  "django-anymail[mailgun,mailjet,sendgrid]",
+  "django-autocomplete-light",
+  "django-autoslug",
+  "django-cors-headers",
+  "django-countries",
+  "django-environ",
+  "django-extensions",
+  "django-filter",
+  "django-hijack",
+  "django-image-cropping",
+  "django-modeltrans",
+  "django-npm",
+  "django-oauth-toolkit",
+  "django-parler",
+  "django-redis",
+  "django-relations-iterator",
+  "django-reversion",
+  "django-storages[s3]",
+  "django-stubs-ext",
+  "djangorestframework",
+  "dnspython",
+  "drf-nested-routers",
+  "drf-spectacular",
+  "easy-thumbnails",
+  "elasticsearch",
+  "elasticsearch-dsl",
+  "factory-boy",
+  "fastmcp>=3.1",
+  "graphene-django",
+  "graphene-django-optimizer",
+  "graphene-pydantic",
+  "graphql-core",
+  "graphql-relay",
+  "html2text",
+  "httpx",
+  "humanize",
+  "jinja2",
+  "libvoikko",
+  "logfmter",
+  "loguru",
+  "lxml",
+  "markdown",
+  "nanoid",
+  "networkx",
+  "opentelemetry-exporter-otlp-proto-http",
+  "opentelemetry-exporter-prometheus",
+  "opentelemetry-instrumentation-django",
+  "opentelemetry-instrumentation-psycopg",
+  "opentelemetry-instrumentation-redis",
+  "opentelemetry-instrumentation-threading",
+  "opentelemetry-sdk",
+  "orjson",
+  "pillow",
+  "polars[xlsx2csv]",
+  "psutil",
+  "psycopg[binary,pool]",
+  "pycryptodome",
+  "pygithub",
+  "pygments-graphql",
+  "pytest-cov",
+  "pytest-django",
+  "pytest-env",
+  "pytest-factoryboy",
+  "pytest-html",
+  "pyyaml",
+  "requests",
+  "rich",
+  "s3cmd",
+  "sentry-sdk[opentelemetry]",
+  "setuptools<80",
+  "social-auth-app-django",
+  "starlette",
+  "strawberry-graphql",
+  "strawberry-graphql-django",
+  "tinycss2",
+  "treelib",
+  "tzdata",
+  "unidecode",
+  "uritemplate",
+  "uuid-utils",
+  "uvicorn",
+  "wagtail",
+  "wagtail-autocomplete",
+  "wagtail-color-panel",
+  "wagtail-generic-chooser",
+  "wagtail-grapple",
+  "wagtail-localize",
+  "wagtail-modeladmin",
+  "wagtail-orderable",
+  "wagtailgeowidget",
+  "xlsxwriter",
+]
+optional-dependencies.kausal = [ "kausal-watch-extensions>=0.1.173" ]
+
+[dependency-groups]
+dev = [
+  "ariadne-codegen>=0.16",
+  "basedpyright>=1.32.1",
+  "daphne",
+  "django-debug-toolbar",
+  "django-zeal>=2.0.4",
+  "ipdb",
+  "ipython",
+  "pdbr>=0.9.7",
+  "prek>=0.2.12",
+  "turms>=0.10.1",
+  "types-factory-boy>=0.4.1",
+  "uv",
+  "virtualenvwrapper>=6.1.1",
+  "viztracer",
+  "watchfiles",
+]
+kausal = [ "kausal-watch-extensions" ]
+lint = [
+  "celery-stubs",
+  "django-stubs",
+  "djangorestframework-stubs",
+  "graphene-stubs",
+  "isort",
+  "mypy[faster-cache]",
+  "mypy-baseline",
+  "ondivi",
+  "ruff",
+  "types-factory-boy>=0.4.1",
+  "types-jwcrypto>=1.5.0.20251102",
+  "types-oauthlib",
+  "types-psutil",
+  "types-python-dateutil",
+  "types-requests>=2.32.4.20260107",
+  "types-uwsgi",
+]
+prod = [
+  "gunicorn",
+  "rustface>=0.1; sys_platform=='linux'",
+  "uvicorn[standard]",
+  "uvicorn-worker",
 ]
 
-[project.optional-dependencies]
-kausal = [
-    "kausal-watch-extensions>=0.1.173",
+[tool.setuptools]
+include-package-data = false
+py-modules = []
+
+[tool.uv]
+sources.django-modeltrans = { url = "https://github.com/kausaltech/django-modeltrans/archive/37ed924498fa0e6a431e0b6fc1e6982a3f3b3a84.zip" }
+sources.graphene-django-optimizer = { url = "https://github.com/kausaltech/graphene-django-optimizer/archive/f18d827d0d58c1148288b6b886c167dd2fc1931a.zip" }
+sources.kausal-paths-extensions = { index = "kausal" }
+index = [
+  { url = "https://pypi.org/simple" },
+  { name = "kausal", url = "https://pypi.kausal.tech", authenticate = "always" }
+]
+environments = [
+  "python_full_version >= '3.14' and sys_platform == 'darwin' and platform_machine == 'arm64'",
+  "python_full_version >= '3.14' and sys_platform == 'linux' and platform_machine == 'x86_64'",
 ]
 
 [tool.ruff]
 extend = "./kausal_common/configs/ruff.toml"
-extend-exclude = ["./paths_integration/_generated_", "./mcp_server/__generated__"]
-
-
-[tool.pytest.ini_options]
-DJANGO_SETTINGS_MODULE = "aplans.settings"
-norecursedirs = [
-  ".*",
-  ".direnv",
-  ".git",
-  ".mypy_cache",
-  "**/media",
-  "**/static",
-  "**/templates",
-  "Attic",
-  "data",
-  "node_modules",
-  "venv",
-]
-filterwarnings = ["ignore::DeprecationWarning:easy_thumbnails"]
-testpaths = ["**/tests"]
-env = [
-  "ENV_FILE=.env.test",
+extend-exclude = [
+  "./mcp_server/__generated__",
+  "./paths_integration/_generated_",
 ]
 
 [tool.mypy]
-plugins = [
-  "mypy_django_plugin.main",
-  "pydantic.mypy",
-]
+plugins = [ "mypy_django_plugin.main", "pydantic.mypy" ]
 mypy_path = "$MYPY_CONFIG_FILE_DIR/kausal_common/typings"
 exclude = [
   "/migrations/",
@@ -154,17 +193,16 @@ exclude = [
   "^typings/",
   "^kausal_common/deployment/gunicorn\\.py$",
   "node_modules",
-  "^.*/_generated_/.*$",
   "^.*/__generated__/.*$",
-  #"^kausal_common/typings/",
+  # "^kausal_common/typings/",
 ]
 check_untyped_defs = true
 cache_fine_grained = true
 explicit_package_bases = true
 strict_optional = true
 fixed_format_cache = true
-always_true = ['IS_WATCH']
-always_false = ['IS_PATHS']
+always_true = [ "IS_WATCH", "IS_MYPY" ]
+always_false = [ "IS_PATHS" ]
 
 [[tool.mypy.overrides]]
 module = [
@@ -224,16 +262,8 @@ module = [
 ignore_missing_imports = true
 
 [[tool.mypy.overrides]]
-module = [
-  "mcp_server.__generated__.*",
-  "paths_integration._generated_.*",
-]
+module = [ "mcp_server.__generated__.*", "paths_integration.__generated__.*" ]
 ignore_errors = true
-
-[tool.mypy-baseline]
-baseline_path = ".mypy-baseline.txt"
-preserve_position = false
-sort_baseline = true
 
 [tool.pyright]
 exclude = [
@@ -272,80 +302,34 @@ reportUnreachable = false
 reportUnsafeMultipleInheritance = "information"
 reportUnusedCallResult = false
 reportUnusedImport = false
-defineConstant = { 'IS_PATHS' = false, 'IS_WATCH' = true }
+defineConstant = { IS_PATHS = false, IS_WATCH = true, IS_MYPY = false }
 
+[tool.ty]
+environment.extra-paths = [ "kausal_common/typings" ]
 
 [tool.django-stubs]
 django_settings_module = "aplans.settings"
 
-[tool.setuptools]
-include-package-data = false
-py-modules = []
-
-[tool.ty.environment]
-extra-paths = ['kausal_common/typings']
-
-[tool.uv]
-environments = [
-  "python_full_version >= '3.14' and sys_platform == 'linux' and platform_machine == 'x86_64'",
-  "python_full_version >= '3.14' and sys_platform == 'darwin' and platform_machine == 'arm64'",
+[tool.pytest]
+DJANGO_SETTINGS_MODULE = "aplans.settings"
+norecursedirs = [
+  ".*",
+  ".direnv",
+  ".git",
+  ".mypy_cache",
+  "**/media",
+  "**/static",
+  "**/templates",
+  "Attic",
+  "data",
+  "node_modules",
+  "venv",
 ]
+filterwarnings = [ "ignore::DeprecationWarning:easy_thumbnails" ]
+testpaths = [ "**/tests" ]
+env = [ "ENV_FILE=.env.test" ]
 
-[[tool.uv.index]]
-url = "https://pypi.org/simple"
-
-[[tool.uv.index]]
-name = "kausal"
-url = "https://pypi.kausal.tech"
-authenticate = "always"
-
-[tool.uv.sources]
-graphene-django-optimizer = { url = "https://github.com/kausaltech/graphene-django-optimizer/archive/f18d827d0d58c1148288b6b886c167dd2fc1931a.zip" }
-django-modeltrans = { url = "https://github.com/kausaltech/django-modeltrans/archive/37ed924498fa0e6a431e0b6fc1e6982a3f3b3a84.zip" }
-kausal-paths-extensions = { index = "kausal"}
-
-[dependency-groups]
-dev = [
-    "ariadne-codegen>=0.16.0",
-    "basedpyright>=1.32.1",
-    "daphne",
-    "django-debug-toolbar",
-    "django-zeal>=2.0.4",
-    "ipdb",
-    "ipython",
-    "pdbr>=0.9.7",
-    "prek>=0.2.12",
-    "turms>=0.10.1",
-    "types-factory-boy>=0.4.1",
-    "uv",
-    "virtualenvwrapper>=6.1.1",
-    "viztracer",
-    "watchfiles",
-]
-kausal = [
-    "kausal-watch-extensions",
-]
-lint = [
-    "celery-stubs",
-    "django-stubs",
-    "djangorestframework-stubs",
-    "graphene-stubs",
-    "isort",
-    "mypy-baseline",
-    "mypy[faster-cache]",
-    "ondivi",
-    "ruff",
-    "types-factory-boy>=0.4.1",
-    "types-jwcrypto>=1.5.0.20251102",
-    "types-oauthlib",
-    "types-psutil",
-    "types-python-dateutil",
-    "types-requests>=2.32.4.20260107",
-    "types-uwsgi",
-]
-prod = [
-    "gunicorn",
-    "rustface>=0.1.0; sys_platform == 'linux'",
-    "uvicorn-worker",
-    "uvicorn[standard]",
-]
+[tool.mypy-baseline]
+baseline_path = ".mypy-baseline.txt"
+preserve_position = false
+sort_baseline = true

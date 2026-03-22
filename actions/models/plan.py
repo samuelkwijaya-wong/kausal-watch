@@ -40,7 +40,7 @@ from wagtail_localize.operations import TranslationCreator
 
 from kausal_common.i18n.helpers import get_default_language, get_supported_languages
 from kausal_common.models.language import ModelWithPrimaryLanguage
-from kausal_common.models.permissions import PermissionedModel
+from kausal_common.models.permissions import PermissionedModel, PermissionedQuerySet
 from kausal_common.models.types import MLModelManager
 
 from aplans.utils import (
@@ -58,6 +58,7 @@ from search.models import SearchableModel
 
 if TYPE_CHECKING:
     from django_stubs_ext import StrOrPromise
+    from wagtail.models import Task
 
     from rich.repr import RichReprResult
 
@@ -124,7 +125,7 @@ def get_page_translation(page: Page, fallback=True) -> Page:
     return page
 
 
-class PlanQuerySet(MultilingualQuerySet['Plan']):
+class PlanQuerySet(PermissionedQuerySet['Plan'], MultilingualQuerySet['Plan']):
     def for_hostname(self, hostname: str, request: WatchAPIRequest | WatchGraphQLContext | None = None) -> Self:
         hostname = hostname.lower()
         plan_domains = PlanDomain.objects.filter(hostname=hostname)
@@ -157,7 +158,8 @@ class PlanQuerySet(MultilingualQuerySet['Plan']):
         """Filter by visibility using permission policy."""
         if user is None:
             user = AnonymousUser()
-        return cast('PlanQuerySet', self.model.permission_policy().filter_by_perm(self, user, 'view'))
+        return self.model.permission_policy().filter_by_perm(self, user, 'view')
+
 
 if TYPE_CHECKING:
     _PlanManager = models.Manager.from_queryset(PlanQuerySet)
@@ -1057,7 +1059,7 @@ class Plan(ClusterableModel, ModelWithPrimaryLanguage, PermissionedModel, Search
         assert tasks.count() < 3, 'Currently max. 2 task workflows supported'
         return tasks
 
-    def get_next_workflow_task(self, workflow_state: WorkflowStateEnum) -> WorkflowTask | None:
+    def get_next_workflow_task(self, workflow_state: WorkflowStateEnum) -> Task | None:
         """
         Return the next workflow task that is active after the desired workflow_state has been reached.
 
@@ -1072,16 +1074,18 @@ class Plan(ClusterableModel, ModelWithPrimaryLanguage, PermissionedModel, Search
 
         """
         from aplans.graphql_types import WorkflowStateEnum
-        tasks = self.get_workflow_tasks()
+        workflow_tasks = self.get_workflow_tasks()
         if workflow_state == WorkflowStateEnum.PUBLISHED:
             return None
-        if tasks.count() == 1:
+        if workflow_tasks.count() == 1:
             if workflow_state == WorkflowStateEnum.APPROVED:
                 return None
-            return tasks.get().task
-        if tasks.count() == 2:
+            return workflow_tasks.get().task
+        if workflow_tasks.count() == 2:
             if workflow_state == WorkflowStateEnum.APPROVED:
-                return cast('WorkflowTask', tasks.last()).task
+                last_workflow_task = workflow_tasks.last()
+                assert last_workflow_task is not None
+                return last_workflow_task.task
             return None
         return None
 

@@ -429,6 +429,10 @@ class OrganizationPlanAdmin(PlanRelatedModelWithRevision):
         verbose_name=_('person'),
     )
 
+    person_id: int
+    plan_id: int
+    organization_id: int
+
     def __str__(self):
         return f'{self.person} ({self.plan})'
 

@@ -18,9 +18,24 @@ Kausal Watch is an open-source platform (AGPLv3) for managing and communicating 
 - Politicians and decision-makers (dashboard consumers)
 - Citizens (public UI readers)
 
+Public UI repo: https://github.com/kausaltech/kausal-watch-ui
 Can integrate with Kausal Paths (scenario modeling product) for emissions impact assessment.
 
 ## Development Commands
+
+### Setting up a new dev environment
+
+We are using [mise-en-place](https://github.com/jdx/mise) to manage tools. Check
+first if the `mise` command is available; if not, install it with:
+
+```bash
+curl https://mise.run | sh
+```
+
+Activate `mise` shell hooks:
+```bash
+eval "$(mise activate bash)"
+```
 
 ### Core Django Commands
 - `python manage.py runserver` - Start development server
@@ -36,6 +51,8 @@ Can integrate with Kausal Paths (scenario modeling product) for emissions impact
 ### Linting and Type Checking
 - `ruff check` - Run code linting (configuration extends kausal_common/configs/ruff.toml)
 - `mypy . | mypy-baseline filter` - Run type checking with Django plugin and baseline support
+- `ruff check --fix <file>` – Autofix import sorts etc. No need to fix these manually.
+- `ruff format <file>` – Prettify after edits
 
 ## Architecture Overview
 

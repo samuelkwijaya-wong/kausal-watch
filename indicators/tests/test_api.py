@@ -95,7 +95,7 @@ def test_all_values_get_replaced(client, plan, plan_admin_user):
 
 
 def test_all_goals_get_replaced(client, plan, plan_admin_user):
-    indicator = IndicatorFactory(plans=[plan])
+    indicator = IndicatorFactory.create(plans=[plan])
     assert not indicator.goals.exists()
     for values in [[GOAL_2030, GOAL_2045], [GOAL_2035, GOAL_2040]]:
         post(client, plan, plan_admin_user, 'indicator-goals', indicator, values)
@@ -178,26 +178,28 @@ def test_values_get_normalized(client, plan, plan_admin_user, reverse_request_or
 
 
 def test_add_first_value_updates_indicator_latest_value(client, plan, plan_admin_user):
-    indicator = IndicatorFactory(plans=[plan])
+    indicator = IndicatorFactory.create(plans=[plan])
     assert not indicator.values.exists()
     assert indicator.latest_value is None
     post(client, plan, plan_admin_user, 'indicator-values', indicator, [VALUE_2019])
+    assert indicator.latest_value is not None
     assert not indicator.latest_value.categories.exists()
     assert indicator.latest_value.date == date(2019, 12, 31)
     assert indicator.latest_value.value == VALUE_2019['value']
 
 
 def test_add_value_updates_indicator_latest_value(client, plan, plan_admin_user):
-    indicator = IndicatorFactory(plans=[plan])
+    indicator = IndicatorFactory.create(plans=[plan])
     post(client, plan, plan_admin_user, 'indicator-values', indicator, [VALUE_2019])
     post(client, plan, plan_admin_user, 'indicator-values', indicator, [VALUE_2020])
+    assert indicator.latest_value is not None
     assert not indicator.latest_value.categories.exists()
     assert indicator.latest_value.date == date(2020, 12, 31)
     assert indicator.latest_value.value == VALUE_2020['value']
 
 
 def test_add_value_keeps_null_due_date(client, plan, plan_admin_user):
-    indicator = IndicatorFactory(plans=[plan])
+    indicator = IndicatorFactory.create(plans=[plan])
     post(client, plan, plan_admin_user, 'indicator-values', indicator, [VALUE_2019])
     assert indicator.updated_values_due_at is None
 
@@ -234,13 +236,13 @@ def test_update_contact_persons(api_client, plan, plan_admin_user, indicator, in
 
 def test_update_categories(api_client, plan, plan_admin_user, indicator, indicator_detail_url):
 
-    category_type = CategoryTypeFactory(
+    category_type = CategoryTypeFactory.create(
         plan=plan,
         usable_for_indicators=True,
         editable_for_indicators=True,
         select_widget='multiple')
-    category1 = CategoryFactory(type=category_type)
-    category2 = CategoryFactory(type=category_type)
+    category1 = CategoryFactory.create(type=category_type)
+    category2 = CategoryFactory.create(type=category_type)
 
     data = {
         "name": indicator.name,
@@ -261,12 +263,12 @@ def test_update_categories(api_client, plan, plan_admin_user, indicator, indicat
 
 
 def test_update_single_select_category(api_client, plan, plan_admin_user, indicator, indicator_detail_url):
-    category_type = CategoryTypeFactory(
+    category_type = CategoryTypeFactory.create(
         plan=plan,
         usable_for_indicators=True,
         editable_for_indicators=True,
         select_widget='single')
-    category = CategoryFactory(type=category_type)
+    category = CategoryFactory.create(type=category_type)
 
     data = {
         "name": indicator.name,
@@ -287,8 +289,8 @@ def test_update_single_select_category(api_client, plan, plan_admin_user, indica
 
 
 def test_update_categories_invalid_type(api_client, plan, plan_admin_user, indicator_detail_url):
-    category_type = CategoryTypeFactory(plan=plan, usable_for_indicators=False, select_widget='single')
-    category = CategoryFactory(type=category_type)
+    category_type = CategoryTypeFactory.create(plan=plan, usable_for_indicators=False, select_widget='single')
+    category = CategoryFactory.create(type=category_type)
 
     data = {
         'categories': {
@@ -302,8 +304,8 @@ def test_update_categories_invalid_type(api_client, plan, plan_admin_user, indic
 
 
 def test_get_indicator_with_categories(api_client, plan, plan_admin_user, indicator, indicator_detail_url):
-    category_type = CategoryTypeFactory(plan=plan, usable_for_indicators=True)
-    category = CategoryFactory(type=category_type)
+    category_type = CategoryTypeFactory.create(plan=plan, usable_for_indicators=True)
+    category = CategoryFactory.create(type=category_type)
     indicator.categories.add(category)
     indicator.save()
 

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import copy
 import uuid
+from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Any, ClassVar, Protocol, cast, override
 from uuid import UUID
 
@@ -15,7 +16,6 @@ from modeltrans.utils import build_localized_fieldname, get_available_languages
 from rest_framework import exceptions, permissions, serializers, viewsets
 from rest_framework.relations import RelatedField
 from rest_framework.routers import SimpleRouter
-from wagtail.log_actions import log
 
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import OpenApiParameter, extend_schema, extend_schema_field
@@ -30,7 +30,7 @@ from kausal_common.model_images import (
     ModelWithImageViewMixin,
 )
 from kausal_common.people.api import PersonSerializer as BasePersonSerializer
-from kausal_common.users import user_or_none
+from kausal_common.users import user_or_bust, user_or_none
 
 from aplans.api_router import router
 from aplans.permissions import AnonReadOnly, WatchObjectPermissions
@@ -40,7 +40,7 @@ from aplans.utils import generate_identifier, public_fields
 from actions.models.action import ActionContactPerson, ActionImplementationPhase, ContactPersonDict
 from actions.models.attributes import AttributeType, ModelWithAttributes
 from admin_site.models import BuiltInFieldCustomization
-from audit_logging.utils import BulkActionModelList
+from audit_logging.models import PlanScopedModel, PlanScopedModelLogEntry
 from orgs.models import Organization
 from pages.apps import post_reorder_categories
 from people.models import Person
@@ -721,7 +721,7 @@ class CategoryChoiceAttributesSerializer(AttributesSerializerMixin[Any], seriali
 
 # Regarding the metaclass: https://stackoverflow.com/a/58304791/14595546
 class ModelWithAttributesSerializerMixin[M: ModelWithAttributes](
-    ModelSerializerMixin[M], DeferredDatabaseOperationsMixin, metaclass=serializers.SerializerMetaclass
+    ModelSerializerMixin[M], DeferredDatabaseOperationsMixin[M], metaclass=serializers.SerializerMetaclass
 ):
     choice_attributes = ChoiceAttributesSerializer(required=False)
     choice_with_text_attributes = ChoiceWithTextAttributesSerializer(required=False)
@@ -750,6 +750,7 @@ class ModelWithAttributesSerializerMixin[M: ModelWithAttributes](
         if plan is None:
             return
         Model = self.Meta.model
+        assert issubclass(Model, ModelWithAttributes)
         attribute_types = Model.get_attribute_types_for_plan(plan)
         attribute_types_by_identifier = {at.instance.identifier: at for at in attribute_types}
         prepopulated_attributes: dict[str, dict] = {}
@@ -808,11 +809,12 @@ class HasUUIDAndOrder(Protocol):
     order: int
 
 
+type ActionOrCategory = Action | Category
 
 
 # Regarding the metaclass: https://stackoverflow.com/a/58304791/14595546
-class NonTreebeardModelWithTreePositionSerializerMixin[M: HasUUIDAndOrder](
-    ModelSerializerMixin[M], DeferredDatabaseOperationsMixin, metaclass=serializers.SerializerMetaclass  # type: ignore[type-var]  # pyright: ignore[reportInvalidTypeArguments]
+class NonTreebeardModelWithTreePositionSerializerMixin[M: ActionOrCategory](
+    ModelSerializerMixin[M], DeferredDatabaseOperationsMixin[M], metaclass=serializers.SerializerMetaclass
 ):
     left_sibling = PrevSiblingField[Any](allow_null=True, required=False)
     _cached_instances: dict[UUID, M]
@@ -986,7 +988,7 @@ class NonTreebeardModelWithTreePositionSerializerMixin[M: HasUUIDAndOrder](
 class ActionSerializer(  # type: ignore[misc]
     ModelWithAttributesSerializerMixin[Action],
     NonTreebeardModelWithTreePositionSerializerMixin[Action],
-    BulkSerializerValidationInstanceMixin,
+    BulkSerializerValidationInstanceMixin[Action],
     PlanRelatedModelSerializer[Action],
 ):
     _modifiable_actions_cache: ActionQuerySet
@@ -1250,31 +1252,43 @@ class ViewSetWithPlanContext:
         return context
 
 
-class AuditLoggingBulkModelViewSet[M: Model](BulkModelViewSet[M]):
+class AuditLoggingBulkModelViewSet[M: PlanScopedModel](BulkModelViewSet[M], ABC):
     """BulkModelViewSet with automatic audit logging for create/update/delete operations."""
 
-    def _log_action(self, instance, action_name: str) -> None:
+    @abstractmethod
+    def get_plan(self) -> Plan | None: ...
+
+    def _log_action(self, instance: M | list[M], action_name: str) -> None:
         """Log an action for an instance or list of instances."""
-        plan: Plan | None = self.get_plan()  # type: ignore[attr-defined]
+        from wagtail.log_actions import registry
+
+        plan: Plan | None = self.get_plan()
         if plan is None:
             user = user_or_none(self.request.user)
             if user is None:
                 raise exceptions.PermissionDenied()
             plan = user.get_active_admin_plan()
 
+        registry.scan_for_actions()
+        log_manager = PlanScopedModelLogEntry.objects
+        user = user_or_bust(self.request.user)
         if isinstance(instance, list):
-            instance = BulkActionModelList(
-                instance,
-                plan=plan,
+            log_manager.log_bulk_action(
+                plan,
+                instances=instance,
+                action=action_name,
+                user=user,
+                uuid=uuid.uuid4(),
+                content_changed=True,
             )
-
-        log(
-            instance,
-            action_name,
-            user=self.request.user,
-            uuid=uuid.uuid4(),
-            content_changed=True,
-        )
+        else:
+            log_manager.log_action(
+                instance,
+                action_name,
+                user=user,
+                uuid=uuid.uuid4(),
+                content_changed=True,
+            )
 
     def perform_create(self, serializer: serializers.BaseSerializer[M]):
         super().perform_create(serializer)
@@ -1385,7 +1399,8 @@ class CategoryPermission(WatchObjectPermissions):
             case 'actions.delete_category':
                 # For now we don't have object-specific delete permissions
                 return user.can_delete_category(category_type=category_type)
-        return False
+            case _:
+                return False
 
 
 class CategoryTypeViewSet(viewsets.ModelViewSet[CategoryType]):
@@ -1427,8 +1442,8 @@ class NonTreebeardParentUUIDField(serializers.Field):
 
 class CategorySerializer(  # type: ignore[misc]
     ModelWithAttributesSerializerMixin[Category],
-    NonTreebeardModelWithTreePositionSerializerMixin[Category],  # pyright: ignore[reportInvalidTypeArguments]
-    BulkSerializerValidationInstanceMixin,
+    NonTreebeardModelWithTreePositionSerializerMixin[Category],
+    BulkSerializerValidationInstanceMixin[Category],
     serializers.ModelSerializer[Category],
 ):
     parent = NonTreebeardParentUUIDField(allow_null=True, required=False)  # type: ignore[assignment]  # pyright: ignore[reportAssignmentType]
@@ -1456,7 +1471,7 @@ class CategorySerializer(  # type: ignore[misc]
                 self.category_type = CategoryType.objects.first()
         super().__init__(*args, **kwargs)
 
-    def create(self, validated_data: dict):
+    def create(self, validated_data: dict[str, Any]) -> Category:
         validated_data['type'] = self.category_type
         validated_data['order_on_create'] = validated_data.get('order')
         if validated_data['parent']:

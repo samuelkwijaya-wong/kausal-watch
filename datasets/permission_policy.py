@@ -3,20 +3,23 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, override
 
 from django.contrib.contenttypes.models import ContentType
-from django.db.models import Q, QuerySet
+from django.db.models import Q
 from django.http import HttpRequest
 
 from kausal_common.datasets.models import (
     DataPoint,
+    DataPointQuerySet,
     Dataset,
     DatasetQuerySet,
     DatasetSchema,
+    DatasetSchemaQuerySet,
     DataSource,
 )
 from kausal_common.models.permission_policy import ModelPermissionPolicy
+from kausal_common.models.permissions import PermissionedQuerySet
 
 from actions.models import Action, Category, Plan
-from indicators.models import Indicator
+from indicators.models import Indicator, IndicatorGoalDataPoint
 
 if TYPE_CHECKING:
     from kausal_common.models.permission_policy import ObjectSpecificAction
@@ -120,13 +123,11 @@ class ScopeInheritedDatasetPermissionPolicy(ModelPermissionPolicy[Dataset, HttpR
 
         return False
 
+type DataPointLike = DataPoint | IndicatorGoalDataPoint
 
-class DataPointPermissionPolicy(ModelPermissionPolicy[DataPoint, None, QuerySet[DataPoint]]):
+
+class DataPointPermissionPolicyBase[DataPointM: DataPointLike](ModelPermissionPolicy[DataPointM, None, DataPointQuerySet]):
     """Permission policy for data points that inherits permissions from the parent dataset."""
-
-    def __init__(self):
-        from kausal_common.datasets.models import DataPoint
-        super().__init__(DataPoint)
 
     def construct_perm_q(self, user: User, action: ObjectSpecificAction) -> Q | None:
         """Grant permission to data points if the user can access the parent dataset."""
@@ -152,7 +153,7 @@ class DataPointPermissionPolicy(ModelPermissionPolicy[DataPoint, None, QuerySet[
             return Q(dataset__in=viewable_datasets)
         return None
 
-    def user_has_perm(self, user: User, action: ObjectSpecificAction, obj: DataPoint) -> bool:
+    def user_has_perm(self, user: User, action: ObjectSpecificAction, obj: DataPointM) -> bool:
         """Check if user has permission based on the parent dataset."""
         if user.is_superuser:
             return True
@@ -166,7 +167,7 @@ class DataPointPermissionPolicy(ModelPermissionPolicy[DataPoint, None, QuerySet[
         # For editing/deleting, check if user can modify the dataset
         return dataset_policy.user_has_perm(user, 'change', obj.dataset)
 
-    def anon_has_perm(self, action: ObjectSpecificAction, obj: DataPoint) -> bool:
+    def anon_has_perm(self, action: ObjectSpecificAction, obj: DataPointM) -> bool:
         """Check if anonymous users can access the data point based on the parent dataset."""
         if action != 'view':
             return False
@@ -190,7 +191,12 @@ class DataPointPermissionPolicy(ModelPermissionPolicy[DataPoint, None, QuerySet[
         ).exists()
 
 
-class DatasetSchemaPermissionPolicy(ModelPermissionPolicy[DatasetSchema, None, QuerySet[DatasetSchema]]):
+class DataPointPermissionPolicy(DataPointPermissionPolicyBase[DataPoint]):
+    def __init__(self):
+        from kausal_common.datasets.models import DataPoint
+        super().__init__(DataPoint)
+
+class DatasetSchemaPermissionPolicy(ModelPermissionPolicy[DatasetSchema, None, DatasetSchemaQuerySet]):
     # To be implemented; creating schemas in the UI is not yet supported in Watch
 
     def __init__(self):
@@ -236,7 +242,7 @@ class DatasetSchemaPermissionPolicy(ModelPermissionPolicy[DatasetSchema, None, Q
         return False
 
 
-class DataSourcePermissionPolicy(ModelPermissionPolicy[DataSource, None, QuerySet[DataSource]]):
+class DataSourcePermissionPolicy(ModelPermissionPolicy[DataSource, None, PermissionedQuerySet[DataSource]]):
     # FIXME: This placeholder policy is there to prevent tests from blowing up as DataSourceViewSet, which will be
     # instantiated, requires a permission policy. KW does not seem to use data sources yet, but once it does, we should
     # implement this permission policy.

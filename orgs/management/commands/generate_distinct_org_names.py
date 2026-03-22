@@ -26,7 +26,7 @@ class Command(BaseCommand):
 
         # Refresh from db
         orgs = Organization.objects.filter(dissolution_date=None)
-        orgs_by_name = {}
+        orgs_by_name: dict[str, list[Organization]] = {}
         for org in orgs:
             orgs_by_name.setdefault(org.name, []).append(org)
 

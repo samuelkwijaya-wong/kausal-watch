@@ -1,9 +1,13 @@
 import functools
+from typing import TYPE_CHECKING, Any
 
 from wagtail.models import Collection
 
-_wagtail_chooser_get_context_data = None
-_wagtail_index_get_context_data = None
+if TYPE_CHECKING:
+    from collections.abc import Callable
+
+_wagtail_chooser_get_context_data: Callable[..., Any] | None = None
+_wagtail_index_get_context_data: Callable[..., Any] | None = None
 
 def get_context_data(self, get_context_func):
     ret = get_context_func(self)

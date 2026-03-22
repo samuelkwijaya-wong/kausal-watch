@@ -1,7 +1,17 @@
-from typing import List, Tuple
+from __future__ import annotations
 
+from typing import TYPE_CHECKING
 
-class DeferredDatabaseOperationsMixin:
+from django.db.models import Model
+
+if TYPE_CHECKING:
+    from rest_framework import serializers
+    class ModelSerializerMixinBase[M: Model](serializers.ModelSerializer[M]):
+        pass
+else:
+    class ModelSerializerMixinBase[M: Model]: ...
+
+class DeferredDatabaseOperationsMixin[M: Model](ModelSerializerMixinBase[M]):
     deferred_operations: list[tuple]
     execute_immediately: bool
 

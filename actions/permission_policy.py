@@ -5,16 +5,18 @@ import typing
 from django.db.models import Q
 from django.utils import timezone
 
-from kausal_common.models.permission_policy import ModelPermissionPolicy, ObjectSpecificAction
+from kausal_common.models.permission_policy import ModelPermissionPolicy
 
 if typing.TYPE_CHECKING:
 
+    from kausal_common.models.permission_policy import ObjectSpecificAction
+
     from actions.models import Plan
-    from actions.models.plan import PlanQuerySet
+    from actions.models.plan import PlanQuerySet  # noqa: F401
     from users.models import User
 
 
-class PlanPermissionPolicy(ModelPermissionPolicy['Plan', 'PlanQuerySet']):
+class PlanPermissionPolicy(ModelPermissionPolicy['Plan', None, 'PlanQuerySet']):
     def construct_perm_q_anon(self, action: ObjectSpecificAction) -> Q | None:
         """
         Construct permission query for anonymous users.
@@ -72,6 +74,6 @@ class PlanPermissionPolicy(ModelPermissionPolicy['Plan', 'PlanQuerySet']):
             return True  # If expose_unpublished_plan_only_to_authenticated_user is False, allow access to Plan
         return False
 
-    def user_can_create(self, user: User, context: PlanQuerySet) -> bool:
+    def user_can_create(self, user: User, context: None) -> bool:
         """Check if user can create new plans."""
         return False  # implement proper creation permissions when needed

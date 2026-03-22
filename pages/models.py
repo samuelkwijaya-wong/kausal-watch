@@ -325,7 +325,7 @@ class PlanRootPage(DefaultSlugForCopyingMixin, AplansPage):  # type: ignore[misc
     parent_page_types: Sequence[type[Page] | str] = []
 
     @staticmethod
-    def resolve_change_log_message(root: PlanRootPage, info: GQLInfo) -> BaseChangeLogMessage | None:
+    def resolve_change_log_message(root: PlanRootPage, _info: GQLInfo) -> BaseChangeLogMessage | None:
         return root.get_public_change_log_message()
 
     graphql_fields = AplansPage.graphql_fields + [
@@ -405,7 +405,7 @@ class StaticPage(AplansPage):
     parent_page_types = [PlanRootPage, EmptyPage, 'StaticPage', 'CategoryPage']
 
     @staticmethod
-    def resolve_change_log_message(root: StaticPage, info: GQLInfo) -> BaseChangeLogMessage | None:
+    def resolve_change_log_message(root: StaticPage, _info: GQLInfo) -> BaseChangeLogMessage | None:
         return root.get_public_change_log_message()
 
     graphql_fields = AplansPage.graphql_fields + [

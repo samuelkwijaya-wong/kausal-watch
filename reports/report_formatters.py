@@ -279,7 +279,10 @@ class ActionManyToOneFieldFormatter(ReportFieldFormatter):
     def xlsx_column_labels(self, value, plan: Plan | None = None) -> list[str]:
         field_name = self.block.meta.field_name
         field = Action._meta.get_field(field_name)
-        verbose_name = field.related_model._meta.verbose_name_plural
+        related_model = field.related_model
+        assert related_model is not None
+        assert related_model != 'self'
+        verbose_name = related_model._meta.verbose_name_plural
         return [verbose_name.capitalize() if verbose_name else field_name]
 
     def get_xlsx_cell_format(self, block_value: dict[str, Any]) -> dict[str, str | int] | None:

@@ -1,19 +1,16 @@
 from datetime import timedelta
 from logging import getLogger
-from typing import Dict, Sequence
+from typing import TYPE_CHECKING
 
-from django.conf import settings
 from django.core.mail import EmailMessage
 from django.utils import translation
 
-from markupsafe import Markup
 from sentry_sdk import capture_exception
 
 from aplans.email_sender import EmailSender
 
-from actions.models import Action, ActionContactPerson, ActionTask, Plan
-from feedback.models import UserFeedback
-from indicators.models import Indicator, IndicatorContactPerson
+from actions.models import ActionContactPerson, ActionTask
+from indicators.models import IndicatorContactPerson
 
 from .mjml import render_mjml_from_template
 from .models import ManuallyScheduledNotificationTemplate
@@ -21,7 +18,6 @@ from .notifications import (
     ActionNotUpdatedNotification,
     ManuallyScheduledNotification,
     NotEnoughTasksNotification,
-    Notification,
     NotificationType,
     TaskDueSoonNotification,
     TaskLateNotification,
@@ -30,7 +26,19 @@ from .notifications import (
     UserFeedbackReceivedNotification,
 )
 from .queue import NotificationQueue
-from .recipients import NotificationRecipient, PersonRecipient
+from .recipients import PersonRecipient
+
+if TYPE_CHECKING:
+    from collections.abc import Sequence
+
+    from actions.models import Action, Plan
+    from feedback.models import UserFeedback
+    from indicators.models import Indicator
+
+    from .notifications import (
+        Notification,
+    )
+    from .recipients import NotificationRecipient
 
 logger = getLogger(__name__)
 

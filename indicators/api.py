@@ -46,7 +46,7 @@ if TYPE_CHECKING:
     from indicators.models.indicator import IndicatorQuerySet
     from users.models import User
 
-all_views = []
+all_views: list = []
 
 
 def register_view(klass, *args, **kwargs):
@@ -121,7 +121,7 @@ class IndicatorValueListSerializer(serializers.ListSerializer):
             for cat in dim.categories.all():
                 cat_by_id[cat.id] = cat
 
-        data_by_date = {}
+        data_by_date: dict[str, dict[tuple[int, ...], bool]] = {}
 
         for sample in data:
             date = sample['date']
@@ -209,7 +209,14 @@ class IndicatorGoalListSerializer(serializers.ListSerializer):
         return created_objs
 
 
-class IndicatorDataPointMixin:
+if TYPE_CHECKING:
+    class _IndicatorDataPointBase(serializers.Serializer):
+        pass
+else:
+    class _IndicatorDataPointBase: ...
+
+
+class IndicatorDataPointMixin(_IndicatorDataPointBase):
     def validate_date(self, date):
         indicator = self.context['indicator']
         if indicator.time_resolution == 'year':
@@ -620,7 +627,8 @@ class IndicatorPermission(WatchObjectPermissions):
             case 'indicators.delete_indicator':
                 # For now we don't have object-specific delete permissions
                 return user.can_delete_indicator(plan=plan)
-        return False
+            case _:
+                return False
 
 
 @extend_schema(
@@ -719,7 +727,6 @@ class IndicatorViewSet(AuditLoggingBulkModelViewSet[Indicator]):
             )
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
         return Response({})
 
     @action(detail=True, methods=['get'])

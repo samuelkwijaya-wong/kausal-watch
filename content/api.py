@@ -8,7 +8,7 @@ from .models import (
     StaticPage,
 )
 
-all_views = []
+all_views: list = []
 
 
 def register_view(klass, *args, **kwargs):

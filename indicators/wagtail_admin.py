@@ -307,7 +307,7 @@ class IndicatorForm(AplansAdminModelForm[Indicator]):
         fs = self.formsets['dimensions']
         if not hasattr(fs, 'cleaned_data'):
             return None
-        sorted_form_data = sorted(fs.cleaned_data, key=lambda d: d.get('ORDER'))
+        sorted_form_data = sorted(fs.cleaned_data, key=lambda d: d.get('ORDER', 0))
         return [d['dimension'].id for d in sorted_form_data if not d.get('DELETE')]
 
     def clean_organization(self):
@@ -490,9 +490,9 @@ class IndicatorAdmin(AplansModelAdmin[Indicator]):
         plan = request.user.get_active_admin_plan()
         is_general_admin = request.user.is_general_admin_for_plan(plan)
         is_linked_to_common_indicator = bool(instance and instance.common)
-        dimensions_str = ', '.join(instance.dimensions.values_list('dimension__name', flat=True))
+        dimensions_str: str = ', '.join(instance.dimensions.values_list('dimension__name', flat=True))
         if not dimensions_str:
-            dimensions_str = _("none")
+            dimensions_str = str(_("none"))
 
         # Basic panels
         indicator_settings_panels: list[Panel] = [
@@ -750,7 +750,7 @@ class CommonIndicatorForm(AplansAdminModelForm[CommonIndicator]):
     def clean(self):
         if self.instance.pk and 'dimensions' in self.formsets:
             # Dimensions cannot be accessed from self.instance.dimensions yet
-            sorted_form_data = sorted(self.formsets['dimensions'].cleaned_data, key=lambda d: d.get('ORDER'))
+            sorted_form_data = sorted(self.formsets['dimensions'].cleaned_data, key=lambda d: d.get('ORDER', 0))
             new_dimensions = [d['dimension'].id for d in sorted_form_data if not d.get('DELETE')]
             for indicator in self.instance.indicators.all():
                 indicator_dimensions = list(indicator.dimensions.values_list('dimension', flat=True))
@@ -791,9 +791,9 @@ class CommonIndicatorAdmin(AplansModelAdmin[CommonIndicator]):
                 FieldPanel('dimension'),
             ], heading=_("Dimensions")))
         else:
-            dimensions_str = ', '.join(instance.dimensions.values_list('dimension__name', flat=True))
+            dimensions_str: str = ', '.join(instance.dimensions.values_list('dimension__name', flat=True))
             if not dimensions_str:
-                dimensions_str = _("none")
+                dimensions_str = str(_("none"))
             info_text = _("This common indicator has indicators linked to it, so quantity, unit and dimensions cannot "
                           "be edited. Current quantity: %(quantity)s; unit: %(unit)s; dimensions: %(dimensions)s") % {
                               'quantity': instance.quantity, 'unit': instance.unit, 'dimensions': dimensions_str,

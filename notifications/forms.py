@@ -63,7 +63,7 @@ class NotificationPreferencesForm(forms.Form):
 
     def cleaned_data_by_model(self):
         """Rearrange self.cleaned_data to access it by model and PK"""
-        data_by_model = {}
+        data_by_model: dict[type, dict[int, dict[str, bool]]] = {}
         for field_name, value in self.cleaned_data.items():
             model_id, pk_str, model_field = field_name.split(':')
             model = self.MODEL_FOR_ID[model_id]

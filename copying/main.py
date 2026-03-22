@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import dataclasses
-from collections.abc import Callable, Generator, Iterable
+from collections.abc import Generator
 from contextlib import ExitStack, contextmanager
 from copy import copy as shallow_copy
 from functools import singledispatchmethod, wraps
@@ -25,7 +25,7 @@ from wagtail.models.media import Collection
 from wagtail.models.reference_index import ReferenceIndex
 
 from loguru import logger
-from relations_iterator import AbstractVisitor, ConfigurableRelationTree, RelationTreeIterator, TreeNode  # type: ignore
+from relations_iterator import AbstractVisitor, ConfigurableRelationTree, RelationTreeIterator  # type: ignore
 
 from actions.models.action import Action
 from actions.models.attributes import AttributeType
@@ -54,8 +54,12 @@ from people.models import Person
 from users.models import User
 
 if TYPE_CHECKING:
+    from collections.abc import Callable, Iterable
+
     from wagtail.documents.models import AbstractDocument
     from wagtail.images.models import AbstractImage
+
+    from relations_iterator import TreeNode
 
 type CloneStructure = dict[str, CloneStructure]
 
@@ -873,6 +877,7 @@ def copy_collection_with_contents(collection: Collection, clone_visitor: CloneVi
         visit_tree(image_or_document, {}, clone_visitor)
         image_or_document.collection = collection
         file = image_or_document.file
+        assert file.name is not None
         try:
             content_file = ContentFile(file.read(), name=file.name)
             filename = file.name.split('/')[-1]

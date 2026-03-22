@@ -11,7 +11,7 @@ from orgs.models import Organization, OrganizationClass
 
 from .generator import ActionGraphGenerator, OrganizationGraphGenerator
 
-all_views = []
+all_views: list = []
 
 
 def register_view(klass, *args, **kwargs):
@@ -32,7 +32,9 @@ class InsightViewSet(viewsets.ViewSet):
         if object_type == 'organization':
             orgs = Organization.objects.filter(dissolution_date__isnull=True)
             classes = OrganizationClass.objects.all()
-            generator = OrganizationGraphGenerator(request=request, orgs=orgs, classifications=classes)
+            generator: ActionGraphGenerator | OrganizationGraphGenerator = (
+                OrganizationGraphGenerator(request=request, orgs=orgs, classifications=classes)
+            )
         else:
             plan_id = params.get('plan', '').strip()
             if not plan_id:

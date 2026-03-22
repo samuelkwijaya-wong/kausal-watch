@@ -22,7 +22,7 @@ media/**
 *.sublime-workspace
 *.code-workspace
 data/**
-.vscode/**
+**/.vscode
 .idea/**
 .direnv/**
 .venv/**
@@ -36,7 +36,7 @@ requirements-local.txt
 /.dmypy.json
 .secrets/**
 *.egg-info/
-/schema.graphql
+/schema*.graphql
 /.claude/*.local*
 
 # Playwright
@@ -48,3 +48,5 @@ node_modules/
 /playwright/.auth/
 mise.local.toml
 /.mise
+__generated__/
+/.devstate

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from os import path
-from typing import TYPE_CHECKING, List, cast
+from pathlib import Path
+from typing import TYPE_CHECKING, cast
 
 from django.utils.html import escape
 from wagtail import hooks
@@ -16,8 +16,9 @@ class DocumentLinkHandler(WagtailDocumentLinkHandler):
 
     @classmethod
     def expand_one(cls, doc: AplansDocument) -> str:
-        base, ext = path.splitext(doc.file.name)
-        ext = ext.lstrip('.')
+        assert doc.file.name is not None
+        path = Path(doc.file.name)
+        ext = path.suffix.lower().lstrip('.')
         return '<a href="%s" data-link-type="document" data-file-extension="%s">' % (escape(doc.url), escape(ext))
 
     @classmethod

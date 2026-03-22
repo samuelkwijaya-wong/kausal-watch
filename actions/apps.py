@@ -3,8 +3,8 @@ from __future__ import annotations
 from django.apps import AppConfig
 from django.utils.translation import pgettext_lazy
 
-_wagtail_image_chooser_viewset_permission_policy = None
-_wagtail_get_base_snippet_action_menu_items = None
+_wagtail_image_chooser_viewset_permission_policy: object | None = None
+_wagtail_get_base_snippet_action_menu_items: object | None = None
 _create_deferring_forward_many_to_many_manager  = None  # type: ignore[var-annotated]
 
 

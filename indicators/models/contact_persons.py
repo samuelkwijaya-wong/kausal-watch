@@ -24,6 +24,9 @@ class IndicatorContactPerson(OrderedModel):
         'people.Person', on_delete=models.CASCADE, verbose_name=_('person'),
     )
 
+    indicator_id: int
+    person_id: int
+
     def filter_siblings(self, qs: models.QuerySet[Self]) -> models.QuerySet[Self]:
         return qs.filter(indicator=self.indicator)
 

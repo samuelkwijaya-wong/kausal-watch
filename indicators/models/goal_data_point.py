@@ -10,6 +10,8 @@ from kausal_common.datasets.models import DataPointBase, Dataset, DatasetMetric,
 if TYPE_CHECKING:
     from kausal_common.models.types import FK, M2M
 
+    from indicators.permission_policy import IndicatorGoalDataPointPermissionPolicy
+
 
 class IndicatorGoalDataPoint(DataPointBase):
     dataset: FK[Dataset] = models.ForeignKey(
@@ -32,6 +34,11 @@ class IndicatorGoalDataPoint(DataPointBase):
         verbose_name_plural = _('indicator goal data points')
         ordering = ('date', 'id')
 
+    @classmethod
+    def permission_policy(cls) -> IndicatorGoalDataPointPermissionPolicy:
+        from indicators.permission_policy import IndicatorGoalDataPointPermissionPolicy
+        return IndicatorGoalDataPointPermissionPolicy()
+
     def __str__(self):
         return f'IndicatorGoalDataPoint {self.uuid} / dataset {self.dataset.uuid}'
 
@@ -43,6 +50,8 @@ class IndicatorGoalDimensionCategory(models.Model):
     dimension_category: FK[DimensionCategory] = models.ForeignKey(
         DimensionCategory, on_delete=models.PROTECT, related_name='+',
     )
+    goal_data_point_id: int
+    dimension_category_id: int
 
     class Meta:
         verbose_name = _('indicator goal dimension category')

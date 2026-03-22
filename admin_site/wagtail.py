@@ -13,7 +13,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.contenttypes.models import ContentType
 from django.db import transaction
 from django.db.models import Model, ProtectedError
-from django.forms.models import ModelChoiceField, ModelForm
+from django.forms.models import ModelForm
 from django.http.request import QueryDict
 from django.http.response import HttpResponseRedirect
 from django.urls.base import reverse
@@ -34,7 +34,7 @@ from wagtail.admin.panels.field_panel import FieldPanel
 from wagtail_modeladmin.helpers.button import ButtonHelper
 from wagtail_modeladmin.helpers.permission import PermissionHelper
 from wagtail_modeladmin.options import ModelAdmin
-from wagtail_modeladmin.views import CreateView, EditView, IndexView, InstanceSpecificView, ModelFormView, WMABaseView
+from wagtail_modeladmin.views import CreateView, EditView, IndexView
 
 from kausal_common.i18n.helpers import convert_language_code, get_language_from_default_language_field
 from kausal_common.users import user_or_bust
@@ -49,11 +49,13 @@ from .utils import FieldLabelRenderer, admin_req
 if TYPE_CHECKING:
     from collections.abc import Callable, Sequence
 
+    from django.forms.models import ModelChoiceField
     from django.http import HttpRequest
     from modeltrans.fields import TranslatedVirtualField
     from wagtail.admin.panels.base import Panel
 
     from wagtail_modeladmin.helpers.url import AdminURLHelper
+    from wagtail_modeladmin.views import InstanceSpecificView, ModelFormView, WMABaseView
 
     from kausal_common.datasets.models import DatasetScopeType
 
@@ -347,6 +349,7 @@ class BuiltInFieldCustomizationAwareEditHandlerMixin[M: Model, FormT: ModelForm[
         # Disable / remove built-in fields that are not editable / visible due to customization
         change_base_fields(form_class, self.model)
         for formset in form_class.formsets.values():
+            assert formset.model is not None
             change_base_fields(formset.form, formset.model)
 
         return form_class

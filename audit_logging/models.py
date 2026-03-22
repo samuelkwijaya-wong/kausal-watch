@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, ClassVar
+from typing import TYPE_CHECKING, ClassVar, Unpack
 
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
@@ -10,121 +10,113 @@ from django.utils.translation import gettext_lazy as _
 from wagtail.models import Page
 from wagtail.models.audit_log import BaseLogEntry, BaseLogEntryManager, LogEntryQuerySet
 
-from audit_logging.utils import BulkActionModelList
+from kausal_common.users import user_or_none
+
+from pages.models import AplansPage
+from users.models import User
 
 if TYPE_CHECKING:
+    from collections.abc import Sequence
+
+    from wagtail.models.audit_log import LogActionArgs
+
     from kausal_common.models.types import FK
+
+    from aplans.utils import IndirectPlanRelatedModel, PlanRelatedModel
 
     from actions.models import Plan
 
+type PlanScopedPageModel = AplansPage
+type PlanScopedModel = PlanRelatedModel | IndirectPlanRelatedModel
 
-class PlanScopedModelLogEntryManager(BaseLogEntryManager):
-    def log_bulk_action(self, instances: BulkActionModelList, action: str, **kwargs):
+class PlanScopedModelLogEntryManager(
+    BaseLogEntryManager['PlanScopedModelLogEntry', LogEntryQuerySet['PlanScopedModelLogEntry'], PlanScopedModel, User]
+):
+    def log_bulk_action[M: PlanScopedModel](
+        self, plan: Plan, instances: Sequence[M], action: str, **kwargs: Unpack[LogActionArgs[User]]
+    ) -> list[PlanScopedModelLogEntry]:
         if len(instances) == 0:
-            return
-        data = kwargs.pop('data', None) or {}
+            return []
+        kwargs['data'] = kwargs.get('data') or {}
         label = kwargs.pop('title', None)
-        timestamp = kwargs.pop('timestamp', timezone.now())
-        plan = instances.plan
-        content_type = ContentType.objects.get_for_model(
-            instances[0],
-            for_concrete_model=False
-        )
-        log_entries = []
+        kwargs['timestamp'] = kwargs.get('timestamp', timezone.now())
+        content_type = ContentType.objects.get_for_model(instances[0], for_concrete_model=False)
+        log_entries: list[PlanScopedModelLogEntry] = []
         for instance in instances:
             if instance.pk is None:
-                raise ValueError(
-                    'Attempted to log an action for object %r with empty primary key'
-                    % (instance,)
-                )
+                raise ValueError('Attempted to log an action for object %r with empty primary key' % (instance,))
             log_entries.append(
                 PlanScopedModelLogEntry(
                     content_type=content_type,
-                    label=label if label else str(instance),
+                    label=label or str(instance),
                     action=action,
-                    timestamp=timestamp,
-                    data=data,
                     plan_id=plan.pk,
                     object_id=str(instance.pk),
-                    **kwargs
+                    **kwargs,
                 )
             )
-        PlanScopedModelLogEntry.objects.bulk_create(log_entries)
+        return PlanScopedModelLogEntry.objects.bulk_create(log_entries)
 
-    def log_action(self, instance, action, **kwargs):
-        if isinstance(instance, BulkActionModelList):
-            self.log_bulk_action(instance, action, **kwargs)
-            return None
-
+    def log_action(
+        self,
+        instance: PlanScopedModel,
+        action: str,
+        **kwargs: Unpack[LogActionArgs],
+    ) -> PlanScopedModelLogEntry | None:
         if instance.pk is None:
-            raise ValueError(
-                'Attempted to log an action for object %r with empty primary key'
-                % (instance,)
-            )
+            raise ValueError('Attempted to log an action for object %r with empty primary key' % (instance,))
 
-        data = kwargs.pop('data', None) or {}
+        kwargs['data'] = kwargs.get('data') or {}
         title = kwargs.pop('title', None)
         if not title:
             title = self.get_instance_title(instance)
 
-        timestamp = kwargs.pop('timestamp', timezone.now())
-        kwargs.update(object_id=str(instance.pk))
+        kwargs['timestamp'] = kwargs.get('timestamp', timezone.now())
+        object_id = str(instance.pk)
 
+        user = user_or_none(kwargs.get('user'))
         plans = instance.get_plans()
         retval = None
-        if not plans and 'user' in kwargs:
-            plans = [kwargs['user'].get_active_admin_plan()]
+        if not plans and user is not None:
+            plans = [user.get_active_admin_plan()]
         for plan in set(plans):
-            kwargs.update(plan=plan)
             retval = PlanScopedModelLogEntry.objects.create(
-                content_type=ContentType.objects.get_for_model(
-                    instance, for_concrete_model=False
-                ),
+                content_type=ContentType.objects.get_for_model(instance, for_concrete_model=False),
                 label=title,
                 action=action,
-                timestamp=timestamp,
-                data=data,
+                object_id=object_id,
+                plan=plan,
                 **kwargs,
             )
         return retval
 
-    def viewable_by_user(self, user):
-        return super().viewable_by_user(user).filter(
-            plan__isnull=False,
-            plan__in=user.get_adminable_plans()
-        )
+    def viewable_by_user(self, user: User):  # type: ignore[override]
+        return super().viewable_by_user(user).filter(plan__isnull=False, plan__in=user.get_adminable_plans())
 
-    def for_instance(self, instance):
+    def for_instance(self, instance: PlanScopedModel):
         return self.filter(
-            content_type=ContentType.objects.get_for_model(
-                instance, for_concrete_model=False
-            ),
+            content_type=ContentType.objects.get_for_model(instance, for_concrete_model=False),
             object_id=str(instance.pk),
         )
 
 
-class PlanScopedModelLogEntry(BaseLogEntry):
+class PlanScopedModelLogEntry(BaseLogEntry[User]):
     # The type error below stems from the Wagtail code
-    object_id = models.CharField(max_length=255, blank=False, db_index=True)  # type: ignore[assignment]
+    object_id: models.CharField[str, str] = models.CharField(max_length=255, blank=False, db_index=True)
     plan: FK[Plan] = models.ForeignKey('actions.Plan', null=False, blank=False, on_delete=models.PROTECT)
 
-    objects: ClassVar[PlanScopedModelLogEntryManager] = PlanScopedModelLogEntryManager()  # type: ignore[misc]
+    objects: ClassVar[PlanScopedModelLogEntryManager] = PlanScopedModelLogEntryManager()
 
     class Meta:
         ordering = ['-timestamp', '-id']
         verbose_name = _('plan-scoped model log entry')
         verbose_name_plural = _('plan-scoped model log entries')
 
-    def __str__(self):
-        return 'PlanScopedModelLogEntry %d: \'%s\' on \'%s\' with id %s' % (
-            self.pk,
-            self.action,
-            self.object_verbose_name(),
-            self.object_id,
-        )
+    def __str__(self) -> str:
+        return f"PlanScopedModelLogEntry {self.pk}: '{self.action}' on '{self.object_verbose_name()}' with id {self.object_id}"
 
 
-class PlanScopedPageLogEntryQuerySet(LogEntryQuerySet):
+class PlanScopedPageLogEntryQuerySet(LogEntryQuerySet['PlanScopedPageLogEntry']):
     def get_content_type_ids(self):
         if self.exists():
             return {ContentType.objects.get_for_model(Page).pk}
@@ -136,44 +128,48 @@ class PlanScopedPageLogEntryQuerySet(LogEntryQuerySet):
         return self.none()
 
 
-class PlanScopedPageLogEntryManager(BaseLogEntryManager):
+class PlanScopedPageLogEntryManager(
+    BaseLogEntryManager['PlanScopedPageLogEntry', PlanScopedPageLogEntryQuerySet, AplansPage, User]
+):
     def get_queryset(self):
         return PlanScopedPageLogEntryQuerySet(self.model, using=self._db)
 
-    def get_instance_title(self, instance):
+    def get_instance_title(self, instance: AplansPage) -> str:
         return instance.specific_deferred.get_admin_display_title()
 
-    def log_action(self, instance, action, **kwargs):
+    def log_action(
+        self,
+        instance: AplansPage,
+        action: str,
+        /,
+        plan: Plan | None = None,
+        page: Page | None = None,
+        **kwargs: Unpack[LogActionArgs],
+    ) -> PlanScopedPageLogEntry | None:
         plan = instance.plan
         if plan is None:
             return None
 
         if instance.pk is None:
-            raise ValueError(
-                'Attempted to log an action for object %r with empty primary key'
-                % (instance,)
-            )
+            raise ValueError('Attempted to log an action for object %r with empty primary key' % (instance,))
 
-        data = kwargs.pop('data', None) or {}
+        kwargs['data'] = kwargs.get('data') or {}
         title = kwargs.pop('title', None)
         if not title:
             title = self.get_instance_title(instance)
 
-        timestamp = kwargs.pop('timestamp', timezone.now())
-        kwargs.update(plan=plan, page=instance)
+        kwargs['timestamp'] = kwargs.get('timestamp', timezone.now())
 
         return PlanScopedPageLogEntry.objects.create(
-            content_type=ContentType.objects.get_for_model(
-                instance, for_concrete_model=False
-            ),
+            content_type=ContentType.objects.get_for_model(instance, for_concrete_model=False),
             label=title,
             action=action,
-            timestamp=timestamp,
-            data=data,
+            page=instance,
+            plan=plan,
             **kwargs,
         )
 
-    def viewable_by_user(self, user):
+    def viewable_by_user(self, user: User):
         from django.db.models import Q, Subquery
         from wagtail.permissions import page_permission_policy
 
@@ -184,27 +180,16 @@ class PlanScopedPageLogEntryManager(BaseLogEntryManager):
         if root_page is None:
             raise ValueError('No root page found')
         root_page_permissions = root_page.permissions_for_user(user)
-        if (
-            user.is_superuser
-            or root_page_permissions.can_add_subpage()
-            or root_page_permissions.can_edit()
-        ):
-            q = q | Q(
-                page_id__in=Subquery(
-                    PlanScopedPageLogEntry.objects.filter(deleted=True).values('page_id')
-                )
-            )
+        if user.is_superuser or root_page_permissions.can_add_subpage() or root_page_permissions.can_edit():
+            q = q | Q(page_id__in=Subquery(PlanScopedPageLogEntry.objects.filter(deleted=True).values('page_id')))
 
-        return PlanScopedPageLogEntry.objects.filter(q).filter(
-            plan__isnull=False,
-            plan__in=user.get_adminable_plans()
-        )
+        return PlanScopedPageLogEntry.objects.filter(q).filter(plan__isnull=False, plan__in=user.get_adminable_plans())
 
-    def for_instance(self, instance):
+    def for_instance(self, instance: AplansPage):
         return self.filter(page=instance)
 
 
-class PlanScopedPageLogEntry(BaseLogEntry):
+class PlanScopedPageLogEntry(BaseLogEntry[User]):
     page: FK[Page] = models.ForeignKey(
         'wagtailcore.Page',
         on_delete=models.DO_NOTHING,
@@ -212,8 +197,9 @@ class PlanScopedPageLogEntry(BaseLogEntry):
         related_name='+',
     )
     plan: FK[Plan] = models.ForeignKey('actions.Plan', null=False, blank=False, on_delete=models.PROTECT)
+    page_id: int
 
-    objects = PlanScopedPageLogEntryManager()
+    objects: ClassVar[PlanScopedPageLogEntryManager] = PlanScopedPageLogEntryManager()
 
     class Meta:
         ordering = ['-timestamp', '-id']
@@ -221,7 +207,7 @@ class PlanScopedPageLogEntry(BaseLogEntry):
         verbose_name_plural = _('plan-scoped page log entries')
 
     def __str__(self):
-        return 'PlanScopedPageLogEntry %d: \'%s\' on \'%s\' with id %s' % (
+        return "PlanScopedPageLogEntry %d: '%s' on '%s' with id %s" % (
             self.pk,
             self.action,
             self.object_verbose_name(),

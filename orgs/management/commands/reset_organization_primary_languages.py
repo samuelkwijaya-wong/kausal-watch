@@ -14,7 +14,7 @@ class Command(BaseCommand):
     @transaction.atomic
     def handle(self, *args, **options):
         for org in Organization.objects.all():
-            ancestor = org
+            ancestor: Organization | None = org
             related_plan = None
             while not related_plan and ancestor:
                 related_plan = ancestor.plans.first() or ancestor.related_plans.first()

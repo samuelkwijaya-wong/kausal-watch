@@ -22,7 +22,7 @@ if TYPE_CHECKING:
 
     from .models import AplansDocument as DocumentModel
 
-_wagtail_get_chooser_context = None
+_wagtail_get_chooser_context: object | None = None
 
 
 def chooser(request: HttpRequest):

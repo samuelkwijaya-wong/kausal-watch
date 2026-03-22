@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import json
-from typing import TYPE_CHECKING, ClassVar
+from typing import TYPE_CHECKING, Any, cast
 
 from django.conf import settings
 from django.contrib.admin.utils import quote, unquote
@@ -29,21 +29,32 @@ from wagtail.models import (
 )
 from wagtail.permissions import ModelPermissionPolicy
 
+from kausal_common.users import user_or_bust
+
+from actions.models.action import Action
+
 if TYPE_CHECKING:
     from collections.abc import Iterable
 
     from django.db.models.base import Model
     from django.http.request import HttpRequest
+    from wagtail.admin.views.generic import BaseObjectMixin
     from wagtail.admin.views.generic.permissions import PermissionCheckedMixin
+    from wagtail.permission_policies.base import BasePermissionPolicy
 
     from wagtail_modeladmin.helpers.url import AdminURLHelper
+    from wagtail_modeladmin.views import InstanceSpecificView, ModelFormView
+
+    class ModelFormViewMixinBase[M: Model](ModelFormView[M], InstanceSpecificView[M], BaseObjectMixin[M]): ...
 else:
     PermissionCheckedMixin = object
+    class ModelFormViewMixinBase[M: Model]:
+        pass
 
 # The mixins in this file have been copied from Wagtail to avoid unexpected upstream changes. We use them in ActionAdmin
 # for our MVP workflow functionality. They should be phased out ASAP by moving ActionAdmin to snippets.
 
-class CreateEditViewOptionalFeaturesMixin[M: Model]:
+class CreateEditViewOptionalFeaturesMixin[M: Action](ModelFormViewMixinBase[M]):
     # Source: wagtail.admin.views.generic.CreateEditViewOptionalFeaturesMixin
     """
     A mixin for generic CreateView/EditView.
@@ -59,6 +70,7 @@ class CreateEditViewOptionalFeaturesMixin[M: Model]:
     confirm_workflow_cancellation_url_name: str | None = None
     model: type[M]
     action: str
+    permission_policy: BasePermissionPolicy[Any, Any, Any]
 
     def setup(self, request, *args, **kwargs):
         # Need to set these here as they are used in get_object()
@@ -75,7 +87,7 @@ class CreateEditViewOptionalFeaturesMixin[M: Model]:
         )
 
         # Set the object before super().setup() as LocaleMixin.setup() needs it
-        self.object = self.get_object()
+        self.object = cast('M', self.get_object())
         self.lock = self.get_lock()
         self.locked_for_user = self.lock and self.lock.for_user(request.user)
         super().setup(request, *args, **kwargs)  # type: ignore[misc]
@@ -115,7 +127,7 @@ class CreateEditViewOptionalFeaturesMixin[M: Model]:
         return self.workflow_state.all_tasks_with_status()
 
     def user_has_permission(self, permission):
-        user = self.request.user
+        user = user_or_bust(self.request.user)
         if user.is_superuser:
             return True
 
@@ -190,10 +202,10 @@ class CreateEditViewOptionalFeaturesMixin[M: Model]:
 
         return actions
 
-    def get_object(self, queryset=None):
+    def get_object(self, queryset=None) -> M | None:  # type: ignore[override]
         if self.view_name == "create":
             return None
-        self.live_object = super().get_object(queryset)
+        self.live_object = super().get_object(queryset)  # type: ignore[call-arg]
         if self.draftstate_enabled:
             return self.live_object.get_latest_revision_as_object()
         return self.live_object
@@ -512,6 +524,8 @@ class CreateEditViewOptionalFeaturesMixin[M: Model]:
                 )
 
             if user_can_unschedule:
+                rev = self.object.scheduled_revision
+                assert rev is not None
                 lock_message = format_html(
                     '{} <span class="buttons">'
                     '<button type="button" class="button button-small button-secondary" '
@@ -520,7 +534,7 @@ class CreateEditViewOptionalFeaturesMixin[M: Model]:
                     lock_message,
                     reverse(
                         self.revisions_unschedule_url_name,
-                        args=[quote(self.object.pk), self.object.scheduled_revision.id],
+                        args=[quote(self.object.pk), rev.pk],
                     ),
                     _("Cancel scheduled publish"),
                 )
@@ -535,7 +549,7 @@ class CreateEditViewOptionalFeaturesMixin[M: Model]:
 
         return context
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, **kwargs):  # type: ignore[override]
         context = super().get_context_data(**kwargs)
         context.update(self.get_lock_context())
         context["revision_enabled"] = self.revision_enabled
@@ -556,8 +570,7 @@ class CreateEditViewOptionalFeaturesMixin[M: Model]:
         # Make sure object is not locked
         if not self.locked_for_user and form.is_valid():
             return self.form_valid(form)
-        else:
-            return self.form_invalid(form)
+        return self.form_invalid(form)
 
 
 class HookResponseMixin:
@@ -627,7 +640,7 @@ class BeforeAfterHookMixin(HookResponseMixin):
 
 class GenericModelEditViewMixin(BeforeAfterHookMixin):
     # Source: wagtail.admin.views.generic.models.EditView
-    success_message = None
+    success_message: str | None = None
     actions = ["edit"]
 
     def setup(self, request, *args, **kwargs):
@@ -717,8 +730,8 @@ class WatchPermissionCheckedMixin(PermissionCheckedMixin):
         )
 
 
-class SnippetsEditViewCompatibilityMixin(
-    CreateEditViewOptionalFeaturesMixin,
+class SnippetsEditViewCompatibilityMixin[M: Action](
+    CreateEditViewOptionalFeaturesMixin[M],
     GenericModelEditViewMixin,
     WatchPermissionCheckedMixin,
 ):
@@ -756,13 +769,13 @@ class SnippetsEditViewCompatibilityMixin(
     def get(self, request, *args, **kwargs):
         # Copied from django.views.generic.edit.BaseUpdateView; omitting causes problems with
         # CreateEditViewOptionalFeaturesMixin
-        self.object = self.get_object()
+        self.object = cast('M', self.get_object())
         return super().get(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
         # Copied from django.views.generic.edit.BaseUpdateView; omitting causes problems with
         # CreateEditViewOptionalFeaturesMixin
-        self.object = self.get_object()
+        self.object = cast('M', self.get_object())
         return super().post(request, *args, **kwargs)
 
     def get_object(self, queryset=None):
@@ -773,6 +786,6 @@ class SnippetsEditViewCompatibilityMixin(
         return super().get_object(queryset)
 
     @property
-    def permission_policy(self):
+    def permission_policy(self):  # type: ignore[override]
         # Copied from wagtail.snippets.views.snippets.SnippetViewSet
         return ModelPermissionPolicy(self.model)

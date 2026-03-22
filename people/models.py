@@ -136,7 +136,8 @@ class Person(SearchableModel[PersonQuerySet], BasePerson, IndirectPlanRelatedMod
 
     objects: ClassVar[PersonManager] = PersonManager()
 
-    public_fields = BasePerson.public_fields + [
+    public_fields: ClassVar = [
+        *BasePerson.public_fields,
         'participated_in_training',
     ]
 

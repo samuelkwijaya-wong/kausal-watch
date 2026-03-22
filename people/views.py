@@ -79,9 +79,9 @@ class ResetPasswordView(WMABaseView[Person]):
 
     def make_reset_url(self):
         # cf. wagtail.contrib.auth.forms.PasswordResetForm.save()
-        reset_token = default_token_generator.make_token(self.target_person.user)
         target_user = self.target_person.user
         assert target_user is not None
+        reset_token = default_token_generator.make_token(target_user)
         uid = urlsafe_base64_encode(force_bytes(target_user.pk))
         kwargs = {'uidb64': uid, 'token': reset_token}
         reset_path = reverse('wagtailadmin_password_reset_confirm', kwargs=kwargs)

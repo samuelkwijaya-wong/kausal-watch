@@ -890,9 +890,9 @@ def get_translated_category_page(_info, **_kwargs) -> Prefetch:  # pyright: igno
 
 def prefetch_workflow_states(_info, **_kwargs) -> Prefetch:  # pyright: ignore[reportMissingTypeArgument]
     workflow_states = (
-        WorkflowState._default_manager.get_queryset()
+        WorkflowState.objects.get_queryset()
         .active()
-        .select_related(  # pyright: ignore[reportAttributeAccessIssue]
+        .select_related(
             'current_task_state__task',
         )
     )
@@ -2134,7 +2134,7 @@ class Query:
             action_pks = [str(pk) for pk in action_queryset.values_list('pk', flat=True)]
             if desired_workflow_task is not None:
                 workflowstates = (
-                    WorkflowState._default_manager.get_queryset()
+                    WorkflowState.objects.get_queryset()
                     .active()
                     .filter(content_type=ct)
                     .filter(current_task_state__task=desired_workflow_task)

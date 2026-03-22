@@ -7,7 +7,7 @@ if typing.TYPE_CHECKING:
 
 
 # Some ModelAdmins can be disabled if they are replaced in an extension.
-disabled_modeladmins = set()
+disabled_modeladmins: set[str] = set()
 
 
 def disable_modeladmin(name):
@@ -33,7 +33,7 @@ BlockDef = tuple[str, 'Block']
 
 body_block_registry: dict[str | None, list[BlockDef]] = dict()
 
-blocks_callback_funcs = set()
+blocks_callback_funcs: set[typing.Callable[[], None]] = set()
 
 
 def register_blocks_callback(func):

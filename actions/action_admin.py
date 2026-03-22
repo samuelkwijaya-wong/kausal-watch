@@ -788,7 +788,7 @@ class ActionButtonHelper(AplansButtonHelper):
 
 class ActionEditView(
     InitializeFormWithInitialPlanMixin[Action],
-    SnippetsEditViewCompatibilityMixin,
+    SnippetsEditViewCompatibilityMixin[Action],
     SingleObjectMixin[Action],
     AplansEditView[Action],
 ):
@@ -837,12 +837,11 @@ class ActionEditView(
         primary_action_classification = action.plan.primary_action_classification
         if primary_action_classification is None:
             return ''
-        category = action.categories.filter(type=primary_action_classification)
-        if not category:
+        category_qs = action.categories.filter(type=primary_action_classification)
+        category = category_qs.first()
+        if category is None:
             return ''
-        category = category.first()
         crumb = [category]
-        assert category is not None
         parent = category.parent
         while parent is not None:
             crumb.append(parent)

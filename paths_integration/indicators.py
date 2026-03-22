@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Any
 
 from django.utils.translation import gettext as _
 
-from paths_integration._generated_.graphql_client.client import PathsClient
+from paths_integration.__generated__.graphql_client.client import PathsClient
 
 if TYPE_CHECKING:
     from actions.models import Plan

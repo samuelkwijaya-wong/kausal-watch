@@ -4,9 +4,10 @@ import {
   test as setup,
   type Page,
 } from '@playwright/test';
-import { randomUUID } from 'node:crypto';
+import { randomUUID } from 'crypto';
 import { ApolloClient, gql, HttpLink, InMemoryCache } from '@apollo/client';
-import playwrightConfig from '../playwright.config';
+import playwrightConfig from '../playwright.config.js';
+import { CombinedGraphQLErrors } from '@apollo/client';
 
 
 const authFile = 'playwright-state/user.json';
@@ -86,11 +87,20 @@ async function createTestUser(page: Page, role: TestUserRole = TestUserRole.SUPE
 const ensureTestUser = async (page: Page): Promise<{ email: string, password: string }> => {
   if (!testUserEmail || !testUserPassword) {
     console.log('Creating test user');
-    const { email, password } = await createTestUser(page);
-    return {
-      email,
-      password,
-    };
+    try {
+      const { email, password } = await createTestUser(page);
+      return {
+        email,
+        password,
+      };
+    } catch (error) {
+      if (CombinedGraphQLErrors.is(error)) {
+        if (error.toString().includes("Cannot query field 'testMode")) {
+          throw new Error('Unable to create test user: test mode is not enabled; re-run the server with ENABLE_TEST_MODE=1');
+        }
+      }
+      throw error;
+    }
   }
   return {
     email: testUserEmail,

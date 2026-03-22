@@ -62,7 +62,7 @@ if typing.TYPE_CHECKING:
     from indicators.models.metadata import Unit
     from indicators.models.relationships import RelatedIndicator
     from indicators.models.values import IndicatorGoal
-    from paths_integration._generated_.graphql_client.node_values import NodeValuesNodeMetricDim
+    from paths_integration.__generated__.graphql_client.node_values import NodeValuesNodeMetricDim
     from people.models import Person
     from users.models import User
 
