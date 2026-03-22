@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "target": "es2024",
+    "module": "NodeNext",
+    "moduleResolution": "node16",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "noEmit": true,
+  },
+  "include": [
+    "*.ts",
+    "tests/**/*.ts"
+  ],
+}

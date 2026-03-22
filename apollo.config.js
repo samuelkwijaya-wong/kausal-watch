@@ -12,12 +12,12 @@ function getPathsConfig() {
 
 function getWatchConfig() {
   const fs = require("fs");
-  if (!fs.existsSync("./schema.graphql")) return null;
+  if (!fs.existsSync("./__generated__/schema.graphql")) return null;
   return {
     includes: ["./mcp_server/**/*.graphql"],
     service: {
       name: "WatchClient",
-      localSchemaFile: "./schema.graphql",
+      localSchemaFile: "./__generated__/schema.graphql",
     },
   };
 }

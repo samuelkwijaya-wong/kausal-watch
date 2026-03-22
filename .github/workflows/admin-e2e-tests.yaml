@@ -79,7 +79,7 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
     container:
-      image: harbor.kausal.tech/library/playwright:v1.58.1
+      image: harbor.kausal.tech/library/playwright:v1.58.2
 
     env:
       CI: "1"
@@ -92,13 +92,8 @@ jobs:
       - name: Wait for backend
         run: wait-for-it.sh -t 180 localhost:8000
 
-      - name: Install dependencies
-        run: |
-          apt-get update && apt-get install -y jq
-        shell: bash
-
       - name: Install Playwright dependencies
-        run: corepack enable pnpm && pnpm install --frozen-lockfile
+        run: corepack enable pnpm && pnpm install --prod --frozen-lockfile
         working-directory: ./e2e-tests
 
       - name: Start coverage tracking
