@@ -1,12 +1,15 @@
 from datetime import UTC, datetime
+from typing import TYPE_CHECKING
 
 import pytest
 
 from orgs.tests.factories import OrganizationFactory
 from people.models import Person
 from people.tests.factories import PersonFactory
-from users.models import User
 from users.tests.factories import UserFactory
+
+if TYPE_CHECKING:
+    from users.models import User
 
 pytestmark = pytest.mark.django_db
 

@@ -1,12 +1,15 @@
 from __future__ import annotations
 
-from typing import Iterable
+from typing import TYPE_CHECKING
 
 from aplans.tests.tree import Tree, parse_tree_string
 
 from orgs.models import Organization
 
 from .factories import OrganizationFactory
+
+if TYPE_CHECKING:
+    from collections.abc import Iterable
 
 
 def tree_to_org(tree: Tree, parent: Organization | None=None):

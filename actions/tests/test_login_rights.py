@@ -6,7 +6,7 @@ import pytest
 
 from actions.perms import _make_organization_tree, calculate_people_with_login_rights
 from orgs.models import Organization
-from orgs.tests.fixtures import *  # noqa: F403
+from orgs.tests.fixtures import *
 from people.models import Person
 
 pytestmark = pytest.mark.django_db

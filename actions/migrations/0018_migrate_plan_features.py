@@ -16,7 +16,7 @@ def migrate_plan_features(apps, schema_editor):
             continue
         pf = PlanFeatures(plan=plan)
         for f in plan._meta.fields:
-            if f.name in ('id',):
+            if f.name == 'id':
                 continue
             if f.name in pf_fields:
                 val = getattr(plan, f.name)

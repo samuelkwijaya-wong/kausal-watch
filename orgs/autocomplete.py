@@ -1,10 +1,13 @@
+from typing import TYPE_CHECKING
+
 from django.db.models import Q
 
 from dal import autocomplete
 
-from aplans.types import WatchAdminRequest
-
 from orgs.models import Organization
+
+if TYPE_CHECKING:
+    from aplans.types import WatchAdminRequest
 
 
 class OrganizationAutocomplete(autocomplete.Select2QuerySetView):

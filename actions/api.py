@@ -580,7 +580,7 @@ class AttributesSerializerMixin[InstanceT: Any](AttributesSerializerMixinBase[In
         """
         Format the incoming REST API data to conform
         to the format expected by each actions.attributes.AttributeValue
-        subclass as the value parameter of the from_serialized_value method
+        subclass as the value parameter of the from_serialized_value method.
         """
         return self.to_value_parameter(item)
 
@@ -588,7 +588,7 @@ class AttributesSerializerMixin[InstanceT: Any](AttributesSerializerMixinBase[In
         """
         Format the incoming REST API data to conform
         to the format expected by an existing Attribute model
-        instance, setting the instance attributes with
+        instance, setting the instance attributes with.
 
             setattr(instance, key_in_dict, value_parameter_dict[key_in_dict])
 
@@ -797,7 +797,7 @@ class ModelWithAttributesSerializerMixin[M: ModelWithAttributes](
     def _pop_attributes_from_validated_data(self, validated_data: dict):
         return {field: validated_data.pop(field, None) for field in self._attribute_fields}
 
-    def _update_attribute_fields(self, instance: ModelWithAttributes, popped_fields):
+    def _update_attribute_fields(self, instance: ModelWithAttributes, popped_fields) -> None:
         for field_name, data in popped_fields.items():
             if data is not None:
                 ops = self.fields[field_name].update(instance, data)
@@ -827,7 +827,7 @@ class NonTreebeardModelWithTreePositionSerializerMixin[M: ActionOrCategory](
 
     def init_cached_instances(self, instance):
         # Use instance cache for bulk update
-        def init_cache(force_refresh=False):
+        def init_cache(force_refresh=False) -> None:
             self._cached_instances = {}
             # If we're using self as a list serializer, instance should be an iterable
             try:
@@ -976,7 +976,7 @@ class NonTreebeardModelWithTreePositionSerializerMixin[M: ActionOrCategory](
 
         return [('update', instance, ['order']) for instance in self._cached_instances.values()]
 
-    def _cache_descendants(self, node):
+    def _cache_descendants(self, node) -> None:
         """Add instance `node` and all its descendants to the dict `self._cached_instances`."""
         assert self._cached_instances.get(node.uuid, node) == node
         self._cached_instances[node.uuid] = node

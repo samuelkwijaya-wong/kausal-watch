@@ -1,9 +1,12 @@
-from dal import autocomplete
+from typing import TYPE_CHECKING
 
-from aplans.types import WatchAdminRequest
+from dal import autocomplete
 
 from indicators.models import CommonIndicator, Indicator, Quantity, Unit
 from orgs.models import Organization
+
+if TYPE_CHECKING:
+    from aplans.types import WatchAdminRequest
 
 
 class BaseAutocomplete(autocomplete.Select2QuerySetView):

@@ -75,7 +75,7 @@ class NotificationEngine:
     def ignore_indicator(self, indicator):
         return indicator.identifier in self.ignore_indicators
 
-    def _fetch_data(self):
+    def _fetch_data(self) -> None:
         active_tasks = ActionTask.objects.filter(action__plan=self.plan)
         active_tasks = active_tasks.exclude(state__in=(ActionTask.CANCELLED, ActionTask.COMPLETED))
         self.active_tasks = list(active_tasks.order_by('due_at'))
@@ -281,7 +281,7 @@ class NotificationEngine:
                 logger.error(str(e))
                 continue
             for notification_type, queue_items_by_identifier in items_for_type.items():
-                for _, queue_items in queue_items_by_identifier.items():
+                for queue_items in queue_items_by_identifier.values():
                     ttype = notification_type.identifier
                     if self.only_type and ttype != self.only_type:
                         continue

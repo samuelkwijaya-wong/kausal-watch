@@ -12,8 +12,14 @@ pytestmark = pytest.mark.django_db
 
 
 @pytest.mark.parametrize(
-    'built_in_field_customization__instances_editable_by,'
-    'expect_unprivileged,expect_editor,expect_moderator,expect_admin', [
+    (
+        'built_in_field_customization__instances_editable_by',
+        'expect_unprivileged',
+        'expect_editor',
+        'expect_moderator',
+        'expect_admin',
+    ),
+    [
         (InstancesEditableByMixin.EditableBy.AUTHENTICATED, True, True, True, True),
         (InstancesEditableByMixin.EditableBy.CONTACT_PERSONS, False, True, True, True),
         (InstancesEditableByMixin.EditableBy.MODERATORS, False, False, True, True),
@@ -22,7 +28,12 @@ pytestmark = pytest.mark.django_db
     ],
 )
 def test_built_in_field_customization_is_action_field_editable_by(
-    expect_unprivileged, expect_editor, expect_moderator, expect_admin, built_in_field_customization, action,
+    expect_unprivileged,
+    expect_editor,
+    expect_moderator,
+    expect_admin,
+    built_in_field_customization,
+    action,
     plan_admin_user,
 ):
     unauthenticated = AnonymousUser()
@@ -38,8 +49,15 @@ def test_built_in_field_customization_is_action_field_editable_by(
 
 
 @pytest.mark.parametrize(
-    'built_in_field_customization__instances_visible_for,'
-    'expect_unauthenticated,expect_unprivileged,expect_editor,expect_moderator,expect_admin', [
+    (
+        'built_in_field_customization__instances_visible_for',
+        'expect_unauthenticated',
+        'expect_unprivileged',
+        'expect_editor',
+        'expect_moderator',
+        'expect_admin',
+    ),
+    [
         # TODO: Also test visibility via GraphQL API somewhere
         (InstancesVisibleForMixin.VisibleFor.PUBLIC, True, True, True, True, True),
         (InstancesVisibleForMixin.VisibleFor.AUTHENTICATED, False, True, True, True, True),
@@ -49,8 +67,14 @@ def test_built_in_field_customization_is_action_field_editable_by(
     ],
 )
 def test_built_in_field_customization_is_action_field_visible_for(
-    expect_unauthenticated, expect_unprivileged, expect_editor, expect_moderator, expect_admin,
-    built_in_field_customization, action, plan_admin_user,
+    expect_unauthenticated,
+    expect_unprivileged,
+    expect_editor,
+    expect_moderator,
+    expect_admin,
+    built_in_field_customization,
+    action,
+    plan_admin_user,
 ):
     unauthenticated = AnonymousUser()
     # Create an authenticated user that's unprivileged for this action because they are a contact for another action

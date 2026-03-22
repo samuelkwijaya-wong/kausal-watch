@@ -73,7 +73,7 @@ class Notification(ABC):
     def get_default_intro_text(cls) -> str | None:
         """
         Return None if this notification type does not need a default text
-        when initializing the default notification templates, otherwise a string
+        when initializing the default notification templates, otherwise a string.
         """
         pass
 
@@ -246,10 +246,9 @@ class NotEnoughTasksNotification(Notification):
             now = self.plan.now_in_local_timezone()
         for recipient in recipients:
             days_since = self.days_since_notification_last_sent(recipient, now=now)
-            if days_since is not None:
-                if days_since < 30:
-                    # We don't want to remind too often
-                    continue
+            if days_since is not None and days_since < 30:
+                # We don't want to remind too often
+                continue
 
             engine.queue_notification(self, recipient)
 
@@ -285,10 +284,9 @@ class ActionNotUpdatedNotification(Notification):
             now = self.plan.now_in_local_timezone()
         for recipient in recipients:
             days_since = self.days_since_notification_last_sent(recipient, now=now)
-            if days_since is not None:
-                if days_since < 30:
-                    # We don't want to remind too often
-                    continue
+            if days_since is not None and days_since < 30:
+                # We don't want to remind too often
+                continue
 
             engine.queue_notification(self, recipient)
 

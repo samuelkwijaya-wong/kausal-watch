@@ -8,7 +8,7 @@ from typing import Any, Generic, TypeVar, cast
 
 from django import forms
 from django.contrib.contenttypes.models import ContentType
-from django.db.models import Field, ForeignKey, QuerySet
+from django.db.models import ForeignKey
 from django.utils import translation
 from django.utils.translation import gettext_lazy as _
 from wagtail.admin.panels import FieldPanel, field_panel
@@ -25,6 +25,8 @@ import actions.models.attributes as models
 from admin_site.utils import FieldLabelRenderer
 
 if typing.TYPE_CHECKING:
+    from django.db.models import Field, QuerySet
+
     from aplans.cache import PlanSpecificCache
 
     from actions.models import Category, Plan
@@ -243,7 +245,7 @@ class CategoryChoiceAttributeValue(AttributeValue):
     def attribute_model_kwargs(self) -> dict[str, Any]:
         return {}  # categories are set not in model's __init__() kwargs but after model instance creation
 
-    def instantiate_attribute(self, type: AttributeType[T], obj: models.ModelWithAttributes) -> T:  # noqa: A002
+    def instantiate_attribute(self, type: AttributeType[T], obj: models.ModelWithAttributes) -> T:
         instance = super().instantiate_attribute(type, obj)
         assert isinstance(instance, models.AttributeCategoryChoice)
         instance.categories.set(self.categories)

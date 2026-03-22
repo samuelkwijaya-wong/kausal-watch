@@ -2,16 +2,16 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, cast
 
-from django.http.request import HttpRequest
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
 from generic_chooser.views import ChooserListingTabMixin
 
-from aplans.types import WatchAdminRequest
-
 if TYPE_CHECKING:
+    from django.http.request import HttpRequest
     from django_stubs_ext import StrOrPromise
+
+    from aplans.types import WatchAdminRequest
 
 
 def render_html_label_for_visibility(text_content: StrOrPromise, public: bool):
@@ -56,4 +56,4 @@ def admin_req(request: HttpRequest) -> WatchAdminRequest:
     """Cast the HTTP request into an instance of (authenticated) WatchAdminRequest."""
     assert request.user is not None
     assert request.user.is_authenticated
-    return cast(WatchAdminRequest, request)
+    return cast('WatchAdminRequest', request)

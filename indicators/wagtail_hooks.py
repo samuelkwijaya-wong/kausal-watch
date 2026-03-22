@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import typing
-from typing import Any, Mapping
+from typing import Any
 
 from django.templatetags.static import static
 from django.utils.html import format_html
@@ -12,6 +12,8 @@ from wagtail.admin.site_summary import SummaryItem
 from . import wagtail_admin  # noqa
 
 if typing.TYPE_CHECKING:
+    from collections.abc import Mapping
+
     from wagtail.log_actions import LogActionRegistry
 
     from aplans.types import WatchAdminRequest

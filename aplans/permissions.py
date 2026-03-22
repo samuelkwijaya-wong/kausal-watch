@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from abc import abstractmethod
 from typing import TYPE_CHECKING
 
 from rest_framework import permissions
@@ -9,7 +8,6 @@ from kausal_common.users import user_or_none
 
 if TYPE_CHECKING:
     from django.db.models import Model
-    from django.views.generic import View
     from rest_framework.request import Request
     from rest_framework.views import APIView
 

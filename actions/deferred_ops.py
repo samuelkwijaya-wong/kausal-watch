@@ -40,7 +40,7 @@ class DeferredDatabaseOperationsMixin[M: Model](ModelSerializerMixinBase[M]):
         except AttributeError:
             self.set_deferred_operations(operations)
 
-    def _execute_immediately(self, operations: list[tuple]):
+    def _execute_immediately(self, operations: list[tuple]) -> None:
         for operation, obj, *rest in operations:
             if operation == 'create':
                 obj.save()

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from enum import StrEnum, auto
 
-from graphql.error import GraphQLError, GraphQLErrorExtensions
+from graphql.error import GraphQLError
 
 
 class GraphQLErrorWithCode(GraphQLError):
@@ -10,12 +10,13 @@ class GraphQLErrorWithCode(GraphQLError):
             self,
             *args,
             code: ErrorCode | None = None,
-            extensions: GraphQLErrorExtensions = {},
             **kwargs,
     ):
+        extensions = kwargs.pop('extensions') or {}
         if code:
             extensions['code'] = code
-        return super().__init__(*args, extensions=extensions, **kwargs)
+        kwargs['extensions'] = extensions
+        super().__init__(*args, **kwargs)
 
 
 class ErrorCode(StrEnum):

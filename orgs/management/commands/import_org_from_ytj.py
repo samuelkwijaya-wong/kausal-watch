@@ -21,13 +21,12 @@ class Command(BaseCommand):
             if len(res) == 0:
                 print('No matches for: %s' % name_or_id)
                 return
-            elif len(res) > 1:
+            if len(res) > 1:
                 print('Multiple matches for: %s' % name_or_id)
                 for org in res:
                     print('\t%s: %s' % (res['businessId'], res['name']))
                 return
-            else:
-                data = res[0]
+            data = res[0]
         else:
             resp = requests.get('https://avoindata.prh.fi/bis/v1/%s' % name_or_id)
             resp.raise_for_status()

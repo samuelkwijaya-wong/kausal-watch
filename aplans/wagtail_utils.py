@@ -1,4 +1,4 @@
-from typing import Type, TypeVar
+from typing import TYPE_CHECKING, TypeVar
 
 from django import forms
 from django.db.models import Model
@@ -7,8 +7,10 @@ from dal import autocomplete, forward as dal_forward
 
 from actions.models.action import Action
 from actions.models.category import CategoryType
-from actions.models.plan import Plan
 from indicators.models import Indicator
+
+if TYPE_CHECKING:
+    from actions.models.plan import Plan
 
 
 class ModelChoiceFieldWithValueInList(forms.ModelChoiceField):
@@ -31,7 +33,7 @@ class ModelChoiceFieldWithValueInList(forms.ModelChoiceField):
 
 M = TypeVar('M', bound=Model)
 
-def _get_category_fields(plan: Plan, model: type[M], obj: M | None, with_initial: bool = False) -> dict:
+def _get_category_fields[M: Model](plan: Plan, model: type[M], obj: M | None, with_initial: bool = False) -> dict:
     fields = {}
     if model == Action:
         filter_name = 'editable_for_actions'

@@ -55,14 +55,14 @@ class NotificationPreferencesForm(forms.Form):
             return model.objects.filter(
                 pk__in=self.person.actioncontactperson_set.values_list('notification_preferences'),
             )
-        elif model is GeneralPlanAdminNotificationPreferences:
+        if model is GeneralPlanAdminNotificationPreferences:
             return model.objects.filter(
                 pk__in=self.person.general_admin_plans_ordered.values_list('notification_preferences'),
             )
         raise ValueError(f"Unexpected model {model}")
 
     def cleaned_data_by_model(self):
-        """Rearrange self.cleaned_data to access it by model and PK"""
+        """Rearrange self.cleaned_data to access it by model and PK."""
         data_by_model: dict[type, dict[int, dict[str, bool]]] = {}
         for field_name, value in self.cleaned_data.items():
             model_id, pk_str, model_field = field_name.split(':')
@@ -80,7 +80,7 @@ class NotificationPreferencesForm(forms.Form):
             pks = data.keys()
             instances = list(self.get_qs_for_model(model).filter(pk__in=pks))
             for instance in instances:
-                instance_data = data_by_model[model][instance.pk]
+                instance_data = data[instance.pk]
                 for field_name, value in instance_data.items():
                     setattr(instance, field_name, value)
             fields = [field_name for field_name, _, _ in self.MODEL_FIELDS[model]]

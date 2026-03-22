@@ -21,7 +21,7 @@ logger = logging.getLogger(__name__)
 
 
 class BaseActionModeratorApprovalTaskStateEmailNotifier(EmailNotificationMixin, Notifier):
-    """A base notifier to send updates for UserApprovalTask events"""
+    """A base notifier to send updates for UserApprovalTask events."""
 
     class AllowAllUsersAdminURLFinder(ModelAdminURLFinder):
         """
@@ -107,13 +107,13 @@ class BaseActionModeratorApprovalTaskStateEmailNotifier(EmailNotificationMixin, 
 
 
 class ActionModeratorApprovalTaskStateSubmissionEmailNotifier(BaseActionModeratorApprovalTaskStateEmailNotifier):
-    """A notifier to send updates for ActionModeratorApprovalTask submission events"""
+    """A notifier to send updates for ActionModeratorApprovalTask submission events."""
 
     notification = 'submitted'
 
 
 class ActionModeratorCancelTaskStateSubmissionEmailNotifier(BaseActionModeratorApprovalTaskStateEmailNotifier):
-    """A notifier to send updates for ActionModeratorApprovalTask submission events"""
+    """A notifier to send updates for ActionModeratorApprovalTask submission events."""
 
     notification = 'cancelled'
 

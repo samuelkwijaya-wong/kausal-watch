@@ -5,7 +5,7 @@ def migrate_data(apps, schema_editor):
     AttributeType = apps.get_model('actions', 'AttributeType')
     AttributeType.objects.filter(instances_editable_by='').update(instances_editable_by='authenticated')
     AttributeType.objects.filter(instances_visible_for='').update(instances_visible_for='public')
-    CategoryType = apps.get_model('actions', 'CategoryType')
+    apps.get_model('actions', 'CategoryType')
     AttributeType.objects.filter(instances_editable_by='').update(instances_editable_by='authenticated')
 
 

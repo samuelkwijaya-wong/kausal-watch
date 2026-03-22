@@ -54,11 +54,11 @@ class temp_disconnect_signal:  # noqa: N801
 
 
 def update_reference_in_raw_data(
-    raw_data: Any,  # noqa: ANN401
+    raw_data: Any,
     content_path: list[str],
     old_object: Model,
     new_object: Model,
-) -> Any:  # noqa: ANN401
+) -> Any:
     """
     Update a reference at a certain path in raw data from a streamfield.
 

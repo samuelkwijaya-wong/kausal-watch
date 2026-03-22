@@ -4,7 +4,7 @@ from kausal_common.blocks.registry import FieldBlockContext
 
 from actions.action_fields import action_registry
 
-from .fixtures import *  # noqa: F403
+from .fixtures import *
 
 pytestmark = pytest.mark.django_db
 

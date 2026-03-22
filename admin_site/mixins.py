@@ -1,11 +1,10 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Callable, Protocol, cast
+from typing import TYPE_CHECKING, Any, Protocol, cast
 from urllib.parse import urljoin
 
 from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.contrib.auth.decorators import login_required
-from django.db.models import Model
 from django.http.request import QueryDict
 from django.http.response import HttpResponseRedirect
 from django.urls import reverse
@@ -14,15 +13,19 @@ from django.utils.translation import gettext_lazy as _
 from wagtail.snippets.action_menu import ActionMenuItem
 
 from aplans.context_vars import ctx_instance
-from aplans.types import WatchAdminRequest
 from aplans.utils import PlanRelatedModel
 
 from admin_site.permissions import PlanContextPermissionPolicy
 from users.models import User
 
 if TYPE_CHECKING:
+    from collections.abc import Callable
+
+    from django.db.models import Model
     from django.http import HttpRequest
     from django.http.response import HttpResponseBase
+
+    from aplans.types import WatchAdminRequest
 
 
 class SuccessUrlEditPageMixin:
@@ -121,7 +124,7 @@ class PlanRelatedViewMixin:
         if isinstance(obj, PlanRelatedModel):
             # Sanity check to ensure we're saving the model to a currently active
             # action plan.
-            active_plan = cast(WatchAdminRequest, self.request).user.get_active_admin_plan()
+            active_plan = cast('WatchAdminRequest', self.request).user.get_active_admin_plan()
             plans = obj.get_plans()
             if len(plans):
                 assert active_plan in plans
@@ -151,7 +154,7 @@ class ActivatePermissionHelperPlanContextMixin:
     @method_decorator(login_required)
     def dispatch(self, request: HttpRequest, *args, **kwargs) -> HttpResponseBase:
         """Set the plan context for permission helper before dispatching request."""
-        request = cast(WatchAdminRequest, request)
+        request = cast('WatchAdminRequest', request)
         permission_policy = getattr(self, 'permission_policy', None)
         super_dispatch: Callable[[HttpRequest, ...], HttpResponseBase] = super().dispatch  # type: ignore
         if not isinstance(permission_policy, PlanContextPermissionPolicy):

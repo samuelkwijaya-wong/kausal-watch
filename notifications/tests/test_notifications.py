@@ -1,10 +1,10 @@
 from datetime import UTC, date, datetime, timedelta
+from typing import TYPE_CHECKING
 
 from django.core import mail
 
 import pytest
 
-from actions.models.plan import Plan
 from actions.tests.factories import (
     ActionContactFactory,
     ActionFactory,
@@ -19,8 +19,11 @@ from notifications.management.commands.send_plan_notifications import Notificati
 from notifications.models import AutomaticNotificationTemplate, NotificationType, SentNotification
 from notifications.tests.factories import AutomaticNotificationTemplateFactory, ManuallyScheduledNotificationTemplateFactory
 from orgs.tests.factories import OrganizationPlanAdminFactory
-from people.models import Person
 from people.tests.factories import PersonFactory
+
+if TYPE_CHECKING:
+    from actions.models.plan import Plan
+    from people.models import Person
 
 pytestmark = pytest.mark.django_db
 

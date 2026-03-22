@@ -146,10 +146,7 @@ def _action_visible(action, data):
 
 
 def _action_in_list(action, data):
-    for item in data:
-        if item['id'] == str(action.id):
-            return True
-    return False
+    return any(item['id'] == str(action.id) for item in data)
 
 
 def test_action_contact_person_hide_moderators(graphql_client_query_data, plan, action, action_contact_factory):

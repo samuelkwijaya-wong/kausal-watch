@@ -3,15 +3,15 @@ from io import BytesIO
 from django.utils import translation
 from django.utils.translation import gettext as _, pgettext
 
-import polars
+import polars as pl
 import polars.selectors as cs
 import pytest
 
-from .fixtures import *  # noqa
+from .fixtures import *
 
-polars.Config.set_ascii_tables(True)
-polars.Config.set_tbl_rows(20)
-polars.Config.set_tbl_cols(20)
+pl.Config.set_ascii_tables(True)
+pl.Config.set_tbl_rows(20)
+pl.Config.set_tbl_cols(20)
 
 pytestmark = pytest.mark.django_db
 
@@ -28,7 +28,7 @@ def excel_file_from_report_factory(actions_having_attributes, report_with_all_at
 
 
 def assert_report_dimensions(excel_file, report, actions):
-    df_actions = polars.read_excel(BytesIO(excel_file), sheet_name=pgettext('Action model', 'Actions'), engine='openpyxl')
+    df_actions = pl.read_excel(BytesIO(excel_file), sheet_name=pgettext('Action model', 'Actions'), engine='openpyxl')
     non_report_fields = ['action', 'identifier']
     has_complete_actions = False
     if report.is_complete:
@@ -139,7 +139,7 @@ def test_excel_export_with_duplicate_attribute_fields(
     assert len(excel_output) > 0
 
     # Verify the DataFrame was created successfully by reading it back
-    df = polars.read_excel(BytesIO(excel_output), sheet_name=pgettext('Action model', 'Actions'), engine='openpyxl')
+    df = pl.read_excel(BytesIO(excel_output), sheet_name=pgettext('Action model', 'Actions'), engine='openpyxl')
     assert df.height == len(actions_having_attributes)
 
     # The duplicate field should have been skipped, so we should have fewer columns
@@ -177,7 +177,7 @@ def test_excel_export_with_duplicate_category_fields(
     excel_output = exporter.generate_xlsx()
 
     assert excel_output is not None
-    df = polars.read_excel(BytesIO(excel_output), sheet_name=pgettext('Action model', 'Actions'), engine='openpyxl')
+    df = pl.read_excel(BytesIO(excel_output), sheet_name=pgettext('Action model', 'Actions'), engine='openpyxl')
     assert df.height == len(actions_having_attributes)
 
     # Expected: Identifier + Action + implementation_phase + 1 category (duplicate skipped)

@@ -224,11 +224,10 @@ class IndicatorDataPointMixin(_IndicatorDataPointBase):
                 raise ValidationError(
                     "Indicator has a yearly resolution, so '%s' must be '%d-12-31" % (date, date.year),
                 )
-        elif indicator.time_resolution == 'month':
-            if date.day != 1:
-                raise ValidationError(
-                    "Indicator has a monthly resolution, so '%s' must be '%d-%02d-01" % (date, date.year, date.month),
-                )
+        elif indicator.time_resolution == 'month' and date.day != 1:
+            raise ValidationError(
+                "Indicator has a monthly resolution, so '%s' must be '%d-%02d-01" % (date, date.year, date.month),
+            )
         return date
 
 
@@ -259,7 +258,7 @@ class IndicatorValueSerializer(serializers.ModelSerializer, IndicatorDataPointMi
                 raise ValidationError("dimension already present for category %s" % cat.id)
             found_dims.add(cat.dimension_id)
 
-        if len(found_dims) and len(found_dims) != len(dims):
+        if found_dims and len(found_dims) != len(dims):
             raise ValidationError("not all dimensions found for %s: %s" % (self.data['date'], [cat.id for cat in cats]))
 
         return cats
@@ -391,7 +390,7 @@ class IndicatorCategoriesSerializer(serializers.Serializer):
                 continue
             ct_cats = [cat.id for cat in cats if cat.type_id == ct.pk]
             if ct.select_widget == ct.SelectWidget.SINGLE:
-                val = ct_cats[0] if len(ct_cats) else None
+                val = ct_cats[0] if ct_cats else None
             else:
                 val = ct_cats
             out[ct.identifier] = val
@@ -462,7 +461,7 @@ class IndicatorSerializerMixin:
         cache: dict[str, Any] = {}
 
         # Ensure fields is a dictionary
-        fields = cast(dict[str, serializers.Field], self.fields) # type: ignore[attr-defined]
+        fields = cast('dict[str, serializers.Field]', self.fields) # type: ignore[attr-defined]
 
 
         for field_name in ['categories', 'contact_persons']:
@@ -507,7 +506,7 @@ class IndicatorSerializer(IndicatorSerializerMixin, serializers.ModelSerializer[
         level = validated_data.pop('level', _not_provided)
         instance = super().create(validated_data)
 
-        fields = cast(dict[str, serializers.Field], self.fields)
+        fields = cast('dict[str, serializers.Field]', self.fields)
 
         if categories_data is not None and hasattr(fields['categories'], 'update'):
             fields['categories'].update(instance, categories_data)
@@ -529,7 +528,7 @@ class IndicatorSerializer(IndicatorSerializerMixin, serializers.ModelSerializer[
         level = validated_data.pop('level', _not_provided)
         instance = super().update(instance, validated_data)
 
-        fields = cast(dict[str, serializers.Field], self.fields)
+        fields = cast('dict[str, serializers.Field]', self.fields)
 
         if categories_data is not None and hasattr(fields['categories'], 'update'):
             fields['categories'].update(instance, categories_data)

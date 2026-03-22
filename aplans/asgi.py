@@ -23,6 +23,8 @@ from kausal_common.asgi.middleware import HTTPMiddleware, WebSocketMiddleware
 if TYPE_CHECKING:
     from collections.abc import Callable
 
+    from django.urls import URLPattern, URLResolver
+
     from fastmcp.server.http import StarletteWithLifespan
 
     from mcp_server.auth import MCPAuthMiddleware
@@ -42,7 +44,7 @@ class AuthGraphQLProtocolTypeRouter(ProtocolTypeRouter):
 
     def __init__(self):
         from django.conf import settings
-        from django.urls import URLPattern, URLResolver, re_path
+        from django.urls import re_path
 
         from channels.routing import URLRouter
 

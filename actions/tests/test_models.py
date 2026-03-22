@@ -183,7 +183,7 @@ def test_category_move_to_new_sibling_changes_page_hierarchy(plan_with_pages):
 def category_type_with_category_hierarchy(category_type, category_level_factory, category_factory):
     """
     Constructs a three level category hierarchy with a balanced structure,
-    with the category identifiers matching the hierarchy structure
+    with the category identifiers matching the hierarchy structure.
     """
     ct_id = category_type
     for _ in range(3):
@@ -322,7 +322,7 @@ def test_category_type_accepts_non_action_specific_editability(editable_by):
     CategoryTypeFactory.create(instances_editable_by=editable_by).full_clean()
 
 
-@pytest.mark.parametrize('model,scope_factory,editable_by_accepted,editable_by_raises', [
+@pytest.mark.parametrize(('model', 'scope_factory', 'editable_by_accepted', 'editable_by_raises'), [
     ('action', PlanFactory, [
         # accepted
         InstancesEditableByMixin.EditableBy.AUTHENTICATED,
@@ -362,7 +362,7 @@ def test_attribute_type_editability_validation(model, scope_factory, editable_by
             ).full_clean()
 
 
-@pytest.mark.parametrize('model,scope_factory,visible_for_accepted,visible_for_raises', [
+@pytest.mark.parametrize(('model', 'scope_factory', 'visible_for_accepted', 'visible_for_raises'), [
     ('action', PlanFactory, [
         # accepted
         InstancesVisibleForMixin.VisibleFor.PUBLIC,
@@ -488,7 +488,7 @@ def test_action_i18n_when_saving(plan, action_factory, primary_language, active_
         action = action_factory(plan=plan)
         action.name = 'action.name'
         action.save()
-        assert action.i18n == None or len(action.i18n) == 0
+        assert action.i18n is None or len(action.i18n) == 0
         assert action.name == 'action.name'
         action.name = 'action.name.original'
         action.name_i18n = 'action.name_i18n'

@@ -429,7 +429,7 @@ class TestComputedDataPoints:
         other operand had no data point at all.
         """
         dataset, metric_a, _metric_b, _metric_c = _make_computation_setup()
-        DataPointFactory.create(dataset=dataset, metric=metric_a, date=date(2024, 1, 1), value=Decimal('3'))
+        DataPointFactory.create(dataset=dataset, metric=metric_a, date=date(2024, 1, 1), value=Decimal(3))
 
         api_client.force_login(superuser)
         response = api_client.get(self._url(dataset.uuid))
@@ -440,8 +440,8 @@ class TestComputedDataPoints:
     def test_computed_value_returned_when_both_operands_present(self, api_client, superuser):
         """When both operands have data points the computed result must be returned."""
         dataset, metric_a, metric_b, metric_c = _make_computation_setup()
-        DataPointFactory.create(dataset=dataset, metric=metric_a, date=date(2024, 1, 1), value=Decimal('3'))
-        DataPointFactory.create(dataset=dataset, metric=metric_b, date=date(2024, 1, 1), value=Decimal('5'))
+        DataPointFactory.create(dataset=dataset, metric=metric_a, date=date(2024, 1, 1), value=Decimal(3))
+        DataPointFactory.create(dataset=dataset, metric=metric_b, date=date(2024, 1, 1), value=Decimal(5))
 
         api_client.force_login(superuser)
         response = api_client.get(self._url(dataset.uuid))
@@ -450,12 +450,12 @@ class TestComputedDataPoints:
         assert len(response.json_data) == 1
         result = response.json_data[0]
         assert result['date'] == '2024-01-01'
-        assert Decimal(result['value']) == Decimal('15')
+        assert Decimal(result['value']) == Decimal(15)
         assert result['metric'] == str(metric_c.uuid)
 
     def test_no_result_when_dataset_has_no_data_points(self, api_client, superuser):
         """An empty dataset must return an empty list."""
-        dataset, _metric_a, _metric_b, _metric_c = _make_computation_setup()  # noqa: F841
+        dataset, _metric_a, _metric_b, _metric_c = _make_computation_setup()
 
         api_client.force_login(superuser)
         response = api_client.get(self._url(dataset.uuid))
@@ -468,10 +468,10 @@ class TestComputedDataPoints:
         If operand a has data for two dates but operand b only covers one of
         them, only the date with both operands present should yield a result.
         """
-        dataset, metric_a, metric_b, metric_c = _make_computation_setup()
-        DataPointFactory.create(dataset=dataset, metric=metric_a, date=date(2023, 1, 1), value=Decimal('2'))
-        DataPointFactory.create(dataset=dataset, metric=metric_a, date=date(2024, 1, 1), value=Decimal('4'))
-        DataPointFactory.create(dataset=dataset, metric=metric_b, date=date(2024, 1, 1), value=Decimal('5'))
+        dataset, metric_a, metric_b, _metric_c = _make_computation_setup()
+        DataPointFactory.create(dataset=dataset, metric=metric_a, date=date(2023, 1, 1), value=Decimal(2))
+        DataPointFactory.create(dataset=dataset, metric=metric_a, date=date(2024, 1, 1), value=Decimal(4))
+        DataPointFactory.create(dataset=dataset, metric=metric_b, date=date(2024, 1, 1), value=Decimal(5))
 
         api_client.force_login(superuser)
         response = api_client.get(self._url(dataset.uuid))
@@ -480,4 +480,4 @@ class TestComputedDataPoints:
         assert len(response.json_data) == 1
         result = response.json_data[0]
         assert result['date'] == '2024-01-01'
-        assert Decimal(result['value']) == Decimal('20')
+        assert Decimal(result['value']) == Decimal(20)

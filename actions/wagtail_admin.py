@@ -36,7 +36,6 @@ from wagtail.admin.views.generic.permissions import PermissionCheckedMixin
 from wagtail.admin.widgets import Button
 from wagtail.admin.widgets.button import ButtonWithDropdown
 from wagtail.log_actions import log
-from wagtail.snippets import widgets as wagtailsnippets_widgets
 from wagtail.snippets.models import register_snippet
 from wagtail.snippets.views.snippets import IndexView, SnippetViewSet
 
@@ -84,9 +83,7 @@ from copying.views import PlanCopyView
 from indicators.models import Indicator
 from notifications.models import NotificationSettings
 from orgs.chooser import OrganizationChooser
-from orgs.models import Organization
 from pages.models import PlanLink
-from users.models import User
 
 from . import (
     action_admin,  # noqa: F401
@@ -112,6 +109,7 @@ if TYPE_CHECKING:
     from wagtail.admin.panels.base import Panel
 
     from actions.models.plan import PlanQuerySet
+    from users.models import User
 
 
 class PlanForm(AplansAdminModelForm[Plan]):

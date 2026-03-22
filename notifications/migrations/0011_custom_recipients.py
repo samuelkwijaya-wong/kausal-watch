@@ -21,7 +21,7 @@ def set_default_recipients(apps, schema_editor):
             template.send_to_contact_persons = 'cp-oa-pa'
             template.save()
         elif template.type in TYPES_FOR_PLAN_ADMINS:
-            assert template.send_to_plan_admins == True
+            assert template.send_to_plan_admins
         else:
             raise Exception(f"Unexpected template type {template.type}")
 

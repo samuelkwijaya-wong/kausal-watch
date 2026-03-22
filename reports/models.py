@@ -1,7 +1,7 @@
 from __future__ import annotations  # noqa: I001
 
 from contextlib import contextmanager
-from typing import TYPE_CHECKING, ClassVar, cast
+from typing import TYPE_CHECKING, ClassVar, cast, Never
 
 import reversion
 from django.contrib.contenttypes.models import ContentType
@@ -233,7 +233,7 @@ class Report(PlanRelatedModelWithRevision):
         self.xlsx_exporter = ExcelReport(self, action_ids=action_ids)
         return self.xlsx_exporter
 
-    def _raise_complete(self):
+    def _raise_complete(self) -> Never:
         raise ValueError(_("The report is already marked as complete."))
 
     def get_live_versions(self, action_ids: list[int] | None = None) -> LiveVersions:
@@ -398,7 +398,7 @@ class ActionSnapshot(models.Model):
         """
         Use like this to temporarily revert the action to this snapshot:
         with snapshot.inspect() as action:
-            pass  # action is reverted here and will be rolled back afterwards
+            pass  # action is reverted here and will be rolled back afterwards.
         """
         try:
             with transaction.atomic():

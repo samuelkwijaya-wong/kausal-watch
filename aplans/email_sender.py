@@ -1,7 +1,12 @@
-from django.conf import settings
-from django.core.mail import EmailMessage, get_connection
+from typing import TYPE_CHECKING
 
-from actions.models import Plan
+from django.conf import settings
+from django.core.mail import get_connection
+
+if TYPE_CHECKING:
+    from django.core.mail import EmailMessage
+
+    from actions.models import Plan
 
 
 class EmailSender:

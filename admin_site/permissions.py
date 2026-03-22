@@ -1,19 +1,24 @@
 from contextlib import contextmanager
+from typing import TYPE_CHECKING
 
 from django.conf import settings
-from django.contrib.auth.base_user import AbstractBaseUser
-from django.contrib.auth.models import AnonymousUser
-from django.db.models import Model
 from wagtail.permission_policies.base import ModelPermissionPolicy
 from wagtail.permission_policies.collections import (
     CollectionOwnershipPermissionPolicy,
 )
 
-from aplans.types import WatchAdminRequest
 from aplans.utils import PlanRelatedModel
 
-from actions.models.plan import Plan
 from users.models import User
+
+if TYPE_CHECKING:
+    from django.contrib.auth.base_user import AbstractBaseUser
+    from django.contrib.auth.models import AnonymousUser
+    from django.db.models import Model
+
+    from aplans.types import WatchAdminRequest
+
+    from actions.models.plan import Plan
 
 
 class PlanRelatedCollectionOwnershipPermissionPolicy(CollectionOwnershipPermissionPolicy):
@@ -111,19 +116,15 @@ class PlanRelatedPermissionPolicy(ModelPermissionPolicy):
     def get_plans(self, obj):
         if isinstance(obj, PlanRelatedModel):
             return obj.get_plans()
-        else:
-            raise NotImplementedError('implement in subclass')
+        raise NotImplementedError('implement in subclass')
 
-    def _obj_matches_active_plan(self, user, obj):
+    def _obj_matches_active_plan(self, user, obj) -> bool:
         if not self.check_admin_plan:
             return True
 
         obj_plans = self.get_plans(obj)
         active_plan = user.get_active_admin_plan()
-        for obj_plan in obj_plans:
-            if obj_plan == active_plan:
-                return True
-        return False
+        return any(obj_plan == active_plan for obj_plan in obj_plans)
 
     def user_has_permission_for_instance(self, user, action, instance):
         if not super().user_has_permission_for_instance(user, action, instance):

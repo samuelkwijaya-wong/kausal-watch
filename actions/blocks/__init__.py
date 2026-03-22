@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from django.utils.translation import gettext_lazy as _
 from wagtail import blocks
@@ -28,9 +28,12 @@ from actions.blocks.filters import (
     PrimaryOrganizationFilterBlock,  # noqa: F401
     ResponsiblePartyFilterBlock,  # noqa: F401
 )
-from actions.models.attributes import AttributeType, AttributeTypeQuerySet
+from actions.models.attributes import AttributeType
 from actions.models.category import CategoryType
-from actions.models.plan import Plan
+
+if TYPE_CHECKING:
+    from actions.models.attributes import AttributeTypeQuerySet
+    from actions.models.plan import Plan
 
 
 def get_default_action_content_blocks(plan: Plan) -> dict[str, Any]:

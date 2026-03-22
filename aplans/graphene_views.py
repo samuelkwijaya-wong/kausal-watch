@@ -35,7 +35,7 @@ from aplans.types import WatchAPIRequest
 from actions.models import Plan
 from users.models import User
 
-from .graphql_helpers import GraphQLAuthFailedError, GraphQLAuthRequiredError
+from .graphql_helpers import GraphQLAuthFailedError
 from .graphql_types import WorkflowStateEnum
 
 if TYPE_CHECKING:
@@ -183,7 +183,7 @@ def perform_auth(request):
     auth = IDTokenAuthentication()
     ret = auth.authenticate(request)
     if ret is not None:
-        user, token = ret
+        user, _token = ret
         request.user = user
 
 

@@ -6,13 +6,15 @@ from typing import TYPE_CHECKING, ClassVar
 
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from wagtail.images.models import AbstractImage, AbstractRendition, Filter, Image as WagtailImage, ImageQuerySet
+from wagtail.images.models import AbstractImage, AbstractRendition, Image as WagtailImage, ImageQuerySet
 
 from kausal_common.models.types import ModelManager
 
 from aplans.utils import PlanRelatedModelWithRevision
 
 if TYPE_CHECKING:
+    from wagtail.images.models import Filter
+
     from kausal_common.models.types import FK
 
 

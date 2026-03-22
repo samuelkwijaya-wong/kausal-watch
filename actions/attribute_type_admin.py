@@ -613,7 +613,7 @@ class AttributeTypeMenuItem(MenuItem):
         super().__init__(label, url, **kwargs)
 
     def is_active(self, request):
-        path, _ = self.url.split('?', maxsplit=1)
+        _path, _ = self.url.split('?', maxsplit=1)
         content_type = request.GET.get('content_type')
         return request.path.startswith(self.base_url) and content_type == str(self.content_type.pk)
 

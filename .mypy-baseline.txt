@@ -46,7 +46,6 @@ actions/tests/test_models.py:0: error: Need type annotation for "wrapper"  [var-
 admin_site/apps.py:0: error: Module "wagtail.admin.forms" has no attribute "account"  [attr-defined]
 admin_site/draftail_rich_text_area.py:0: error: Cannot determine type of "options"  [has-type]
 aplans/celery.py:0: error: Argument 1 to "dictConfig" has incompatible type "Any | None"; expected "_DictConfigArgs | dict[str, Any]"  [arg-type]
-aplans/graphql_errors.py:0: error: "__init__" of "GraphQLError" gets multiple values for keyword argument "extensions"  [misc]
 aplans/log_handler.py:0: error: "ConsoleRenderable" has no attribute "plain"  [attr-defined]
 aplans/urls.py:0: error: Module "wagtail.documents" has no attribute "urls"  [attr-defined]
 aplans/wagtail_utils.py:0: error: "ModelMultipleChoiceField[Category]" has no attribute "category_type"  [attr-defined]

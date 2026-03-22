@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import datetime
 from enum import Enum
-from typing import TYPE_CHECKING, Callable, NotRequired, TypedDict
+from typing import TYPE_CHECKING, NotRequired, TypedDict
 
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
@@ -10,6 +10,8 @@ from django.utils.translation import gettext_lazy as _
 from aplans.utils import ConstantMetadata, MetadataEnum
 
 if TYPE_CHECKING:
+    from collections.abc import Callable
+
     from django_stubs_ext import StrOrPromise
 
     from aplans.cache import WatchObjectCache
@@ -165,7 +167,7 @@ class ActionStatusSummaryIdentifier(MetadataEnum):
         # FIXME: Some plans in production have inconsistent Capitalized identifiers
         # Once the db has been cleaned up, this match logic
         # should be revisited
-        status_identifier = action.status.identifier.lower() if action.status else None
+        action.status.identifier.lower() if action.status else None
         phase = action.implementation_phase.identifier.lower() if action.implementation_phase else None
         if action.merged_with_id is not None:
             return cls.MERGED

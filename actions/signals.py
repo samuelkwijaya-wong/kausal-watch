@@ -16,8 +16,7 @@ from .mail import (
     ActionModeratorCancelTaskStateSubmissionEmailNotifier,
     WorkflowStateApprovalWithCommentEmailNotifier,
 )
-from .models import Action, ActionContactPerson, ActionResponsibleParty, Category, GeneralPlanAdmin, Plan, PlanFeatures
-from .models.attributes import AttributeType
+from .models import Action, ActionContactPerson, ActionResponsibleParty, GeneralPlanAdmin, Plan, PlanFeatures
 from .perms import get_people_with_login_rights, sync_all_group_permissions_for_plan
 
 logger = logging.getLogger(__name__)

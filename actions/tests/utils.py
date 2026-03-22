@@ -19,7 +19,7 @@ def assert_log_entry_created(instance, action, user, plan):
     ).first()
     assert log_entry is not None, (
         f'Expected PlanScopedModelLogEntry for {instance.__class__.__name__} '
-        f'id={instance.pk}, action=\'{action}\', plan={plan.pk}, but none found'
+        f"id={instance.pk}, action='{action}', plan={plan.pk}, but none found"
     )
     assert log_entry.user_id == user.pk
     return log_entry

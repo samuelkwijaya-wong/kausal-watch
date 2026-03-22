@@ -42,8 +42,7 @@ class SetUserFeedbackProcessedView(
     def get_page_title(self):
         if self.set_processed:
             return _("Mark user feedback as processed")
-        else:
-            return _("Mark user feedback as unprocessed")
+        return _("Mark user feedback as unprocessed")
 
     def get_meta_title(self):
         if self.set_processed:

@@ -1,12 +1,16 @@
+from typing import TYPE_CHECKING
+
 from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
 from wagtail import blocks
 
 from kausal_common.datasets.models import DatasetSchema
 
-from actions.chooser import CategoryTypeChooser
 from actions.models.attributes import AttributeType
 from actions.models.category import Category, CategoryLevel, CategoryType
+
+if TYPE_CHECKING:
+    from actions.chooser import CategoryTypeChooser
 
 
 class CategoryChooserBlock(blocks.ChooserBlock[Category]):

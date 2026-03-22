@@ -2,7 +2,6 @@ import re
 
 from wagtail.embeds.finders.base import EmbedFinder
 
-
 DEFAULT_PROVIDER_NAME = 'default'
 
 

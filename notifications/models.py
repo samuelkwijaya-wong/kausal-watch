@@ -282,7 +282,7 @@ class NotificationTemplate(IndirectPlanRelatedModel, RevisionMixin):
             if admin:
                 client = admin.get_admin_client()
         assert client
-        return EmailRecipient(email=cast(str, self.custom_email), client=client)
+        return EmailRecipient(email=cast('str', self.custom_email), client=client)
 
 
 class AutomaticNotificationTemplate(NotificationTemplate):
@@ -330,9 +330,9 @@ class AutomaticNotificationTemplate(NotificationTemplate):
         self, action_contacts, indicator_contacts, organization_plan_admins, plan_admins, action, indicator,
     ):
         recipients = []
-        fall_back_to_org_admins = (
-            self.send_to_contact_persons == self.ContactPersonFallbackChain.CONTACT_PERSONS_THEN_ORG_ADMINS
-            or self.send_to_contact_persons == self.ContactPersonFallbackChain.CONTACT_PERSONS_THEN_ORG_ADMINS_THEN_PLAN_ADMINS
+        fall_back_to_org_admins = self.send_to_contact_persons in (
+            self.ContactPersonFallbackChain.CONTACT_PERSONS_THEN_ORG_ADMINS,
+            self.ContactPersonFallbackChain.CONTACT_PERSONS_THEN_ORG_ADMINS_THEN_PLAN_ADMINS,
         )
         fall_back_to_plan_admins = (
             self.send_to_contact_persons == self.ContactPersonFallbackChain.CONTACT_PERSONS_THEN_ORG_ADMINS_THEN_PLAN_ADMINS
@@ -342,24 +342,22 @@ class AutomaticNotificationTemplate(NotificationTemplate):
             if not action:
                 raise Exception(f'Notifications of type {self.type} must refer to an action')
             recipients += action_contacts.get(action.id, [])
-            if not recipients:
-                if fall_back_to_org_admins:
-                    org_ids = {p.organization_id for p in action.responsible_parties.all()}
-                    org_ids.add(action.primary_org_id)
-                    opa_lists = (organization_plan_admins.get(org_id, []) for org_id in org_ids)
-                    recipients += {recipient for opas in opa_lists for recipient in opas}
-                    if not recipients and fall_back_to_plan_admins:
-                        recipients += plan_admins
+            if not recipients and fall_back_to_org_admins:
+                org_ids = {p.organization_id for p in action.responsible_parties.all()}
+                org_ids.add(action.primary_org_id)
+                opa_lists = (organization_plan_admins.get(org_id, []) for org_id in org_ids)
+                recipients += {recipient for opas in opa_lists for recipient in opas}
+                if not recipients and fall_back_to_plan_admins:
+                    recipients += plan_admins
 
         if self.concerns_indicator:
             if not indicator:
                 raise Exception(f'Notifications of type {self.type} must refer to an indicator')
             recipients += indicator_contacts.get(indicator.id, [])
-            if not recipients:
-                if fall_back_to_org_admins:
-                    recipients += organization_plan_admins.get(indicator.organization_id, [])
-                    if not recipients and fall_back_to_plan_admins:
-                        recipients += plan_admins
+            if not recipients and fall_back_to_org_admins:
+                recipients += organization_plan_admins.get(indicator.organization_id, [])
+                if not recipients and fall_back_to_plan_admins:
+                    recipients += plan_admins
 
         return recipients
 
@@ -485,9 +483,8 @@ class ContentBlock(models.Model):
     ]
 
     def save(self, *args, **kwargs):
-        if self.template is not None:
-            if self.template.base != self.base:
-                raise Exception('Mismatch between template base and content block base')
+        if self.template is not None and self.template.base != self.base:
+            raise Exception('Mismatch between template base and content block base')
         return super().save(*args, **kwargs)
 
     def __str__(self):

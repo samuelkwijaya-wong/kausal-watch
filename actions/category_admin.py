@@ -25,7 +25,7 @@ from wagtail_color_panel.edit_handlers import NativeColorPanel
 from wagtail_modeladmin.helpers.permission import PermissionHelper
 from wagtail_modeladmin.menus import ModelAdminMenuItem
 from wagtail_modeladmin.options import modeladmin_register
-from wagtail_modeladmin.views import DeleteView, InstanceSpecificView
+from wagtail_modeladmin.views import DeleteView
 from wagtailorderable.modeladmin.mixins import OrderableMixin
 
 from kausal_common.users import user_or_bust
@@ -59,6 +59,8 @@ if TYPE_CHECKING:
     from django.db.models import QuerySet
     from django.forms import ModelChoiceField
     from django.http.request import HttpRequest
+
+    from wagtail_modeladmin.views import InstanceSpecificView
 
 
 class CategoryTypeFilter(SimpleListFilter):

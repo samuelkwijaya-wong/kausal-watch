@@ -28,7 +28,6 @@ from actions.models.attributes import (
 )
 from actions.models.category import (
     Category,
-    CategoryLevel,
     CategoryType,
 )
 from actions.models.plan import Plan
@@ -50,6 +49,9 @@ if typing.TYPE_CHECKING:
 
     from actions.blocks.base import ActionReportContentField
     from actions.models import Plan
+    from actions.models.category import (
+        CategoryLevel,
+    )
     from orgs.models import OrganizationQuerySet
     from reports.models import ActionSnapshot
     from reports.spreadsheets import ExcelReport

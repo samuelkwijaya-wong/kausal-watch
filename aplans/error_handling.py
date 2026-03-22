@@ -47,6 +47,6 @@ def html_server_error(request, template_name=ERROR_500_TEMPLATE_NAME):
 def server_error(request, *args, **kwargs):
     if request.accepts('text/html'):
         return html_server_error(request, *args, **kwargs)
-    elif request.accepts('application/json'):
+    if request.accepts('application/json'):
         return json_server_error(request, *args, **kwargs)
     return html_server_error(request, *args, **kwargs)

@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import logging
 import typing
-from datetime import date, timedelta
+from datetime import timedelta
 from typing import Any, cast
 
 from django.contrib import admin
@@ -19,7 +19,7 @@ from django.urls import re_path
 from django.utils import timezone
 from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
-from wagtail.admin.panels import FieldPanel, ObjectList, Panel, TabbedInterface
+from wagtail.admin.panels import FieldPanel, ObjectList, TabbedInterface
 
 from dal import autocomplete
 from wagtail_modeladmin.helpers.button import ButtonHelper
@@ -52,9 +52,12 @@ from .models import Person
 from .views import ImpersonateUserView, ResetPasswordView
 
 if typing.TYPE_CHECKING:
+    from datetime import date
+
     from django.contrib.admin.options import _DisplayT
     from django.http import HttpRequest
     from django_stubs_ext import StrOrPromise
+    from wagtail.admin.panels import Panel
 
     from users.models import User
 

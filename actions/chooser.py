@@ -303,14 +303,13 @@ class DatasetSchemaChooserMixin(WatchModelChooserBase[DatasetSchema]):
                 scopes__scope_content_type=content_type,
                 scopes__scope_id=plan.id,
             ).distinct()
-        elif scope == 'categorytype':
+        if scope == 'categorytype':
             content_type = ContentType.objects.get_for_model(CategoryType)
             return DatasetSchema.objects.filter(
                 scopes__scope_content_type=content_type,
                 scopes__scope_id__in=plan.category_types.values_list('id', flat=True),
             ).distinct()
-        else:
-            return DatasetSchema.objects.none()
+        return DatasetSchema.objects.none()
 
     def user_can_create(self, user):
         return False

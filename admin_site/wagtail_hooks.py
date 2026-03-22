@@ -26,8 +26,6 @@ from .models import Client
 if TYPE_CHECKING:
     from collections.abc import Sequence
 
-    from laces.typing import RenderContext
-
     from aplans.types import WatchAdminRequest
 
 
@@ -80,7 +78,7 @@ class CommonCategoryMenuItem(MenuItem):
         super().__init__(label, url, icon_name='kausal-category', **kwargs)
 
     def is_active(self, request):
-        path, _ = self.url.split('?', maxsplit=1)
+        _path, _ = self.url.split('?', maxsplit=1)
         common_category_type = request.GET.get('common_category_type')
         return request.path.startswith(self.base_url) and common_category_type == str(self.common_category_type.pk)
 

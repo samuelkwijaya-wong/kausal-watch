@@ -1,9 +1,12 @@
 from __future__ import annotations
 
-from typing import Callable
+from typing import TYPE_CHECKING
 
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
 
 class IndicatorValuesImportLog(models.Model):

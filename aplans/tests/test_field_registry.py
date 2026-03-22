@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import sys
-from typing import Any, Callable
+from typing import TYPE_CHECKING, Any
 
 from wagtail import blocks
 
@@ -12,6 +12,9 @@ from kausal_common.blocks.registry import FieldBlockContext, FieldContextConfig,
 
 from actions.blocks.base import ActionFilterBlock, ActionListContentBlock, ActionReportContentField
 from actions.models import Action
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
 pytestmark = pytest.mark.django_db
 

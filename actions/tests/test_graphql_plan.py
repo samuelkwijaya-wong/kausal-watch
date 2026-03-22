@@ -119,7 +119,7 @@ def test_plan_exists(graphql_client_query_data, plan):
 
 @pytest.mark.parametrize('show_admin_link', [True, False])
 def test_plan_admin_url(graphql_client_query_data, plan, show_admin_link):
-    client_plan = ClientPlanFactory(plan=plan)
+    ClientPlanFactory(plan=plan)
     plan.features.show_admin_link = show_admin_link
     plan.features.save()
     data = graphql_client_query_data(
@@ -303,7 +303,7 @@ def test_plan_root_page_contains_block(graphql_client_query_data, plan_with_page
         assert block[key] == value
 
 
-@pytest.mark.parametrize('menu_field,menu_key,with_descendants,expected_pages', [
+@pytest.mark.parametrize(('menu_field', 'menu_key', 'with_descendants', 'expected_pages'), [
     ('mainMenu', 'show_in_menus', False, ['page1_in_menu', 'page2_in_menu']),
     ('mainMenu', 'show_in_menus', True, ['subpage1_in_menu', 'page1_in_menu', 'subpage2_in_menu', 'page2_in_menu']),
     ('footer', 'show_in_footer', False, ['page1_in_menu', 'page2_in_menu']),

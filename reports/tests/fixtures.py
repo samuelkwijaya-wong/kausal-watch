@@ -1,10 +1,6 @@
-from django.contrib.contenttypes.models import ContentType
 
 import pytest
-from factory import LazyAttribute, SubFactory
 from pytest_factoryboy import register
-
-from actions.tests import factories as actions_factories
 
 from .factories import (
     ActionAttributeTypeReportFieldBlockFactory,

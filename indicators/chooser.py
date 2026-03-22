@@ -14,10 +14,12 @@ from kausal_common.users import user_or_bust
 
 from admin_site.utils import ChooserListingTabMixinWithEmptyResultsMessage
 
-from .models import Dimension, Indicator, IndicatorDimension, IndicatorQuerySet, IndicatorValue
+from .models import Dimension, Indicator, IndicatorDimension, IndicatorValue
 
 if TYPE_CHECKING:
     from wagtail.admin.views.generic.chooser import ChooseResultsView, ChooseView, ChosenView
+
+    from .models import IndicatorQuerySet
 
 
 class IndicatorChooserViewSet(ChooserViewSet[Indicator]):

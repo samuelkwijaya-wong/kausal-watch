@@ -80,7 +80,7 @@ class AdminSiteConfig(AdminConfig):
         register_telepath_adapter(DraftailRichTextAreaAdapterWithFixedTranslations(), DraftailRichTextArea)
 
         # We use this just for overriding some Django translations that are weird in some languages
-        def _dummy_function_so_makemessages_finds_strings():
+        def _dummy_function_so_makemessages_finds_strings() -> None:
             # This is never called
             _("History")
 

@@ -1,17 +1,20 @@
+from typing import TYPE_CHECKING
+
 from django import forms
-from django.forms.models import modelform_factory
 from django.utils.translation import gettext_lazy as _
 from wagtail import hooks
 
-from generic_chooser.views import ModelChooserCreateTabMixin, ModelChooserMixin, ModelChooserViewSet
+from generic_chooser.views import ModelChooserViewSet
 from generic_chooser.widgets import AdminChooser
 
 from aplans.fields import HostnameValidator
-from aplans.types import WatchAdminRequest
 
 from actions.chooser import WatchModelChooserBase
 
 from .models import Client, EmailDomains
+
+if TYPE_CHECKING:
+    from aplans.types import WatchAdminRequest
 
 
 class ClientChooserMixin(WatchModelChooserBase):

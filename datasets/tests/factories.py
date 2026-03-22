@@ -101,7 +101,7 @@ class DataPointFactory(ModelFactory[DataPoint]):
     dataset = SubFactory[DataPoint, Dataset](DatasetFactory)
     metric = SubFactory[DataPoint, DatasetMetric](DatasetMetricFactory)
     date = Sequence(lambda i: date(2023, 1, i+1))
-    value = Sequence(lambda i: float(i))
+    value = Sequence(float)
 
     class Meta:
         model = DataPoint

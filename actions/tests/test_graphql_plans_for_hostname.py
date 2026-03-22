@@ -104,7 +104,7 @@ def test_get_plans_by_hostname(graphql_client_query_data,
 
 
 @pytest.mark.parametrize(
-    "publication_status_override,has_message",
+    ("publication_status_override", "has_message"),
     [(PublicationStatus.UNPUBLISHED, True),
      (PublicationStatus.PUBLISHED, False)],
 )

@@ -1,10 +1,15 @@
 from __future__ import annotations
 
-from django.core.management.base import BaseCommand, CommandParser
+from typing import TYPE_CHECKING
+
+from django.core.management.base import BaseCommand
 
 from actions.models import Plan
 from orgs.models import Organization
 from people.models import Person
+
+if TYPE_CHECKING:
+    from django.core.management.base import CommandParser
 
 
 class Command(BaseCommand):

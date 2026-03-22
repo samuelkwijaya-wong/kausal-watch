@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Callable, ClassVar, Self
+from typing import TYPE_CHECKING, ClassVar, Self
 
 import reversion
 from django.db import models
@@ -16,6 +16,8 @@ from aplans.utils import RestrictedVisibilityModel
 from indicators.models.relationships import IndicatorRelationship
 
 if TYPE_CHECKING:
+    from collections.abc import Callable
+
     from kausal_common.users import UserOrAnon
 
     from actions.models import Action

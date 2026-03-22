@@ -1,3 +1,5 @@
+from typing import TYPE_CHECKING
+
 from django import forms
 from django.utils.translation import gettext_lazy as _
 from wagtail import hooks
@@ -5,9 +7,10 @@ from wagtail import hooks
 from generic_chooser.views import ModelChooserMixin, ModelChooserViewSet
 from generic_chooser.widgets import AdminChooser
 
-from aplans.types import WatchAdminRequest
-
 from .models import Organization
+
+if TYPE_CHECKING:
+    from aplans.types import WatchAdminRequest
 
 
 class OrganizationChooserMixin(ModelChooserMixin):

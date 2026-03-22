@@ -3,7 +3,6 @@ from __future__ import annotations
 import inspect
 import typing
 
-from actions.blocks.base import ActionReportContentField
 from reports.utils import (
     EXCEL_BUILTIN_NUMBER_FORMAT_FOR_DATES_WHICH_ADAPTS_TO_USER_LOCALE,
     EXCEL_BUILTIN_NUMBER_FORMAT_FOR_DATETIMES_WHICH_ADAPTS_TO_USER_LOCALE,
@@ -14,6 +13,8 @@ if typing.TYPE_CHECKING:
 
     import xlsxwriter
     from xlsxwriter.format import Format
+
+    from actions.blocks.base import ActionReportContentField
 
 
 class ExcelFormats(dict):
@@ -147,7 +148,7 @@ class ExcelFormats(dict):
     def set_for_field(self, field: BoundBlock, labels: list) -> None:
         if None not in {self._formats_for_fields.get(label) for label in labels}:
             return
-        block: ActionReportContentField = typing.cast(ActionReportContentField, field.block)
+        block: ActionReportContentField = typing.cast('ActionReportContentField', field.block)
         cell_format_specs: dict[str, str | int] | None = block.get_xlsx_cell_format(field.value)
         cell_format = self.workbook.add_format(cell_format_specs)
         self.StyleSpecifications.all_rows(cell_format)

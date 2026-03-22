@@ -580,7 +580,7 @@ class HookResponseMixin:
     def run_hook(self, hook_name, *args, **kwargs):
         """
         Run the named hook, passing args and kwargs to each function registered under that hook name.
-        If any return an HttpResponse, stop processing and return that response
+        If any return an HttpResponse, stop processing and return that response.
         """
         for fn in hooks.get_hooks(hook_name):
             result = fn(*args, **kwargs)
@@ -709,9 +709,8 @@ class WatchPermissionCheckedMixin(PermissionCheckedMixin):
     def dispatch(self, request, *args, **kwargs):
         if self.permission_policy is not None:
 
-            if self.permission_required is not None:
-                if not self.user_has_permission(self.permission_required):
-                    raise PermissionDenied
+            if self.permission_required is not None and not self.user_has_permission(self.permission_required):
+                raise PermissionDenied
 
             if self.any_permission_required is not None:
                 if not self.user_has_any_permission(self.any_permission_required):

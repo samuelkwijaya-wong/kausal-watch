@@ -3,9 +3,11 @@ from __future__ import annotations
 import typing
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import Any, Sequence
+from typing import Any
 
 if typing.TYPE_CHECKING:
+    from collections.abc import Sequence
+
     from xlsxwriter.format import Format
     from xlsxwriter.workbook import Worksheet
 
@@ -51,7 +53,7 @@ class CursorWriter:
         self.merge = merge
 
     def write(self, value: Any, format: Format | None = None, url: str | None = None) -> CursorWriter:
-        format = format if format else self.default_format
+        format = format or self.default_format
         self.current_format = format
         x, y = self.cursor
         if url:

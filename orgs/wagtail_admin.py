@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, Any
 
 from django.contrib.admin.utils import quote
 from django.core.exceptions import ValidationError
-from django.urls import URLPattern, path, reverse
+from django.urls import path, reverse
 from django.utils.translation import gettext_lazy as _, pgettext_lazy
 from wagtail.admin.panels import FieldPanel, ObjectList, TabbedInterface
 from wagtail.admin.widgets.button import ListingButton
@@ -16,7 +16,7 @@ from wagtail.snippets.views.snippets import SnippetViewSet
 from wagtailgeowidget import __version__ as wagtailgeowidget_version
 
 from kausal_common.i18n.panels import TranslatedFieldPanel
-from kausal_common.models.permission_policy import ModelPermissionPolicy, ObjectSpecificAction
+from kausal_common.models.permission_policy import ModelPermissionPolicy
 from kausal_common.organizations.forms import NodeForm
 from kausal_common.people.chooser import PersonChooser
 
@@ -40,8 +40,11 @@ if TYPE_CHECKING:
     from django.contrib.auth.models import AnonymousUser
     from django.db.models import Q
     from django.http import HttpRequest
+    from django.urls import URLPattern
     from wagtail.admin.menu import MenuItem
     from wagtail.admin.panels.base import Panel
+
+    from kausal_common.models.permission_policy import ObjectSpecificAction
 
     from actions.models.plan import Plan
 

@@ -6,20 +6,17 @@ from typing import TYPE_CHECKING, TypeVar, cast
 
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Q
-from wagtail.models import Page, Revision
+from wagtail.models import Revision
 
 import sentry_sdk
 
-from kausal_common.datasets.models import Dataset, DatasetSchema, DatasetSchemaQuerySet
+from kausal_common.datasets.models import Dataset, DatasetSchema
 
 from aplans.graphql_types import WorkflowStateEnum
 
 from actions.models import (
     Action,
-    ActionImplementationPhase,
-    ActionStatus,
     AttributeType,
-    AttributeTypeChoiceOption,
     CategoryType,
     Plan,
 )
@@ -30,9 +27,15 @@ from reports.models import Report
 
 if TYPE_CHECKING:
     from django.db.models.base import Model
+    from wagtail.models import Page
 
-    from kausal_common.datasets.models import DatasetScopeType
+    from kausal_common.datasets.models import DatasetSchemaQuerySet, DatasetScopeType
 
+    from actions.models import (
+        ActionImplementationPhase,
+        ActionStatus,
+        AttributeTypeChoiceOption,
+    )
     from actions.models.action import ActionQuerySet
     from orgs.models import Organization, OrganizationQuerySet
     from pages.models import AplansPage

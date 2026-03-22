@@ -1,3 +1,5 @@
+from typing import TYPE_CHECKING
+
 from django.contrib import messages
 from django.dispatch import receiver
 from django.utils.translation import gettext as _
@@ -5,9 +7,10 @@ from django.utils.translation import gettext as _
 from hijack.signals import hijack_ended, hijack_started  # type: ignore[import-untyped]
 from loguru import logger
 
-from aplans.types import WatchAdminRequest
+if TYPE_CHECKING:
+    from aplans.types import WatchAdminRequest
 
-from users.models import User
+    from users.models import User
 
 hijack_log = logger.bind(impersonation=True)
 

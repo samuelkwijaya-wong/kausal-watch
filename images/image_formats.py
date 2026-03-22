@@ -1,7 +1,10 @@
+from typing import TYPE_CHECKING
+
 from django.utils.translation import gettext_lazy as _
 from wagtail.images.formats import Format, register_image_format
 
-from images.models import AplansImage
+if TYPE_CHECKING:
+    from images.models import AplansImage
 
 
 class ZoomableFormat(Format):

@@ -20,7 +20,7 @@ from wagtail.snippets.views.snippets import (
 )
 
 from kausal_common.models.types import QS
-from kausal_common.users import UserOrAnon, is_authenticated, user_or_bust, user_or_none
+from kausal_common.users import is_authenticated, user_or_bust, user_or_none
 
 from users.models import User
 
@@ -31,6 +31,8 @@ if TYPE_CHECKING:
     from django.db.models.query import QuerySet
     from django.http.request import HttpRequest
     from wagtail.admin.menu import MenuItem
+
+    from kausal_common.users import UserOrAnon
 
 
 class UserFeedbackPermissionPolicy(ModelPermissionPolicy[UserFeedback, User, str]):

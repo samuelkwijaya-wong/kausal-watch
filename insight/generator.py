@@ -97,7 +97,7 @@ class ActionGraphGenerator(GraphGenerator):
         d['object_id'] = obj.id
         d['name'] = obj.name_i18n
         d['id'] = self.make_node_id(obj)
-        d['identifier'] = obj.identifier if obj.identifier else None
+        d['identifier'] = obj.identifier or None
 
         return d
 
@@ -130,15 +130,13 @@ class ActionGraphGenerator(GraphGenerator):
         if relation_type == 'effect':
             if hasattr(obj, '_effect_relations'):
                 return obj._effect_relations
-            else:
-                return self.filter_indicators(obj.related_effects.filter(
-                    effect_indicator__visibility=RestrictedVisibilityModel.VisibilityState.PUBLIC), 'effect_indicator')
-        elif relation_type == 'causal':
+            return self.filter_indicators(obj.related_effects.filter(
+                effect_indicator__visibility=RestrictedVisibilityModel.VisibilityState.PUBLIC), 'effect_indicator')
+        if relation_type == 'causal':
             if hasattr(obj, '_causal_relations'):
                 return obj._causal_relations
-            else:
-                return self.filter_indicators(obj.related_causes.filter(
-                    causal_indicator__visibility=RestrictedVisibilityModel.VisibilityState.PUBLIC), 'causal_indicator')
+            return self.filter_indicators(obj.related_causes.filter(
+                causal_indicator__visibility=RestrictedVisibilityModel.VisibilityState.PUBLIC), 'causal_indicator')
         return None
 
     def add_node(self, obj):
@@ -188,7 +186,11 @@ class ActionGraphGenerator(GraphGenerator):
 
 
 class OrganizationGraphGenerator(GraphGenerator):
-    def __init__(self, request=None, orgs=[], classifications=[]):
+    def __init__(self, request=None, orgs=None, classifications=None):
+        if classifications is None:
+            classifications = []
+        if orgs is None:
+            orgs = []
         super().__init__(request)
         self.orgs = {org.id: org for org in orgs}
         self.org_classes = {kls.id: kls for kls in classifications}

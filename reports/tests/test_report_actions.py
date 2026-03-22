@@ -8,7 +8,7 @@ import pytest
 from actions.models import Action
 from reports.models import ActionSnapshot, Report, SerializedActionVersion
 
-from .fixtures import *  # noqa
+from .fixtures import *
 
 pytestmark = pytest.mark.django_db
 
@@ -33,7 +33,7 @@ def test_report_action_snapshots(plan_with_some_actions, report_type_with_multip
     """
     This test intentionally creates revisions sequentially
     to test that the correct revisions / versions get tied to
-    the actions when reporting / completing
+    the actions when reporting / completing.
     """
     actions = plan_with_some_actions.actions.all()
 
@@ -82,7 +82,7 @@ def test_report_action_snapshots(plan_with_some_actions, report_type_with_multip
 
     # Step 2: Mark some actions for partial report 2 complete
     report_partially_complete = Report.objects.get(name='Report 2')
-    report_partially_complete = typing.cast(Report, report_partially_complete)
+    report_partially_complete = typing.cast('Report', report_partially_complete)
     complete_actions = actions[0:3]
     for action in complete_actions:
         action.mark_as_complete_for_report(report_partially_complete, user)
@@ -116,7 +116,7 @@ def test_report_action_snapshots(plan_with_some_actions, report_type_with_multip
     # Step 3: Test that the completely incomplete report doesn't
     # get the previous existing versions
     report_incomplete = Report.objects.get(name='Report 3')
-    report_incomplete = typing.cast(Report, report_incomplete)
+    report_incomplete = typing.cast('Report', report_incomplete)
 
     live_versions = report_incomplete.get_live_versions()
     for action_version in live_versions.actions:

@@ -8,7 +8,7 @@ from aplans.tests.tree import Tree, parse_tree_string
 
 from actions.api import OrganizationSerializer
 from orgs.models import Organization
-from orgs.tests.fixtures import *  # noqa: F403
+from orgs.tests.fixtures import *
 from orgs.tests.utils import assert_org_hierarchy, orgs_to_trees
 
 pytestmark = pytest.mark.django_db
@@ -58,7 +58,7 @@ def update_org_hierarchy(goal_string: str):
                 goal_value = getattr(goal_node, field)
                 goal_uuid_str = uuid_for_name[goal_value.name] if goal_value else None
                 assert node_data[field] != goal_uuid_str
-                node_data[field] = goal_uuid_str if goal_uuid_str else None
+                node_data[field] = goal_uuid_str or None
             serializer_input.append(node_data)
     serializer = OrganizationSerializer(many=True, data=serializer_input, instance=Organization.objects.all())
     assert serializer.is_valid()

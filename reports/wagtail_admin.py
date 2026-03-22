@@ -165,8 +165,7 @@ class ReportTypeFilter(admin.SimpleListFilter):
     def queryset(self, request, queryset):
         if self.value() is not None:
             return queryset.filter(type=self.value())
-        else:
-            return queryset
+        return queryset
 
 
 class ReportAdminMenuItem(ModelAdminMenuItem):

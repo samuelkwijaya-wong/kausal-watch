@@ -23,7 +23,7 @@ def register_lang_feature(features):
         'draftail', feature_name, draftail_features.InlineStyleFeature(control),
     )
 
-    def to_db(*args):
+    def to_db(*args) -> str:
         print('here')
         print(args)
         return 'unknown'

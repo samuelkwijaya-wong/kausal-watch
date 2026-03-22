@@ -44,7 +44,7 @@ def initialize_notification_templates(
         defaults = {
             'subject': notification_type.verbose_name,
         }
-        template, created = AutomaticNotificationTemplate.objects.get_or_create(
+        template, _created = AutomaticNotificationTemplate.objects.get_or_create(
             base=base_template, type=notification_type.identifier, defaults=defaults)
         ContentBlock.objects.get_or_create(
             template=template, identifier='intro', base=base_template,

@@ -7,12 +7,14 @@ from django.utils.translation import gettext_lazy as _
 from wagtail import blocks
 from wagtail.admin.panels import FieldPanel
 from wagtail.fields import StreamField
-from wagtail.models import Page, PageManager
+from wagtail.models import Page
 
 from actions.models.plan import Plan
 from pages.models import DefaultSlugForCopyingMixin
 
 if TYPE_CHECKING:
+    from wagtail.models import PageManager
+
     from kausal_common.models.types import FK
 
 

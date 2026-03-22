@@ -39,7 +39,7 @@ def migrate_data(apps, schema_editor):
             attribute_type_for_block[block.id] = at
         return at
 
-    def transform_blocks(blocks):
+    def transform_blocks(blocks) -> None:
         # Iterating over blocks and setting the streamfield to a new list doesn't allow us to preserve the block IDs,
         # so change `blocks` in place
         for i, block in enumerate(blocks):
@@ -64,9 +64,11 @@ def migrate_data(apps, schema_editor):
         for attribute_type in report.attribute_types.exclude(report_field__isnull=True):
             new_attribute_type = attribute_type_for_block[str(attribute_type.report_field)]
             object_ct = ContentType.objects.get(id=attribute_type.object_content_type_id)
-            assert object_ct.app_label == 'actions' and object_ct.model == 'action'
+            assert object_ct.app_label == 'actions'
+            assert object_ct.model == 'action'
             scope_ct = ContentType.objects.get(id=attribute_type.scope_content_type_id)
-            assert scope_ct.app_label == 'actions' and scope_ct.model == 'plan'
+            assert scope_ct.app_label == 'actions'
+            assert scope_ct.model == 'plan'
             # Only text attributes should be in Kausal's DB at this point, so too lazy to make it work for other formats
             assert attribute_type.format == 'text', "Sorry, this only migrates text attributes"
 

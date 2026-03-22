@@ -241,8 +241,10 @@ class ModelAdminEditTest(Protocol):
 def test_modeladmin_edit(client: django.test.client.Client) -> ModelAdminEditTest:
     def test_admin(
         admin_class: type[ModelAdmin], instance: Model, user: User,
-        post_data: dict = {}, can_inspect: bool = True, can_edit: bool = True,
-    ):
+        post_data: dict | None = None, can_inspect: bool = True, can_edit: bool = True,
+    ) -> None:
+        if post_data is None:
+            post_data = {}
         adm = admin_class()
         edit_name = adm.url_helper.get_action_url_name('edit')
         edit_url = reverse(edit_name, kwargs=dict(instance_pk=instance.pk))
@@ -338,7 +340,9 @@ def attribute_choice(attribute_choice_factory, action_attribute_type__ordered_ch
     )
 
 
-def n_of_a_kind(factory, count, context={}):
+def n_of_a_kind(factory, count, context=None):
+    if context is None:
+        context = {}
     return [
         factory(**context) for i in range(count)
     ]
@@ -375,7 +379,7 @@ def actions_having_attributes(
     ORGANIZATION_COUNT = 4
     CATEGORY_COUNT = 3
     implementation_phases = n_of_a_kind(action_implementation_phase_factory, IMPLEMENTATION_PHASE_COUNT, context={'plan': plan})
-    organizations = [o for o in Organization.objects.all()]
+    organizations = list(Organization.objects.all())
     organizations.extend(n_of_a_kind(organization_factory, ORGANIZATION_COUNT - Organization.objects.count()))
     plan_categories = [category_factory(type=category_type) for _ in range(CATEGORY_COUNT)]
 

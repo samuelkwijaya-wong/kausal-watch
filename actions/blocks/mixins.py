@@ -4,7 +4,6 @@ import contextlib
 import typing
 
 from django import forms
-from django.apps import apps
 from django.utils.translation import gettext as _
 
 if typing.TYPE_CHECKING:

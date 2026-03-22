@@ -418,7 +418,7 @@ class ModelWithRoleInlinePanel(InlinePanel):
     def __init__(self, filter_by_role: bool, role: ModelWithRole.Role | None = None, *args, **kwargs):
         """
         If `filter_by_role` is false, we show all instances in this panel, otherwise only the ones with the given
-        role. (`None` is a possible role for ActionResponsibleParty.)
+        role. (`None` is a possible role for ActionResponsibleParty.).
 
         For the latter to work, make sure that your form contains formsets `contact_persons_<role>` (or equivalent for
         other models) whose querysets are filtered accordingly.

@@ -8,4 +8,4 @@ if typing.TYPE_CHECKING:
     from indicators.models import Indicator
     from notifications.models import ManuallyScheduledNotificationTemplate
 
-    NotificationObject: typing.TypeAlias = Action | ActionTask | Indicator | UserFeedback | ManuallyScheduledNotificationTemplate
+    type NotificationObject = Action | ActionTask | Indicator | UserFeedback | ManuallyScheduledNotificationTemplate

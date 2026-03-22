@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import re
 from collections.abc import Mapping
+from typing import TYPE_CHECKING
 
 from django import http
 from django.conf import settings
@@ -23,10 +24,13 @@ from social_core.exceptions import SocialAuthBaseException
 
 from aplans.cache import WatchObjectCache
 from aplans.context_vars import ctx_request
-from aplans.types import WatchAdminRequest, WatchRequest
+from aplans.types import WatchAdminRequest
 from aplans.utils import get_hostname_redirect_response
 
 from actions.models import Plan
+
+if TYPE_CHECKING:
+    from aplans.types import WatchRequest
 
 
 class SocialAuthExceptionMiddleware(MiddlewareMixin):
@@ -100,7 +104,7 @@ class AdminMiddleware(MiddlewareMixin):
                 if any(request.path.startswith(ignore_path) for ignore_path in ADMIN_IGNORE_PATHS):
                     plan_to_invalidate = None
             if plan_to_invalidate:
-                transaction.on_commit(lambda: plan_to_invalidate.invalidate_cache())
+                transaction.on_commit(plan_to_invalidate.invalidate_cache)
 
 
 class RequestMiddleware:

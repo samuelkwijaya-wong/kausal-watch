@@ -1,8 +1,10 @@
 import itertools
+from typing import TYPE_CHECKING
 
 import pytest
 
-from actions.models.plan import Plan
+if TYPE_CHECKING:
+    from actions.models.plan import Plan
 
 pytestmark = pytest.mark.django_db
 OVERRIDE_COLOR = 'beige123'

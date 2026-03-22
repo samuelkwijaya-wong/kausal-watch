@@ -3,7 +3,7 @@ from __future__ import annotations
 import pathlib
 import typing
 from io import BytesIO
-from typing import Any, Iterable, Sequence
+from typing import Any
 
 from django.contrib.contenttypes.models import ContentType
 from django.utils import timezone, translation
@@ -15,21 +15,25 @@ import polars as pl
 import xlsxwriter
 from loguru import logger
 
-from actions.models.action import Action, ActionImplementationPhase, ActionStatus
+from actions.models.action import Action
 from orgs.models import Organization
-from reports.utils import ReportCellValue, get_field_unique_key, group_by_model
+from reports.utils import get_field_unique_key, group_by_model
 
 from .action_print_layout import write_action_summaries
 from .cursor_writer import Cell, CursorWriter
 from .excel_formats import ExcelFormats
 
 if typing.TYPE_CHECKING:
+    from collections.abc import Iterable, Sequence
+
     from django.db.models import Model, QuerySet
 
+    from actions.models.action import ActionImplementationPhase, ActionStatus
     from actions.models.category import Category, CategoryType
     from actions.models.plan import Plan
     from reports.models import Report
     from reports.types import SerializedActionVersion, SerializedVersion
+    from reports.utils import ReportCellValue
 
 
 def clean(value: ReportCellValue) -> ReportCellValue:
@@ -349,10 +353,8 @@ class ExcelReport:
             append_to_key(completed_at_label, completed_at, 'completed_at')
             self.formats.set_for_label(completed_at_label, self.formats.timestamp)
         if data and set(data.get(completed_at_label) or [None]) == {None}:
-            if completed_at_label in data:
-                del data[completed_at_label]
-            if completed_by_label in data:
-                del data[completed_by_label]
+            data.pop(completed_at_label, None)
+            data.pop(completed_by_label, None)
         return pl.DataFrame(data)
 
     def _get_aggregates(self, labels: Sequence[str], action_df: pl.DataFrame) -> pl.DataFrame | None:
@@ -367,7 +369,7 @@ class ExcelReport:
                     .group_by(labels)
                     .len()
                     .rename({'len': pgettext('Action model', 'Actions')}))
-        return action_df.pivot(  # noqa: PD010
+        return action_df.pivot(
             values=_("Identifier"),
             index=labels[0],
             on=labels[1],

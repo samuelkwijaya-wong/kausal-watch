@@ -11,13 +11,14 @@ from modelcluster.fields import ParentalKey
 from modeltrans.fields import TranslationField
 
 import networkx as nx
-from networkx import DiGraph
 
 from kausal_common.models.types import ModelManager
 
 from aplans.utils import OrderedModel
 
 if TYPE_CHECKING:
+    from networkx import DiGraph
+
     from kausal_common.models.types import FK
 
     from aplans.types import UserOrAnon

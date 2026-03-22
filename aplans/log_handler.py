@@ -1,19 +1,23 @@
 import logging
 import sys
+from collections.abc import Callable
 from datetime import UTC, datetime
-from logging import LogRecord, StreamHandler
+from logging import StreamHandler
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Callable, Dict, List, Optional, Sequence, Union
+from typing import TYPE_CHECKING, Any
 
 from logfmter.formatter import Logfmter
-from rich.console import ConsoleRenderable
 from rich.containers import Renderables
 from rich.logging import RichHandler
-from rich.text import Text, TextType
-from rich.traceback import Traceback
+from rich.text import Text
 
 if TYPE_CHECKING:
-    from rich.console import Console, RenderableType
+    from collections.abc import Sequence
+    from logging import LogRecord
+
+    from rich.console import Console, ConsoleRenderable, RenderableType
+    from rich.text import TextType
+    from rich.traceback import Traceback
 
 FormatTimeCallable = Callable[[datetime], Text]
 
@@ -38,8 +42,8 @@ class LogRender:
 
     def __call__(
         self,
-        console: "Console",
-        renderables: Sequence["ConsoleRenderable"],
+        console: Console,
+        renderables: Sequence[ConsoleRenderable],
         name: str,
         log_time: datetime | None = None,
         time_format: str | FormatTimeCallable | None = None,
@@ -126,8 +130,8 @@ class LogHandler(RichHandler):
         *,
         record: LogRecord,
         traceback: Traceback | None,
-        message_renderable: "ConsoleRenderable",
-    ) -> "ConsoleRenderable":
+        message_renderable: ConsoleRenderable,
+    ) -> ConsoleRenderable:
         """
         Render log for display.
 
@@ -218,9 +222,8 @@ class UwsgiReqLogHandler(StreamHandler):
 
     def emit(self, record: LogRecord) -> None:
         # Only emit health check logs only for 5 mins after starting
-        if ' path=/healthz' in record.msg:
-            if record.relativeCreated > 5 * 60 * 1000:
-                return
+        if ' path=/healthz' in record.msg and record.relativeCreated > 5 * 60 * 1000:
+            return
         # record.msg is already formatted according to logfmt, so we just print
         # it to stdout
         print(self.format(record))

@@ -31,7 +31,7 @@ from actions.tests.factories import (
 from indicators.tests.factories import ActionIndicatorFactory, IndicatorFactory, IndicatorLevelFactory
 from pages.tests.factories import CategoryPageFactory
 
-from .fixtures import *  # noqa: F403
+from .fixtures import *
 
 if TYPE_CHECKING:
     from actions.models.plan import Plan

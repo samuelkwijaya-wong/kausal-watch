@@ -1,5 +1,6 @@
 import itertools
 from datetime import timedelta
+from typing import TYPE_CHECKING
 
 from django.utils import timezone
 
@@ -9,7 +10,9 @@ from actions.models.features import PlanFeatures
 from actions.tests.factories import ActionContactFactory, ActionFactory, ActionResponsiblePartyFactory, PlanFactory
 from orgs.tests.factories import OrganizationClassFactory, OrganizationFactory
 from people.tests.factories import PersonFactory
-from users.models import User
+
+if TYPE_CHECKING:
+    from users.models import User
 
 pytestmark = pytest.mark.django_db
 

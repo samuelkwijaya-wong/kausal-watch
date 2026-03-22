@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING, Any
 
 from django.utils.translation import gettext_lazy as _
 from modeltrans.translator import get_i18n_field
-from wagtail.admin.panels import FieldPanel, Panel
+from wagtail.admin.panels import FieldPanel
 from wagtail.permission_policies.base import ModelPermissionPolicy
 from wagtail.snippets.models import register_snippet
 
@@ -20,6 +20,8 @@ from users.models import User
 from .models import SiteGeneralContent
 
 if TYPE_CHECKING:
+    from wagtail.admin.panels import Panel
+
     from actions.models.plan import Plan
 
 

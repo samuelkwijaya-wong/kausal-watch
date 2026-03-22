@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from django.conf import settings
-from django.forms import BaseFormSet, Select
+from django.forms import Select
 from django.urls import reverse
 from django.utils import formats
 from django.utils.text import format_lazy
@@ -39,6 +39,7 @@ if TYPE_CHECKING:
     from django.contrib.auth.models import AbstractBaseUser
     from django.db.models import Model
     from django.db.models.query import QuerySet
+    from django.forms import BaseFormSet
     from django.http.request import HttpRequest
     from wagtail.admin.forms.models import WagtailAdminModelForm
     from wagtail.admin.panels.base import Panel

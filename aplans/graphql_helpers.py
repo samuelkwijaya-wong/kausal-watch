@@ -10,7 +10,7 @@ from graphql.utilities.ast_to_dict import ast_to_dict
 from kausal_common.users import user_or_bust
 
 from admin_site.permissions import PlanRelatedPermissionPolicy
-from admin_site.wagtail import AplansModelAdmin, PlanRelatedModelAdminPermissionHelper
+from admin_site.wagtail import PlanRelatedModelAdminPermissionHelper
 
 from .graphql_types import AdminButton
 
@@ -22,6 +22,7 @@ if TYPE_CHECKING:
     from kausal_common.graphene import GQLInfo
 
     from admin_site.viewsets import WatchViewSet
+    from admin_site.wagtail import AplansModelAdmin
 
 
 def collect_fields(node, fragments):

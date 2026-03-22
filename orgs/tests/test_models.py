@@ -1,11 +1,15 @@
+from typing import TYPE_CHECKING
+
 import pytest
 
-from actions.models.plan import Plan
 from actions.tests.factories import PlanFactory
 from orgs.models import Organization
 from orgs.tests.factories import OrganizationFactory, OrganizationPlanAdminFactory
-from people.models import Person
-from users.models import User
+
+if TYPE_CHECKING:
+    from actions.models.plan import Plan
+    from people.models import Person
+    from users.models import User
 
 pytestmark = pytest.mark.django_db
 

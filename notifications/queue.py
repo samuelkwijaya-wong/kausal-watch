@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import typing
 from dataclasses import dataclass
-from typing import Dict, List
 
 if typing.TYPE_CHECKING:
     from .notifications import Notification, NotificationType

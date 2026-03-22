@@ -374,7 +374,7 @@ def test_action_bulk_serializer_initial_order(plan):
     serializer.save()
     actions_after_save = list(plan.actions.all())
     assert actions_after_save == actions
-    assert [a1.order == a2.order for a1, a2 in zip(actions_after_save, actions)]
+    assert [a1.order == a2.order for a1, a2 in zip(actions_after_save, actions, strict=False)]
 
 
 @pytest.mark.parametrize('order', permutations(range(3)))
@@ -397,7 +397,7 @@ def test_action_bulk_serializer_reorder(plan, order):
     serializer.save()
     actions_after_save = list(plan.actions.all())
     assert actions_after_save == actions
-    assert [a1.order == a2.order for a1, a2 in zip(actions_after_save, actions)]
+    assert [a1.order == a2.order for a1, a2 in zip(actions_after_save, actions, strict=False)]
 
 
 def test_bulk_action_post_creates_individual_log_entries(

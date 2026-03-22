@@ -23,7 +23,7 @@ def create_plan_dimensions(apps, schema_editor):
     # Create PlanDimension objects for each unique combination
     created_count = 0
     for plan_id, dimension_id in plan_dimension_combinations:
-        plan_dimension, created = PlanDimension.objects.get_or_create(
+        _plan_dimension, created = PlanDimension.objects.get_or_create(
             plan_id=plan_id,
             dimension_id=dimension_id
         )

@@ -4,7 +4,6 @@ from django.http import HttpResponseBadRequest, HttpResponseRedirect
 from django.urls import reverse
 from django.utils.http import (
     url_has_allowed_host_and_scheme,
-    urlsafe_base64_decode,
 )
 from django.views.decorators.http import require_http_methods
 

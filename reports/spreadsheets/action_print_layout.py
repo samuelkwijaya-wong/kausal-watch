@@ -1,7 +1,7 @@
 """
 A module for writing action data in  a spreadsheet in a format which aims to
 fit a visually pleasing  amount of data in one printed page  of the sheet. This
-module writes explicit horizontal page breaks with worksheet.set_h_pagebreaks()
+module writes explicit horizontal page breaks with worksheet.set_h_pagebreaks().
 
 The internal implementation  is considered a hack based on  heuristics and lots
 of trial-and-error. The implementation uses a lot of magic numbers which can be
@@ -30,7 +30,7 @@ from loguru import logger
 from .cursor_writer import Cell, CellBase, CursorWriter
 
 if typing.TYPE_CHECKING:
-    import polars
+    import polars as pl
 
     from actions.models import Plan
 
@@ -106,7 +106,7 @@ class ReportActionPrintLayoutCustomization(models.Model):
         return (instance.get() if instance else None), (fallback.get() if fallback else None)
 
 
-def _keys_with_total_length(action_df: polars.DataFrame) -> list[tuple[str, int]]:
+def _keys_with_total_length(action_df: pl.DataFrame) -> list[tuple[str, int]]:
     result = []
     d = action_df.to_dict()
     def reducer(x: int, y: str) -> int:
@@ -124,7 +124,7 @@ class NewPageMarker(CellBase):
         return True
 
 
-def write_action_summaries(excel_report: ExcelReport, action_df: polars.DataFrame) -> None:
+def write_action_summaries(excel_report: ExcelReport, action_df: pl.DataFrame) -> None:  # noqa: C901, PLR0915
     keys_with_total_length = _keys_with_total_length(action_df)
 
     plan: Plan = excel_report.report.type.plan
@@ -254,8 +254,7 @@ def write_action_summaries(excel_report: ExcelReport, action_df: polars.DataFram
                     split_point = int(len(last_element_value)/2)
                 if split_point < MIN_SPLIT_CHARS:
                     split_point = min(len(last_element_value)-1, MIN_SPLIT_CHARS)
-                if split_point < 0:
-                    split_point = 0
+                split_point = max(split_point, 0)
                 while split_point > 0 and not re.match(r'\s', last_element_value[split_point]):
                     split_point -= 1
                     if split_point < MIN_SPLIT_CHARS and re.match(r'\s', last_element_value[split_point]):
@@ -305,12 +304,12 @@ def write_action_summaries(excel_report: ExcelReport, action_df: polars.DataFram
     for sheet_row in sheet_rows:
         if all(not x.is_page_break() for x in sheet_row):
             # Safe to cast because page breaks and normal cells are mutually exhaustive
-            sheet_row = cast(tuple[Cell, ...], sheet_row)
+            sheet_row = cast('tuple[Cell, ...]', sheet_row)
             processed.append(sheet_row)
             row_index += 1
             continue
 
-        cell = cast(NewPageMarker, sheet_row[0])
+        cell = cast('NewPageMarker', sheet_row[0])
         action_identifier = cell.action_identifier
         action_name = cell.action_name
         assert isinstance(action_identifier, str)

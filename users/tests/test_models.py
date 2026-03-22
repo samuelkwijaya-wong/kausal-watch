@@ -1,17 +1,21 @@
+from typing import TYPE_CHECKING
+
 from django.urls import reverse
 
 import pytest
 
-from actions.models.action import Action
-from actions.models.plan import Plan
 from actions.tests.factories import ActionContactFactory, ActionResponsiblePartyFactory, PlanFactory
 from admin_site.models import Client
 from admin_site.tests.factories import ClientPlanFactory, EmailDomainsFactory
-from indicators.models import Indicator
 from indicators.tests.factories import IndicatorContactFactory, IndicatorLevelFactory
 from orgs.tests.factories import OrganizationFactory, OrganizationPlanAdminFactory
 from people.tests.factories import PersonFactory
-from users.models import User
+
+if TYPE_CHECKING:
+    from actions.models.action import Action
+    from actions.models.plan import Plan
+    from indicators.models import Indicator
+    from users.models import User
 
 pytestmark = pytest.mark.django_db
 

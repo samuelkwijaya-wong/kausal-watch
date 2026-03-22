@@ -69,7 +69,7 @@ class Command(SuperUserCommand):
         return organization
 
     def ensure_client(self, organization_name: str, auth_backend: str, email_domain: str) -> Client:
-        client, created = Client.objects.get_or_create(
+        client, _created = Client.objects.get_or_create(
             name=organization_name,
             defaults={'auth_backend': auth_backend},
         )
@@ -94,7 +94,7 @@ class Command(SuperUserCommand):
         return client
 
     def ensure_person(self, user: User, organization: Organization) -> Person:
-        person, created = Person.objects.get_or_create(
+        person, _created = Person.objects.get_or_create(
             email=user.email,
             user=user,
             defaults={

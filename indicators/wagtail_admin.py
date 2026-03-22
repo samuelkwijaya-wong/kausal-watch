@@ -707,7 +707,7 @@ class IndicatorAdmin(AplansModelAdmin[Indicator]):
 
     def get_edit_handler(self):
         request = ctx_request.get()
-        instance = cast(Indicator, ctx_instance.get())  # FIXME: Fails when creating a new indicator
+        instance = cast('Indicator', ctx_instance.get())  # FIXME: Fails when creating a new indicator
 
         tabs = [
             self._get_basic_information_tab(instance, request),
