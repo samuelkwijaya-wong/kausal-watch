@@ -47,7 +47,7 @@ def register_body_block(key: str, block: Block, for_page: str | None = None):
     block_list = body_block_registry[for_page]
 
     if key in [x[0] for x in block_list]:
-        raise Exception("Block %s already defined" % key)
+        raise Exception('Block %s already defined' % key)
 
     block_list.append((key, block))
 

@@ -83,6 +83,7 @@ ALL_PERMS = ('view', 'change', 'publish', 'delete', 'add')
 
 logger = logger.bind(name='actions.perms')
 
+
 def _get_perm_obj_q(model: type[Model], perms: Iterable[str]) -> Q:
     content_type = ContentType.objects.get_for_model(model)
     full_perms = ['%s_%s' % (x, model._meta.model_name) for x in perms]
@@ -94,7 +95,7 @@ def get_wagtail_contact_person_q() -> Q:
     q = Q(
         content_type__app_label='wagtaildocs',
         codename__in=('add_document', 'change_document', 'delete_document'),
-        )
+    )
     q |= Q(
         content_type__app_label='wagtailimages',
         codename__in=('add_image', 'change_image', 'delete_image'),
@@ -182,6 +183,7 @@ def _get_or_create_group(name: str, perms: Iterable[Permission] | None = None, f
         group.permissions.add(*new_perms)
 
     return group
+
 
 def get_or_create_action_contact_person_group(force_perm_sync: bool = False) -> Group:
     perms = get_action_contact_person_perms()

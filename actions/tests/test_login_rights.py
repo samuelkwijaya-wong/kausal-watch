@@ -40,14 +40,14 @@ def test_data(organization_hierarchy):
         'general_plan_admins': {2},
         'action_contact_persons': {3},
         'indicator_contact_persons': {4},
-        'responsible_orgs': {get_org_pk("3.1")},
-        'primary_orgs': {get_org_pk("1")},
-        'indicator_orgs': {get_org_pk("2.2.1")},
+        'responsible_orgs': {get_org_pk('3.1')},
+        'primary_orgs': {get_org_pk('1')},
+        'indicator_orgs': {get_org_pk('2.2.1')},
         'organization_plan_admins': {
             # (org, person)
-            (get_org_pk("2.1"), 3),
-            (get_org_pk("2.2.1"), 4),
-            (get_org_pk("3"), 5),
+            (get_org_pk('2.1'), 3),
+            (get_org_pk('2.2.1'), 4),
+            (get_org_pk('3'), 5),
         },
         'all_orgs': all_orgs,
     }
@@ -55,18 +55,19 @@ def test_data(organization_hierarchy):
 
 @pytest.fixture
 def create_models(  # noqa: C901
-        superuser,
-        plan,
-        user_factory,
-        person_factory,
-        action_contact_factory,
-        indicator_contact_factory,
-        action_responsible_party_factory,
-        action_factory,
-        indicator_factory,
-        organization_plan_admin_factory,
+    superuser,
+    plan,
+    user_factory,
+    person_factory,
+    action_contact_factory,
+    indicator_contact_factory,
+    action_responsible_party_factory,
+    action_factory,
+    indicator_factory,
+    organization_plan_admin_factory,
 ):
     """Return the same test data but ensure there are models matching it."""
+
     def _create_models(test_data) -> dict[str, Any]:
         for pk in test_data['superusers']:
             person_factory(user=superuser, pk=pk)
@@ -95,6 +96,7 @@ def create_models(  # noqa: C901
                 person_id=person_pk,
             )
         return test_data
+
     return _create_models
 
 
@@ -187,80 +189,90 @@ def assert_user_access_matches_result(result: set[int]):
 
 
 def test_superusers_match_user_can_access_admin(test_data, create_models):
-    test_data_with_models = create_models(dict(
-        superusers=test_data['superusers'],
-        general_plan_admins=set(),
-        action_contact_persons=set(),
-        indicator_contact_persons=set(),
-        responsible_orgs=set(),
-        primary_orgs=set(),
-        indicator_orgs=set(),
-        organization_plan_admins=set(),
-        all_orgs=test_data['all_orgs'],
-    ))
+    test_data_with_models = create_models(
+        dict(
+            superusers=test_data['superusers'],
+            general_plan_admins=set(),
+            action_contact_persons=set(),
+            indicator_contact_persons=set(),
+            responsible_orgs=set(),
+            primary_orgs=set(),
+            indicator_orgs=set(),
+            organization_plan_admins=set(),
+            all_orgs=test_data['all_orgs'],
+        )
+    )
     result = calculate_people_with_login_rights(**test_data_with_models)
     assert_user_access_matches_result(result)
 
 
 def test_general_plan_admins_match_user_can_access_admin(test_data, create_models):
-    test_data_with_models = create_models(dict(
-        superusers=test_data['superusers'],
-        general_plan_admins=test_data['general_plan_admins'],
-        action_contact_persons=set(),
-        indicator_contact_persons=set(),
-        responsible_orgs=set(),
-        primary_orgs=set(),
-        indicator_orgs=set(),
-        organization_plan_admins=set(),
-        all_orgs=test_data['all_orgs'],
-    ))
+    test_data_with_models = create_models(
+        dict(
+            superusers=test_data['superusers'],
+            general_plan_admins=test_data['general_plan_admins'],
+            action_contact_persons=set(),
+            indicator_contact_persons=set(),
+            responsible_orgs=set(),
+            primary_orgs=set(),
+            indicator_orgs=set(),
+            organization_plan_admins=set(),
+            all_orgs=test_data['all_orgs'],
+        )
+    )
     result = calculate_people_with_login_rights(**test_data_with_models)
     assert_user_access_matches_result(result)
 
 
 def test_action_contact_persons_match_user_can_access_admin(test_data, create_models):
-    test_data_with_models = create_models(dict(
-        superusers=test_data['superusers'],
-        general_plan_admins=set(),
-        action_contact_persons=test_data['action_contact_persons'],
-        indicator_contact_persons=set(),
-        responsible_orgs=set(),
-        primary_orgs=set(),
-        indicator_orgs=set(),
-        organization_plan_admins=set(),
-        all_orgs=test_data['all_orgs'],
-    ))
+    test_data_with_models = create_models(
+        dict(
+            superusers=test_data['superusers'],
+            general_plan_admins=set(),
+            action_contact_persons=test_data['action_contact_persons'],
+            indicator_contact_persons=set(),
+            responsible_orgs=set(),
+            primary_orgs=set(),
+            indicator_orgs=set(),
+            organization_plan_admins=set(),
+            all_orgs=test_data['all_orgs'],
+        )
+    )
     result = calculate_people_with_login_rights(**test_data_with_models)
     assert_user_access_matches_result(result)
 
 
 def test_indicator_contact_persons_match_user_can_access_admin(test_data, create_models):
-    test_data_with_models = create_models(dict(
-        superusers=test_data['superusers'],
-        general_plan_admins=set(),
-        action_contact_persons=set(),
-        indicator_contact_persons=test_data['indicator_contact_persons'],
-        responsible_orgs=set(),
-        primary_orgs=set(),
-        indicator_orgs=set(),
-        organization_plan_admins=set(),
-        all_orgs=test_data['all_orgs'],
-    ))
+    test_data_with_models = create_models(
+        dict(
+            superusers=test_data['superusers'],
+            general_plan_admins=set(),
+            action_contact_persons=set(),
+            indicator_contact_persons=test_data['indicator_contact_persons'],
+            responsible_orgs=set(),
+            primary_orgs=set(),
+            indicator_orgs=set(),
+            organization_plan_admins=set(),
+            all_orgs=test_data['all_orgs'],
+        )
+    )
     result = calculate_people_with_login_rights(**test_data_with_models)
     assert_user_access_matches_result(result)
 
 
 def test_organization_plan_admins_match_user_can_access_admin(test_data, create_models):
-    test_data_with_models = create_models(dict(
-        superusers=test_data['superusers'],
-        general_plan_admins=set(),
-        action_contact_persons=set(),
-        indicator_contact_persons=set(),
-        responsible_orgs=test_data['responsible_orgs'],
-        primary_orgs=test_data['primary_orgs'],
-        indicator_orgs=test_data['indicator_orgs'],
-        organization_plan_admins=test_data['organization_plan_admins'],
-        all_orgs=test_data['all_orgs'],
-    ))
+    test_data_with_models = create_models(
+        dict(
+            superusers=test_data['superusers'],
+            general_plan_admins=set(),
+            action_contact_persons=set(),
+            indicator_contact_persons=set(),
+            responsible_orgs=test_data['responsible_orgs'],
+            primary_orgs=test_data['primary_orgs'],
+            indicator_orgs=test_data['indicator_orgs'],
+            organization_plan_admins=test_data['organization_plan_admins'],
+            all_orgs=test_data['all_orgs'],
+        )
+    )
     result = calculate_people_with_login_rights(**test_data_with_models)
     assert_user_access_matches_result(result)

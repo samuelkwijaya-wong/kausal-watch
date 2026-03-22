@@ -17,6 +17,7 @@ from .models import User
 
 logger = logger.bind(name='users.perms')
 
+
 @transaction.atomic
 def create_permissions(user, **kwargs):
     assert isinstance(user, User)

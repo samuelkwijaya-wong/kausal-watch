@@ -69,6 +69,7 @@ if TYPE_CHECKING:
     from actions.models import Plan
     from users.models import User
 
+
 def mp_node_get_ancestors[QS: MP_NodeQuerySet[Any]](qs: QS, include_self: bool = False) -> QS:
     # https://github.com/django-treebeard/django-treebeard/issues/98
     paths: set[str] = set()
@@ -76,8 +77,7 @@ def mp_node_get_ancestors[QS: MP_NodeQuerySet[Any]](qs: QS, include_self: bool =
         length = len(node.path)
         if include_self:
             length += node.steplen
-        paths.update(node.path[0:pos]
-                     for pos in range(node.steplen, length, node.steplen))
+        paths.update(node.path[0:pos] for pos in range(node.steplen, length, node.steplen))
     return cast('QS', qs.model.objects.filter(path__in=paths))
 
 
@@ -89,6 +89,7 @@ class SiteGeneralContentNode(DjangoNode[SiteGeneralContent]):
 
 def get_admin_query():
     from actions.graphql_admin_schema import AdminQuery
+
     return AdminQuery
 
 
@@ -113,19 +114,24 @@ class Query(
         required=False,
     )
     person = graphene.Field(people_schema.PersonNode, id=graphene.ID(required=True), plan=graphene.ID(required=True))
-    me = graphene.Field(UserNode, required=False, description="The current user")
+    me = graphene.Field(UserNode, required=False, description='The current user')
 
-    @sb.field(description="Admin query namespace")
+    @sb.field(description='Admin query namespace')
     @staticmethod
     def admin(root, info: gql.Info) -> Annotated[AdminQuery, sb.lazy('actions.graphql_admin_schema')]:
         user = user_or_none(info.context.user)
         if user is None or not user.is_superuser:
-            raise PermissionError("Admin namespace requires authenticated access")
+            raise PermissionError('Admin namespace requires authenticated access')
         return get_admin_query()()
 
     def resolve_plan_organizations(
-        self, info: GQLInfo, plan: str | None, with_ancestors: bool, for_responsible_parties: bool, for_contact_persons: bool,
-        include_related_plans: bool
+        self,
+        info: GQLInfo,
+        plan: str | None,
+        with_ancestors: bool,
+        for_responsible_parties: bool,
+        for_contact_persons: bool,
+        include_related_plans: bool,
     ) -> Iterable[Organization]:
         plan_obj: Plan | None = get_plan_from_context(info, plan)
         if plan_obj is None or not plan_obj.is_visible_for_user(info.context.user):
@@ -141,9 +147,7 @@ class Query(
         workflow_state = getattr(info.context.cache, 'query_workflow_state', None)
         some_plan_has_a_workflow = any(p.features.moderation_workflow is not None for p in plans)
         consider_responsible_parties_within_action_revisions = (
-            workflow_state is not None and
-            workflow_state != WorkflowStateEnum.PUBLISHED and
-            some_plan_has_a_workflow
+            workflow_state is not None and workflow_state != WorkflowStateEnum.PUBLISHED and some_plan_has_a_workflow
         )
         cache = None
         if consider_responsible_parties_within_action_revisions:
@@ -165,7 +169,7 @@ class Query(
             if for_contact_persons:
                 query |= Q(people__contact_for_actions__in=visible_actions)
             if not query and not info.context.user.is_authenticated:
-                raise GraphQLError("Unfiltered organization list only available when authenticated")
+                raise GraphQLError('Unfiltered organization list only available when authenticated')
             qs = qs.filter(query)
         qs = qs.distinct()
 
@@ -177,16 +181,24 @@ class Query(
         selections = get_fields(info)
         if 'actionCount' in selections and not consider_responsible_parties_within_action_revisions:
             annotate_filter = Q(responsible_actions__action__in=visible_actions)
-            qs = qs.annotate(action_count=Count(
-                'responsible_actions__action', distinct=True, filter=annotate_filter,
-            ))
+            qs = qs.annotate(
+                action_count=Count(
+                    'responsible_actions__action',
+                    distinct=True,
+                    filter=annotate_filter,
+                )
+            )
 
         if 'contactPersonCount' in selections and plan_obj.features.public_contact_persons:
             # FIXME: Check visibility of related plans, too
             annotate_filter = Q(people__contact_for_actions__in=visible_actions)
-            qs = qs.annotate(contact_person_count=Count(
-                'people', distinct=True, filter=annotate_filter,
-            ))
+            qs = qs.annotate(
+                contact_person_count=Count(
+                    'people',
+                    distinct=True,
+                    filter=annotate_filter,
+                )
+            )
 
         qs = gql_optimizer.query(qs, info)
 
@@ -243,10 +255,11 @@ class WatchTestModeMutations:
 @sb.directive(
     locations=[DirectiveLocation.MUTATION],
     name='auth',
-    description="Provide authentication data",
+    description='Provide authentication data',
 )
 def auth_directive(info: gql.Info, uuid: str, token: str):  # pyright: ignore[reportUnusedParameter]
     return
+
 
 graphene_enum_type = graphene.types.schema.TypeMap.create_enum(WorkflowStateGrapheneEnum)
 
@@ -256,17 +269,16 @@ class WorkflowStateDirective(GraphQLDirective):
         super().__init__(
             name='workflow',
             description=(
-                "Let the client request retrieving approved/unapproved "
-                "drafts or published versions of plan data (currently individual actions). "
-                "The actual response is dependent on user access rights, for example "
-                "a published version is always returned to unauthenticated users "
-                "or when no draft exists."
+                'Let the client request retrieving approved/unapproved '
+                'drafts or published versions of plan data (currently individual actions). '
+                'The actual response is dependent on user access rights, for example '
+                'a published version is always returned to unauthenticated users '
+                'or when no draft exists.'
             ),
             args={
-                'state':
-                GraphQLArgument(
-                    type_= graphene_enum_type,
-                    description="State of content to show",
+                'state': GraphQLArgument(
+                    type_=graphene_enum_type,
+                    description='State of content to show',
                     default_value=WorkflowStateEnum.PUBLISHED,
                 ),
             },
@@ -284,7 +296,7 @@ class InstanceContextInput:
 @sb.directive(
     locations=[DirectiveLocation.QUERY, DirectiveLocation.MUTATION],
     name='context',
-    description="Paths instance context, including the selected locale",
+    description='Paths instance context, including the selected locale',
 )
 def context_directive(info: gql.Info, input: InstanceContextInput):  # pyright: ignore[reportUnusedParameter]
     return
@@ -294,11 +306,11 @@ def context_directive(info: gql.Info, input: InstanceContextInput):  # pyright: 
     locations=[DirectiveLocation.QUERY],
     name='workflow',
     description=(
-        "Let the client request retrieving approved/unapproved "
-        "drafts or published versions of plan data (currently individual actions). "
-        "The actual response is dependent on user access rights, for example "
-        "a published version is always returned to unauthenticated users "
-        "or when no draft exists."
+        'Let the client request retrieving approved/unapproved '
+        'drafts or published versions of plan data (currently individual actions). '
+        'The actual response is dependent on user access rights, for example '
+        'a published version is always returned to unauthenticated users '
+        'or when no draft exists.'
     ),
 )
 def workflow_directive(
@@ -306,9 +318,9 @@ def workflow_directive(
     state: Annotated[  # pyright: ignore[reportUnusedParameter]
         WorkflowStateEnum,
         sb.argument(
-            description="State of content to show",
-        )
-    ] = WorkflowStateEnum.PUBLISHED
+            description='State of content to show',
+        ),
+    ] = WorkflowStateEnum.PUBLISHED,
 ):
     return
 
@@ -344,9 +356,9 @@ def _validate_type_registry(types: set[type]) -> None:
         elif has_object_definition(type_):
             name = type_.__strawberry_definition__.name
         else:
-            raise TypeError(f"Type {type_} is not a valid Strawberry nor a Graphene type")
+            raise TypeError(f'Type {type_} is not a valid Strawberry nor a Graphene type')
         if name in registered_names:
-            raise ValueError(f"Type {type_} has name {name} which is already registered")
+            raise ValueError(f'Type {type_} has name {name} which is already registered')
         registered_names.add(name)
 
 

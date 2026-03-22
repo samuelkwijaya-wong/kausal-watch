@@ -15,10 +15,16 @@ if TYPE_CHECKING:
 
 class IndicatorGoalDataPoint(DataPointBase):
     dataset: FK[Dataset] = models.ForeignKey(
-        Dataset, related_name='goal_data_points', on_delete=models.CASCADE, verbose_name=_('dataset'),
+        Dataset,
+        related_name='goal_data_points',
+        on_delete=models.CASCADE,
+        verbose_name=_('dataset'),
     )
     metric: FK[DatasetMetric] = models.ForeignKey(
-        DatasetMetric, related_name='+', on_delete=models.PROTECT, verbose_name=_('metric'),
+        DatasetMetric,
+        related_name='+',
+        on_delete=models.PROTECT,
+        verbose_name=_('metric'),
     )
     dimension_categories: M2M[DimensionCategory, IndicatorGoalDimensionCategory] = models.ManyToManyField(
         DimensionCategory,
@@ -37,6 +43,7 @@ class IndicatorGoalDataPoint(DataPointBase):
     @classmethod
     def permission_policy(cls) -> IndicatorGoalDataPointPermissionPolicy:
         from indicators.permission_policy import IndicatorGoalDataPointPermissionPolicy
+
         return IndicatorGoalDataPointPermissionPolicy()
 
     def __str__(self):
@@ -45,10 +52,14 @@ class IndicatorGoalDataPoint(DataPointBase):
 
 class IndicatorGoalDimensionCategory(models.Model):
     goal_data_point: FK[IndicatorGoalDataPoint] = models.ForeignKey(
-        IndicatorGoalDataPoint, on_delete=models.CASCADE, related_name='dimension_category_links',
+        IndicatorGoalDataPoint,
+        on_delete=models.CASCADE,
+        related_name='dimension_category_links',
     )
     dimension_category: FK[DimensionCategory] = models.ForeignKey(
-        DimensionCategory, on_delete=models.PROTECT, related_name='+',
+        DimensionCategory,
+        on_delete=models.PROTECT,
+        related_name='+',
     )
     goal_data_point_id: int
     dimension_category_id: int

@@ -63,7 +63,7 @@ def determine_image_dim(
                 raise ValueError()  # noqa: TRY301
             if x > 4000:
                 raise ValueError()  # noqa: TRY301
-        except (ValueError, TypeError):
+        except ValueError, TypeError:
             raise ValueError('invalid %s dimension: %s' % (name, x)) from None
 
     if width is not None:

@@ -8,6 +8,7 @@ gracefully across different contexts:
 - Report snapshots via django-reversion
 - GraphQL API queries
 """
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
@@ -52,6 +53,7 @@ pytestmark = pytest.mark.django_db
 # Helper Functions
 # =============================================================================
 
+
 def get_action_content_type():
     """Get the ContentType for Action model."""
     return ContentType.objects.get_for_model(Action)
@@ -78,6 +80,7 @@ def count_choice_with_text_attributes_for_action(action: Action) -> int:
 #   - action_attribute_type__optional_choice (AttributeType, format=OPTIONAL_CHOICE_WITH_TEXT)
 #   - attribute_type_choice_option (AttributeTypeChoiceOption for ordered_choice)
 #   - attribute_type_choice_option__optional (AttributeTypeChoiceOption for optional_choice)
+
 
 @pytest.fixture
 def action_with_choice_attribute(
@@ -113,6 +116,7 @@ def action_with_choice_with_text_attribute(
 # =============================================================================
 # 1. Basic Deletion Cascade Behavior
 # =============================================================================
+
 
 class TestBasicDeletionCascade:
     """Tests for basic CASCADE behavior when deleting AttributeTypeChoiceOption."""
@@ -224,6 +228,7 @@ class TestBasicDeletionCascade:
 # 2. Draft Attributes (Moderation Workflow)
 # =============================================================================
 
+
 class TestDraftAttributesDeletion:
     """Tests for handling deleted choice options in draft attributes."""
 
@@ -288,9 +293,7 @@ class TestDraftAttributesDeletion:
         draft_attributes = DraftAttributes.from_revision_content(serialized_data)
 
         # Get the value - choice should be None, text should be preserved
-        attr_type_wrapper: AttributeTypeWrapper = (
-            AttributeTypeWrapper.from_model_instance(action_attribute_type__optional_choice)
-        )
+        attr_type_wrapper: AttributeTypeWrapper = AttributeTypeWrapper.from_model_instance(action_attribute_type__optional_choice)
         value = draft_attributes.get_value_for_attribute_type(attr_type_wrapper)
 
         assert isinstance(value, OptionalChoiceWithTextAttributeValue)
@@ -535,6 +538,7 @@ class TestDeserializationWarnings:
 # 3. Reports with Deleted Choice Options
 # =============================================================================
 
+
 class TestReportsDeletion:
     """Tests for handling deleted choice options in report snapshots."""
 
@@ -689,6 +693,7 @@ class TestReportsDeletion:
 # 4. GraphQL API
 # =============================================================================
 
+
 class TestGraphQLDeletion:
     """Tests for GraphQL API behavior after choice option deletion."""
 
@@ -794,8 +799,7 @@ class TestGraphQLDeletion:
 
         # Find our attribute type
         attr_type_data = next(
-            at for at in data['plan']['actionAttributeTypes']
-            if at['name'] == action_attribute_type__ordered_choice.name
+            at for at in data['plan']['actionAttributeTypes'] if at['name'] == action_attribute_type__ordered_choice.name
         )
 
         assert len(attr_type_data['choiceOptions']) == 1
@@ -805,6 +809,7 @@ class TestGraphQLDeletion:
 # =============================================================================
 # 5. Edge Cases
 # =============================================================================
+
 
 class TestEdgeCases:
     """Tests for edge cases in choice option deletion."""
@@ -935,6 +940,7 @@ class TestEdgeCases:
 # =============================================================================
 # 6. Category Attributes
 # =============================================================================
+
 
 class TestCategoryAttributeDeletion:
     """Tests for choice option deletion affecting category attributes."""

@@ -6,6 +6,7 @@ This module tests the is_active field on the Plan model and its effects on:
 - Permission checking
 - Admin filtering
 """
+
 from __future__ import annotations
 
 from datetime import timedelta
@@ -165,9 +166,7 @@ class TestPlanPermissionPolicy:
         assert active_plan in visible_plans
         assert inactive_plan not in visible_plans
 
-    def test_filter_by_perm_excludes_inactive_for_regular_user(
-        self, plan_factory, user_factory, person_factory
-    ):
+    def test_filter_by_perm_excludes_inactive_for_regular_user(self, plan_factory, user_factory, person_factory):
         """Test that visible_for_user() excludes inactive plans for non-superusers."""
         active_plan = plan_factory(is_active=True, published_at=timezone.now())
         inactive_plan = plan_factory(is_active=False, published_at=timezone.now())
@@ -185,9 +184,7 @@ class TestPlanPermissionPolicy:
         # Regular user should not see inactive plan
         assert inactive_plan not in visible_plans
 
-    def test_filter_by_perm_includes_inactive_for_superuser(
-        self, plan_factory, user_factory
-    ):
+    def test_filter_by_perm_includes_inactive_for_superuser(self, plan_factory, user_factory):
         """Test that visible_for_user() includes inactive plans for superusers."""
         active_plan = plan_factory(is_active=True, published_at=timezone.now())
         inactive_plan = plan_factory(is_active=False, published_at=timezone.now())

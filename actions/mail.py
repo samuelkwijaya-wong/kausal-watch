@@ -32,6 +32,7 @@ class BaseActionModeratorApprovalTaskStateEmailNotifier(EmailNotificationMixin, 
         class PermissionHelper:
             def user_can_edit_obj(self, user, instance):
                 return True
+
         url_helper = ActionAdmin().url_helper
         permission_helper = PermissionHelper
 
@@ -71,12 +72,13 @@ class BaseActionModeratorApprovalTaskStateEmailNotifier(EmailNotificationMixin, 
         plan = context.get('plan', None)
         email_sender = EmailSender(plan=plan)
         subject = render_to_string(
-            template_set["subject"], context,
+            template_set['subject'],
+            context,
         ).strip()
 
         for recipient in recipients:
             # update context with this recipient
-            context["user"] = recipient
+            context['user'] = recipient
 
             # Translate text to the recipient language settings
             with override(
@@ -84,10 +86,12 @@ class BaseActionModeratorApprovalTaskStateEmailNotifier(EmailNotificationMixin, 
             ):
                 # Get email subject and content
                 email_subject = render_to_string(
-                    template_set["subject"], context,
+                    template_set['subject'],
+                    context,
                 ).strip()
                 email_content = render_to_string(
-                    template_set["text"], context,
+                    template_set['text'],
+                    context,
                 ).strip()
 
             message = EmailMessage(
@@ -100,7 +104,7 @@ class BaseActionModeratorApprovalTaskStateEmailNotifier(EmailNotificationMixin, 
             num_sent = email_sender.send_all()
         except Exception:
             logger.exception(
-                f"Failed to send notification emails with subject [{subject}].",
+                f'Failed to send notification emails with subject [{subject}].',
             )
             num_sent = 0
         return num_sent == len(recipients)
@@ -123,7 +127,6 @@ class WorkflowStateApprovalWithCommentEmailNotifier(WorkflowStateApprovalEmailNo
 
     notification = 'approved'
 
-
     def __call__(self, instance, user, **kwargs):
 
         if not self.can_handle(instance, **kwargs):
@@ -135,8 +138,8 @@ class WorkflowStateApprovalWithCommentEmailNotifier(WorkflowStateApprovalEmailNo
             return True
 
         context = self.get_context(instance, **kwargs)
-        comment = context.get("comment", None)
-        self.notification = "approved_comment" if comment else "approved"
+        comment = context.get('comment', None)
+        self.notification = 'approved_comment' if comment else 'approved'
         template_set = self.get_template_set(instance, **kwargs)
 
         return self.send_notifications(template_set, context, recipients, **kwargs)
@@ -146,7 +149,7 @@ class WorkflowStateApprovalWithCommentEmailNotifier(WorkflowStateApprovalEmailNo
         context = super().get_context(workflow_state, **kwargs)
         task_state = workflow_state.current_task_state.specific
         if task_state:
-            context["comment"] = task_state.get_comment()
+            context['comment'] = task_state.get_comment()
         return context
 
     def get_valid_recipients(self, instance, **kwargs):

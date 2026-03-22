@@ -34,7 +34,7 @@ class HostnameFormField(forms.CharField):
 
 class HostnameField(models.CharField):
     default_validators = [hostname_validator]
-    description = _("Fully qualified hostname (FQDN)")
+    description = _('Fully qualified hostname (FQDN)')
 
     def __init__(self, *args, **kwargs):
         # max_length=254 to be compliant with RFCs 3696 and 5321

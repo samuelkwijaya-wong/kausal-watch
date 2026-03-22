@@ -264,7 +264,7 @@ class PlanAdmin(AplansModelAdmin[Plan]):
 
     COLOR_HELP_TEXT = _(
         "Only set if explicitly required by the customer. Use a color key from the UI theme's graphColors, for example "
-        "red070 or grey030.",
+        'red070 or grey030.',
     )
 
     def copy_view(self, request, instance_pk):
@@ -648,7 +648,7 @@ class InactiveWarningColumn(Column):
     def get_cell_context_data(self, instance: Plan, parent_context):
         context = super().get_cell_context_data(instance, parent_context)
         context['show_warning'] = not instance.is_active
-        context['tooltip'] = str(_("This plan is inactive and only visible to superusers."))
+        context['tooltip'] = str(_('This plan is inactive and only visible to superusers.'))
         return context
 
 
@@ -754,11 +754,14 @@ class IsActiveFilter(filters.ChoiceFilter):
     """
 
     def __init__(self, *args, **kwargs):
-        kwargs.setdefault('choices', [
-            ('active', _('Active')),
-            ('inactive', _('Inactive')),
-            ('all', _('All')),
-        ])
+        kwargs.setdefault(
+            'choices',
+            [
+                ('active', _('Active')),
+                ('inactive', _('Inactive')),
+                ('all', _('All')),
+            ],
+        )
         kwargs.setdefault('label', _('Active status'))
         kwargs.setdefault('empty_label', None)
         super().__init__(*args, **kwargs)
@@ -812,28 +815,26 @@ class PlanPublishView(
 
     def get_page_title(self):
         if self.publish:
-            return _("Publish plan")
-        return _("Unpublish plan")
+            return _('Publish plan')
+        return _('Unpublish plan')
 
     def get_meta_title(self):
         if self.publish:
-            msg = _("Confirm publishing %(plan)s")
+            msg = _('Confirm publishing %(plan)s')
         else:
-            msg = _("Confirm unpublishing %(plan)s")
+            msg = _('Confirm unpublishing %(plan)s')
         return msg % {'plan': self.object}
 
     def confirmation_message(self):
         if self.publish:
-            return _("Do you want to publish the plan '%(plan)s'? This will make it publicly accessible.") % {
-                'plan': self.object
-            }
+            return _("Do you want to publish the plan '%(plan)s'? This will make it publicly accessible.") % {'plan': self.object}
         return _("Do you want to unpublish the plan '%(plan)s'? This will make it inaccessible to the public.") % {
             'plan': self.object
         }
 
     def do_publish(self):
         if self.object.is_live():
-            raise ValueError(_("The plan is already published."))
+            raise ValueError(_('The plan is already published.'))
         self.object.published_at = timezone.now()
         self.object.save(update_fields=['published_at'])
         self.object.invalidate_cache()
@@ -845,7 +846,7 @@ class PlanPublishView(
 
     def do_unpublish(self):
         if not self.object.is_live():
-            raise ValueError(_("The plan is already unpublished."))
+            raise ValueError(_('The plan is already unpublished.'))
         self.object.published_at = None
         self.object.save(update_fields=['published_at'])
         self.object.invalidate_cache()
@@ -877,10 +878,8 @@ class PlanPublishView(
         context['scheduled_info'] = self.object.publication_status_description if self.is_scheduled() else None
         preview_url = self.get_preview_url()
         context['preview_url'] = preview_url
-        context["preview_link_open"] = format_html(
-            '<strong><a href="{}" target="_blank">', preview_url
-        )
-        context["preview_link_close"] = mark_safe("</a></strong>")
+        context['preview_link_open'] = format_html('<strong><a href="{}" target="_blank">', preview_url)
+        context['preview_link_close'] = mark_safe('</a></strong>')
         return context
 
     def post(self, request, *args, **kwargs):

@@ -70,34 +70,34 @@ class APITokenMiddleware:
                     val = variable_vals.get(arg.value.name.value)
                 else:
                     if not isinstance(arg.value, StringValueNode):
-                        raise GraphQLError("Invalid type: %s" % str(type(arg.value)), [arg])
+                        raise GraphQLError('Invalid type: %s' % str(type(arg.value)), [arg])
                     val = arg.value.value
                 try:
                     user = User.objects.get(uuid=UUID(val))
                 except User.DoesNotExist as e:
-                    raise GraphQLAuthFailedError("User not found", [arg]) from e
+                    raise GraphQLAuthFailedError('User not found', [arg]) from e
                 except (ValidationError, ValueError, TypeError) as e:
-                    raise GraphQLAuthFailedError("Invalid UUID", [arg]) from e
+                    raise GraphQLAuthFailedError('Invalid UUID', [arg]) from e
 
             elif arg.name.value == 'token':
                 if isinstance(arg.value, VariableNode):
                     val = variable_vals.get(arg.value.name.value)
                 else:
                     if not isinstance(arg.value, StringValueNode):
-                        raise GraphQLError("Invalid type: %s" % str(type(arg.value)), [arg])
+                        raise GraphQLError('Invalid type: %s' % str(type(arg.value)), [arg])
                     val = arg.value.value
                 token = val
 
         if not token:
-            raise GraphQLAuthFailedError("Token required", [directive])
+            raise GraphQLAuthFailedError('Token required', [directive])
         if not user:
-            raise GraphQLAuthFailedError("User required", [directive])
+            raise GraphQLAuthFailedError('User required', [directive])
 
         try:
             if user.auth_token.key != token:
-                raise GraphQLAuthFailedError("Invalid token", [directive])
+                raise GraphQLAuthFailedError('Invalid token', [directive])
         except User.auth_token.RelatedObjectDoesNotExist:  # type: ignore
-            raise GraphQLAuthFailedError("Invalid token", [directive]) from None
+            raise GraphQLAuthFailedError('Invalid token', [directive]) from None
 
         info.context.user = user
 
@@ -121,7 +121,7 @@ class WorkflowStateMiddleware:
         for arg in directive.arguments:
             if arg.name.value == 'state':
                 if isinstance(arg.value, VariableNode):
-                    str_val =  variable_vals.get(arg.value.name.value)
+                    str_val = variable_vals.get(arg.value.name.value)
                 else:
                     str_val = arg.value.value
                 return WorkflowStateEnum(str_val)
@@ -147,7 +147,7 @@ class LocaleMiddleware:
                 else:
                     lang = arg.value.value
                 if lang.lower() not in SUPPORTED_LANGUAGES:
-                    raise GraphQLError("unsupported language: %s" % lang)
+                    raise GraphQLError('unsupported language: %s' % lang)
                 info.context.graphql_query_language = lang
                 return lang
         return None
@@ -174,6 +174,7 @@ class LocaleMiddleware:
 IDTokenAuthentication: type[TokenAuthentication] | None = None
 if importlib.util.find_spec('kausal_watch_extensions') is not None:
     from kausal_watch_extensions.auth.authentication import IDTokenAuthentication  # type: ignore[no-redef,import-not-found]
+
     id_token_authentication_found = True
 
 
@@ -191,6 +192,7 @@ class WatchExecutionContext(ExecutionContext):
     def complete_value(self, return_type, field_nodes, info, path, result: Any) -> Awaitable[Any] | Any:
         if env_bool('TRACE_GRAPHQL_REQUESTS', default=False):
             import viztracer
+
             tracer = viztracer.get_tracer()
             if tracer is not None:
                 with tracer.log_event('complete_value: %s' % ','.join(str(x) for x in path.as_list())):
@@ -199,9 +201,9 @@ class WatchExecutionContext(ExecutionContext):
 
 
 class SentryGraphQLView(GraphQLView):
-    graphiql_version = "2.0.7"
-    graphiql_sri = "sha256-qQ6pw7LwTLC+GfzN+cJsYXfVWRKH9O5o7+5H96gTJhQ="
-    graphiql_css_sri = "sha256-gQryfbGYeYFxnJYnfPStPYFt0+uv8RP8Dm++eh00G9c="
+    graphiql_version = '2.0.7'
+    graphiql_sri = 'sha256-qQ6pw7LwTLC+GfzN+cJsYXfVWRKH9O5o7+5H96gTJhQ='
+    graphiql_css_sri = 'sha256-gQryfbGYeYFxnJYnfPStPYFt0+uv8RP8Dm++eh00G9c='
     execution_context_class = WatchExecutionContext
 
     def __init__(self, *args, **kwargs):
@@ -268,8 +270,16 @@ class SentryGraphQLView(GraphQLView):
             yield
 
     def caching_execute_graphql_request(
-            self, span, request: WatchAPIRequest, data, query, variables, operation_name, *args, **kwargs,
-        ) -> ExecutionResult:
+        self,
+        span,
+        request: WatchAPIRequest,
+        data,
+        query,
+        variables,
+        operation_name,
+        *args,
+        **kwargs,
+    ) -> ExecutionResult:
         key = self.get_cache_key(request, data, query, variables)
         span.set_tag('cache_key', key)
         if key:
@@ -292,7 +302,7 @@ class SentryGraphQLView(GraphQLView):
         if not debug_logging or not query:
             return
         console = Console()
-        syntax = Syntax(query, "graphql")
+        syntax = Syntax(query, 'graphql')
         console.print(syntax)
         if variables:
             console.print('# Variables:')
@@ -342,12 +352,20 @@ class SentryGraphQLView(GraphQLView):
                         result = super().execute_graphql_request(request, data, query, variables, operation_name, *args, **kwargs)
                 else:
                     result = self.caching_execute_graphql_request(
-                        span, request, data, query, variables, operation_name, *args, **kwargs,
+                        span,
+                        request,
+                        data,
+                        query,
+                        variables,
+                        operation_name,
+                        *args,
+                        **kwargs,
                     )
             # If 'invalid' is set, it's a bad request
             if result and result.errors:
                 if settings.DEBUG:
                     from rich.traceback import Traceback
+
                     console = Console()
 
                     def print_error(err: GraphQLError) -> None:
@@ -355,10 +373,14 @@ class SentryGraphQLView(GraphQLView):
                         oe = err.original_error
                         if oe:
                             tb = Traceback.from_exception(
-                                type(oe), oe, traceback=oe.__traceback__,
+                                type(oe),
+                                oe,
+                                traceback=oe.__traceback__,
                             )
                             console.print(tb)
+
                 else:
+
                     def print_error(err: GraphQLError) -> None:
                         pass
 

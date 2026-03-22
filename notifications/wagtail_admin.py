@@ -58,12 +58,12 @@ class BaseTemplateForm(AplansAdminModelForm):
             local_current_date = plan.now_in_local_timezone().date()
             if item['id'] is None:
                 if new_date < local_current_date:
-                    formset[i].add_error('date', _("Cannot schedule a notification for the past"))
+                    formset[i].add_error('date', _('Cannot schedule a notification for the past'))
                 continue
             instance = item['id']
             if new_date != instance.date and new_date < local_current_date:
                 # Rescheduling old notification
-                formset[i].add_error('date', _("Cannot reschedule a notification for the past"))
+                formset[i].add_error('date', _('Cannot reschedule a notification for the past'))
 
     def clean(self):
         formset = self.formsets.get('manually_scheduled_notification_templates', None)
@@ -77,8 +77,8 @@ class BaseTemplateEditView(SuccessUrlEditPageMixin, WatchEditView[BaseTemplate, 
 
     def get_error_message(self):
         if self.object.pk:
-            return _("Notifications could not be modified due to errors.")
-        return _("Notifications could not be set up due to errors.")
+            return _('Notifications could not be modified due to errors.')
+        return _('Notifications could not be set up due to errors.')
 
 
 class BaseTemplateSendDatePanel(FieldPanel):
@@ -104,7 +104,7 @@ class BaseTemplateSendDatePanel(FieldPanel):
         plan = request.user.get_active_admin_plan()
         time = formats.time_format(plan.notification_settings.send_at_time, 'H:i')
         self.help_text = format_lazy(
-            _("The email message will be sent on the specified day at {time}."),
+            _('The email message will be sent on the specified day at {time}.'),
             time=time,
         )
         return super().get_bound_panel(instance, request, form, prefix)
@@ -115,7 +115,7 @@ class BaseTemplateViewSet(WatchViewSet[BaseTemplate, BaseTemplateForm]):
     add_to_settings_menu = True
     edit_view_class = BaseTemplateEditView
     icon = 'fontawesome-bell'
-    menu_label = _("Notifications")
+    menu_label = _('Notifications')
     menu_order = 504
 
     panels = [
@@ -138,15 +138,13 @@ class BaseTemplateViewSet(WatchViewSet[BaseTemplate, BaseTemplateForm]):
         FieldPanel('content'),
         MultiFieldPanel(
             [
-                FieldRowPanel(
-                    [
-                        FieldPanel('send_to_plan_admins'),
-                        FieldPanel('send_to_action_contact_persons'),
-                        FieldPanel('send_to_indicator_contact_persons'),
-                        FieldPanel('send_to_organization_admins'),
-                        FieldPanel('send_to_custom_email'),
-                    ]
-                ),
+                FieldRowPanel([
+                    FieldPanel('send_to_plan_admins'),
+                    FieldPanel('send_to_action_contact_persons'),
+                    FieldPanel('send_to_indicator_contact_persons'),
+                    FieldPanel('send_to_organization_admins'),
+                    FieldPanel('send_to_custom_email'),
+                ]),
                 FieldPanel('custom_email'),
             ],
             classname='collapsible',
@@ -159,19 +157,15 @@ class BaseTemplateViewSet(WatchViewSet[BaseTemplate, BaseTemplateForm]):
         FieldPanel('custom_email'),
         MultiFieldPanel(
             [
-                FieldRowPanel(
-                    [
-                        FieldPanel('send_to_plan_admins'),
-                        FieldPanel('send_to_custom_email'),
-                    ]
-                ),
-                FieldRowPanel(
-                    [
-                        FieldPanel('send_to_contact_persons'),
-                    ]
-                ),
+                FieldRowPanel([
+                    FieldPanel('send_to_plan_admins'),
+                    FieldPanel('send_to_custom_email'),
+                ]),
+                FieldRowPanel([
+                    FieldPanel('send_to_contact_persons'),
+                ]),
             ],
-            heading=_("Recipients"),
+            heading=_('Recipients'),
             classname='collapsible',
         ),
     ]
@@ -194,7 +188,7 @@ class BaseTemplateViewSet(WatchViewSet[BaseTemplate, BaseTemplateForm]):
 
     def get_edit_handler(self) -> ObjectList | TabbedInterface | None:
         tabs = [
-            ObjectList(self.panels, heading=_("Basic information")),
+            ObjectList(self.panels, heading=_('Basic information')),
             ObjectList(
                 [
                     InlinePanel(
@@ -202,7 +196,7 @@ class BaseTemplateViewSet(WatchViewSet[BaseTemplate, BaseTemplateForm]):
                         panels=self.manually_scheduled_notification_panels,
                     )
                 ],
-                heading=_("One-off notifications"),
+                heading=_('One-off notifications'),
             ),
             ObjectList(
                 [
@@ -211,7 +205,7 @@ class BaseTemplateViewSet(WatchViewSet[BaseTemplate, BaseTemplateForm]):
                         panels=self.templates_panels,
                     )
                 ],
-                heading=_("Event-based notifications"),
+                heading=_('Event-based notifications'),
             ),
             ObjectList(
                 [
@@ -220,7 +214,7 @@ class BaseTemplateViewSet(WatchViewSet[BaseTemplate, BaseTemplateForm]):
                         panels=self.block_panels,
                     )
                 ],
-                heading=_("Notification contents"),
+                heading=_('Notification contents'),
             ),
         ]
         handler = TabbedInterface[BaseTemplate, BaseTemplateForm](tabs)
@@ -273,7 +267,7 @@ class BaseTemplateMenuItem(MenuItem):
 
 class NotificationsPreferencesPanel(BaseSettingsPanel):
     name = 'notification-preferences'  # Wagtail's admin.views.account already defines 'notifications'
-    title = _("Notification preferences")
+    title = _('Notification preferences')
     tab = notifications_tab
     order = 101
     form_class = NotificationPreferencesForm

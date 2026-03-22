@@ -12,13 +12,12 @@ if TYPE_CHECKING:
     from fastmcp import FastMCP
 
 
-
 @register_tool(annotations=ToolAnnotations(title='List organizations', readOnlyHint=True, openWorldHint=False))
 async def list_organizations(
-    plan: Annotated[str | None, "Plan identifier to filter organizations by"] = None,
-    parent: Annotated[str | None, "Parent organization ID to filter children"] = None,
-    depth: Annotated[int | None, "Maximum depth in organization hierarchy to return"] = None,
-    contains: Annotated[str | None, "Filter organizations by name substring"] = None,
+    plan: Annotated[str | None, 'Plan identifier to filter organizations by'] = None,
+    parent: Annotated[str | None, 'Parent organization ID to filter children'] = None,
+    depth: Annotated[int | None, 'Maximum depth in organization hierarchy to return'] = None,
+    contains: Annotated[str | None, 'Filter organizations by name substring'] = None,
 ) -> ListOrganizations:
     """
     List organizations with optional filtering.
@@ -36,9 +35,9 @@ async def list_organizations(
 
 @register_tool(annotations=ToolAnnotations(title='Create a new organization'))
 async def create_organization(
-    name: Annotated[str, "The official name of the organization"],
+    name: Annotated[str, 'The official name of the organization'],
     abbreviation: Annotated[str | None, "Short abbreviation (e.g. 'NASA', 'YM')"] = None,
-    parent_id: Annotated[str | None, "ID of the parent organization. Omit for a root organization."] = None,
+    parent_id: Annotated[str | None, 'ID of the parent organization. Omit for a root organization.'] = None,
     primary_language: Annotated[str, "Primary language code (ISO 639-1, e.g. 'en-US', 'fi', 'de-CH')"] = 'en-US',
 ) -> OrganizationBrief:
     """
@@ -59,4 +58,3 @@ async def create_organization(
 def register_organization_tools(_mcp: FastMCP) -> None:
     """Register all organization-related MCP tools."""
     pass
-

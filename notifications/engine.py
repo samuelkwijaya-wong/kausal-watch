@@ -52,8 +52,17 @@ class InvalidStateException(Exception):
 
 class NotificationEngine:
     def __init__(
-        self, plan: Plan, force_to=None, limit=None, only_type=None, noop=False, only_email=None,
-        ignore_actions=None, ignore_indicators=None, dump=None, now=None,
+        self,
+        plan: Plan,
+        force_to=None,
+        limit=None,
+        only_type=None,
+        noop=False,
+        only_email=None,
+        ignore_actions=None,
+        ignore_indicators=None,
+        dump=None,
+        now=None,
     ):
         if now is None:
             now = plan.now_in_local_timezone()
@@ -133,8 +142,11 @@ class NotificationEngine:
             return
         if template:
             recipients = template.get_recipients(
-                self.action_contact_person_recipients, self.indicator_contact_person_recipients,
-                self.plan_admin_recipients, self.organization_plan_admin_recipients, action=task.action,
+                self.action_contact_person_recipients,
+                self.indicator_contact_person_recipients,
+                self.plan_admin_recipients,
+                self.organization_plan_admin_recipients,
+                action=task.action,
             )
             notif.generate_notifications(self, recipients, now=self.now)
 
@@ -154,8 +166,11 @@ class NotificationEngine:
             return
         if template:
             recipients = template.get_recipients(
-                self.action_contact_person_recipients, self.indicator_contact_person_recipients,
-                self.plan_admin_recipients, self.organization_plan_admin_recipients, indicator=indicator,
+                self.action_contact_person_recipients,
+                self.indicator_contact_person_recipients,
+                self.plan_admin_recipients,
+                self.organization_plan_admin_recipients,
+                indicator=indicator,
             )
             notif.generate_notifications(self, recipients, now=self.now)
 
@@ -178,8 +193,11 @@ class NotificationEngine:
             template = self.templates_by_type.get(NotificationType.NOT_ENOUGH_TASKS.identifier)
             if template:
                 recipients = template.get_recipients(
-                    self.action_contact_person_recipients, self.indicator_contact_person_recipients,
-                    self.plan_admin_recipients, self.organization_plan_admin_recipients, action=action,
+                    self.action_contact_person_recipients,
+                    self.indicator_contact_person_recipients,
+                    self.plan_admin_recipients,
+                    self.organization_plan_admin_recipients,
+                    action=action,
                 )
                 notif.generate_notifications(self, recipients, now=self.now)
 
@@ -188,8 +206,11 @@ class NotificationEngine:
             template = self.templates_by_type.get(NotificationType.ACTION_NOT_UPDATED.identifier)
             if template:
                 recipients = template.get_recipients(
-                    self.action_contact_person_recipients, self.indicator_contact_person_recipients,
-                    self.plan_admin_recipients, self.organization_plan_admin_recipients, action=action,
+                    self.action_contact_person_recipients,
+                    self.indicator_contact_person_recipients,
+                    self.plan_admin_recipients,
+                    self.organization_plan_admin_recipients,
+                    action=action,
                 )
                 notif.generate_notifications(self, recipients, now=self.now)
 
@@ -198,16 +219,20 @@ class NotificationEngine:
         template = self.templates_by_type.get(NotificationType.USER_FEEDBACK_RECEIVED.identifier)
         if template:
             recipients = template.get_recipients(
-                self.action_contact_person_recipients, self.indicator_contact_person_recipients,
-                self.plan_admin_recipients, self.organization_plan_admin_recipients,
+                self.action_contact_person_recipients,
+                self.indicator_contact_person_recipients,
+                self.plan_admin_recipients,
+                self.organization_plan_admin_recipients,
             )
             notification.generate_notifications(self, recipients, now=self.now)
 
     def generate_manually_scheduled_notification(self, template: ManuallyScheduledNotificationTemplate):
         notification = ManuallyScheduledNotification(self.plan, template)
         recipients = template.get_recipients(
-            self.action_contact_person_recipients, self.indicator_contact_person_recipients,
-            self.plan_admin_recipients, self.organization_plan_admin_recipients,
+            self.action_contact_person_recipients,
+            self.indicator_contact_person_recipients,
+            self.plan_admin_recipients,
+            self.organization_plan_admin_recipients,
         )
         notification.generate_notifications(self, recipients, now=self.now)
 
@@ -227,7 +252,8 @@ class NotificationEngine:
 
             rendered['html_body'] = render_mjml_from_template(
                 template.type,
-                context, dump=self.dump,
+                context,
+                dump=self.dump,
             )
             rendered['subject'] = template.subject + ' | ' + context['site']['title']
 
@@ -265,7 +291,9 @@ class NotificationEngine:
         for user_feedback in self.plan.user_feedbacks.all():
             self.generate_user_feedback_notifications(user_feedback)
 
-        for manually_scheduled_notification_template in ManuallyScheduledNotificationTemplate.objects.filter(base__plan=self.plan):
+        for manually_scheduled_notification_template in ManuallyScheduledNotificationTemplate.objects.filter(
+            base__plan=self.plan
+        ):
             self.generate_manually_scheduled_notification(manually_scheduled_notification_template)
 
         notification_count = 0
@@ -319,7 +347,7 @@ class NotificationEngine:
                         body=rendered['html_body'],
                         to=[to_email],
                     )
-                    msg.content_subtype = "html"  # Main content is now text/html
+                    msg.content_subtype = 'html'  # Main content is now text/html
 
                     nstr = []
                     for item in queue_items:

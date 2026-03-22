@@ -28,7 +28,7 @@ class IndicatorGraph(models.Model):
         get_latest_by = 'created_at'
 
     def __str__(self):
-        return "%s (%s)" % (self.indicator, self.created_at)
+        return '%s (%s)' % (self.indicator, self.created_at)
 
 
 class IndicatorValueCategory(models.Model):
@@ -63,7 +63,9 @@ class IndicatorValue(ClusterableModel, PlanRelatedModelWithRevision):
     """One measurement of an indicator for a certain date/month/year."""
 
     indicator = ParentalKey['Indicator'](
-        'indicators.Indicator', related_name='values', on_delete=models.CASCADE,
+        'indicators.Indicator',
+        related_name='values',
+        on_delete=models.CASCADE,
         verbose_name=_('indicator'),
     )
     categories: M2M[DimensionCategory, IndicatorValue] = models.ManyToManyField(
@@ -112,7 +114,7 @@ class IndicatorValue(ClusterableModel, PlanRelatedModelWithRevision):
         else:
             date_str = self.date
 
-        return f"{indicator} {date_str} {self.value}"
+        return f'{indicator} {date_str} {self.value}'
 
 
 @reversion.register()
@@ -120,7 +122,9 @@ class IndicatorGoal(PlanRelatedModelWithRevision):
     """The numeric goal which the organization has set for an indicator."""
 
     indicator = ParentalKey['Indicator'](
-        'indicators.Indicator', related_name='goals', on_delete=models.CASCADE,
+        'indicators.Indicator',
+        related_name='goals',
+        on_delete=models.CASCADE,
         verbose_name=_('indicator'),
     )
     value = models.FloatField()
@@ -145,4 +149,4 @@ class IndicatorGoal(PlanRelatedModelWithRevision):
         indicator = self.indicator
         date = self.date.isoformat()
 
-        return f"{indicator} {date} {self.value}"
+        return f'{indicator} {date} {self.value}'

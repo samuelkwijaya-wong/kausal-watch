@@ -132,7 +132,7 @@ class PrintQueryCountMiddleware:
 
         sqltime = 0.0
         for query in queries:
-            sqltime += float(query["time"])
+            sqltime += float(query['time'])
         sqltime = round(1000 * sqltime)
 
         query_count = len(queries)
@@ -160,10 +160,8 @@ class PrintQueryCountMiddleware:
             if isinstance(body, Mapping) and 'operationName' in body:
                 graphql_operation_name = str(body.get('operationName', '-'))
 
-        logger.log(level, f"⛁ {query_count} SQL queries took {sqltime} ms {request.path} {graphql_operation_name}")
+        logger.log(level, f'⛁ {query_count} SQL queries took {sqltime} ms {request.path} {graphql_operation_name}')
         return response
-
-
 
 
 @sync_and_async_middleware
@@ -187,19 +185,19 @@ def hostname_redirect_middleware(get_response):
         )
     """
     redirect_hostnames = getattr(settings, 'REDIRECT_HOSTNAMES', ())
-    allowed_non_wildcard_hosts = set(
-        h for h in getattr(settings, 'ALLOWED_HOSTS', [])
-        if not h.startswith('.')
-    )
+    allowed_non_wildcard_hosts = set(h for h in getattr(settings, 'ALLOWED_HOSTS', []) if not h.startswith('.'))
     if not redirect_hostnames:
         raise MiddlewareNotUsed('REDIRECT_HOSTNAMES not configured. This is only an error if hostname redirects must be active.')
     if iscoroutinefunction(get_response):
+
         async def middleware(request: http.HttpRequest):  # pyright: ignore[reportRedeclaration]  # type: ignore[misc]  # noqa: ANN202
             redirect_response = get_hostname_redirect_response(request, redirect_hostnames, allowed_non_wildcard_hosts)
             if redirect_response:
                 return redirect_response
             return await get_response(request)
+
     else:
+
         def middleware(request: http.HttpRequest):  # type: ignore[misc]  # noqa: ANN202
             redirect_response = get_hostname_redirect_response(request, redirect_hostnames, allowed_non_wildcard_hosts)
             if redirect_response:

@@ -40,6 +40,7 @@ pytestmark = pytest.mark.django_db
 # Helpers
 # ---------------------------------------------------------------------------
 
+
 def _make_serializer(dataset_uuid: str) -> DataPointSerializer:
     """Return a DataPointSerializer whose view-context points at *dataset_uuid*."""
     mock_view = MagicMock()
@@ -77,6 +78,7 @@ def _make_yearly_dataset():
 # Yearly duplicate detection (unchanged behaviour)
 # ---------------------------------------------------------------------------
 
+
 class TestYearlyDuplicateDetection:
     """
     For yearly datasets, a duplicate is defined by (year, metric, categories).
@@ -99,7 +101,7 @@ class TestYearlyDuplicateDetection:
 
         with pytest.raises(drf_serializers.ValidationError):
             serializer.validate({
-                'date': date(2024, 6, 15),   # same year, different month
+                'date': date(2024, 6, 15),  # same year, different month
                 'dimension_categories': [category],
                 'metric': metric,
             })
@@ -153,6 +155,7 @@ class TestYearlyDuplicateDetection:
 # Monthly duplicate detection (new behaviour)
 # ---------------------------------------------------------------------------
 
+
 class TestMonthlyDuplicateDetection:
     """
     For monthly datasets, a duplicate is defined by (year, month, metric, categories).
@@ -175,7 +178,7 @@ class TestMonthlyDuplicateDetection:
 
         with pytest.raises(drf_serializers.ValidationError):
             serializer.validate({
-                'date': date(2024, 3, 15),   # same year+month
+                'date': date(2024, 3, 15),  # same year+month
                 'dimension_categories': [category],
                 'metric': metric,
             })
@@ -267,6 +270,7 @@ class TestMonthlyDuplicateDetection:
 # API integration tests via the REST endpoint
 # ---------------------------------------------------------------------------
 
+
 class TestDataPointAPIMonthly:
     """Integration tests for POST /v1/datasets/{uuid}/data_points/ on monthly datasets."""
 
@@ -278,9 +282,7 @@ class TestDataPointAPIMonthly:
     def _url(self, dataset_uuid) -> str:
         return f'/v1/datasets/{dataset_uuid}/data_points/'
 
-    def test_create_monthly_data_point_succeeds(
-        self, api_client, superuser, monthly_setup
-    ):
+    def test_create_monthly_data_point_succeeds(self, api_client, superuser, monthly_setup):
         """POSTing a data point to a monthly dataset must return HTTP 201."""
         dataset, metric, category = monthly_setup
         api_client.force_login(superuser)
@@ -296,9 +298,7 @@ class TestDataPointAPIMonthly:
         )
         assert response.status_code == 201, response.json_data
 
-    def test_monthly_duplicate_in_same_month_rejected(
-        self, api_client, superuser, monthly_setup
-    ):
+    def test_monthly_duplicate_in_same_month_rejected(self, api_client, superuser, monthly_setup):
         """POSTing a second data point with the same year-month, metric and categories must return HTTP 400."""
         dataset, metric, category = monthly_setup
         api_client.force_login(superuser)
@@ -316,9 +316,7 @@ class TestDataPointAPIMonthly:
         second = api_client.post(url, data=payload)
         assert second.status_code == 400
 
-    def test_monthly_different_months_same_year_both_succeed(
-        self, api_client, superuser, monthly_setup
-    ):
+    def test_monthly_different_months_same_year_both_succeed(self, api_client, superuser, monthly_setup):
         """
         Two data points in different months of the same year must both be created successfully.
 
@@ -350,9 +348,7 @@ class TestDataPointAPIMonthly:
         )
         assert mar.status_code == 201, mar.json_data
 
-    def test_monthly_same_month_different_categories_both_succeed(
-        self, api_client, superuser, monthly_setup
-    ):
+    def test_monthly_same_month_different_categories_both_succeed(self, api_client, superuser, monthly_setup):
         """Different dimension categories in the same month must both be accepted."""
         dataset, metric, category = monthly_setup
         other_category = DimensionCategoryFactory.create(
@@ -392,6 +388,7 @@ class TestDataPointAPIMonthly:
 # ---------------------------------------------------------------------------
 # computed_data_points endpoint
 # ---------------------------------------------------------------------------
+
 
 def _make_computation_setup():
     """

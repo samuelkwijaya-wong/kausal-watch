@@ -39,7 +39,7 @@ class ReportTypeChooserViewSet(ModelChooserViewSet):
 
     icon = 'doc-full'
     model = ReportType
-    page_title = _("Choose a report type")
+    page_title = _('Choose a report type')
     per_page = 30
     fields = ['name']
 

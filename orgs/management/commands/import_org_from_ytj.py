@@ -40,8 +40,7 @@ class Command(BaseCommand):
         form = data['companyForm']
         assert form == 'OY'
 
-        org_identifier = (OrganizationIdentifier.objects.filter(namespace=namespace, identifier=data['businessId'])
-                          .first())
+        org_identifier = OrganizationIdentifier.objects.filter(namespace=namespace, identifier=data['businessId']).first()
         if org_identifier is None:
             print('Creating %s (%s)' % (data['name'], data['businessId']))
             org = Organization()

@@ -268,6 +268,7 @@ class ActivatePlanContextExtension(WatchSchemaExtension):
         with self.instance_context(op):
             yield
 
+
 class WatchExecutionCacheExtension(ExecutionCacheExtension[WatchGraphQLContext]):
     context_class: type[WatchGraphQLContext] = WatchGraphQLContext
 

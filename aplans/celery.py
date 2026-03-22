@@ -24,5 +24,6 @@ def config_loggers(*args, **kwargs):
 
     dictConfig(settings.LOGGING)
 
+
 # Load task modules from all registered Django app configs.
 app.autodiscover_tasks()

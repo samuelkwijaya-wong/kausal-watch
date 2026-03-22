@@ -21,6 +21,7 @@ class HttpRequestContext(SingleValueContext[HttpRequest]):
         assert not req.user.is_anonymous
         return typing.cast('WatchAdminRequest', req)
 
+
 ctx_instance = SubclassableContext('instance', Model)
 
 ctx_request = HttpRequestContext('request', HttpRequest)

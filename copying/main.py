@@ -131,11 +131,9 @@ INDICATOR_CLONE_STRUCTURE: CloneStructure = {
     # We deliberately exclude the following fields as they seem legacy:
     # - datasets
     # - latest_graph
-
     # We do not copy the following fields `levels` field as they are taken care of by `PLAN_CLONE_STRUCTURE`:
     # - levels (due to indicator_levels)
     # - related_actions (due to actions -> related_indicators)
-
     'contact_persons': {},
     'values': {
         'category_links': {},  # copies through model instances, not `DimensionCategory` instances
@@ -264,13 +262,9 @@ class CloneVisitor(AbstractVisitor):
         node.instance._state.adding = True
         if node.parent is not None:
             parent_joining_field, instance_joining_field = node.relation.get_joining_fields()[0]
-            setattr(
-                node.instance,
-                instance_joining_field.attname,
-                parent_joining_field.value_from_object(node.parent.instance)
-            )
+            setattr(node.instance, instance_joining_field.attname, parent_joining_field.value_from_object(node.parent.instance))
         self.save_copy(node.instance)
-        logger.info(f"Created {type(node.instance).__name__} {node.instance.pk}: {node.instance}")
+        logger.info(f'Created {type(node.instance).__name__} {node.instance.pk}: {node.instance}')
         assert isinstance(node.instance, node.model_class)
         self.register_copy(original_instance, node.instance)
         self.post_visit(original_instance, node.instance)
@@ -396,9 +390,7 @@ class CloneVisitor(AbstractVisitor):
     def _(self, original: Plan, copy: Plan) -> None:
         if self.supersede_original_plan:
             if original.superseded_by:
-                raise ValueError(
-                    f"Cannot supersede plan '{original}': already superseded by '{original.superseded_by}'"
-                )
+                raise ValueError(f"Cannot supersede plan '{original}': already superseded by '{original.superseded_by}'")
             original.superseded_by = copy
             original.save(update_fields=['superseded_by'])
 
@@ -406,9 +398,7 @@ class CloneVisitor(AbstractVisitor):
     def _(self, original: Action, copy: Action) -> None:
         if self.supersede_original_actions:
             if original.superseded_by:
-                raise ValueError(
-                    f"Cannot supersede action '{original}': already superseded by '{original.superseded_by}'"
-                )
+                raise ValueError(f"Cannot supersede action '{original}': already superseded by '{original.superseded_by}'")
             original.superseded_by = copy
             original.save(update_fields=['superseded_by'])
 
@@ -426,14 +416,14 @@ class UpdateReferencesVisitor(AbstractVisitor):
 
         Returns true if and only if the instance was updated, regardless of whether it was saved.
         """
-        logger.trace(f"Update references of {type(instance).__name__} {instance.pk}: {instance}")
+        logger.trace(f'Update references of {type(instance).__name__} {instance.pk}: {instance}')
         update_fields = []
         update_fields += self.update_cluster_related_objects(instance)
-        logger.info(f"Updating foreign keys of {type(instance).__name__} {instance.pk}: {instance}")
+        logger.info(f'Updating foreign keys of {type(instance).__name__} {instance.pk}: {instance}')
         update_fields += self.update_foreign_keys(instance)
         update_fields += self.update_indexed_references(instance)
         if isinstance(instance, Page) and not skip_page_draft:
-            logger.info(f"Updating page draft of {type(instance).__name__} {instance.pk}: {instance}")
+            logger.info(f'Updating page draft of {type(instance).__name__} {instance.pk}: {instance}')
             update_fields += self.update_page_draft(instance)
         # Save changes
         if update_fields and save:
@@ -443,8 +433,7 @@ class UpdateReferencesVisitor(AbstractVisitor):
                 save_kwargs['skip_page_synchronization'] = True
             instance.save(**save_kwargs)
             logger.info(
-                f"Updated references in {len(update_fields)} fields of "
-                f"{type(instance).__name__} {instance.pk}: {instance}"
+                f'Updated references in {len(update_fields)} fields of {type(instance).__name__} {instance.pk}: {instance}'
             )
         return bool(update_fields)
 
@@ -476,9 +465,15 @@ class UpdateReferencesVisitor(AbstractVisitor):
     def _(self, instance: Page) -> Generator[Field | GenericForeignKey]:
         # Pages are copied via Wagtail's Page.copy(), which handles certain fields internally. These objects are not
         # registered in the clone visitor, so skip them to avoid spurious warnings.
-        return self._get_references(instance, exclude_fields=[
-            'page_ptr', 'latest_revision', 'live_revision', 'staticpage_ptr',
-        ])
+        return self._get_references(
+            instance,
+            exclude_fields=[
+                'page_ptr',
+                'latest_revision',
+                'live_revision',
+                'staticpage_ptr',
+            ],
+        )
 
     def update_extractable_references(self, instance: Model) -> bool:
         updated = False
@@ -511,8 +506,8 @@ class UpdateReferencesVisitor(AbstractVisitor):
                 # Probably there is no copy because the model instance that `cro` originally corresponded to no
                 # longer exists in the database.
                 logger.warning(
-                    f"In cluster related objects of {type(parent).__name__} {parent.pk}: Could not find "
-                    f"copy for {type(cro).__name__} {cro.pk}: {cro}"
+                    f'In cluster related objects of {type(parent).__name__} {parent.pk}: Could not find '
+                    f'copy for {type(cro).__name__} {cro.pk}: {cro}'
                 )
                 cro.pk = None
                 return True
@@ -520,8 +515,8 @@ class UpdateReferencesVisitor(AbstractVisitor):
         assert cro.pk != cro_copy.pk
         cro.pk = cro_copy.pk
         logger.trace(
-            f"In cluster related objects of {type(parent).__name__} {parent.pk}: Set primary key "
-            f"of {type(cro).__name__} {cro.pk} to: {cro_copy.pk}"
+            f'In cluster related objects of {type(parent).__name__} {parent.pk}: Set primary key '
+            f'of {type(cro).__name__} {cro.pk} to: {cro_copy.pk}'
         )
         return True
 
@@ -546,7 +541,7 @@ class UpdateReferencesVisitor(AbstractVisitor):
                     setattr(cro, id_field, related_object.id)
                     updated = True
                     logger.trace(
-                        f"In cluster related objects of {type(parent).__name__} {parent.pk}: Set foreign key "
+                        f'In cluster related objects of {type(parent).__name__} {parent.pk}: Set foreign key '
                         f"'{fk.name}' of {type(cro).__name__} {parent.pk} to: {related_object.pk}"
                     )
         return updated
@@ -573,11 +568,11 @@ class UpdateReferencesVisitor(AbstractVisitor):
                     if self.clone_visitor.is_copy(related_object):
                         logger.trace(
                             f"Trying to update foreign key '{fk.name}' of {type(instance).__name__} {instance.pk} "
-                            f"that is already a copy: {type(related_object).__name__} {related_object.pk}"
+                            f'that is already a copy: {type(related_object).__name__} {related_object.pk}'
                         )
                     else:
                         logger.warning(
-                            f"Could not find copy for {type(related_object).__name__} {related_object.pk} "
+                            f'Could not find copy for {type(related_object).__name__} {related_object.pk} '
                             f"when trying to update foreign key '{fk.name}' of {type(instance).__name__} {instance.pk}"
                         )
                     continue
@@ -591,7 +586,12 @@ class UpdateReferencesVisitor(AbstractVisitor):
         return update_fields
 
     def _update_stream_field_reference(
-        self, from_object: Model, to_object: Model, copy: Model, source_field: Field, content_path: str,
+        self,
+        from_object: Model,
+        to_object: Model,
+        copy: Model,
+        source_field: Field,
+        content_path: str,
     ) -> bool:
         """Update a reference that lives inside a StreamField block."""
         # We can't use apply_changes_to_raw_data from wagtail.blocks.migrations.utils because the block paths it
@@ -609,7 +609,12 @@ class UpdateReferencesVisitor(AbstractVisitor):
         return True
 
     def _update_many_to_one_rel_reference(
-        self, from_object: Model, to_object: Model, copy: Model, source_field: ManyToOneRel, content_path: str,
+        self,
+        from_object: Model,
+        to_object: Model,
+        copy: Model,
+        source_field: ManyToOneRel,
+        content_path: str,
     ) -> bool:
         """
         Update a reference held by a cluster-related child object of a ClusterableModel parent.
@@ -659,7 +664,12 @@ class UpdateReferencesVisitor(AbstractVisitor):
         return True
 
     def _update_foreign_key_reference(
-        self, from_object: Model, to_object: Model, copy: Model, source_field: ForeignKey, content_path: str,
+        self,
+        from_object: Model,
+        to_object: Model,
+        copy: Model,
+        source_field: ForeignKey,
+        content_path: str,
     ) -> bool:
         """Verify that a ForeignKey reference has already been updated by update_foreign_keys()."""
         assert source_field.name == content_path
@@ -668,7 +678,12 @@ class UpdateReferencesVisitor(AbstractVisitor):
         return False
 
     def _update_rich_text_reference(
-        self, from_object: Model, to_object: Model, copy: Model, source_field: RichTextField, content_path: str,
+        self,
+        from_object: Model,
+        to_object: Model,
+        copy: Model,
+        source_field: RichTextField,
+        content_path: str,
     ) -> bool:
         """Update a reference embedded in a RichTextField."""
         field_name, *content_path_rest = content_path.split('.')
@@ -698,13 +713,13 @@ class UpdateReferencesVisitor(AbstractVisitor):
         except KeyError:
             if self.clone_visitor.is_copy(to_object):
                 logger.trace(
-                    f"Trying to update reference in {type(from_object).__name__} {from_object.pk} at path "
+                    f'Trying to update reference in {type(from_object).__name__} {from_object.pk} at path '
                     f"'{content_path}' that is already a copy: {type(to_object).__name__} {to_object.pk}"
                 )
             else:
                 logger.warning(
                     f"Cannot update reference in {type(from_object).__name__} {from_object.pk} at path '{content_path}': "
-                    f"Could not find copy for {type(to_object).__name__} {to_object.pk}"
+                    f'Could not find copy for {type(to_object).__name__} {to_object.pk}'
                 )
             return False
 
@@ -716,12 +731,12 @@ class UpdateReferencesVisitor(AbstractVisitor):
             return self._update_foreign_key_reference(from_object, to_object, copy, source_field, content_path)
         if isinstance(source_field, RichTextField):
             return self._update_rich_text_reference(from_object, to_object, copy, source_field, content_path)
-        raise TypeError("Unexpected source field type")
+        raise TypeError('Unexpected source field type')
 
     def update_indexed_references(
-            self,
-            instance: Model,
-            filter_reference: Callable[[ReferenceIndex], bool] | None = None,
+        self,
+        instance: Model,
+        filter_reference: Callable[[ReferenceIndex], bool] | None = None,
     ) -> list[str]:
         update_fields = set()
         for ref in ReferenceIndex.get_references_for_object(instance):
@@ -735,9 +750,9 @@ class UpdateReferencesVisitor(AbstractVisitor):
                 from_object = from_model.objects.get(id=ref.object_id)
                 from_original_pk = self.clone_visitor._get_original_pk(from_object)
                 logger.warning(
-                    f"Cannot update reference: {from_model.__name__} {ref.object_id} (copy of {from_original_pk}) "
-                    f"references {to_model.__name__} {ref.to_object_id}, which does not exist. Keeping broken "
-                    "reference in place."
+                    f'Cannot update reference: {from_model.__name__} {ref.object_id} (copy of {from_original_pk}) '
+                    f'references {to_model.__name__} {ref.to_object_id}, which does not exist. Keeping broken '
+                    'reference in place.'
                 )
                 continue
             updated = self.update_reference(
@@ -772,7 +787,8 @@ class UpdateReferencesVisitor(AbstractVisitor):
 
 
 def copy_root_pages(
-    root_page: PlanRootPage | DocumentationRootPage, title_suffix: str | None = None,
+    root_page: PlanRootPage | DocumentationRootPage,
+    title_suffix: str | None = None,
 ) -> list[tuple[Page, Page]]:
     """
     Copy the given root page and all its translations.
@@ -812,7 +828,9 @@ def copy_root_pages(
 
 
 def _copy_instance_revision(
-    instance: RevisionMixin, clone_visitor: CloneVisitor, update_references_visitor: UpdateReferencesVisitor,
+    instance: RevisionMixin,
+    clone_visitor: CloneVisitor,
+    update_references_visitor: UpdateReferencesVisitor,
 ) -> None:
     try:
         if instance.latest_revision is None:
@@ -825,8 +843,7 @@ def _copy_instance_revision(
         # Clear the stale reference to the original's revision.
         model_name = type(instance).__name__
         logger.opt(exception=True).warning(
-            f'Failed to deserialize revision for {model_name} pk={instance.pk}, skipping '
-            f'({type(exc).__name__}: {exc})'
+            f'Failed to deserialize revision for {model_name} pk={instance.pk}, skipping ({type(exc).__name__}: {exc})'
         )
         instance.latest_revision = None
         instance.save(update_fields=['latest_revision'])
@@ -883,7 +900,7 @@ def copy_collection_with_contents(collection: Collection, clone_visitor: CloneVi
             filename = file.name.split('/')[-1]
             file.save(filename, content_file)
         except FileNotFoundError as e:
-            logger.warning(f"Could not copy file of collection item {image_or_document}: {e}")
+            logger.warning(f'Could not copy file of collection item {image_or_document}: {e}')
         image_or_document.save()
 
 
@@ -918,6 +935,7 @@ def _update_reference_index_immediately_ctx() -> Generator[None]:
 
 def update_reference_index_immediately[**P, R](f: Callable[P, R]) -> Callable[P, R]:
     """Force immediate reference index updates within a call to `f`."""
+
     @wraps(f)
     def wrapped(*args: P.args, **kwargs: P.kwargs) -> R:
         with _update_reference_index_immediately_ctx():
@@ -981,12 +999,12 @@ def _validate_copy_plan_args(plan: Plan, new_plan_identifier: str, new_site_host
 
     if plan.shared_indicators().exists():
         assert not may_copy_indicators(plan)
-        raise ValueError("Cannot copy indicators as the plan shares indicators with another plan")
+        raise ValueError('Cannot copy indicators as the plan shares indicators with another plan')
     # We decided not to copy organizations and common indicators. So the unique constraint on `(common_id,
     # organization_id)` in `Indicator` prevents us from copying indicators that are instances of a common indicator.
     if plan.indicators.filter(common__isnull=False).exists():
         assert not may_copy_indicators(plan)
-        raise ValueError("Cannot copy indicators as some are instances of a common indicator")
+        raise ValueError('Cannot copy indicators as some are instances of a common indicator')
     assert may_copy_indicators(plan)
 
 
@@ -1029,9 +1047,9 @@ def _copy_plan_with_structure(plan_copy: Plan, clone_visitor: CloneVisitor) -> N
         # Disconnect signals to prevent creating related model instances when saving the plan
         stack.enter_context(temp_disconnect_signal(signals.post_save, create_notification_settings, Plan))
         stack.enter_context(temp_disconnect_signal(signals.post_save, create_plan_features_and_sync_group_permissions, Plan))
-        stack.enter_context(temp_disconnect_signal(
-            signals.post_save, create_site_general_content, Plan, 'create_site_general_content'
-        ))
+        stack.enter_context(
+            temp_disconnect_signal(signals.post_save, create_site_general_content, Plan, 'create_site_general_content')
+        )
         # We leave the signal update_plan_domain_deploy_info enabled
         visit_tree(plan_copy, PLAN_CLONE_STRUCTURE, clone_visitor)
 
@@ -1066,10 +1084,12 @@ def _copy_attribute_types(plan: Plan, clone_visitor: CloneVisitor) -> list[Attri
     plan_ct = ContentType.objects.get_for_model(Plan)
     category_type_ct = ContentType.objects.get_for_model(CategoryType)
     # Materialize in a list because we'll update them in place
-    attribute_types = list(AttributeType.objects.filter(
-        (Q(scope_content_type=plan_ct) & Q(scope_id=plan.id))
-        | (Q(scope_content_type=category_type_ct) & Q(scope_id__in=plan.category_types.all()))
-    ))
+    attribute_types = list(
+        AttributeType.objects.filter(
+            (Q(scope_content_type=plan_ct) & Q(scope_id=plan.id))
+            | (Q(scope_content_type=category_type_ct) & Q(scope_id__in=plan.category_types.all()))
+        )
+    )
     for at in attribute_types:
         visit_tree(at, ATTRIBUTE_TYPE_CLONE_STRUCTURE, clone_visitor)
     return attribute_types
@@ -1215,6 +1235,7 @@ def update_references_in_indicators(indicators: list[Indicator], clone_visitor: 
     # Set up filter to only process references whose content path is `indicators.<n>.*`, where `<n>` is the PK of an
     # indicator we copied.
     indicator_pks = {i.pk for i in indicators}
+
     def filter_reference(ref: ReferenceIndex) -> bool:
         parts = ref.content_path.split('.', maxsplit=2)
         if len(parts) < 2:

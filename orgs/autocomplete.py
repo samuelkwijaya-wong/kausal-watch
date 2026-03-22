@@ -30,10 +30,10 @@ class OrganizationAutocomplete(autocomplete.Select2QuerySetView):
 
         if self.q:
             qs = qs.filter(
-                Q(distinct_name__icontains=self.q) |
-                Q(name__icontains=self.q) |
-                Q(internal_abbreviation__icontains=self.q) |
-                Q(abbreviation__icontains=self.q),
+                Q(distinct_name__icontains=self.q)
+                | Q(name__icontains=self.q)
+                | Q(internal_abbreviation__icontains=self.q)
+                | Q(abbreviation__icontains=self.q),
             )
 
         return qs

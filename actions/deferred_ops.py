@@ -6,10 +6,14 @@ from django.db.models import Model
 
 if TYPE_CHECKING:
     from rest_framework import serializers
+
     class ModelSerializerMixinBase[M: Model](serializers.ModelSerializer[M]):
         pass
+
 else:
+
     class ModelSerializerMixinBase[M: Model]: ...
+
 
 class DeferredDatabaseOperationsMixin[M: Model](ModelSerializerMixinBase[M]):
     deferred_operations: list[tuple]

@@ -12,7 +12,7 @@ if TYPE_CHECKING:
     from collections.abc import Iterable
 
 
-def tree_to_org(tree: Tree, parent: Organization | None=None):
+def tree_to_org(tree: Tree, parent: Organization | None = None):
     org = OrganizationFactory.create(name=tree.name, abbreviation=tree.name, parent=parent)
     for child in tree.children:
         tree_to_org(child, org)
@@ -38,4 +38,4 @@ def assert_org_hierarchy(expected_hierarchy: str):
     # assert all(a.equals(e) for (a, e) in zip(actual, expected))
     actual_str = ''.join(str(tree) for tree in actual)
     expected_str = ''.join(str(tree) for tree in expected)
-    assert actual_str == expected_str, f"\n{actual_str}\n!=\n{expected_str}"
+    assert actual_str == expected_str, f'\n{actual_str}\n!=\n{expected_str}'

@@ -22,10 +22,13 @@ class CategoryListBlock(blocks.StructBlock):
     category = CategoryChooserBlock(required=False)
     heading = blocks.CharBlock(classname='full title', label=_('Heading'), required=False)
     lead = blocks.RichTextBlock(label=_('Lead'), required=False)
-    style = blocks.ChoiceBlock(label=_('Style'), choices=[
-        ('cards', _('Cards')),
-        ('table', _('Table')),
-    ])
+    style = blocks.ChoiceBlock(
+        label=_('Style'),
+        choices=[
+            ('cards', _('Cards')),
+            ('table', _('Table')),
+        ],
+    )
 
     class Meta:
         label = _('Category list')
@@ -58,36 +61,37 @@ class CategoryTreeMapBlock(blocks.StructBlock):
     ]
 
 
-
 @register_streamfield_block
 class CategoryTypeLevelListBlock(blocks.StructBlock):
     heading = blocks.CharBlock(
         required=False,
-        help_text=_("What heading should be used in the public UI for the Category level list?"),
+        help_text=_('What heading should be used in the public UI for the Category level list?'),
         default='',
-        label=_("Heading"),
+        label=_('Heading'),
     )
     help_text = blocks.CharBlock(
         required=False,
-        help_text=_("Help text for the Category level list to be shown in the public UI"),
+        help_text=_('Help text for the Category level list to be shown in the public UI'),
         default='',
-        label = _("Help text"),
+        label=_('Help text'),
     )
 
     category_type = CategoryTypeChooserBlock(required=True)
-    category_level = CategoryLevelChooserBlock(required=True, label = _("Filter by level"))
+    category_level = CategoryLevelChooserBlock(required=True, label=_('Filter by level'))
     group_by_category_level = CategoryLevelChooserBlock(
-        required=False, label= _("Group by level"),
-        help_text=_("Use category level for tabbed grouping in the public UI"))
+        required=False, label=_('Group by level'), help_text=_('Use category level for tabbed grouping in the public UI')
+    )
     paths_target_node_id = blocks.CharBlock(
         max_length=200,
         required=False,
         verbose_name=_('Kausal Paths target node ID'),
-        help_text=_('Kausal Paths target node ID used to calculate action impacts. If not set, the default outcome node will be used.'),
+        help_text=_(
+            'Kausal Paths target node ID used to calculate action impacts. If not set, the default outcome node will be used.'
+        ),
     )
 
     class Meta:
-        label = _("Category level list")
+        label = _('Category level list')
 
     graphql_fields = [
         GraphQLString('heading', required=False),

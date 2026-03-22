@@ -33,7 +33,7 @@ class VeryRestrictivePagePermissionTester(PagePermissionTester):
 def restrict_more_button_permissions_very_much(buttons, page, user, context=None):
     if getattr(page, 'restrict_more_button_permissions_very_much', False):
         for button in buttons:
-            if button.label == _("More"):
+            if button.label == _('More'):
                 button.page_perms = VeryRestrictivePagePermissionTester(user, page)
 
 
@@ -41,7 +41,7 @@ def restrict_more_button_permissions_very_much(buttons, page, user, context=None
 def remove_sort_menu_order_button(buttons, page, user, context=None):
     if getattr(page, 'remove_sort_menu_order_button', False):
         for button in buttons:
-            if button.label == _("More"):
+            if button.label == _('More'):
                 button.dropdown_buttons = [b for b in button.dropdown_buttons if b.url != '?ordering=ord']
 
 
@@ -106,6 +106,7 @@ class PageChangeLogMessageCreateView(BaseChangeLogMessageCreateView[PageChangeLo
         revision_id = self.get_revision_id()
         if revision_id:
             from wagtail.models import Revision
+
             revision = Revision.objects.filter(pk=revision_id).first()
             if revision:
                 form.instance.revision = revision

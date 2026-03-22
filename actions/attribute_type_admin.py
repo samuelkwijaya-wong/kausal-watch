@@ -105,7 +105,8 @@ def _extract_choice_pk_from_revision_value(format_key: str, value: object) -> in
 
 
 def _collect_drafts_per_option(
-    attribute_type: AttributeType, option_pks: set[int],
+    attribute_type: AttributeType,
+    option_pks: set[int],
 ) -> dict[int, list[str]]:
     """Collect names of objects with unpublished drafts referencing each choice option."""
     object_model = attribute_type.object_content_type.model_class()
@@ -140,7 +141,8 @@ def _collect_drafts_per_option(
 
 
 def _collect_published_per_option(
-    attribute_type: AttributeType, option_pks: set[int],
+    attribute_type: AttributeType,
+    option_pks: set[int],
 ) -> dict[int, list[str]]:
     """Collect names of published objects referencing each choice option."""
     object_model = attribute_type.object_content_type.model_class()
@@ -173,11 +175,7 @@ def _collect_published_per_option(
         }
 
         for choice_id, obj_ids in choice_to_obj_ids.items():
-            published_names[choice_id] = [
-                objects_by_id[oid]
-                for oid in obj_ids
-                if oid in objects_by_id
-            ]
+            published_names[choice_id] = [objects_by_id[oid] for oid in obj_ids if oid in objects_by_id]
 
     return published_names
 
@@ -209,21 +207,27 @@ def _get_choice_option_usage(attribute_type: AttributeType) -> dict[int, ChoiceO
         obj_ct = attribute_type.object_content_type
         used_option_pks.update(
             AttributeChoice.objects.filter(
-                type=attribute_type, content_type=obj_ct,
+                type=attribute_type,
+                content_type=obj_ct,
             ).values_list('choice_id', flat=True),
         )
         used_option_pks.update(
             AttributeChoiceWithText.objects.filter(
-                type=attribute_type, content_type=obj_ct, choice_id__isnull=False,
+                type=attribute_type,
+                content_type=obj_ct,
+                choice_id__isnull=False,
             ).values_list('choice_id', flat=True),
         )
         used_option_pks &= option_pks
 
         if used_option_pks:
             from reports.models import Report
+
             report_names = [
-                str(r) for r in Report.objects.filter(
-                    is_complete=False, type__plan_id=attribute_type.scope_id,
+                str(r)
+                for r in Report.objects.filter(
+                    is_complete=False,
+                    type__plan_id=attribute_type.scope_id,
                 )
             ]
 
@@ -245,16 +249,19 @@ def _get_choice_option_usage(attribute_type: AttributeType) -> dict[int, ChoiceO
 
 
 ATTRIBUTE_VALUE_MODELS = [
-    AttributeChoice, AttributeChoiceWithText, AttributeText,
-    AttributeRichText, AttributeNumericValue, AttributeCategoryChoice,
+    AttributeChoice,
+    AttributeChoiceWithText,
+    AttributeText,
+    AttributeRichText,
+    AttributeNumericValue,
+    AttributeCategoryChoice,
 ]
 _ATTRIBUTE_VALUE_MODELS_IGNORED: list[type[Attribute]] = []
 
 
 def check_attribute_value_models() -> None:
     expected = {
-        cls for cls in Attribute.__subclasses__()
-        if not cls._meta.abstract and cls not in _ATTRIBUTE_VALUE_MODELS_IGNORED
+        cls for cls in Attribute.__subclasses__() if not cls._meta.abstract and cls not in _ATTRIBUTE_VALUE_MODELS_IGNORED
     }
     actual = set(ATTRIBUTE_VALUE_MODELS)
     missing = expected - actual
@@ -401,9 +408,12 @@ def _collect_reports_for_attribute_type(attribute_type: AttributeType) -> list[s
         return []
 
     from reports.models import Report
+
     return [
-        str(r) for r in Report.objects.filter(
-            is_complete=False, type__plan_id=attribute_type.scope_id,
+        str(r)
+        for r in Report.objects.filter(
+            is_complete=False,
+            type__plan_id=attribute_type.scope_id,
         )
     ]
 
@@ -527,7 +537,7 @@ class ContentTypeQueryParameterMixin:
 
 
 class AttributeTypeIndexView(IndexView):
-    page_title = _("Fields")
+    page_title = _('Fields')
 
 
 class AttributeTypeCreateView(
@@ -545,7 +555,7 @@ class AttributeTypeCreateView(
         content_type = self.get_object_content_type()
         assert content_type is not None
         model_name = content_type.model_class()._meta.verbose_name_plural
-        return _("Field for %s") % model_name
+        return _('Field for %s') % model_name
 
     def get_instance(self):
         """Create an attribute type instance and set its object content type to the one given in GET or POST data."""
@@ -562,7 +572,7 @@ class AttributeTypeCreateView(
             elif (object_ct.app_label, object_ct.model) == ('actions', 'pledge'):
                 scope_ct_model = 'plan'
             else:
-                raise Exception(f"Invalid content type {object_ct.app_label}.{object_ct.model}")
+                raise Exception(f'Invalid content type {object_ct.app_label}.{object_ct.model}')
             instance.scope_content_type = ContentType.objects.get(app_label='actions', model=scope_ct_model)
 
         # If the instance is plan-specific, set plan to the active one just like we do in AplansCreateView for
@@ -609,7 +619,7 @@ class AttributeTypeMenuItem(MenuItem):
         self.base_url = reverse('actions_attributetype_modeladmin_index')
         url = f'{self.base_url}?content_type={content_type.id}'
         model_name = capfirst(content_type.model_class()._meta.verbose_name)
-        label = _("Fields (%(model)s)") % {'model': model_name}
+        label = _('Fields (%(model)s)') % {'model': model_name}
         super().__init__(label, url, **kwargs)
 
     def is_active(self, request):
@@ -669,7 +679,7 @@ class AttributeTypeEditHandler(AplansTabbedInterface):
 class AttributeTypeAdmin(OrderableMixin, AplansModelAdmin[AttributeType]):
     model = AttributeType
     menu_icon = 'kausal-attribute'
-    menu_label = _("Fields")
+    menu_label = _('Fields')
     menu_order = 510
     list_display = ('name', 'format')
     list_filter = (AttributeTypeFilter,)
@@ -717,8 +727,8 @@ class AttributeTypeAdmin(OrderableMixin, AplansModelAdmin[AttributeType]):
                 'format',
                 read_only=True,
                 help_text=_(
-                    "This field already has values. If you want to change the format, you need to delete the existing "
-                    "values first.",
+                    'This field already has values. If you want to change the format, you need to delete the existing '
+                    'values first.',
                 ),
             )
         else:
@@ -731,7 +741,7 @@ class AttributeTypeAdmin(OrderableMixin, AplansModelAdmin[AttributeType]):
             format_field_panel,
             FieldPanel('unit'),
             FieldPanel('attribute_category_type', widget=CategoryTypeChooser),
-            CondensedInlinePanel('choice_options', heading=_("Choice options"), panels=choice_option_panels),
+            CondensedInlinePanel('choice_options', heading=_('Choice options'), panels=choice_option_panels),
             FieldPanel('show_choice_names'),
             FieldPanel('has_zero_option'),
             FieldPanel('max_length'),
@@ -754,14 +764,14 @@ class AttributeTypeAdmin(OrderableMixin, AplansModelAdmin[AttributeType]):
             panels.append(FieldPanel('action_list_filter_section'))
             panels.append(FieldPanel('action_detail_content_section'))
         elif (content_type.app_label, content_type.model) == ('actions', 'category'):
-            panels.insert(0, FieldPanel('scope_id', widget=CategoryTypeChooser, heading=_("Category type")))
+            panels.insert(0, FieldPanel('scope_id', widget=CategoryTypeChooser, heading=_('Category type')))
         elif (content_type.app_label, content_type.model) == ('actions', 'pledge'):
             # This attribute types has scope 'plan' and we automatically set the scope in AttributeTypeCreateView, so we
             # don't add a panel for choosing a plan.
             # Remove show_in_reporting_tab since pledges are not used with reporting
             panels = [p for p in panels if getattr(p, 'field_name', None) != 'show_in_reporting_tab']
         else:
-            raise Exception(f"Invalid content type {content_type.app_label}.{content_type.model}")
+            raise Exception(f'Invalid content type {content_type.app_label}.{content_type.model}')
 
         tabs = [ObjectList(panels, heading=_('General'))]
 
@@ -785,9 +795,7 @@ class AttributeTypeAdmin(OrderableMixin, AplansModelAdmin[AttributeType]):
         actions_q = Q(object_content_type=action_ct) & Q(scope_content_type=plan_ct) & Q(scope_id=plan.id)
         # Attribute types for categories whose category type is the active plan
         categories_q = (
-            Q(object_content_type=category_ct)
-            & Q(scope_content_type=category_type_ct)
-            & Q(scope_id__in=category_types_in_plan)
+            Q(object_content_type=category_ct) & Q(scope_content_type=category_type_ct) & Q(scope_id__in=category_types_in_plan)
         )
         # Attribute types for pledges of the active plan
         pledges_q = Q(object_content_type=pledge_ct) & Q(scope_content_type=plan_ct) & Q(scope_id=plan.id)

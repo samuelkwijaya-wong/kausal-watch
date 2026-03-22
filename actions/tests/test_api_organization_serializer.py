@@ -30,7 +30,7 @@ def original_org_hierarchy(organization_hierarchy_factory):
 
 def update_org_hierarchy(goal_string: str):
     # Only handles moving subtrees around for now
-    uuid_for_name: dict[str, str | None]  = {'<dummy>': None}
+    uuid_for_name: dict[str, str | None] = {'<dummy>': None}
     goal = Tree('<dummy>', 0)
     for root in parse_tree_string(goal_string, reset_indent=False):
         root.reset_indent(4)
@@ -133,9 +133,9 @@ def test_organization_bulk_serializer_move_children_of_org3(original_org_hierarc
             2.1
             2.2
         3
-            3.{order[0]+1}
-            3.{order[1]+1}
-            3.{order[2]+1}
+            3.{order[0] + 1}
+            3.{order[1] + 1}
+            3.{order[2] + 1}
     """
     update_org_hierarchy(expected)
     assert_org_hierarchy(expected)

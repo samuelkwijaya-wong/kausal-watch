@@ -65,19 +65,16 @@ class SingleTenantSpecificEntraAuth(AzureADAuth):
 
     @override
     def get_key_and_secret(self):
-        return (
-            settings.SINGLE_TENANT_SPECIFIC_ENTRA_KEY,
-            settings.SINGLE_TENANT_SPECIFIC_ENTRA_SECRET
-        )
+        return (settings.SINGLE_TENANT_SPECIFIC_ENTRA_KEY, settings.SINGLE_TENANT_SPECIFIC_ENTRA_SECRET)
 
     @override
     def user_data(self, access_token, *args, **kwargs):
-        response = kwargs.get("response")
+        response = kwargs.get('response')
         assert response is not None
-        id_token = response.get("id_token")
+        id_token = response.get('id_token')
 
         # get key id and algorithm
-        key_id = get_unverified_header(id_token)["kid"]
+        key_id = get_unverified_header(id_token)['kid']
 
         try:
             from cryptography.hazmat.primitives.asymmetric import ec, ed25519, rsa
@@ -85,13 +82,11 @@ class SingleTenantSpecificEntraAuth(AzureADAuth):
             # retrieve certificate for key_id
             certificate = self.get_certificate(key_id)
             public_key = certificate.public_key()
-            assert isinstance(
-                public_key, (rsa.RSAPublicKey, ec.EllipticCurvePublicKey, ed25519.Ed25519PublicKey)
-            )
+            assert isinstance(public_key, (rsa.RSAPublicKey, ec.EllipticCurvePublicKey, ed25519.Ed25519PublicKey))
             return jwt_decode(
                 id_token,
                 key=public_key,
-                algorithms=["RS256"],
+                algorithms=['RS256'],
                 audience=settings.SINGLE_TENANT_SPECIFIC_ENTRA_KEY,
             )
         except (DecodeError, ExpiredSignatureError) as error:

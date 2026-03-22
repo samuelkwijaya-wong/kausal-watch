@@ -14,7 +14,7 @@ pytestmark = pytest.mark.django_db
     [
         timezone.now() - timedelta(days=1),  # Published
         None,  # Unpublished
-    ]
+    ],
 )
 def test_resolve_plans_with_action_responsibilities_visibility(
     graphql_client_query_data,
@@ -40,9 +40,13 @@ def test_resolve_plans_with_action_responsibilities_visibility(
 
     expected = {
         'organization': {
-            'plansWithActionResponsibilities': [{
-                'id': plan.identifier,
-            }] if published_at is not None else []
+            'plansWithActionResponsibilities': [
+                {
+                    'id': plan.identifier,
+                }
+            ]
+            if published_at is not None
+            else []
         }
     }
 

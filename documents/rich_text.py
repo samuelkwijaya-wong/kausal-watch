@@ -23,14 +23,12 @@ class DocumentLinkHandler(WagtailDocumentLinkHandler):
 
     @classmethod
     def expand_db_attributes_many(cls, attrs_list: list[dict]) -> list[str]:
-        ret = [
-            cls.expand_one(cast('AplansDocument', doc)) if doc else "<a>"
-            for doc in cls.get_many(attrs_list)
-        ]
+        ret = [cls.expand_one(cast('AplansDocument', doc)) if doc else '<a>' for doc in cls.get_many(attrs_list)]
         return ret
 
 
 def register_document_feature(features):
     features.register_link_type(DocumentLinkHandler)
+
 
 hooks.register('register_rich_text_features', register_document_feature)

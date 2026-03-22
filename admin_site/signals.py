@@ -14,17 +14,21 @@ if TYPE_CHECKING:
 
 hijack_log = logger.bind(impersonation=True)
 
+
 @receiver(hijack_started)
 def on_hijack_started(sender, hijacker: User, hijacked: User, request: WatchAdminRequest, **kwargs):
     hijack_log.bind(impersonation_actor=hijacker.email, impersonation_target=hijacked.email).info(
-        f"{hijacker} has started impersonation for user {hijacked}")
-    messages.warning(request, _("You are now viewing the site as %(user)s.") % {'user': hijacked})
+        f'{hijacker} has started impersonation for user {hijacked}'
+    )
+    messages.warning(request, _('You are now viewing the site as %(user)s.') % {'user': hijacked})
+
 
 @receiver(hijack_ended)
 def on_hijack_ended(sender, hijacker: User, hijacked: User, request: WatchAdminRequest, **kwargs):
     hijack_log.bind(impersonation_actor=hijacker.email, impersonation_target=hijacked.email).info(
-        f"{hijacker} has ended impersonation for user {hijacked}")
-    message = _("You have stopped viewing the site as %(user)s and have returned to your original account.") % {
+        f'{hijacker} has ended impersonation for user {hijacked}'
+    )
+    message = _('You have stopped viewing the site as %(user)s and have returned to your original account.') % {
         'user': hijacked,
     }
     messages.success(request, message)

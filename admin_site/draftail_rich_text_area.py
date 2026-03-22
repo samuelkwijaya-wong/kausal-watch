@@ -10,19 +10,19 @@ from wagtail.admin.rich_text.editors.draftail import DraftailRichTextAreaAdapter
 # Workaround until https://github.com/wagtail/wagtail/pull/11075 is merged
 def _hack_rich_text_editor_options(options: dict) -> None:
     type_to_trans_map = {
-        "LINK": gettext("Link"),
-        "DOCUMENT": gettext("Document"),
-        "EMBED": gettext("Embed"),
-        "IMAGE": gettext("Image"),
-        "BOLD": gettext("Bold"),
-        "ITALIC": gettext("Italic"),
-        "SUPERSCRIPT": gettext("Superscript"),
-        "SUBSCRIPT": gettext("Subscript"),
-        "header-two": gettext("Heading %(level)d") % {"level": 2},
-        "header-three": gettext("Heading %(level)d") % {"level": 3},
-        "header-four": gettext("Heading %(level)d") % {"level": 4},
-        "ordered-list-item": gettext("Numbered list"),
-        "unordered-list-item": gettext("Bulleted list"),
+        'LINK': gettext('Link'),
+        'DOCUMENT': gettext('Document'),
+        'EMBED': gettext('Embed'),
+        'IMAGE': gettext('Image'),
+        'BOLD': gettext('Bold'),
+        'ITALIC': gettext('Italic'),
+        'SUPERSCRIPT': gettext('Superscript'),
+        'SUBSCRIPT': gettext('Subscript'),
+        'header-two': gettext('Heading %(level)d') % {'level': 2},
+        'header-three': gettext('Heading %(level)d') % {'level': 3},
+        'header-four': gettext('Heading %(level)d') % {'level': 4},
+        'ordered-list-item': gettext('Numbered list'),
+        'unordered-list-item': gettext('Bulleted list'),
     }
     for option in options.values():
         if not isinstance(option, list):

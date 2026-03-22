@@ -78,8 +78,9 @@ class IsContactPersonFilter(SimpleListFilter):
         filter_plans = related_plans.filter(pk__in=related_plans_contact_persons.values_list('action__plan'))
         action_filters: list[tuple[str, StrOrPromise]]
         if filter_plans.exists():
-            action_filters = [(f'action_in_plan__{plan.pk}', _('For an action in %(plan)s') % {'plan': plan.name_i18n})
-                              for plan in filter_plans]
+            action_filters = [
+                (f'action_in_plan__{plan.pk}', _('For an action in %(plan)s') % {'plan': plan.name_i18n}) for plan in filter_plans
+            ]
         else:
             action_filters = [('action', _('For an action'))]
         choices = [
@@ -114,19 +115,19 @@ class IsContactPersonFilter(SimpleListFilter):
             my_actions = plan.actions.filter(contact_persons__person=person)
             my_indicators = plan.indicators.filter(contact_persons__person=person)
             queryset = queryset.filter(
-                Q(contact_for_actions__pk__in=my_actions) |
-                Q(contact_for_indicators__pk__in=my_indicators),
+                Q(contact_for_actions__pk__in=my_actions) | Q(contact_for_indicators__pk__in=my_indicators),
             )
         else:
-            queryset = queryset.exclude(contact_for_actions__in=plan.actions.all())\
-                .exclude(contact_for_indicators__in=plan.indicators.all())
+            queryset = queryset.exclude(contact_for_actions__in=plan.actions.all()).exclude(
+                contact_for_indicators__in=plan.indicators.all()
+            )
         return queryset.distinct()
 
 
 def smart_truncate(content, length=100, suffix='...'):
     if len(content) <= length:
         return content
-    return ' '.join(content[:length + 1].split(' ')[0:-1]) + suffix
+    return ' '.join(content[: length + 1].split(' ')[0:-1]) + suffix
 
 
 class AvatarWidget(AdminFileWidget):
@@ -152,15 +153,18 @@ class PersonForm(AplansAdminModelForm[Person]):
             self.instance.image_cropping = None
         return super().save(commit)
 
+
 class PersonFormForGeneralAdmin(PersonForm):
     class AccessLevel(models.TextChoices):
-        PUBLIC_SITE_ONLY = "public_site_only", _('Access to public site only')
-        FULL_ACCESS = "full_access", _('Access to admin site and public site')
+        PUBLIC_SITE_ONLY = 'public_site_only', _('Access to public site only')
+        FULL_ACCESS = 'full_access', _('Access to admin site and public site')
 
     is_admin_for_active_plan = BooleanField(required=False, label=_('Is plan admin'))
     access_level = ChoiceField(choices=AccessLevel.choices, required=True, label=_('Site access'))
     organization_plan_admin_orgs: ModelMultipleChoiceField[Organization] = ModelMultipleChoiceField(
-        queryset=None, required=False, widget=autocomplete.ModelSelect2Multiple(url='organization-autocomplete'),
+        queryset=None,
+        required=False,
+        widget=autocomplete.ModelSelect2Multiple(url='organization-autocomplete'),
         label=_('Plan admin organizations'),
     )
 
@@ -170,8 +174,8 @@ class PersonFormForGeneralAdmin(PersonForm):
         initial = kwargs.setdefault('initial', {})
         initial['access_level'] = self.AccessLevel.FULL_ACCESS
         if instance.pk is not None:
-            initial['organization_plan_admin_orgs'] = (
-                instance.organization_plan_admins.filter(plan=plan).values_list('organization', flat=True)
+            initial['organization_plan_admin_orgs'] = instance.organization_plan_admins.filter(plan=plan).values_list(
+                'organization', flat=True
             )
             is_public_site_viewer = instance.plans_with_public_site_access.filter(plan=plan).exists()
             initial['access_level'] = self.AccessLevel.PUBLIC_SITE_ONLY if is_public_site_viewer else self.AccessLevel.FULL_ACCESS
@@ -299,14 +303,18 @@ class PersonPermissionHelper(PlanContextModelAdminPermissionHelper[Person]):
         if obj.user == user:
             return True
         return user.can_edit_or_delete_person_within_plan(
-            obj, plan=self.plan, orgs=self._org_map,
+            obj,
+            plan=self.plan,
+            orgs=self._org_map,
         )
 
     def user_can_delete_obj(self, user, obj: Person):
         if not super().user_can_delete_obj(user, obj):
             return False
         return user.can_edit_or_delete_person_within_plan(
-            obj, plan=self.plan, orgs=self._org_map,
+            obj,
+            plan=self.plan,
+            orgs=self._org_map,
         )
 
     def user_can_create(self, user: User):
@@ -315,8 +323,12 @@ class PersonPermissionHelper(PlanContextModelAdminPermissionHelper[Person]):
         person = user.get_corresponding_person()
         # FIXME: there is some hardcoding of assumptions about contact person roles here.
         # These should be moved to a role-based system.
-        if not ActionContactPerson.objects\
-                                  .filter(action__plan=self.plan).filter(person=person).exclude(role=ActionContactPerson.Role.EDITOR):
+        if (
+            not ActionContactPerson.objects
+            .filter(action__plan=self.plan)
+            .filter(person=person)
+            .exclude(role=ActionContactPerson.Role.EDITOR)
+        ):
             # Only persons with role other than editor can add persons
             return False
         return super().user_can_create(user)
@@ -335,16 +347,16 @@ class PersonButtonHelper(ButtonHelper):
     def reset_password_button(self, pk, **kwargs):
         """Button for sending password reset emails and displaying reset tokens."""
         return {
-            'label': _("Reset password"),
-            'title': _("Create a password reset link"),
+            'label': _('Reset password'),
+            'title': _('Create a password reset link'),
             'url': self.url_helper.get_action_url('reset_password', quote(pk)),
             'classname': self.finalise_classname(['button-secondary', 'button-small']),
         }
 
     def impersonation_button(self, pk, **kwargs):
         return {
-            'label': _("View as user"),
-            'title': _("View site as it looks for this user"),
+            'label': _('View as user'),
+            'title': _('View site as it looks for this user'),
             'url': self.url_helper.get_action_url('view_as_user', quote(pk)),
             'classname': self.finalise_classname(['button-secondary', 'button-small']),
         }
@@ -369,7 +381,7 @@ class PersonButtonHelper(ButtonHelper):
             impersonation_button = self.impersonation_button(
                 pk=getattr(obj, self.opts.pk.attname),
                 **kwargs,
-                )
+            )
             buttons.append(impersonation_button)
         return buttons
 
@@ -381,9 +393,7 @@ class PersonDeleteView(ActivatePermissionHelperPlanContextModelAdminMixin[Person
     def get(self, request, *args, **kwargs):
         linked_objects = []
         fields = self.model._meta.fields_map.values()
-        rel_fields = (
-            obj for obj in fields if isinstance(obj, ForeignObjectRel) and not isinstance(obj.field, ManyToManyField)
-        )
+        rel_fields = (obj for obj in fields if isinstance(obj, ForeignObjectRel) and not isinstance(obj.field, ManyToManyField))
         for rel in rel_fields:
             obj = None
             key: str | None
@@ -424,7 +434,7 @@ class PersonAdmin(AplansModelAdmin[Person]):
     edit_view_class = PersonEditView
     index_view_class = PersonIndexView
     delete_view_class = PersonDeleteView
-    delete_template_name = "people/delete.html"
+    delete_template_name = 'people/delete.html'
     permission_helper_class = PersonPermissionHelper
     menu_icon = 'user'
     menu_label = _('People')
@@ -484,8 +494,8 @@ class PersonAdmin(AplansModelAdmin[Person]):
         def cannot_access_admin_warning(obj: Person) -> str:
             if not _person_can_access_admin(obj):
                 tooltip = _(
-                    "This person has no access to the admin interface. This is commonly because no actions or "
-                    "indicators are assigned to them.",
+                    'This person has no access to the admin interface. This is commonly because no actions or '
+                    'indicators are assigned to them.',
                 )
                 return format_html(
                     '<span data-controller="w-tooltip" data-w-tooltip-content-value="{}" style="cursor: pointer;">'
@@ -518,7 +528,7 @@ class PersonAdmin(AplansModelAdmin[Person]):
             return org.get_fully_qualified_name(orgs_by_path=orgs_by_path)
 
         fields: list[_DisplayT[Person]] = [avatar, cannot_access_admin_warning, first_name, last_name, 'title', organization]
-        #fields = [avatar, first_name, last_name, 'title', organization]
+        # fields = [avatar, first_name, last_name, 'title', organization]
 
         @admin.display(description=_('last login'), ordering='user__last_login')
         def last_logged_in(obj: Person) -> str | date | None:
@@ -530,6 +540,7 @@ class PersonAdmin(AplansModelAdmin[Person]):
             if delta > timedelta(days=30):
                 return user.last_login.date()
             return naturaltime(delta)
+
         setattr(last_logged_in, '_name', 'last_logged_in')  # noqa: B010
 
         if user.is_general_admin_for_plan(plan):
@@ -538,6 +549,7 @@ class PersonAdmin(AplansModelAdmin[Person]):
             @admin.display(description=_('Is plan admin'), ordering='is_plan_admin', boolean=True)
             def is_plan_admin(obj: Person) -> bool:
                 return obj.id in plan_admins
+
             setattr(is_plan_admin, '_name', 'is_plan_admin')  # noqa: B010
             fields.append(is_plan_admin)
 
@@ -551,7 +563,6 @@ class PersonAdmin(AplansModelAdmin[Person]):
         @admin.display(description=_('contact for indicators'))
         def contact_for_indicators(obj) -> str:
             return '; '.join([smart_truncate(str(ind), 40) for ind in obj.plan_contact_for_indicators])
-
 
         contact_person_filter = request.GET.get('contact_person', '')
         if contact_person_filter == 'action':
@@ -585,10 +596,12 @@ class PersonAdmin(AplansModelAdmin[Person]):
             basic_panels.append(FieldPanel('access_level'))
             basic_panels.append(FieldPanel('participated_in_training'))
             basic_panels.append(FieldPanel('is_admin_for_active_plan'))
-            basic_panels.append(FieldPanel(
-                'organization_plan_admin_orgs',
-                widget=autocomplete.ModelSelect2Multiple(url='organization-autocomplete'),
-            ))
+            basic_panels.append(
+                FieldPanel(
+                    'organization_plan_admin_orgs',
+                    widget=autocomplete.ModelSelect2Multiple(url='organization-autocomplete'),
+                )
+            )
             # FIXME: This saves ActionContactPerson instances without specifying `order`, which leads to duplicates of
             # the default value.
             # TODO: No way to specify `primary_contact`.
@@ -596,10 +609,12 @@ class PersonAdmin(AplansModelAdmin[Person]):
             # adding some workarounds) for `actioncontactperson_set`, but came across the problem that it screws up the
             # ordering because the order as displayed in the person admin view is not what we want -- the order we want
             # should rather be the one as specified in the action edit view.
-            basic_panels.append(FieldPanel(
-                'contact_for_actions_unordered',
-                widget=autocomplete.ModelSelect2Multiple(url='action-autocomplete'),
-            ))
+            basic_panels.append(
+                FieldPanel(
+                    'contact_for_actions_unordered',
+                    widget=autocomplete.ModelSelect2Multiple(url='action-autocomplete'),
+                )
+            )
         else:
             form_class = PersonForm
 

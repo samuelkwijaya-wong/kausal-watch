@@ -54,6 +54,7 @@ def log_email_send_status(sender, message, status, esp_name, **kwargs):
             f"email with subject '{message.subject}' to recipient {email}",
         )
 
+
 @receiver(post_delete, sender=ActionContactPerson)
 def fix_deleted_contact_person_in_draft(sender, instance, **kwargs):
     # When deleting an ActionContactPerson, drafts of that action may reference the deleted instance, which causes an
@@ -104,6 +105,7 @@ for model in MODELS_WHICH_AFFECT_LOGIN_RIGHTS:
 
 def sync_permissions(sender, **kwargs):
     from actions.perms import sync_group_permissions
+
     if sender.label != 'actions':
         return
     print('Syncing permissions')
@@ -121,6 +123,6 @@ def register_signal_handlers():
     )
     workflow_approved.connect(
         workflow_approval_email_notifier,
-        dispatch_uid="workflow_state_approved_email_notification",
+        dispatch_uid='workflow_state_approved_email_notification',
     )
     post_migrate.connect(sync_permissions, dispatch_uid='sync_app_permissions')

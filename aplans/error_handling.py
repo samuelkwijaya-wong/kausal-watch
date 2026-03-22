@@ -19,7 +19,7 @@ def html_server_error(request, template_name=ERROR_500_TEMPLATE_NAME):
     Templates: :template:`500.html`
     Context: None
     """
-    admin_500_template = "500_admin.html"
+    admin_500_template = '500_admin.html'
     context = {}
     try:
         ret = current_plan(request)
@@ -43,6 +43,7 @@ def html_server_error(request, template_name=ERROR_500_TEMPLATE_NAME):
     except Exception:
         template = loader.get_template(template_name)
         return HttpResponseServerError(template.render(context=context, request=request))
+
 
 def server_error(request, *args, **kwargs):
     if request.accepts('text/html'):

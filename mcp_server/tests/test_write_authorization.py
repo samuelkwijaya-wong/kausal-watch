@@ -139,7 +139,7 @@ def test_authorize_plan_edits_requires_explicit_elicitation(monkeypatch):
 
     grant = MCPPlanWriteAuthorizationGrant.objects.get(user=user, plan=plan)
     assert grant.granted_by_tool == 'authorize_plan_edits'
-    assert "Write access authorized for plan" in result
+    assert 'Write access authorized for plan' in result
 
 
 @pytest.mark.skip(reason='Elicitation is disabled until client support is reliable')

@@ -67,9 +67,7 @@ class PlanSpecificSingletonModelPermissionPolicy(ModelPermissionPolicy):
                 return True
         return False
 
-    def user_has_permission_for_instance(
-        self, user: AbstractBaseUser | AnonymousUser, action: str, instance: Model
-    ) -> bool:
+    def user_has_permission_for_instance(self, user: AbstractBaseUser | AnonymousUser, action: str, instance: Model) -> bool:
         if not isinstance(user, User):
             return False
         if action == 'change':

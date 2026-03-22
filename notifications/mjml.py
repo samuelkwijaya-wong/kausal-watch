@@ -16,16 +16,22 @@ logger = logging.getLogger(__name__)
 
 MJML_CMD = [
     os.path.join(settings.BASE_DIR, 'node_modules', '.bin', 'mjml'),
-    '-c', 'ignoreIncludes=true',
-    '--config.validationLevel', 'strict',
-    '-i', '-s',
+    '-c',
+    'ignoreIncludes=true',
+    '--config.validationLevel',
+    'strict',
+    '-i',
+    '-s',
 ]
 
 
 def make_jinja_environment():
     loader = FileSystemLoader(os.path.join(settings.BASE_DIR, 'notifications', 'mjml-templates'))
     env = SandboxedEnvironment(
-        trim_blocks=True, lstrip_blocks=True, undefined=StrictUndefined, loader=loader,
+        trim_blocks=True,
+        lstrip_blocks=True,
+        undefined=StrictUndefined,
+        loader=loader,
         extensions=[
             'jinja2.ext.i18n',
         ],
@@ -40,7 +46,11 @@ def make_jinja_environment():
 def render_mjml(mjml_in, dump=None):
     try:
         p = subprocess.run(
-            MJML_CMD, input=mjml_in, capture_output=True, encoding='utf8', check=True,
+            MJML_CMD,
+            input=mjml_in,
+            capture_output=True,
+            encoding='utf8',
+            check=True,
         )
     except subprocess.CalledProcessError as e:
         logger.error(e.stderr)

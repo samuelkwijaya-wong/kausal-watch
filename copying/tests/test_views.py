@@ -20,8 +20,7 @@ def test_plan_copy_view_accepts_as_view_kwargs():
     from copying.views import PlanCopyView
 
     # Verify the class attribute exists
-    assert hasattr(PlanCopyView, 'plan_id'), \
-        'PlanCopyView must have plan_id as a class attribute'
+    assert hasattr(PlanCopyView, 'plan_id'), 'PlanCopyView must have plan_id as a class attribute'
 
     # Verify as_view() accepts the kwarg (passed in actions/wagtail_admin.py:273)
     try:

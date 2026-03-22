@@ -11,7 +11,8 @@ def sentry(request):
         return {}
     scope = sentry_sdk.get_current_scope()
     return dict(
-        sentry_dsn=settings.SENTRY_DSN, deployment_type=settings.DEPLOYMENT_TYPE,
+        sentry_dsn=settings.SENTRY_DSN,
+        deployment_type=settings.DEPLOYMENT_TYPE,
         sentry_trace_meta=mark_safe(scope.trace_propagation_meta),  # noqa: S308
         sentry_release=scope.get_client().options.get('release'),
     )

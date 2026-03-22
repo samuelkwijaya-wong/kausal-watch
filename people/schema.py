@@ -17,7 +17,12 @@ class PersonNode(BasePersonNode, DjangoNode[Person]):
     class Meta:
         model = Person
         fields = [
-            'id', 'first_name', 'last_name', 'title', 'email', 'organization',
+            'id',
+            'first_name',
+            'last_name',
+            'title',
+            'email',
+            'organization',
         ]
 
     @staticmethod

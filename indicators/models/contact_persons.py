@@ -18,10 +18,15 @@ class IndicatorContactPerson(OrderedModel):
     """Contact person for an indicator."""
 
     indicator = ParentalKey(
-        'indicators.Indicator', on_delete=models.CASCADE, verbose_name=_('indicator'), related_name='contact_persons',
+        'indicators.Indicator',
+        on_delete=models.CASCADE,
+        verbose_name=_('indicator'),
+        related_name='contact_persons',
     )
     person: PK[Person] = ParentalKey(
-        'people.Person', on_delete=models.CASCADE, verbose_name=_('person'),
+        'people.Person',
+        on_delete=models.CASCADE,
+        verbose_name=_('person'),
     )
 
     indicator_id: int

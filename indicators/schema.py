@@ -53,7 +53,11 @@ class UnitNode(DjangoNode[Unit]):
     class Meta:
         model = Unit
         fields = [
-            'id', 'name', 'short_name', 'verbose_name', 'verbose_name_plural',
+            'id',
+            'name',
+            'short_name',
+            'verbose_name',
+            'verbose_name_plural',
         ]
 
     @staticmethod
@@ -105,7 +109,8 @@ class QuantityNode(DjangoNode[Quantity]):
     class Meta:
         model = Quantity
         fields = [
-            'id', 'name',
+            'id',
+            'name',
         ]
 
 
@@ -142,6 +147,7 @@ class IndicatorLevelNode(DjangoNode[IndicatorLevel]):
     )
     def resolve_plan(root: IndicatorLevel, info) -> Plan | None:
         return root.plan.get_if_visible(info.context.user)
+
 
 @register_django_node
 class DimensionNode(DjangoNode[Dimension]):
@@ -245,12 +251,17 @@ class IndicatorGoalNode(NormalizedValuesMixin, DjangoNode[IndicatorGoal]):
 class IndicatorNode(DjangoNode[Indicator]):
     ORDERABLE_FIELDS: ClassVar[Sequence[str]] = ['updated_at']
 
-    goals = graphene.List(IndicatorGoalNode, plan=graphene.ID(
-        default_value=None,
-        description=('[Deprecated] Has no effect. '
-                     'The same indicator cannot have different goals '
-                     'for the same organization for different plans.'),
-    ))
+    goals = graphene.List(
+        IndicatorGoalNode,
+        plan=graphene.ID(
+            default_value=None,
+            description=(
+                '[Deprecated] Has no effect. '
+                'The same indicator cannot have different goals '
+                'for the same organization for different plans.'
+            ),
+        ),
+    )
     values = graphene.List(graphene.NonNull(IndicatorValueNode), include_dimensions=graphene.Boolean(), required=True)
     level = graphene.String(plan=graphene.ID())
     actions = graphene.List(graphene.NonNull('actions.schema.ActionNode'), plan=graphene.ID(), required=True)
@@ -348,7 +359,6 @@ class IndicatorNode(DjangoNode[Indicator]):
     def resolve_related_causes(root: Indicator, info) -> Iterable[RelatedIndicator]:
         return root.related_causes.filter(causal_indicator__visibility=RestrictedVisibilityModel.VisibilityState.PUBLIC)
 
-
     @staticmethod
     @gql_optimizer.resolver_hints(
         model_field=('related_effects', 'i18n'),
@@ -378,19 +388,33 @@ class Query:
         id=graphene.ID(),
         identifier=graphene.ID(),
         plan=graphene.ID(),
-        restrict_to_publicly_visible=graphene.Boolean(default_value=True))
+        restrict_to_publicly_visible=graphene.Boolean(default_value=True),
+    )
     plan_indicators = graphene.List(
-        graphene.NonNull(IndicatorNode), plan=graphene.ID(required=True), first=graphene.Int(),
-        order_by=graphene.String(), has_data=graphene.Boolean(), has_goals=graphene.Boolean(),
+        graphene.NonNull(IndicatorNode),
+        plan=graphene.ID(required=True),
+        first=graphene.Int(),
+        order_by=graphene.String(),
+        has_data=graphene.Boolean(),
+        has_goals=graphene.Boolean(),
     )
     related_plan_indicators = graphene.List(
-        graphene.NonNull(IndicatorNode), plan=graphene.ID(required=True), first=graphene.Int(),
-        category=graphene.ID(), order_by=graphene.String(),
+        graphene.NonNull(IndicatorNode),
+        plan=graphene.ID(required=True),
+        first=graphene.Int(),
+        category=graphene.ID(),
+        order_by=graphene.String(),
     )
 
     def resolve_plan_indicators(
-        self, info: GQLInfo, plan: str, first=None, order_by=None, has_data=None,
-        has_goals=None, **kwargs,
+        self,
+        info: GQLInfo,
+        plan: str,
+        first=None,
+        order_by=None,
+        has_data=None,
+        has_goals=None,
+        **kwargs,
     ):
         plan_obj = get_plan_from_context(info, plan)
         if plan_obj is None:
@@ -413,10 +437,8 @@ class Query:
 
         return gql_optimizer.query(qs, info)
 
-
     @staticmethod
-    def resolve_related_plan_indicators(
-        root, info: GQLInfo, plan: str, **kwargs) -> IndicatorQuerySet | None:
+    def resolve_related_plan_indicators(root, info: GQLInfo, plan: str, **kwargs) -> IndicatorQuerySet | None:
         plan_obj = get_plan_from_context(info, plan)
         if plan_obj is None:
             return None
@@ -458,7 +480,6 @@ class Query:
         else:
             qs = qs.visible_for_public()
 
-
         if identifier:
             qs = qs.filter(identifier=identifier)
 
@@ -470,6 +491,7 @@ class Query:
             return None
 
         return obj
+
 
 def plans_indicators_queryset(plans, user, **kwargs):
     first = kwargs.get('first')

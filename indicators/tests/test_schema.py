@@ -927,10 +927,15 @@ def test_indicator_value_summary_block_field_label(plan_with_pages, graphql_clie
     from pages.models import IndicatorListPage
 
     page = plan_with_pages.root_page.get_children().type(IndicatorListPage).get().specific
-    page.details_main_top = [('value_summary', {
-        'field_label': 'My custom label',
-        'field_help_text': 'My custom help text',
-    })]
+    page.details_main_top = [
+        (
+            'value_summary',
+            {
+                'field_label': 'My custom label',
+                'field_help_text': 'My custom help text',
+            },
+        )
+    ]
     page.save()
 
     data = graphql_client_query_data(

@@ -69,7 +69,9 @@ class AttributeTypeQuerySet(MultilingualQuerySet['AttributeType']):
 
 if TYPE_CHECKING:
     _AttributeTypeManager = models.Manager.from_queryset(AttributeTypeQuerySet)
+
     class AttributeTypeManager(MLModelManager['AttributeType', AttributeTypeQuerySet], _AttributeTypeManager): ...
+
     del _AttributeTypeManager
 else:
     AttributeTypeManager = MLModelManager.from_queryset(AttributeTypeQuerySet)
@@ -105,7 +107,8 @@ class AttributeType(
     scope_content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, related_name='+')
     scope_id = models.PositiveIntegerField()
     scope: FK[Plan] | FK[CategoryType] = GenericForeignKey(  # pyright: ignore[reportAssignmentType]
-        'scope_content_type', 'scope_id',
+        'scope_content_type',
+        'scope_id',
     )  # type: ignore
 
     name = models.CharField(max_length=100, verbose_name=_('name'))
@@ -118,26 +121,39 @@ class AttributeType(
     )
     help_text = models.TextField(verbose_name=_('help text'), blank=True)
     format = models.CharField[AttributeFormat, AttributeFormat](
-        max_length=50, choices=AttributeFormat.choices, verbose_name=_('Format'),
+        max_length=50,
+        choices=AttributeFormat.choices,
+        verbose_name=_('Format'),
         help_text=_('The format of the fields with this type'),
     )
     unit = models.ForeignKey(
-        Unit, blank=True, null=True, on_delete=models.PROTECT, related_name='+',
+        Unit,
+        blank=True,
+        null=True,
+        on_delete=models.PROTECT,
+        related_name='+',
         verbose_name=_('Unit (only if format is numeric)'),
     )
     attribute_category_type = models.ForeignKey(
-        'actions.CategoryType', blank=True, null=True, on_delete=models.CASCADE, related_name='+',
+        'actions.CategoryType',
+        blank=True,
+        null=True,
+        on_delete=models.CASCADE,
+        related_name='+',
         verbose_name=_('Category type (if format is category)'),
         help_text=_('If the format is "Category", choose which category type the field values can be chosen from'),
     )
     show_choice_names = models.BooleanField(
-        default=True, verbose_name=_('show choice names'),
+        default=True,
+        verbose_name=_('show choice names'),
         help_text=_('If the format is "ordered choice", determines whether the choice names are displayed'),
     )
     has_zero_option = models.BooleanField(
-        default=False, verbose_name=_('has zero option'),
-        help_text=_('If the format is "ordered choice", determines whether the first option is displayed with zero '
-                    'bullets instead of one'),
+        default=False,
+        verbose_name=_('has zero option'),
+        help_text=_(
+            'If the format is "ordered choice", determines whether the first option is displayed with zero bullets instead of one'
+        ),
     )
     max_length = models.PositiveIntegerField(blank=True, null=True, verbose_name=_('character limit for text fields'))
     show_in_reporting_tab = models.BooleanField(default=False, verbose_name=_('show in reporting tab'))
@@ -147,7 +163,7 @@ class AttributeType(
         blank=True,
         on_delete=models.SET_NULL,
         related_name='+',
-        verbose_name=_("Icon"),
+        verbose_name=_('Icon'),
     )
 
     # Intentionally overrides ModelWithPrimaryLanguage.primary_language
@@ -155,7 +171,9 @@ class AttributeType(
     primary_language = models.CharField(max_length=8, choices=get_supported_languages())
     other_languages = ChoiceArrayField[list[str]](
         models.CharField[str, str](max_length=8, choices=get_supported_languages()),
-        default=list, null=False, blank=True,
+        default=list,
+        null=False,
+        blank=True,
     )
 
     i18n = TranslationField(
@@ -168,8 +186,17 @@ class AttributeType(
     help_text_i18n: str
 
     public_fields: ClassVar = [
-        'id', 'identifier', 'name', 'help_text', 'format', 'unit', 'attribute_category_type', 'show_choice_names',
-        'has_zero_option', 'icon', 'choice_options',
+        'id',
+        'identifier',
+        'name',
+        'help_text',
+        'format',
+        'unit',
+        'attribute_category_type',
+        'show_choice_names',
+        'has_zero_option',
+        'icon',
+        'choice_options',
     ]
 
     objects: AttributeTypeManager = AttributeTypeManager()
@@ -186,19 +213,19 @@ class AttributeType(
 
     def clean(self):
         from actions.models.action import Action
+
         super().clean()
         if self.unit is not None and self.format != self.AttributeFormat.NUMERIC:
-            raise ValidationError({'unit': _("A unit may only be set for numeric fields.")})
+            raise ValidationError({'unit': _('A unit may only be set for numeric fields.')})
         if not self.primary_language and self.other_languages:
-            raise ValidationError(_("If no primary language is set, there may not be other languages."))
+            raise ValidationError(_('If no primary language is set, there may not be other languages.'))
         action_ct = ContentType.objects.get_for_model(Action)
         if self.instance_editability_is_action_specific and self.object_content_type != action_ct:
-            raise ValidationError({'instances_editable_by': _("This value is only allowed for action fields.")})
+            raise ValidationError({'instances_editable_by': _('This value is only allowed for action fields.')})
         if self.instance_visibility_is_action_specific and self.object_content_type != action_ct:
-            raise ValidationError({'instances_visible_for': _("This value is only allowed for action fields.")})
+            raise ValidationError({'instances_visible_for': _('This value is only allowed for action fields.')})
         if self.icon and not self.icon.filename.endswith('.svg'):
-            raise ValidationError({'icon': _("The icon must be an SVG file.")})
-
+            raise ValidationError({'icon': _('The icon must be an SVG file.')})
 
     def _get_plan(self) -> Plan | None:
         if not hasattr(self, 'scope_content_type'):
@@ -207,14 +234,16 @@ class AttributeType(
         scope_model = self.scope_content_type.model
         if scope_app_label == 'actions' and scope_model == 'plan':
             from .plan import Plan
+
             assert isinstance(self.scope, Plan)
             plan = self.scope
         elif scope_app_label == 'actions' and scope_model == 'categorytype':
             from .category import CategoryType
+
             assert isinstance(self.scope, CategoryType)
             plan = self.scope.plan
         else:
-            raise Exception(f"Unexpected AttributeType scope content type {scope_app_label}:{scope_model}")
+            raise Exception(f'Unexpected AttributeType scope content type {scope_app_label}:{scope_model}')
         return plan
 
     def save(self, *args, **kwargs):
@@ -231,7 +260,9 @@ class AttributeType(
 
     def filter_siblings(self, qs: models.QuerySet[Self, Self]) -> models.QuerySet[Self, Self]:
         return qs.filter(
-            object_content_type=self.object_content_type, scope_content_type=self.scope_content_type, scope_id=self.scope_id,
+            object_content_type=self.object_content_type,
+            scope_content_type=self.scope_content_type,
+            scope_id=self.scope_id,
         )
 
     def get_plans(self):
@@ -261,6 +292,7 @@ class Attribute(models.Model):
 
     def is_visible_for_user(self, user: UserOrAnon, plan: Plan) -> bool:
         from actions.models.action import Action
+
         assert plan is not None
         if self.content_type_id == ContentType.objects.get_for_model(Action).id:
             action = self.content_object
@@ -315,7 +347,9 @@ class AttributeTypeChoiceOption(ClusterableModel, OrderedModel):
 @reversion.register(follow=['categories'])
 class AttributeCategoryChoice(Attribute, ClusterableModel):
     type: PK[AttributeType] = ParentalKey(
-        AttributeType, on_delete=models.CASCADE, related_name='category_choice_attributes',
+        AttributeType,
+        on_delete=models.CASCADE,
+        related_name='category_choice_attributes',
     )
     categories = ParentalManyToManyField('actions.Category', related_name='+')
 
@@ -325,14 +359,16 @@ class AttributeCategoryChoice(Attribute, ClusterableModel):
         unique_together = ('type', 'content_type', 'object_id')
 
     def __str__(self):
-        return "; ".join([str(c) for c in self.categories.all()])
+        return '; '.join([str(c) for c in self.categories.all()])
 
 
 @reversion.register(follow=['choice'])
 class AttributeChoice(Attribute):
     type: PK[AttributeType] = ParentalKey(AttributeType, on_delete=models.CASCADE, related_name='choice_attributes')
     choice = models.ForeignKey(
-        AttributeTypeChoiceOption, on_delete=models.CASCADE, related_name='choice_attributes',
+        AttributeTypeChoiceOption,
+        on_delete=models.CASCADE,
+        related_name='choice_attributes',
     )
 
     class Meta:
@@ -347,10 +383,10 @@ class AttributeChoice(Attribute):
             sentry_sdk.set_extra(
                 'serializedReferenceError',
                 'Deleted AttributeChoice instance referenced. '
-                'Probable cause: serialized report representation has stale reference to choice.'
+                'Probable cause: serialized report representation has stale reference to choice.',
             )
-            sentry_sdk.set_extra("attributeType", self.type.pk)
-            sentry_sdk.set_extra("attributeChoicePk", self.choice_id)
+            sentry_sdk.set_extra('attributeType', self.type.pk)
+            sentry_sdk.set_extra('attributeChoicePk', self.choice_id)
             sentry_sdk.capture_exception(e)
             return gettext('Missing value')
         return str(choice)
@@ -359,10 +395,15 @@ class AttributeChoice(Attribute):
 @reversion.register(follow=['choice'])
 class AttributeChoiceWithText(Attribute):
     type: PK[AttributeType] = ParentalKey(
-        AttributeType, on_delete=models.CASCADE, related_name='choice_with_text_attributes',
+        AttributeType,
+        on_delete=models.CASCADE,
+        related_name='choice_with_text_attributes',
     )
     choice = models.ForeignKey(
-        AttributeTypeChoiceOption, blank=True, null=True, on_delete=models.CASCADE,
+        AttributeTypeChoiceOption,
+        blank=True,
+        null=True,
+        on_delete=models.CASCADE,
         related_name='choice_with_text_attributes',
     )
     text: RichTextField[str | None, str | None] = RichTextField(verbose_name=_('Text'), blank=True, null=True)
@@ -378,7 +419,7 @@ class AttributeChoiceWithText(Attribute):
 
     def __str__(self):
         text_field = cast('RichTextField', self._meta.get_field('text'))
-        text = " ".join(text_field.get_searchable_content(str(self.text_i18n))).strip()
+        text = ' '.join(text_field.get_searchable_content(str(self.text_i18n))).strip()
         if len(text):
             text = f'; {text}'
         return f'{self.choice}{text}'
@@ -430,8 +471,7 @@ class AttributeRichText(Attribute):
 
     def __str__(self):
         text_field = cast('RichTextField', self._meta.get_field('text'))
-        return " ".join(text_field.get_searchable_content(str(self.text_i18n)))
-
+        return ' '.join(text_field.get_searchable_content(str(self.text_i18n)))
 
 
 @reversion.register()
@@ -451,6 +491,7 @@ class AttributeNumericValue(Attribute):
 type SetAttributeReturn = (
     tuple[Literal['create', 'delete'], Attribute] | tuple[Literal['update'], Attribute, list[str]] | tuple[None, None]
 )
+
 
 class ModelWithAttributes(ClusterableModel):
     """
@@ -472,8 +513,12 @@ class ModelWithAttributes(ClusterableModel):
     category_choice_attributes = GenericRelation(to='actions.AttributeCategoryChoice')
 
     ATTRIBUTE_RELATIONS = [
-        'choice_attributes', 'choice_with_text_attributes', 'text_attributes', 'rich_text_attributes',
-        'numeric_value_attributes', 'category_choice_attributes',
+        'choice_attributes',
+        'choice_with_text_attributes',
+        'text_attributes',
+        'rich_text_attributes',
+        'numeric_value_attributes',
+        'category_choice_attributes',
     ]
 
     # Register models inheriting from this one using:
@@ -488,21 +533,22 @@ class ModelWithAttributes(ClusterableModel):
         self.draft_attributes = None
 
     def get_editable_attribute_types(self, user: UserOrAnon) -> Sequence[AttributeTypeWrapper[Any]]:
-        raise NotImplementedError("Implement in subclass")
+        raise NotImplementedError('Implement in subclass')
 
     def get_visible_attribute_types(self, user: UserOrAnon) -> Sequence[AttributeTypeWrapper[Any]]:
-        raise NotImplementedError("Implement in subclass")
+        raise NotImplementedError('Implement in subclass')
 
     @classmethod
     def get_attribute_types_for_plan(
         cls, plan: Plan, only_in_reporting_tab: bool = False, unless_in_reporting_tab: bool = False
     ) -> Sequence[AttributeTypeWrapper[Any]]:
-        raise NotImplementedError("Implement in subclass")
+        raise NotImplementedError('Implement in subclass')
 
     @classmethod
     def from_serializable_data(cls, data: SerializableData, check_fks: bool = True, strict_fks: bool = False) -> Self | None:
         """Called by Wagtail when editing a draft, and by the GraphQL implementation when resolving attributes."""  # noqa: D401
         from actions.attributes import DraftAttributes
+
         serialized_attributes = data.pop('attributes', {})
         result = super().from_serializable_data(data, check_fks=check_fks, strict_fks=strict_fks)
         result.draft_attributes = DraftAttributes.from_revision_content(serialized_attributes, cache=getattr(data, 'cache', None))

@@ -487,9 +487,9 @@ class ActionCategoryReportFieldFormatter(ReportFieldFormatter):
         category_pks = self._get_category_ids(
             action['id'], related_objects.get('actions.models.action.ActionCategoryThrough', [])
         )
-        categories: Iterable[Category] = filter_by_type(
-            [report.plan_current_related_objects.categories.get(int(pk)) for pk in category_pks]
-        )
+        categories: Iterable[Category] = filter_by_type([
+            report.plan_current_related_objects.categories.get(int(pk)) for pk in category_pks
+        ])
 
         level = block_value.get('category_level')
         mapped_categories: Iterable[Category | None] = categories

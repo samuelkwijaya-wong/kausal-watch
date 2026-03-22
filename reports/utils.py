@@ -11,11 +11,12 @@ if typing.TYPE_CHECKING:
 
     from .types import AttributePath, SerializedAttributeVersion, SerializedVersion
 
+
 def get_attribute_for_type_from_related_objects(
-        required_content_type_id: int,
-        action_id: int,
-        attribute_type_id: int,
-        attribute_versions: dict[AttributePath, SerializedAttributeVersion],
+    required_content_type_id: int,
+    action_id: int,
+    attribute_type_id: int,
+    attribute_versions: dict[AttributePath, SerializedAttributeVersion],
 ) -> SerializedAttributeVersion | None:
     required_attribute_path: AttributePath = (
         required_content_type_id,
@@ -26,23 +27,20 @@ def get_attribute_for_type_from_related_objects(
 
 
 def get_related_model_instances_for_action(
-        # TODO: this is used in formatters -- see if it needs to be refactored
-        match_criterion: tuple[str, Any] | None,
-        related_objects: dict[str, list[SerializedVersion]],
-        desired_model: type[Model] | Literal['self'] | Any | None,
+    # TODO: this is used in formatters -- see if it needs to be refactored
+    match_criterion: tuple[str, Any] | None,
+    related_objects: dict[str, list[SerializedVersion]],
+    desired_model: type[Model] | Literal['self'] | Any | None,
 ):
     match_key = None
     match_value = None
     if match_criterion is not None:
         match_key, match_value = match_criterion
-    model_full_path = f"{desired_model.__module__}.{desired_model.__name__}"
+    model_full_path = f'{desired_model.__module__}.{desired_model.__name__}'
     objects = related_objects.get(model_full_path)
     if objects is None:
         return []
-    return [
-        x for x in objects
-        if match_criterion is None or match_value == int(x.data[match_key])
-    ]
+    return [x for x in objects if match_criterion is None or match_value == int(x.data[match_key])]
 
 
 def group_by_model(serialized_versions: list[SerializedVersion]) -> dict[str, list[SerializedVersion]]:
@@ -79,6 +77,7 @@ def get_field_unique_key(field: Any) -> str:
             key = f'{key}.level_{level.id}'
         return key
     return block_name
+
 
 # These are magic numbers referring to the Excel built-in, non-custom,
 # and locale-independent formats for date with or without time. It is used to make

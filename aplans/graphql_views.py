@@ -36,6 +36,7 @@ logger = logger.bind(markup=True)
 
 GRAPHQL_CAPTURE_QUERIES = env_bool('GRAPHQL_CAPTURE_QUERIES', default=False)
 
+
 # FIXME: Not used anywhere; any code worth keeping?
 class WatchExecutionContext(ExecutionContext):
     context_value: GQLPlanContext
@@ -79,6 +80,7 @@ class WatchGraphQLView(GraphQLView[WatchGraphQLContext]):
 
     def __init__(self):
         from .schema import schema
+
         super().__init__(schema=schema)
 
     @override

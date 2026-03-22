@@ -58,13 +58,13 @@ pytestmark = pytest.mark.django_db
 class TestValidateCopyPlanArgs:
     def test_rejects_duplicate_plan_identifier(self, plan):
         new_site_hostname = _new_site_hostname(plan, 'new-identifier')
-        with pytest.raises(ValueError, match="already exists"):
+        with pytest.raises(ValueError, match='already exists'):
             _validate_copy_plan_args(plan, plan.identifier, new_site_hostname, copy_indicators=False)
 
     def test_rejects_duplicate_site_hostname(self, plan_with_pages):
         assert plan_with_pages.site is not None
         existing_hostname = plan_with_pages.site.hostname
-        with pytest.raises(ValueError, match="already exists"):
+        with pytest.raises(ValueError, match='already exists'):
             _validate_copy_plan_args(plan_with_pages, 'unique-identifier', existing_hostname, copy_indicators=False)
 
     def test_passes_with_valid_args(self, plan):
@@ -113,7 +113,7 @@ def html_with_references(instances):
         elif isinstance(instance, Indicator):
             html += f'<a linktype="indicator" id="{instance.id}" uuid="{instance.uuid}">{instance.name}</a>'
         else:
-            raise TypeError("Unexpected type for referenced instance")
+            raise TypeError('Unexpected type for referenced instance')
     html += '</p>'
     return html
 
@@ -263,7 +263,13 @@ def test_indicators_are_shared_when_copy_indicators_is_false(plan_with_pages, in
 
 @pytest.mark.parametrize('indicator__common', [None])
 def test_copy_indicator(  # noqa: PLR0915
-    plan_with_pages, action, indicator, category, plan_dimension, indicator_dimension, person,
+    plan_with_pages,
+    action,
+    indicator,
+    category,
+    plan_dimension,
+    indicator_dimension,
+    person,
 ):
     # Do not share indicators between the original plan and the plan copy but copy them from the original plan to the
     # plan copy
@@ -277,10 +283,14 @@ def test_copy_indicator(  # noqa: PLR0915
     goal = IndicatorGoalFactory.create(indicator=indicator)
     action_indicator = ActionIndicatorFactory.create(action=action, indicator=indicator)
     effect = RelatedIndicatorFactory.create(
-        causal_indicator=indicator, effect_indicator__plans=[plan_with_pages], effect_indicator__common=None,
+        causal_indicator=indicator,
+        effect_indicator__plans=[plan_with_pages],
+        effect_indicator__common=None,
     )
     cause = RelatedIndicatorFactory.create(
-        effect_indicator=indicator, causal_indicator__plans=[plan_with_pages], causal_indicator__common=None,
+        effect_indicator=indicator,
+        causal_indicator__plans=[plan_with_pages],
+        causal_indicator__common=None,
     )
     assert indicator.contact_persons.count() == 1
     assert plan_with_pages.dimensions.get() == plan_dimension
@@ -404,7 +414,9 @@ def test_rich_text_field_indicator_references(plan_with_pages):
 
 @pytest.mark.parametrize('indicator__common', [None])
 def test_indicator_reference_in_action_description_updated_when_copying_indicators(
-    plan_with_pages, action, indicator,
+    plan_with_pages,
+    action,
+    indicator,
 ):
     """When copying a plan with indicators, indicator references in action descriptions should be updated."""
     action.description = html_with_references([indicator])
@@ -417,7 +429,10 @@ def test_indicator_reference_in_action_description_updated_when_copying_indicato
 
 @pytest.mark.parametrize('indicator__common', [None])
 def test_indicator_reference_in_action_draft_updated_when_copying_indicators(
-    plan_with_pages, action, indicator, user,
+    plan_with_pages,
+    action,
+    indicator,
+    user,
 ):
     """When copying a plan with indicators, indicator references in action draft descriptions should be updated."""
     action.description = html_with_references([indicator])
@@ -433,7 +448,9 @@ def test_indicator_reference_in_action_draft_updated_when_copying_indicators(
 
 @pytest.mark.parametrize('indicator__common', [None])
 def test_indicator_reference_in_action_task_details_updated_when_copying_indicators(
-    plan_with_pages, action, indicator,
+    plan_with_pages,
+    action,
+    indicator,
 ):
     """When copying a plan with indicators, indicator references in action task details should be updated."""
     task = ActionTaskFactory.create(action=action, details=html_with_references([indicator]))
@@ -446,7 +463,9 @@ def test_indicator_reference_in_action_task_details_updated_when_copying_indicat
 
 @pytest.mark.parametrize('indicator__common', [None])
 def test_indicator_reference_in_attribute_rich_text_updated_when_copying_indicators(
-    plan_with_pages, action, indicator,
+    plan_with_pages,
+    action,
+    indicator,
 ):
     """When copying a plan with indicators, indicator references in AttributeRichText.text should be updated."""
     action_ct = ContentType.objects.get_for_model(Action)
@@ -470,7 +489,9 @@ def test_indicator_reference_in_attribute_rich_text_updated_when_copying_indicat
 
 @pytest.mark.parametrize('indicator__common', [None])
 def test_indicator_reference_in_attribute_choice_with_text_updated_when_copying_indicators(
-    plan_with_pages, action, indicator,
+    plan_with_pages,
+    action,
+    indicator,
 ):
     """When copying a plan with indicators, indicator references in AttributeChoiceWithText.text should be updated."""
     action_ct = ContentType.objects.get_for_model(Action)

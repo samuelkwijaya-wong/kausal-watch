@@ -12,4 +12,4 @@ urlpatterns = [
 ]
 
 if not settings.LOGOUT_REDIRECT_URL:
-    raise ImproperlyConfigured("You must configure LOGOUT_REDIRECT_URL.")
+    raise ImproperlyConfigured('You must configure LOGOUT_REDIRECT_URL.')

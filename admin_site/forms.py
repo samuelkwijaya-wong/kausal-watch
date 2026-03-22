@@ -17,14 +17,17 @@ if TYPE_CHECKING:
 
 class LoginForm(AuthenticationForm):
     password = forms.CharField(
-        widget=forms.PasswordInput(attrs={
-            'placeholder': gettext_lazy("Enter password"),
-        }))
+        widget=forms.PasswordInput(
+            attrs={
+                'placeholder': gettext_lazy('Enter password'),
+            }
+        )
+    )
 
     def __init__(self, request=None, *args, **kwargs):
         super().__init__(request, *args, **kwargs)
         email_attrs = self.fields['username'].widget.attrs
-        email_attrs['placeholder'] = gettext_lazy("Enter your email address")
+        email_attrs['placeholder'] = gettext_lazy('Enter your email address')
         email_attrs['autofocus'] = True
 
     @property
@@ -50,10 +53,10 @@ class WatchAdminModelForm[ModelT: Model](LanguageAwareAdminModelForm[ModelT]):
     def get_all_realm_languages(self) -> set[str]:
         if self.plan is None:
             raise ValueError('Cannot get plan languages without plan.')
-        result = set(self.plan.other_languages).union({ self.plan.primary_language })
+        result = set(self.plan.other_languages).union({self.plan.primary_language})
         return {convert_language_code(lang, 'django') for lang in result}
 
     def __init__(self, *args, **kwargs):
-        self.plan = kwargs.pop("plan", None)
-        self.realm_initialized = (self.plan is not None)
+        self.plan = kwargs.pop('plan', None)
+        self.realm_initialized = self.plan is not None
         super().__init__(*args, **kwargs)

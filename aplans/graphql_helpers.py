@@ -52,8 +52,7 @@ def collect_fields(node, fragments):
                     leaf['name']['value']: collect_fields(leaf, fragments),
                 })
             elif leaf['kind'].replace('_', '').lower() == 'fragmentspread':
-                field.update(collect_fields(fragments[leaf['name']['value']],
-                                            fragments))
+                field.update(collect_fields(fragments[leaf['name']['value']], fragments))
 
     return field
 
@@ -96,6 +95,7 @@ class GraphQLAuthRequiredError(GraphQLError):
                 'code': 'AUTH_REQUIRED',
             }
 
+
 class ModelAdminAdminButtonsMixin:
     admin_buttons = graphene.List(graphene.NonNull(AdminButton), required=True)
 
@@ -113,6 +113,7 @@ class ModelAdminAdminButtonsMixin:
             helper.permission_helper.disable_admin_plan_check()
         buttons = helper.get_buttons_for_obj(root)
         return buttons
+
 
 class AdminButtonsMixin:
     admin_buttons = graphene.List(graphene.NonNull(AdminButton), required=True)

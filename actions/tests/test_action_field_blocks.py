@@ -52,22 +52,21 @@ def test_action_field_registry_validity(field):
     try:
         field_props = action_registry[field.name]
     except KeyError:
-        msg = (f'No blocks configured for public field "{field.name}" of Action. '
-               'Please configure or disable blocks for that field in actions.action_fields.py')
+        msg = (
+            f'No blocks configured for public field "{field.name}" of Action. '
+            'Please configure or disable blocks for that field in actions.action_fields.py'
+        )
         warnings.warn(msg, stacklevel=1)  # TODO: make this a test failure
         return
 
     default_field_type = get_field_type(field)
     if field_props.is_disabled():
         return
-    assert field_props.field_type in ('custom', default_field_type), (
-        f'Wrong type for field {field.name}'
-    )
+    assert field_props.field_type in ('custom', default_field_type), f'Wrong type for field {field.name}'
 
     config = field_props.config
     assert config
     if config[FieldBlockContext.DASHBOARD].has_block:
-        msg = (f'No report block configured for public field "{field.name}" of Action '
-               'even though a dashboard block exists for it.')
+        msg = f'No report block configured for public field "{field.name}" of Action even though a dashboard block exists for it.'
         assert config[FieldBlockContext.REPORT].has_block, msg
     return

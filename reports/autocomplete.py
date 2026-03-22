@@ -26,8 +26,7 @@ class ReportTypeAutocomplete(autocomplete.Select2QuerySetView):
         if self.q:
             q = self.q.strip()
             report_types = report_types.filter(
-                Q(identifier__istartswith=q) |
-                Q(name__icontains=q),
+                Q(identifier__istartswith=q) | Q(name__icontains=q),
             )
         return report_types
 
@@ -49,8 +48,7 @@ class ReportAutocomplete(autocomplete.Select2QuerySetView):
         if self.q:
             q = self.q.strip()
             reports = reports.filter(
-                Q(identifier__istartswith=q) |
-                Q(name__icontains=q),
+                Q(identifier__istartswith=q) | Q(name__icontains=q),
             )
         return reports
 

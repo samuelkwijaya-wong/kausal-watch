@@ -9,7 +9,7 @@ from admin_site.models import Client
 from users.models import User
 
 pytestmark = pytest.mark.django_db
-COMMAND_NAME='create_superuser_with_defaults'
+COMMAND_NAME = 'create_superuser_with_defaults'
 AUTH_BACKENDS = [be.value or None for be in Client.AuthBackend]
 
 
@@ -21,11 +21,9 @@ def test_users():
         ('Tarja', 'Halonen'),
     ]
 
+
 def make_user_kwargs(
-    email_domain: str,
-    user: tuple[str, str],
-    organization: str,
-    extra_kwargs: dict[str, str] | None = None
+    email_domain: str, user: tuple[str, str], organization: str, extra_kwargs: dict[str, str] | None = None
 ) -> dict[str, str]:
     first_name, last_name = user
     email = f'{first_name.lower()}.{last_name.lower()}@{email_domain}'
@@ -38,6 +36,7 @@ def make_user_kwargs(
     if extra_kwargs:
         kwargs.update(extra_kwargs)
     return kwargs
+
 
 def _handle_user(domain, user_names, out, organization: str = 'TestOrg', extra_kwargs: dict | None = None):
     user_kwargs = make_user_kwargs(domain, user_names, organization, extra_kwargs)
@@ -66,9 +65,11 @@ def _handle_user(domain, user_names, out, organization: str = 'TestOrg', extra_k
     assert user.person.organization.name == organization
     user.get_adminable_plans()
 
+
 def test_create_user_invalid_uuid(test_users):
     with pytest.raises(CommandError):
         _handle_user('foo.com', test_users[0], StringIO(), extra_kwargs=dict(uuid='IAmNotAValidUuid'))
+
 
 def test_create_multiple_superusers_same_organization(test_users):
     out = StringIO()
@@ -76,26 +77,30 @@ def test_create_multiple_superusers_same_organization(test_users):
     for user in test_users:
         _handle_user(domain, user, out)
 
+
 def test_create_multiple_superusers_different_organization_same_email(test_users):
     # This use case is not supported and should throw.
     out = StringIO()
     domain = 'suomi.fi'
     for index, user in enumerate(test_users):
         if index == 0:
-            _handle_user(domain, user, out, organization=f'TestOrg{index+1}')
+            _handle_user(domain, user, out, organization=f'TestOrg{index + 1}')
             continue
         with pytest.raises(CommandError):
-            _handle_user(domain, user, out, organization=f'TestOrg{index+1}')
+            _handle_user(domain, user, out, organization=f'TestOrg{index + 1}')
+
 
 def test_create_multiple_superusers_different_organization_different_email(test_users):
     out = StringIO()
     domains = ['suomi.fi', 'sverige.se', 'danmark.de']
     for index, user in enumerate(test_users):
-        _handle_user(domains[index], user, out, organization=f'TestOrg{index+1}')
+        _handle_user(domains[index], user, out, organization=f'TestOrg{index + 1}')
+
 
 @pytest.mark.parametrize('auth_backend', AUTH_BACKENDS)
 def test_create_user_login_methods(test_users, auth_backend):
     _handle_user('foo.com', test_users[0], StringIO(), extra_kwargs=dict(auth_backend=auth_backend))
+
 
 def test_required_arguments_missing():
     out = StringIO()

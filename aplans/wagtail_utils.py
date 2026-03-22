@@ -23,15 +23,14 @@ class ModelChoiceFieldWithValueInList(forms.ModelChoiceField):
         return [result]
 
     def prepare_value(self, value):
-        if (hasattr(value, '__iter__') and
-                not isinstance(value, str) and
-                not hasattr(value, '_meta')):
+        if hasattr(value, '__iter__') and not isinstance(value, str) and not hasattr(value, '_meta'):
             prepare_value = super().prepare_value
             return [prepare_value(v) for v in value]
         return super().prepare_value(value)
 
 
 M = TypeVar('M', bound=Model)
+
 
 def _get_category_fields[M: Model](plan: Plan, model: type[M], obj: M | None, with_initial: bool = False) -> dict:
     fields = {}
@@ -56,20 +55,20 @@ def _get_category_fields[M: Model](plan: Plan, model: type[M], obj: M | None, wi
 
             widget = autocomplete.ModelSelect2(
                 url='category-autocomplete',
-                forward=(
-                    dal_forward.Const(cat_type.id, 'type'),
-                ),
+                forward=(dal_forward.Const(cat_type.id, 'type'),),
             )
         else:
             field_class = forms.ModelMultipleChoiceField
             widget = autocomplete.ModelSelect2Multiple(
                 url='category-autocomplete',
-                forward=(
-                    dal_forward.Const(cat_type.id, 'type'),
-                ),
+                forward=(dal_forward.Const(cat_type.id, 'type'),),
             )
         field = field_class(
-            qs, label=cat_type.name, initial=initial, required=False, widget=widget,
+            qs,
+            label=cat_type.name,
+            initial=initial,
+            required=False,
+            widget=widget,
         )
         field.category_type = cat_type
         fields['categories_%s' % cat_type.identifier] = field

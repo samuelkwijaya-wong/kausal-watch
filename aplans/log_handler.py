@@ -28,7 +28,7 @@ class LogRender:
         show_time: bool = True,
         show_level: bool = False,
         show_path: bool = True,
-        time_format: str | FormatTimeCallable = "[%x %X]",
+        time_format: str | FormatTimeCallable = '[%x %X]',
         omit_repeated_times: bool = True,
         level_width: int | None = 8,
     ) -> None:
@@ -47,7 +47,7 @@ class LogRender:
         name: str,
         log_time: datetime | None = None,
         time_format: str | FormatTimeCallable | None = None,
-        level: TextType = "",
+        level: TextType = '',
         path: str | None = None,
         line_no: int | None = None,
         link_path: str | None = None,
@@ -57,12 +57,12 @@ class LogRender:
         output = Table.grid(padding=(0, 1))
         output.expand = True
         if self.show_time:
-            output.add_column(style="log.time")
+            output.add_column(style='log.time')
         if self.show_level:
-            output.add_column(style="log.level", width=self.level_width)
-        output.add_column(ratio=1, style="log.message", overflow="fold")
+            output.add_column(style='log.level', width=self.level_width)
+        output.add_column(ratio=1, style='log.message', overflow='fold')
         if self.show_path and path:
-            output.add_column(style="log.path")
+            output.add_column(style='log.path')
         row: list[RenderableType] = []
         if self.show_time:
             log_time = log_time or console.get_datetime()
@@ -72,7 +72,7 @@ class LogRender:
             else:
                 log_time_display = Text(log_time.strftime(time_format))
             if log_time_display == self._last_time and self.omit_repeated_times:
-                row.append(Text(" " * len(log_time_display)))
+                row.append(Text(' ' * len(log_time_display)))
             else:
                 row.append(log_time_display)
                 self._last_time = log_time_display
@@ -88,7 +88,8 @@ class LogRender:
         if self.show_path and path:
             path_text = Text()
             path_text.append(
-                name, style=f"link file://{link_path}#{line_no}" if link_path else "",
+                name,
+                style=f'link file://{link_path}#{line_no}' if link_path else '',
             )
             row.append(path_text)
 

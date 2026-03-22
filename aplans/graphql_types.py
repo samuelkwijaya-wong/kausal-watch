@@ -85,9 +85,12 @@ def order_queryset[QS: QuerySet[Any]](qs: QS, node_class: type[SupportsOrderable
         desc = ''
     order_by = to_snake_case(order_by)
     if order_by not in orderable_fields:
-        raise ValueError('Only orderable fields are: %s' % ', '.join(
-            [to_camel_case(x) for x in orderable_fields],
-        ))
+        raise ValueError(
+            'Only orderable fields are: %s'
+            % ', '.join(
+                [to_camel_case(x) for x in orderable_fields],
+            )
+        )
     assert order_by is not None
     qs = qs.order_by(desc + order_by)
     return qs
@@ -96,7 +99,7 @@ def order_queryset[QS: QuerySet[Any]](qs: QS, node_class: type[SupportsOrderable
 def register_django_node[DN: DjangoNode[Any]](cls: type[DN]) -> type[DN]:
     meta = cls._meta
     model = meta.model
-    assert model not in grapple_registry.django_models, f"Model {model} already registered"
+    assert model not in grapple_registry.django_models, f'Model {model} already registered'
     grapple_registry.django_models[model] = cls
     return cls
 
@@ -153,6 +156,7 @@ class WorkflowStateDescription(graphene.ObjectType[Any]):
 
 
 if TYPE_CHECKING:
+
     @type_check_only
     class GQLInfo(CommonGQLInfo):  # pyright: ignore
         context: WatchGraphQLContext  # type: ignore[assignment]

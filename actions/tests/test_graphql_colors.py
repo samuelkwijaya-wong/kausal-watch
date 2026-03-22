@@ -38,11 +38,11 @@ def plan_with_statuses_phases_and_actions(
 
 
 def test_plan_action_colors(
-        graphql_client_query_data,
-        colorized_statuses,
-        colorized_implementation_phases,
-        plan_with_statuses_phases_and_actions,
-        django_assert_max_num_queries,
+    graphql_client_query_data,
+    colorized_statuses,
+    colorized_implementation_phases,
+    plan_with_statuses_phases_and_actions,
+    django_assert_max_num_queries,
 ):
     plan = plan_with_statuses_phases_and_actions
     data = None
@@ -67,10 +67,10 @@ def test_plan_action_colors(
 
 
 def test_plan_phase_colors(
-        graphql_client_query_data,
-        plan: Plan,
-        colorized_implementation_phases,
-        django_assert_max_num_queries,
+    graphql_client_query_data,
+    plan: Plan,
+    colorized_implementation_phases,
+    django_assert_max_num_queries,
 ):
     data = None
     with django_assert_max_num_queries(5):
@@ -87,9 +87,7 @@ def test_plan_phase_colors(
     assert len(data['plan']['actionImplementationPhases']) == len(colorized_implementation_phases)
     for phase in data['plan']['actionImplementationPhases']:
         result_color = phase['color']
-        corresponding_phase = next(
-            p for p in colorized_implementation_phases if p.identifier == phase['identifier']
-        )
+        corresponding_phase = next(p for p in colorized_implementation_phases if p.identifier == phase['identifier'])
         if corresponding_phase.color:
             assert result_color == OVERRIDE_COLOR
         else:
@@ -97,10 +95,10 @@ def test_plan_phase_colors(
 
 
 def test_plan_status_colors(
-        graphql_client_query_data,
-        plan,
-        colorized_statuses,
-        django_assert_max_num_queries,
+    graphql_client_query_data,
+    plan,
+    colorized_statuses,
+    django_assert_max_num_queries,
 ):
     data = None
     with django_assert_max_num_queries(7):
@@ -117,9 +115,7 @@ def test_plan_status_colors(
     assert len(data['plan']['actionStatuses']) == len(colorized_statuses)
     for status in data['plan']['actionStatuses']:
         result_color = status['color']
-        corresponding_status = next(
-            p for p in colorized_statuses if p.identifier == status['identifier']
-        )
+        corresponding_status = next(p for p in colorized_statuses if p.identifier == status['identifier'])
         assert result_color
         if corresponding_status.color:
             assert result_color == OVERRIDE_COLOR

@@ -14,6 +14,7 @@ In the end it  would be nice to find a sustainable solution  to replace some of
 the rough estimations happening here.
 
 """
+
 from __future__ import annotations
 
 import re
@@ -97,10 +98,9 @@ class ReportActionPrintLayoutCustomization(models.Model):
             raise ValueError(f'Unsupported variable key {key}')
 
     @classmethod
-    def _get_instance_with_fallback(cls, plan: Plan) -> (
-            tuple[ReportActionPrintLayoutCustomization | None,
-                  ReportActionPrintLayoutCustomization | None]
-    ):
+    def _get_instance_with_fallback(
+        cls, plan: Plan
+    ) -> tuple[ReportActionPrintLayoutCustomization | None, ReportActionPrintLayoutCustomization | None]:
         instance = cls.objects.filter(plan=plan)
         fallback = cls.objects.filter(plan=None)
         return (instance.get() if instance else None), (fallback.get() if fallback else None)
@@ -109,8 +109,10 @@ class ReportActionPrintLayoutCustomization(models.Model):
 def _keys_with_total_length(action_df: pl.DataFrame) -> list[tuple[str, int]]:
     result = []
     d = action_df.to_dict()
+
     def reducer(x: int, y: str) -> int:
         return max(x, (len(str(y)) if y is not None else 0))
+
     for label, datas in d.items():
         result.append((label, reduce(reducer, datas, 0)))
     return result
@@ -120,6 +122,7 @@ def _keys_with_total_length(action_df: pl.DataFrame) -> list[tuple[str, int]]:
 class NewPageMarker(CellBase):
     action_identifier: str
     action_name: str
+
     def is_page_break(self) -> bool:
         return True
 
@@ -136,11 +139,14 @@ def write_action_summaries(excel_report: ExcelReport, action_df: pl.DataFrame) -
     MIN_SPLIT_CHARS = custom_variables.min_split_chars
 
     if (
-            MAX_COLUMNS is None or
-            APPROXIMATE_CHARS_PER_LINE is None or
-            APPROXIMATE_LINES_PER_PAGE is None or
-            MIN_SPLIT_CHARS is None or
-            WIDTH_NEEDED is None or not WIDTH_NEEDED or len(WIDTH_NEEDED) < 1 or len(WIDTH_NEEDED[0]) != 2
+        MAX_COLUMNS is None
+        or APPROXIMATE_CHARS_PER_LINE is None
+        or APPROXIMATE_LINES_PER_PAGE is None
+        or MIN_SPLIT_CHARS is None
+        or WIDTH_NEEDED is None
+        or not WIDTH_NEEDED
+        or len(WIDTH_NEEDED) < 1
+        or len(WIDTH_NEEDED[0]) != 2
     ):
         logger.error(f'Invalid custom_variables received for write_action_summaries, pk: {custom_variables.pk}')
         return
@@ -189,18 +195,19 @@ def write_action_summaries(excel_report: ExcelReport, action_df: pl.DataFrame) -
         return val
 
     pages_per_action_identifier = {}
+
     def grid_layout_to_grid_values(
-            grid_layout: list[list[str]],
-            action: dict[str, Any],
-            approximate_chars_per_line: int,
-            approximate_lines_per_page: int,
+        grid_layout: list[list[str]],
+        action: dict[str, Any],
+        approximate_chars_per_line: int,
+        approximate_lines_per_page: int,
     ) -> list[tuple[CellBase, ...]]:
 
         result: list[tuple[CellBase, ...]] = []
         action_identifier = pop_value_from_action(action, 'identifier')
         action_name = pop_value_from_action(action, 'name')
         pages_per_action_identifier[action_identifier] = 1
-        result.append((NewPageMarker(action_identifier, action_name), ))
+        result.append((NewPageMarker(action_identifier, action_name),))
 
         def style_for_value(val: str | None) -> str:
             if val is not None and len(str(val)) > 100:
@@ -208,7 +215,7 @@ def write_action_summaries(excel_report: ExcelReport, action_df: pl.DataFrame) -
             return 'action_digest_value'
 
         def clean_text(val: str) -> str:
-            val = str(val).replace("\n\n", "\n")
+            val = str(val).replace('\n\n', '\n')
             return val.rstrip()
 
         approximate_lines_so_far = 0
@@ -220,13 +227,16 @@ def write_action_summaries(excel_report: ExcelReport, action_df: pl.DataFrame) -
             if not label_row:
                 row = grid_layout[i]
                 label_row = tuple(Cell(label, 'action_digest_label') for label in row if label not in FILTER_OUT)
-                value_row = tuple(Cell(clean_text(action.get(label) or '-'), style_for_value(action.get(label)))
-                                  for label in row if label not in FILTER_OUT)
+                value_row = tuple(
+                    Cell(clean_text(action.get(label) or '-'), style_for_value(action.get(label)))
+                    for label in row
+                    if label not in FILTER_OUT
+                )
 
-            accumulated_string_contents = "\n".join([str(x.value) for x in value_row])
-            total_len_chars = reduce(lambda x,y: x + y, [len(str(x.value)) for x in value_row], 0)
+            accumulated_string_contents = '\n'.join([str(x.value) for x in value_row])
+            total_len_chars = reduce(lambda x, y: x + y, [len(str(x.value)) for x in value_row], 0)
 
-            approximate_lines_so_far += 1 # header
+            approximate_lines_so_far += 1  # header
 
             assert len(label_row) == len(value_row)
             if len(label_row) == 0:
@@ -235,7 +245,7 @@ def write_action_summaries(excel_report: ExcelReport, action_df: pl.DataFrame) -
 
             if len(label_row) == 1:
                 approximate_lines_so_far += int(total_len_chars / approximate_chars_per_line)
-                newline_count = len(re.findall(r"\n", accumulated_string_contents))
+                newline_count = len(re.findall(r'\n', accumulated_string_contents))
                 approximate_lines_so_far += newline_count
             else:
                 approximate_lines_so_far += 2
@@ -244,16 +254,16 @@ def write_action_summaries(excel_report: ExcelReport, action_df: pl.DataFrame) -
 
             if approximate_lines_so_far > approximate_lines_per_page:
                 last_element_value = value_row[-1].value
-                approximate_lines_last_el = int(len(last_element_value)/approximate_chars_per_line)
-                approximate_lines_last_el += len(re.findall(r"\n", last_element_value))
+                approximate_lines_last_el = int(len(last_element_value) / approximate_chars_per_line)
+                approximate_lines_last_el += len(re.findall(r'\n', last_element_value))
 
                 delta = approximate_lines_per_page - (approximate_lines_so_far - approximate_lines_last_el)
                 delta = delta * approximate_chars_per_line
                 split_point = delta
                 if split_point > len(last_element_value) - 1:
-                    split_point = int(len(last_element_value)/2)
+                    split_point = int(len(last_element_value) / 2)
                 if split_point < MIN_SPLIT_CHARS:
-                    split_point = min(len(last_element_value)-1, MIN_SPLIT_CHARS)
+                    split_point = min(len(last_element_value) - 1, MIN_SPLIT_CHARS)
                 split_point = max(split_point, 0)
                 while split_point > 0 and not re.match(r'\s', last_element_value[split_point]):
                     split_point -= 1
@@ -276,7 +286,7 @@ def write_action_summaries(excel_report: ExcelReport, action_df: pl.DataFrame) -
                     result.append((NewPageMarker(action_identifier, action_name),))
                     pages_per_action_identifier[action_identifier] += 1
                     approximate_lines_so_far = 0
-                    value_row = (Cell(part2, value_row[-1].format), )
+                    value_row = (Cell(part2, value_row[-1].format),)
             else:
                 result.append(label_row)
                 result.append(value_row)
@@ -338,12 +348,15 @@ def write_action_summaries(excel_report: ExcelReport, action_df: pl.DataFrame) -
     # to automatically adjust the row height to fit the texts (with a separate macro), since excel doesn't do that for merged cells
     worksheet.set_column(MAX_COLUMNS + 1, MAX_COLUMNS + 2, column_width * 2)
     worksheet.set_column(MAX_COLUMNS + 3, MAX_COLUMNS + 3, column_width * 4)
-    worksheet.insert_button('F1', {
-        'macro':   'ThisWorkbook.ProcessMergedCells',
-        'caption': _('Prepare for printing'),
-        'width':   320,
-        'height':  60,
-    })
+    worksheet.insert_button(
+        'F1',
+        {
+            'macro': 'ThisWorkbook.ProcessMergedCells',
+            'caption': _('Prepare for printing'),
+            'width': 320,
+            'height': 60,
+        },
+    )
 
     cursor_writer = CursorWriter(
         worksheet,

@@ -51,7 +51,7 @@ class CategoryChooserViewSet(ModelChooserViewSet[Category]):
 
     icon = 'kausal-category'
     model = Category
-    page_title = _("Choose a category")
+    page_title = _('Choose a category')
     per_page = 30
     fields = ['identifier', 'name']
 
@@ -86,7 +86,7 @@ class CategoryTypeChooserViewSet(ModelChooserViewSet[CategoryType]):
 
     icon = 'kausal-category'
     model = CategoryType
-    page_title = _("Choose a category type")
+    page_title = _('Choose a category type')
     per_page = 30
     fields = ['identifier', 'name']
 
@@ -125,7 +125,7 @@ class CategoryLevelChooserViewSet(ModelChooserViewSet[CategoryLevel]):
 
     icon = 'kausal-category'
     model = CategoryLevel
-    page_title = _("Choose a category level")
+    page_title = _('Choose a category level')
     fields = ['order', 'name']
 
 
@@ -170,7 +170,7 @@ class ActionChooserViewSet(ModelChooserViewSet[Action]):
 
     icon = 'kausal-action'
     model = Action
-    page_title = _("Choose an action")
+    page_title = _('Choose an action')
     per_page = 30
     fields = ['identifier', 'name']
 
@@ -213,7 +213,7 @@ class PlanChooserViewSet(ModelChooserViewSet[Plan]):
 
     icon = 'kausal-plan'
     model = Plan
-    page_title = _("Choose a plan")
+    page_title = _('Choose a plan')
     per_page = 30
     fields = ['identifier', 'name']
 
@@ -245,7 +245,7 @@ class AttributeTypeChooserMixin(WatchModelChooserBase[AttributeType]):
             elif scope == 'action':
                 qs = act_qs
             else:
-                raise Exception("Unknown scope")
+                raise Exception('Unknown scope')
         else:
             qs = cat_qs | act_qs
         return qs.order_by('name')
@@ -259,7 +259,7 @@ class AttributeTypeChooserViewSet(ModelChooserViewSet[AttributeType]):
 
     icon = 'kausal-attribute'
     model = AttributeType
-    page_title = _("Choose a field")
+    page_title = _('Choose a field')
     per_page = 30
     fields = ['name']
 
@@ -286,7 +286,6 @@ class AttributeTypeChooser(AdminChooser):
 @hooks.register('register_admin_viewset')
 def register_attribute_type_chooser_viewset():
     return AttributeTypeChooserViewSet('attribute_type_chooser', url_prefix='attribute-type-chooser')
-
 
 
 class DatasetSchemaChooserMixin(WatchModelChooserBase[DatasetSchema]):
@@ -317,11 +316,12 @@ class DatasetSchemaChooserMixin(WatchModelChooserBase[DatasetSchema]):
     def get_object_string(self, obj):
         return obj.name_i18n
 
+
 class DatasetSchemaChooserViewSet(ModelChooserViewSet[DatasetSchema]):
     chooser_mixin_class = DatasetSchemaChooserMixin
     icon = 'table'
     model = DatasetSchema
-    page_title = _("Choose a dataset schema")
+    page_title = _('Choose a dataset schema')
     per_page = 30
     fields = ['name', 'time_resolution']
 
@@ -343,11 +343,10 @@ class DatasetSchemaChooser(AdminChooser):
 
     def get_choose_modal_url(self):
         url = super().get_choose_modal_url()
-        return f"{url}?scope={self.scope}"
+        return f'{url}?scope={self.scope}'
 
     def get_title(self, instance):
         return instance.name_i18n
-
 
 
 @hooks.register('register_admin_viewset')

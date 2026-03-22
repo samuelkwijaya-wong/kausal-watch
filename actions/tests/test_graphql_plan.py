@@ -59,22 +59,22 @@ def add_menu_test_pages(root_page, menu_key='show_in_menus'):
     #   page2_in_menu
     pages = {}
 
-    pages['page_not_in_menu'] = StaticPage(title="Page not in menu")
+    pages['page_not_in_menu'] = StaticPage(title='Page not in menu')
     root_page.add_child(instance=pages['page_not_in_menu'])
 
-    pages['subpage1_in_menu'] = StaticPage(title="Subpage 1 in menu", **{menu_key: True})
+    pages['subpage1_in_menu'] = StaticPage(title='Subpage 1 in menu', **{menu_key: True})
     pages['page_not_in_menu'].add_child(instance=pages['subpage1_in_menu'])
 
-    pages['page1_in_menu'] = StaticPage(title="Page 1 in menu", **{menu_key: True})
+    pages['page1_in_menu'] = StaticPage(title='Page 1 in menu', **{menu_key: True})
     root_page.add_child(instance=pages['page1_in_menu'])
 
-    pages['subpage_not_in_menu'] = StaticPage(title="Subpage not in menu")
+    pages['subpage_not_in_menu'] = StaticPage(title='Subpage not in menu')
     pages['page1_in_menu'].add_child(instance=pages['subpage_not_in_menu'])
 
-    pages['subpage2_in_menu'] = StaticPage(title="Subpage 2 in menu", **{menu_key: True})
+    pages['subpage2_in_menu'] = StaticPage(title='Subpage 2 in menu', **{menu_key: True})
     pages['page1_in_menu'].add_child(instance=pages['subpage2_in_menu'])
 
-    pages['page2_in_menu'] = StaticPage(title="Page 2 in menu", **{menu_key: True})
+    pages['page2_in_menu'] = StaticPage(title='Page 2 in menu', **{menu_key: True})
     root_page.add_child(instance=pages['page2_in_menu'])
 
     return pages
@@ -163,38 +163,45 @@ def test_categorytypes(graphql_client_query_data, plan, category_type, category_
     )
     expected = {
         'plan': {
-            'categoryTypes': [{
-                'id': str(category_type.id),
-                'identifier': category_type.identifier,
-                'name': category_type.name,
-                'usableForActions': category_type.usable_for_actions,
-                'categories': [{
-                    'id': str(c0.id),
-                    'identifier': c0.identifier,
-                    'name': c0.name,
-                    'parent': None,
-                }, {
-                    'id': str(c1.id),
-                    'identifier': c1.identifier,
-                    'name': c1.name,
-                    'parent': {
-                        'id': str(c0.id),
-                    },
-                }],
-            }],
+            'categoryTypes': [
+                {
+                    'id': str(category_type.id),
+                    'identifier': category_type.identifier,
+                    'name': category_type.name,
+                    'usableForActions': category_type.usable_for_actions,
+                    'categories': [
+                        {
+                            'id': str(c0.id),
+                            'identifier': c0.identifier,
+                            'name': c0.name,
+                            'parent': None,
+                        },
+                        {
+                            'id': str(c1.id),
+                            'identifier': c1.identifier,
+                            'name': c1.name,
+                            'parent': {
+                                'id': str(c0.id),
+                            },
+                        },
+                    ],
+                }
+            ],
         },
     }
     assert data == expected
 
 
 def test_category_types(
-    graphql_client_query_data, plan, category_type_factory, attribute_type_factory,
+    graphql_client_query_data,
+    plan,
+    category_type_factory,
+    attribute_type_factory,
     attribute_type_choice_option_factory,
 ):
     ct = category_type_factory(plan=plan)
     cat1 = attribute_type_factory(scope=ct)
-    cat2 = attribute_type_factory(scope=ct,
-                                  format=AttributeType.AttributeFormat.ORDERED_CHOICE)
+    cat2 = attribute_type_factory(scope=ct, format=AttributeType.AttributeFormat.ORDERED_CHOICE)
     cat2co1 = attribute_type_choice_option_factory(type=cat2)
     cat2co2 = attribute_type_choice_option_factory(type=cat2)
     data = graphql_client_query_data(
@@ -221,27 +228,35 @@ def test_category_types(
     )
     expected = {
         'plan': {
-            'categoryTypes': [{
-                'identifier': ct.identifier,
-                'name': ct.name,
-                'attributeTypes': [{
-                    'format': 'RICH_TEXT',
-                    'identifier': cat1.identifier,
-                    'name': cat1.name,
-                    'choiceOptions': [],
-                }, {
-                    'format': 'ORDERED_CHOICE',
-                    'identifier': cat2.identifier,
-                    'name': cat2.name,
-                    'choiceOptions': [{
-                        'identifier': cat2co1.identifier,
-                        'name': cat2co1.name,
-                    }, {
-                        'identifier': cat2co2.identifier,
-                        'name': cat2co2.name,
-                    }],
-                }],
-            }],
+            'categoryTypes': [
+                {
+                    'identifier': ct.identifier,
+                    'name': ct.name,
+                    'attributeTypes': [
+                        {
+                            'format': 'RICH_TEXT',
+                            'identifier': cat1.identifier,
+                            'name': cat1.name,
+                            'choiceOptions': [],
+                        },
+                        {
+                            'format': 'ORDERED_CHOICE',
+                            'identifier': cat2.identifier,
+                            'name': cat2.name,
+                            'choiceOptions': [
+                                {
+                                    'identifier': cat2co1.identifier,
+                                    'name': cat2co1.name,
+                                },
+                                {
+                                    'identifier': cat2co2.identifier,
+                                    'name': cat2co2.name,
+                                },
+                            ],
+                        },
+                    ],
+                }
+            ],
         },
     }
     assert data == expected
@@ -291,7 +306,8 @@ def test_plan_root_page_contains_block(graphql_client_query_data, plan_with_page
             }
           }
         }
-        """ % " ".join(hero_data.keys()),
+        """
+        % ' '.join(hero_data.keys()),
         variables=dict(plan=plan.identifier),
     )
     pages = data['plan']['pages']
@@ -303,16 +319,27 @@ def test_plan_root_page_contains_block(graphql_client_query_data, plan_with_page
         assert block[key] == value
 
 
-@pytest.mark.parametrize(('menu_field', 'menu_key', 'with_descendants', 'expected_pages'), [
-    ('mainMenu', 'show_in_menus', False, ['page1_in_menu', 'page2_in_menu']),
-    ('mainMenu', 'show_in_menus', True, ['subpage1_in_menu', 'page1_in_menu', 'subpage2_in_menu', 'page2_in_menu']),
-    ('footer', 'show_in_footer', False, ['page1_in_menu', 'page2_in_menu']),
-    ('footer', 'show_in_footer', True, ['subpage1_in_menu', 'page1_in_menu', 'subpage2_in_menu', 'page2_in_menu']),
-    ('additionalLinks', 'show_in_additional_links', False, ['page1_in_menu', 'page2_in_menu']),
-    ('additionalLinks', 'show_in_additional_links', True, [
-        'subpage1_in_menu', 'page1_in_menu', 'subpage2_in_menu', 'page2_in_menu',
-    ]),
-])
+@pytest.mark.parametrize(
+    ('menu_field', 'menu_key', 'with_descendants', 'expected_pages'),
+    [
+        ('mainMenu', 'show_in_menus', False, ['page1_in_menu', 'page2_in_menu']),
+        ('mainMenu', 'show_in_menus', True, ['subpage1_in_menu', 'page1_in_menu', 'subpage2_in_menu', 'page2_in_menu']),
+        ('footer', 'show_in_footer', False, ['page1_in_menu', 'page2_in_menu']),
+        ('footer', 'show_in_footer', True, ['subpage1_in_menu', 'page1_in_menu', 'subpage2_in_menu', 'page2_in_menu']),
+        ('additionalLinks', 'show_in_additional_links', False, ['page1_in_menu', 'page2_in_menu']),
+        (
+            'additionalLinks',
+            'show_in_additional_links',
+            True,
+            [
+                'subpage1_in_menu',
+                'page1_in_menu',
+                'subpage2_in_menu',
+                'page2_in_menu',
+            ],
+        ),
+    ],
+)
 def test_menu(graphql_client_query_data, menu_field, menu_key, with_descendants, expected_pages, plan_with_pages):
     plan = plan_with_pages
     # Some pages (e.g., action and indicator list) are in menus and footers by default; remove for this test
@@ -342,10 +369,10 @@ def test_footer_children_only_shown(graphql_client_query_data, plan_with_pages):
     for page in plan.root_page.get_children().specific():
         page.show_in_footer = False
         page.save()
-    page1 = StaticPage(title="page1", show_in_footer=True)
+    page1 = StaticPage(title='page1', show_in_footer=True)
     plan.root_page.add_child(instance=page1)
-    page2 = StaticPage(title="page2", show_in_footer=True)
-    page3 = StaticPage(title="page3", show_in_footer=False)
+    page2 = StaticPage(title='page2', show_in_footer=True)
+    page3 = StaticPage(title='page3', show_in_footer=False)
     page1.add_child(instance=page2)
     page1.add_child(instance=page3)
     data = graphql_client_query_data(
@@ -370,12 +397,16 @@ def test_footer_children_only_shown(graphql_client_query_data, plan_with_pages):
     expected = {
         'plan': {
             'footer': {
-                'items': [{
-                    'id': str(page1.id),
-                    'children': [{
-                        'id': str(page2.id),
-                    }],
-                }],
+                'items': [
+                    {
+                        'id': str(page1.id),
+                        'children': [
+                            {
+                                'id': str(page2.id),
+                            }
+                        ],
+                    }
+                ],
             },
         },
     }

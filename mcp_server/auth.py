@@ -83,7 +83,7 @@ class MCPAuthMiddleware:
             'error_description="Authentication required"',
             f'resource_metadata="{resource_metadata_url}"',
         ]
-        www_authenticate = f"Bearer {', '.join(www_auth_parts)}"
+        www_authenticate = f'Bearer {", ".join(www_auth_parts)}'
 
         body = {
             'error': 'invalid_token',
@@ -108,6 +108,7 @@ class MCPAuthMiddleware:
         })
 
         logger.debug('MCP auth error: unauthenticated request')
+
 
 # summary metrics
 # plans that are inactive

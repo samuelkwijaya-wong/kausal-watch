@@ -17,9 +17,7 @@ class TestReportAdminButtonHelper:
 
         return ReportTypeFactory.create(plan=plan, name='Test Report Type')
 
-    def test_add_button_shown_with_report_type_parameter(
-        self, rf, plan, plan_admin_user, report_type
-    ):
+    def test_add_button_shown_with_report_type_parameter(self, rf, plan, plan_admin_user, report_type):
         """Add button should be shown when report_type parameter is present."""
         from reports.wagtail_admin import ReportAdmin, ReportAdminButtonHelper
 
@@ -57,9 +55,7 @@ class TestReportAdminButtonHelper:
 
         assert result is None
 
-    def test_delete_button_preserves_report_type_parameter(
-        self, rf, plan, plan_admin_user, report_type
-    ):
+    def test_delete_button_preserves_report_type_parameter(self, rf, plan, plan_admin_user, report_type):
         """Delete button should preserve report_type parameter in URL."""
         from reports.wagtail_admin import ReportAdminButtonHelper
 
@@ -71,9 +67,7 @@ class TestReportAdminButtonHelper:
         view.model._meta = Mock()
         view.model._meta.verbose_name = 'report'
         view.url_helper = Mock()
-        view.url_helper.get_action_url = Mock(
-            side_effect=lambda action, pk: f'/admin/{action}/{pk}/'
-        )
+        view.url_helper.get_action_url = Mock(side_effect=lambda action, pk: f'/admin/{action}/{pk}/')
         view.permission_helper = Mock()
 
         helper = ReportAdminButtonHelper(view, request)
@@ -82,9 +76,7 @@ class TestReportAdminButtonHelper:
         assert result is not None
         assert f'report_type={report_type.id}' in result['url']
 
-    def test_edit_button_preserves_report_type_parameter(
-        self, rf, plan, plan_admin_user, report_type
-    ):
+    def test_edit_button_preserves_report_type_parameter(self, rf, plan, plan_admin_user, report_type):
         """Edit button should preserve report_type parameter in URL."""
         from reports.wagtail_admin import ReportAdminButtonHelper
 
@@ -96,9 +88,7 @@ class TestReportAdminButtonHelper:
         view.model._meta = Mock()
         view.model._meta.verbose_name = 'report'
         view.url_helper = Mock()
-        view.url_helper.get_action_url = Mock(
-            side_effect=lambda action, pk: f'/admin/{action}/{pk}/'
-        )
+        view.url_helper.get_action_url = Mock(side_effect=lambda action, pk: f'/admin/{action}/{pk}/')
         view.permission_helper = Mock()
 
         helper = ReportAdminButtonHelper(view, request)

@@ -12,6 +12,7 @@ class ObjectBaseModel(PydanticBaseModel):
 class OperationMeta(Protocol):
     document: str
 
+
 class QueryModel(PydanticBaseModel):
     Arguments: ClassVar[type[ArgumentsModel]]
     Meta: ClassVar[type[OperationMeta]]

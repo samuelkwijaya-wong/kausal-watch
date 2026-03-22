@@ -24,43 +24,58 @@ class UserFeedback(PlanRelatedModelWithRevision):
         CATEGORY = 'category', _('Category')
         PLEDGE = 'pledge', _('Pledge')
 
-    plan = models.ForeignKey(Plan, on_delete=models.CASCADE, related_name='user_feedbacks', verbose_name=_("plan"))
+    plan = models.ForeignKey(Plan, on_delete=models.CASCADE, related_name='user_feedbacks', verbose_name=_('plan'))
     type = models.CharField(
-        max_length=30, choices=FeedbackType.choices, verbose_name=_("type"), blank=True,
+        max_length=30,
+        choices=FeedbackType.choices,
+        verbose_name=_('type'),
+        blank=True,
     )
     action = models.ForeignKey(
-        Action, blank=True, null=True, on_delete=models.SET_NULL, related_name='user_feedbacks',
-        verbose_name=_("action"),
+        Action,
+        blank=True,
+        null=True,
+        on_delete=models.SET_NULL,
+        related_name='user_feedbacks',
+        verbose_name=_('action'),
     )
     category = models.ForeignKey(
-        Category, blank=True, null=True, on_delete=models.SET_NULL, related_name='user_feedbacks',
-        verbose_name=_("category"),
+        Category,
+        blank=True,
+        null=True,
+        on_delete=models.SET_NULL,
+        related_name='user_feedbacks',
+        verbose_name=_('category'),
     )
     pledge = models.ForeignKey(
-        Pledge, blank=True, null=True, on_delete=models.SET_NULL, related_name='user_feedbacks',
+        Pledge,
+        blank=True,
+        null=True,
+        on_delete=models.SET_NULL,
+        related_name='user_feedbacks',
         verbose_name=_('pledge'),
     )
 
-    name = models.CharField(max_length=100, null=True, blank=True, verbose_name=_("name"))
-    email = models.EmailField(null=True, blank=True, verbose_name=_("email address"))
-    comment = models.TextField(verbose_name=_("comment"), blank=True)
+    name = models.CharField(max_length=100, null=True, blank=True, verbose_name=_('name'))
+    email = models.EmailField(null=True, blank=True, verbose_name=_('email address'))
+    comment = models.TextField(verbose_name=_('comment'), blank=True)
 
-    url = models.URLField(verbose_name=_("URL"), max_length=500)
+    url = models.URLField(verbose_name=_('URL'), max_length=500)
 
     additional_fields = models.JSONField(blank=True, null=True)
-    page_id = models.CharField(null=True, blank=True, verbose_name=_("page id"))
+    page_id = models.CharField(null=True, blank=True, verbose_name=_('page id'))
     latest_revision = models.ForeignKey(
-        "wagtailcore.Revision",
-        related_name="+",
-        verbose_name=_("latest revision"),
+        'wagtailcore.Revision',
+        related_name='+',
+        verbose_name=_('latest revision'),
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
         editable=False,
     )
 
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("created at"))
-    is_processed = models.BooleanField(default=False, verbose_name=_("is processed"))
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name=_('created at'))
+    is_processed = models.BooleanField(default=False, verbose_name=_('is processed'))
 
     sent_notifications = GenericRelation('notifications.SentNotification', related_query_name='user_feedbacks')
 
@@ -88,7 +103,7 @@ class UserFeedback(PlanRelatedModelWithRevision):
         if additional_fields and not any(additional_fields.values()):
             additional_fields = None
         if not comment and not additional_fields:
-            raise ValidationError(_("At least one field must be filled."))
+            raise ValidationError(_('At least one field must be filled.'))
 
         self.save()
 
@@ -101,10 +116,10 @@ def get_latest_revision(page_id):
         elif isinstance(page.specific, CategoryPage):
             latest_revision = page.get_parent().get_latest_revision()
         else:
-            raise ValidationError("Wrong page.")
+            raise ValidationError('Wrong page.')
         if latest_revision:
             return latest_revision
-        raise ValidationError("No revisions found for the specified page.")
+        raise ValidationError('No revisions found for the specified page.')
     except Page.DoesNotExist:
         # We might be at the feedback page or accessibility feedback page
         # where a page doesn't exist and is not needed because it's lacking

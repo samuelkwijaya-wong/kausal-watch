@@ -86,11 +86,11 @@ def update_reference_in_raw_data(
         raw_data[path_element] = update_reference_in_raw_data(
             raw_data[path_element],
             remaining_elements,
-                    old_object,
-                    new_object,
+            old_object,
+            new_object,
         )
     else:
-        raise TypeError(f"raw_data has unexpected type {type(raw_data)}")
+        raise TypeError(f'raw_data has unexpected type {type(raw_data)}')
     return raw_data
 
 
@@ -136,7 +136,7 @@ def update_reference_in_html(
     elif isinstance(old_referenced_object, Indicator):
         pattern = r'<a\s+[^>]*linktype="indicator"[^>]*>'
     else:
-        raise TypeError(f"old_referenced_object has unexpected type {type(old_referenced_object)}")
+        raise TypeError(f'old_referenced_object has unexpected type {type(old_referenced_object)}')
 
     old_id = old_referenced_object.pk
     new_id = new_referenced_object.pk
@@ -161,8 +161,7 @@ def update_reference_in_html(
     # If nothing changed, make some sanity checks
     if f'id="{new_id}"' not in html:
         raise ValueError(
-            f"Failed to update reference from {old_id} to {new_id} in HTML: "
-            f"old reference not found and new reference not present"
+            f'Failed to update reference from {old_id} to {new_id} in HTML: old reference not found and new reference not present'
         )
 
     # For indicators, also verify that the UUID was updated
@@ -170,7 +169,7 @@ def update_reference_in_html(
         assert isinstance(new_referenced_object, Indicator)
         new_uuid = str(new_referenced_object.uuid)
         if f'uuid="{new_uuid}"' not in html:
-            raise ValueError(f"Reference ID was updated but UUID was not for indicator {new_id}")
+            raise ValueError(f'Reference ID was updated but UUID was not for indicator {new_id}')
 
     # Reference was already updated -- return unchanged HTML.
     # This can happen as the reference index may contain, e.g., `description`, `description_en` and `description_i18n`,

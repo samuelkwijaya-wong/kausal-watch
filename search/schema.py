@@ -168,7 +168,8 @@ class Query:
             related_plans = related_plans.live()
         if only_other_plans:
             plans = (
-                Plan.objects.get_queryset()
+                Plan.objects
+                .get_queryset()
                 .live()
                 .exclude(Q(id=plan_obj.id) | Q(id__in=related_plans) | Q(features__password_protected=True))
             )
@@ -190,7 +191,8 @@ class Query:
 
         querysets: list[ActionQuerySet | PageQuerySet | IndicatorQuerySet] = [
             (
-                Action.objects.get_queryset()
+                Action.objects
+                .get_queryset()
                 .visible_for_user(info.context.user)
                 .filter(plan__in=plan_ids)
                 .select_related('plan', 'plan__organization')

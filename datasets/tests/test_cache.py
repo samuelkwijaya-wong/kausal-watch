@@ -153,6 +153,7 @@ class TestPlanIndicatorIds:
     def test_does_not_include_indicators_from_other_plans(self, plan):
         """Indicators linked only to other plans are not included."""
         from actions.tests.factories import PlanFactory
+
         other_plan = PlanFactory.create()
         indicator_in_plan = IndicatorFactory.create()
         indicator_other_plan = IndicatorFactory.create()

@@ -89,9 +89,9 @@ class ContinueEditingMixin:
     get_edit_url: Callable
 
     class ContinueEditingActionMenuItem(ActionMenuItem):
-        label = _("Save and continue editing")
-        name = "_continue"
-        icon_name = "download"
+        label = _('Save and continue editing')
+        name = '_continue'
+        icon_name = 'download'
 
     def continue_editing_active(self):
         return '_continue' in self.request.POST
@@ -137,8 +137,13 @@ class PlanRelatedViewMixin:
         # Check if we need to change the active action plan to be able to modify
         # the instance. This might happen e.g. when the user clicks on an edit link
         # in the email notification.
-        if (instance is not None and isinstance(instance, PlanRelatedModel) and
-                user is not None and user.is_authenticated and isinstance(user, User)):
+        if (
+            instance is not None
+            and isinstance(instance, PlanRelatedModel)
+            and user is not None
+            and user.is_authenticated
+            and isinstance(user, User)
+        ):
             plan = user.get_active_admin_plan()
             instance_plans = instance.get_plans()
             if len(instance_plans) and plan not in instance_plans:

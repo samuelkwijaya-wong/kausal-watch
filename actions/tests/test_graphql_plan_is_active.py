@@ -4,6 +4,7 @@ Tests for Plan GraphQL queries with is_active field.
 This module tests that inactive plans are properly filtered in GraphQL queries
 based on user permissions.
 """
+
 from __future__ import annotations
 
 from datetime import timedelta
@@ -52,9 +53,7 @@ PLANS_FOR_HOSTNAME_QUERY = """
 class TestPlanGraphQLIsActive:
     """Test GraphQL queries respect is_active field."""
 
-    def test_anonymous_cannot_query_inactive_plan_by_id(
-        self, graphql_client_query_data, plan_factory
-    ):
+    def test_anonymous_cannot_query_inactive_plan_by_id(self, graphql_client_query_data, plan_factory):
         """Test that anonymous users cannot query inactive plans by ID."""
         inactive_plan = plan_factory(
             is_active=False,
@@ -69,9 +68,7 @@ class TestPlanGraphQLIsActive:
         # Should return None for inactive plan
         assert data['plan'] is None
 
-    def test_anonymous_can_query_active_plan_by_id(
-        self, graphql_client_query_data, plan_factory
-    ):
+    def test_anonymous_can_query_active_plan_by_id(self, graphql_client_query_data, plan_factory):
         """Test that anonymous users can query active published plans by ID."""
         active_plan = plan_factory(
             is_active=True,
@@ -97,9 +94,7 @@ class TestPlanGraphQLIsActive:
 class TestPlansForHostnameGraphQL:
     """Test plansForHostname GraphQL query respects is_active field."""
 
-    def test_plans_for_hostname_excludes_inactive_for_anon(
-        self, graphql_client_query_data, plan_factory, plan_domain_factory
-    ):
+    def test_plans_for_hostname_excludes_inactive_for_anon(self, graphql_client_query_data, plan_factory, plan_domain_factory):
         """Test that plansForHostname excludes inactive plans for anonymous users."""
         active_plan = plan_factory(
             is_active=True,
@@ -154,9 +149,7 @@ class TestPlansForHostnameGraphQL:
 class TestPlanIsActiveFieldInSchema:
     """Test that isActive field is exposed in GraphQL schema."""
 
-    def test_is_active_field_in_plan_type(
-        self, graphql_client_query_data, plan_factory
-    ):
+    def test_is_active_field_in_plan_type(self, graphql_client_query_data, plan_factory):
         """Test that isActive field is available on Plan type."""
         active_plan = plan_factory(
             is_active=True,

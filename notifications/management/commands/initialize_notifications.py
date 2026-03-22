@@ -17,8 +17,9 @@ def generate_draftail_block_key():
 
 
 def split_into_draftail_paragraphs(s):
-    return "\n".join(f'<p data-block-key="{generate_draftail_block_key()}">{x.strip()}</p>'
-                      for x in re.split(r'\n\n+', s.strip()))
+    return '\n'.join(
+        f'<p data-block-key="{generate_draftail_block_key()}">{x.strip()}</p>' for x in re.split(r'\n\n+', s.strip())
+    )
 
 
 def initialize_notification_templates(
@@ -45,30 +46,37 @@ def initialize_notification_templates(
             'subject': notification_type.verbose_name,
         }
         template, _created = AutomaticNotificationTemplate.objects.get_or_create(
-            base=base_template, type=notification_type.identifier, defaults=defaults)
+            base=base_template, type=notification_type.identifier, defaults=defaults
+        )
         ContentBlock.objects.get_or_create(
-            template=template, identifier='intro', base=base_template,
+            template=template,
+            identifier='intro',
+            base=base_template,
             defaults={'content': split_into_draftail_paragraphs(default_intro_text)},
         )
 
     default_shared_texts = {
         'motivation': pgettext(
             'motivation',
-            "Thank you for keeping the action plan updated. "
-            "Up-to-date information about the actions is essential "
-            "for us to achieve our goals."),
+            'Thank you for keeping the action plan updated. '
+            'Up-to-date information about the actions is essential '
+            'for us to achieve our goals.',
+        ),
         'outro': pgettext(
             'outro',
-            "If you are having difficulties using the action "
-            "plan watch platform, please send an email to the "
-            "administrators of the action plan.\n\n"
-            "Thank you for taking part in implementing the action plan!\n\n"
-            "Kind regards,\nthe action plan administrators"),
+            'If you are having difficulties using the action '
+            'plan watch platform, please send an email to the '
+            'administrators of the action plan.\n\n'
+            'Thank you for taking part in implementing the action plan!\n\n'
+            'Kind regards,\nthe action plan administrators',
+        ),
     }
 
     for block_type in ['motivation', 'outro']:
         ContentBlock.objects.get_or_create(
-            template=None, identifier=block_type, base=base_template,
+            template=None,
+            identifier=block_type,
+            base=base_template,
             defaults={'content': split_into_draftail_paragraphs(default_shared_texts.get(block_type))},
         )
 

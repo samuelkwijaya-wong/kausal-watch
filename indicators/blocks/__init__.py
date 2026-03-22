@@ -73,11 +73,13 @@ class IndicatorHighlightsBlock(StaticBlock):
 @register_streamfield_block
 class IndicatorBlock(StructBlock):
     indicator = IndicatorChooserBlock()
-    style = ChoiceBlock(choices=[
-        ('graph', _('Graph')),
-        ('progress', _('Progress')),
-        ('animated', _('Animated')),
-    ])
+    style = ChoiceBlock(
+        choices=[
+            ('graph', _('Graph')),
+            ('progress', _('Progress')),
+            ('animated', _('Animated')),
+        ]
+    )
 
     graphql_fields = [
         GraphQLForeignKey('indicator', Indicator),
@@ -144,22 +146,17 @@ class IndicatorShowcaseBlock(StructBlock):
 
 def _get_dashboard_indicator_chart_series_class() -> type[DashboardIndicatorChartSeries]:
     from indicators.schema import DashboardIndicatorChartSeries
+
     return DashboardIndicatorChartSeries
 
 
 class DashboardIndicatorChartBaseBlock(StructBlock):
     """Base class for dashboard indicator chart blocks with common fields and validation."""
 
-    help_text = CharBlock(
-        required=False,
-        help_text=_('Help text for the field to be shown in the UI')
-    )
-    indicator = IndicatorChooserBlock(
-        help_text=_('Choose the indicator for data visualization')
-    )
+    help_text = CharBlock(required=False, help_text=_('Help text for the field to be shown in the UI'))
+    indicator = IndicatorChooserBlock(help_text=_('Choose the indicator for data visualization'))
     dimension = DimensionChooserBlock(
-        help_text=_('Choose the indicator dimension that will be used for categories in the visualization'),
-        required=False
+        help_text=_('Choose the indicator dimension that will be used for categories in the visualization'), required=False
     )
 
     graphql_fields = [
@@ -175,6 +172,7 @@ class DashboardIndicatorChartBaseBlock(StructBlock):
 
     def chart_series(self, info: GQLInfo, values: dict[str, Any]) -> list[DashboardIndicatorChartSeries]:
         from indicators.schema import DashboardIndicatorChartSeries
+
         indicator = values['indicator']
         assert isinstance(indicator, Indicator)
         dimension = values['dimension']
@@ -198,14 +196,11 @@ class DashboardIndicatorChartBaseBlock(StructBlock):
             # Check if dimension is valid for this indicator
             dimension_ids = list(indicator.dimensions.values_list('dimension_id', flat=True))
             if dimension.id not in dimension_ids:
-                error_msg = _("Dimension '%(dimension)s' is not valid for indicator '%(indicator)s'. "
-                              "Please choose a dimension that belongs to the indicator.") % {
-                    'dimension': dimension.name,
-                    'indicator': indicator.name
-                }
-                errors = {
-                    'dimension': ValidationError(error_msg)
-                }
+                error_msg = _(
+                    "Dimension '%(dimension)s' is not valid for indicator '%(indicator)s'. "
+                    'Please choose a dimension that belongs to the indicator.'
+                ) % {'dimension': dimension.name, 'indicator': indicator.name}
+                errors = {'dimension': ValidationError(error_msg)}
                 raise blocks.StructBlockValidationError(errors)
 
         return cleaned_value
@@ -219,7 +214,7 @@ class DashboardIndicatorBarChartBlock(DashboardIndicatorChartBaseBlock):
             ('grouped', _('Grouped bars')),
         ],
         default='stacked',
-        required=True
+        required=True,
     )
 
     graphql_fields = DashboardIndicatorChartBaseBlock.graphql_fields + [
@@ -234,11 +229,7 @@ class DashboardIndicatorBarChartBlock(DashboardIndicatorChartBaseBlock):
 
 @register_streamfield_block
 class DashboardIndicatorLineChartBlock(DashboardIndicatorChartBaseBlock):
-    show_total_line = BooleanBlock(
-        default=False,
-        required=False,
-        help_text=_('Show total line')
-    )
+    show_total_line = BooleanBlock(default=False, required=False, help_text=_('Show total line'))
 
     graphql_fields = DashboardIndicatorChartBaseBlock.graphql_fields + [
         GraphQLBoolean('show_total_line'),
@@ -252,11 +243,7 @@ class DashboardIndicatorLineChartBlock(DashboardIndicatorChartBaseBlock):
 
 @register_streamfield_block
 class DashboardIndicatorAreaChartBlock(DashboardIndicatorChartBaseBlock):
-    show_total_line = BooleanBlock(
-        default=False,
-        required=False,
-        help_text=_('Show total line')
-    )
+    show_total_line = BooleanBlock(default=False, required=False, help_text=_('Show total line'))
 
     graphql_fields = DashboardIndicatorChartBaseBlock.graphql_fields + [
         GraphQLBoolean('show_total_line'),
@@ -300,15 +287,12 @@ class DashboardIndicatorPieChartBlock(DashboardIndicatorChartBaseBlock):
                 available_years.add(value_date.year)
 
             if len(available_years) > 0 and selected_year not in available_years:
-                years_str = ", ".join(str(year) for year in sorted(available_years))
-                error_msg = _("The selected year (%(selected_year)s) has no data for this indicator. "
-                              "Available years are: %(available_years)s") % {
-                    'selected_year': selected_year,
-                    'available_years': years_str
-                }
-                errors = {
-                    'year': ValidationError(error_msg)
-                }
+                years_str = ', '.join(str(year) for year in sorted(available_years))
+                error_msg = _(
+                    'The selected year (%(selected_year)s) has no data for this indicator. '
+                    'Available years are: %(available_years)s'
+                ) % {'selected_year': selected_year, 'available_years': years_str}
+                errors = {'year': ValidationError(error_msg)}
                 raise blocks.StructBlockValidationError(errors)
 
         return cleaned_value
@@ -316,9 +300,7 @@ class DashboardIndicatorPieChartBlock(DashboardIndicatorChartBaseBlock):
 
 @register_streamfield_block
 class DashboardIndicatorSummaryBlock(StructBlock):
-    indicator = IndicatorChooserBlock(
-        help_text=_('Choose the indicator for data visualization')
-    )
+    indicator = IndicatorChooserBlock(help_text=_('Choose the indicator for data visualization'))
 
     graphql_fields = [
         GraphQLForeignKey('indicator', Indicator),
@@ -332,9 +314,7 @@ class DashboardIndicatorSummaryBlock(StructBlock):
 
 @register_streamfield_block
 class DashboardParagraphBlock(StructBlock):
-    text = RichTextBlock(
-        required=True
-    )
+    text = RichTextBlock(required=True)
 
     graphql_fields = [
         GraphQLString('text'),

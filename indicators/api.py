@@ -101,7 +101,8 @@ class RelatedEffectIndicatorSerializer(serializers.ModelSerializer):
 
 class IndicatorFilter(filters.FilterSet):
     plans = filters.ModelMultipleChoiceFilter(
-        field_name='plans__identifier', to_field_name='identifier',
+        field_name='plans__identifier',
+        to_field_name='identifier',
         queryset=Plan.objects,
     )
 
@@ -129,12 +130,12 @@ class IndicatorValueListSerializer(serializers.ListSerializer):
             categories = tuple(sorted([x.id for x in cat_ids]))
             dd = data_by_date.setdefault(date, {})
             if categories in dd:
-                raise ValidationError("duplicate categories for %s: %s" % (date, categories))
+                raise ValidationError('duplicate categories for %s: %s' % (date, categories))
             dd[categories] = True
 
         for date, vals in data_by_date.items():
             if tuple() not in vals:
-                raise ValidationError("no default value provided for %s" % date)
+                raise ValidationError('no default value provided for %s' % date)
 
         return data
 
@@ -186,9 +187,9 @@ class IndicatorGoalListSerializer(serializers.ListSerializer):
         for sample in data:
             date = sample['date']
             if date in seen_dates:
-                raise ValidationError("Duplicate date values")
+                raise ValidationError('Duplicate date values')
             if 'value' not in sample or sample['value'] is None:
-                raise ValidationError("Value is required")
+                raise ValidationError('Value is required')
             seen_dates.add(date)
         return data
 
@@ -210,9 +211,12 @@ class IndicatorGoalListSerializer(serializers.ListSerializer):
 
 
 if TYPE_CHECKING:
+
     class _IndicatorDataPointBase(serializers.Serializer):
         pass
+
 else:
+
     class _IndicatorDataPointBase: ...
 
 
@@ -253,13 +257,13 @@ class IndicatorValueSerializer(serializers.ModelSerializer, IndicatorDataPointMi
         for cat in cats:
             c = cat_by_id.get(cat.id)
             if c is None:
-                raise ValidationError("category %d not found in indicator dimensions" % cat.id)
+                raise ValidationError('category %d not found in indicator dimensions' % cat.id)
             if cat.dimension_id in found_dims:
-                raise ValidationError("dimension already present for category %s" % cat.id)
+                raise ValidationError('dimension already present for category %s' % cat.id)
             found_dims.add(cat.dimension_id)
 
         if found_dims and len(found_dims) != len(dims):
-            raise ValidationError("not all dimensions found for %s: %s" % (self.data['date'], [cat.id for cat in cats]))
+            raise ValidationError('not all dimensions found for %s: %s' % (self.data['date'], [cat.id for cat in cats]))
 
         return cats
 
@@ -269,12 +273,15 @@ class IndicatorValueSerializer(serializers.ModelSerializer, IndicatorDataPointMi
         list_serializer_class = IndicatorValueListSerializer
 
 
-@extend_schema_field(dict(
-    type='object',
-    title=_('Contact persons'),
-))
+@extend_schema_field(
+    dict(
+        type='object',
+        title=_('Contact persons'),
+    )
+)
 class IndicatorContactPersonSerializer(serializers.ListSerializer):
     child = serializers.PrimaryKeyRelatedField(queryset=Person.objects.all())
+
     class Meta:
         model = IndicatorContactPerson
         fields = ('id', 'person', 'order')
@@ -288,9 +295,12 @@ class IndicatorContactPersonSerializer(serializers.ListSerializer):
     def to_representation(self, value):
         key = self.get_type_label()
         fk_id_label = f'{key}_id'
-        return [{
-            key: getattr(v, fk_id_label),
-        } for v in value.all()]
+        return [
+            {
+                key: getattr(v, fk_id_label),
+            }
+            for v in value.all()
+        ]
 
     def to_internal_value(self, data):
         if isinstance(data, dict) and 'contact_persons' in data:
@@ -304,8 +314,9 @@ class IndicatorContactPersonSerializer(serializers.ListSerializer):
         cache = self.context.get('_cache', {})
         available_persons = cache.get('available_person_ids')
         if available_persons is None:
-            available_persons = set(Person.objects.get_queryset().available_for_plan(
-                plan, include_contact_persons=True).values_list('id', flat=True))
+            available_persons = set(
+                Person.objects.get_queryset().available_for_plan(plan, include_contact_persons=True).values_list('id', flat=True)
+            )
             cache['available_person_ids'] = available_persons
         return available_persons
 
@@ -326,12 +337,12 @@ class IndicatorContactPersonSerializer(serializers.ListSerializer):
         return persons[pk]
 
     def get_multiple_error(self):
-        return _("Person occurs multiple times as contact person")
+        return _('Person occurs multiple times as contact person')
 
 
 def _validate_cat(ct_id, cat_val, ct_by_identifier) -> list:
     if ct_id not in ct_by_identifier:
-            raise ValidationError('category type %s not found' % ct_id)
+        raise ValidationError('category type %s not found' % ct_id)
     ct = ct_by_identifier[ct_id]
     if not ct.usable_for_indicators or not ct.editable_for_indicators:
         raise ValidationError('category type %s not editable' % ct_id)
@@ -360,14 +371,16 @@ def _validate_cat(ct_id, cat_val, ct_by_identifier) -> list:
     return cats
 
 
-@extend_schema_field(dict(
-    type='object',
-    additionalProperties=dict(
-        type='array',
-        title='categories',
-        items=dict(type='integer'),
-    ),
-))
+@extend_schema_field(
+    dict(
+        type='object',
+        additionalProperties=dict(
+            type='array',
+            title='categories',
+            items=dict(type='integer'),
+        ),
+    )
+)
 class IndicatorCategoriesSerializer(serializers.Serializer):
     parent: IndicatorSerializer
 
@@ -461,8 +474,7 @@ class IndicatorSerializerMixin:
         cache: dict[str, Any] = {}
 
         # Ensure fields is a dictionary
-        fields = cast('dict[str, serializers.Field]', self.fields) # type: ignore[attr-defined]
-
+        fields = cast('dict[str, serializers.Field]', self.fields)  # type: ignore[attr-defined]
 
         for field_name in ['categories', 'contact_persons']:
             if field_name in fields:
@@ -485,9 +497,22 @@ class IndicatorSerializer(IndicatorSerializerMixin, serializers.ModelSerializer[
         model = Indicator
         list_serializer_class = BulkListSerializer
         fields = (
-            'id', 'uuid', 'name', 'quantity', 'unit', 'time_resolution', 'organization', 'updated_values_due_at',
-            'latest_value', 'reference', 'internal_notes', 'visibility', 'contact_persons', 'categories',
-            'description', 'level',
+            'id',
+            'uuid',
+            'name',
+            'quantity',
+            'unit',
+            'time_resolution',
+            'organization',
+            'updated_values_due_at',
+            'latest_value',
+            'reference',
+            'internal_notes',
+            'visibility',
+            'contact_persons',
+            'categories',
+            'description',
+            'level',
         )
 
     def to_representation(self, instance: Indicator) -> dict[str, Any]:
@@ -680,7 +705,7 @@ class IndicatorViewSet(AuditLoggingBulkModelViewSet[Indicator]):
             )
 
     @action(detail=True, methods=['get'])
-    def values(self, request, plan_pk : int | None = None, pk=None):
+    def values(self, request, plan_pk: int | None = None, pk=None):
         indicator = self.get_object()
         objs = indicator.values.all().order_by('date').prefetch_related('categories')
         serializer = IndicatorValueSerializer(objs, many=True)
@@ -714,7 +739,9 @@ class IndicatorViewSet(AuditLoggingBulkModelViewSet[Indicator]):
         assert plan_pk is not None
         assert pk is not None
         indicator = Indicator.objects.prefetch_related(
-            'dimensions', 'dimensions__dimension', 'dimensions__dimension__categories',
+            'dimensions',
+            'dimensions__dimension',
+            'dimensions__dimension__categories',
         ).get(pk=pk)
         serializer = IndicatorValueSerializer(data=request.data, many=True, context={'indicator': indicator})
         user = user_or_bust(self.request.user)

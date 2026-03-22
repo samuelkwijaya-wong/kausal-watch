@@ -29,6 +29,7 @@ class MenuItemBase(Protocol):
 
     def get_plan_cache(self, info: GQLInfo) -> PlanSpecificCache: ...
 
+
 @register_graphene_node
 class PageMenuItemNode(graphene.ObjectType[MenuItemBase]):
     class Meta:

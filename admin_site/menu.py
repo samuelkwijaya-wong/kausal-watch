@@ -25,7 +25,7 @@ class PlanSpecificSingletonModelMenuItem(MenuItem):
 
         super().__init__(
             label=view_set.menu_label,
-            url="",  # This is set in render_component
+            url='',  # This is set in render_component
             name=view_set.menu_name,
             icon_name=view_set.icon,
             order=order,

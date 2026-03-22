@@ -5,6 +5,7 @@ This module tests how the is_active field affects:
 - User.get_adminable_plans()
 - User.get_viewable_plans()
 """
+
 from __future__ import annotations
 
 import pytest
@@ -17,9 +18,7 @@ pytestmark = pytest.mark.django_db
 class TestUserAdminablePlans:
     """Test User.get_adminable_plans() respects is_active field."""
 
-    def test_superuser_sees_all_plans_including_inactive(
-        self, user_factory, plan_factory
-    ):
+    def test_superuser_sees_all_plans_including_inactive(self, user_factory, plan_factory):
         """Test that superusers see all plans regardless of is_active status."""
         active_plan = plan_factory(is_active=True)
         inactive_plan = plan_factory(is_active=False)
@@ -30,9 +29,7 @@ class TestUserAdminablePlans:
         assert active_plan in adminable_plans
         assert inactive_plan in adminable_plans
 
-    def test_general_admin_sees_only_active_plans(
-        self, user_factory, plan_factory, person_factory
-    ):
+    def test_general_admin_sees_only_active_plans(self, user_factory, plan_factory, person_factory):
         """Test that general admins only see active plans they administer."""
         active_plan = plan_factory(is_active=True)
         inactive_plan = plan_factory(is_active=False)
@@ -137,9 +134,7 @@ class TestUserAdminablePlans:
 class TestUserViewablePlans:
     """Test User.get_viewable_plans() respects is_active field."""
 
-    def test_public_site_viewer_sees_only_active_plans(
-        self, user_factory, plan_factory, person_factory
-    ):
+    def test_public_site_viewer_sees_only_active_plans(self, user_factory, plan_factory, person_factory):
         """Test that public site viewers only see active plans."""
         active_plan = plan_factory(is_active=True)
         inactive_plan = plan_factory(is_active=False)
@@ -148,6 +143,7 @@ class TestUserViewablePlans:
 
         # Add person as public site viewer to both plans
         from actions.models import PlanPublicSiteViewer
+
         PlanPublicSiteViewer.objects.create(plan=active_plan, person=person)
         PlanPublicSiteViewer.objects.create(plan=inactive_plan, person=person)
 
@@ -183,9 +179,7 @@ class TestUserViewablePlans:
 class TestUserCanAccessAdmin:
     """Test User.can_access_admin() respects is_active field."""
 
-    def test_superuser_can_access_admin_for_inactive_plan(
-        self, user_factory, plan_factory
-    ):
+    def test_superuser_can_access_admin_for_inactive_plan(self, user_factory, plan_factory):
         """Test that superusers can access admin for inactive plans."""
         inactive_plan = plan_factory(is_active=False)
         superuser = user_factory(is_superuser=True)
@@ -194,9 +188,7 @@ class TestUserCanAccessAdmin:
 
         assert can_access is True
 
-    def test_general_admin_cannot_access_admin_for_inactive_plan(
-        self, user_factory, plan_factory, person_factory
-    ):
+    def test_general_admin_cannot_access_admin_for_inactive_plan(self, user_factory, plan_factory, person_factory):
         """Test that general admins cannot access admin for inactive plans."""
         inactive_plan = plan_factory(is_active=False)
 
@@ -211,9 +203,7 @@ class TestUserCanAccessAdmin:
 
         assert can_access is False
 
-    def test_general_admin_can_access_admin_for_active_plan(
-        self, user_factory, plan_factory, person_factory
-    ):
+    def test_general_admin_can_access_admin_for_active_plan(self, user_factory, plan_factory, person_factory):
         """Test that general admins can access admin for active plans."""
         active_plan = plan_factory(is_active=True)
 
@@ -232,15 +222,14 @@ class TestUserCanAccessAdmin:
 class TestUserCanAccessPublicSite:
     """Test User.can_access_public_site() respects is_active field."""
 
-    def test_public_site_viewer_cannot_access_inactive_plan(
-        self, user_factory, plan_factory, person_factory
-    ):
+    def test_public_site_viewer_cannot_access_inactive_plan(self, user_factory, plan_factory, person_factory):
         """Test that public site viewers cannot access inactive plans."""
         inactive_plan = plan_factory(is_active=False)
 
         person = person_factory()
 
         from actions.models import PlanPublicSiteViewer
+
         PlanPublicSiteViewer.objects.create(plan=inactive_plan, person=person)
 
         user = user_factory(is_superuser=False)
@@ -266,15 +255,14 @@ class TestUserCanAccessPublicSite:
         viewable_plans = user.get_viewable_plans()
         assert inactive_plan not in viewable_plans
 
-    def test_public_site_viewer_can_access_active_plan(
-        self, user_factory, plan_factory, person_factory
-    ):
+    def test_public_site_viewer_can_access_active_plan(self, user_factory, plan_factory, person_factory):
         """Test that public site viewers can access active plans."""
         active_plan = plan_factory(is_active=True)
 
         person = person_factory()
 
         from actions.models import PlanPublicSiteViewer
+
         PlanPublicSiteViewer.objects.create(plan=active_plan, person=person)
 
         user = user_factory(is_superuser=False)

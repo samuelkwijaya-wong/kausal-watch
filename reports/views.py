@@ -37,8 +37,8 @@ class MarkActionAsCompleteView(WMABaseView[Action]):
 
     def get_page_title(self):
         if self.complete:
-            return _("Mark action as complete")
-        return _("Undo marking action as complete")
+            return _('Mark action as complete')
+        return _('Undo marking action as complete')
 
     def check_action_permitted(self, user):
         return user.can_modify_action(self.action)
@@ -51,9 +51,9 @@ class MarkActionAsCompleteView(WMABaseView[Action]):
 
     def get_meta_title(self):
         if self.complete:
-            msg = _("Confirm marking action %(action)s as complete for report %(report)s")
+            msg = _('Confirm marking action %(action)s as complete for report %(report)s')
         else:
-            msg = _("Confirm undoing marking action %(action)s as complete for report %(report)s")
+            msg = _('Confirm undoing marking action %(action)s as complete for report %(report)s')
         return msg % {'action': self.action, 'report': self.report}
 
     def confirmation_message(self):
@@ -93,8 +93,8 @@ class MarkReportAsCompleteView(WMABaseView[Report]):
 
     def get_page_title(self):
         if self.complete:
-            return _("Mark report as complete")
-        return _("Undo marking report as complete")
+            return _('Mark report as complete')
+        return _('Undo marking report as complete')
 
     def check_action_permitted(self, user):
         plan = user.get_active_admin_plan()
@@ -108,19 +108,20 @@ class MarkReportAsCompleteView(WMABaseView[Report]):
 
     def get_meta_title(self):
         if self.complete:
-            msg = _("Confirm marking report %(report)s as complete")
+            msg = _('Confirm marking report %(report)s as complete')
         else:
-            msg = _("Confirm undoing marking report %(report)s as complete")
+            msg = _('Confirm undoing marking report %(report)s as complete')
         return msg % {'report': self.report}
 
     def get_context_data(self, **kwargs):
-        context =  super().get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         if self.complete:
             complete_actions = Action.objects.qs.complete_for_report(self.report)
             context['affected_actions'] = self.report.type.plan.actions.exclude(id__in=complete_actions)
         else:
             action_ids = (
-                ActionSnapshot.objects.filter(report=self.report, created_explicitly=False)
+                ActionSnapshot.objects
+                .filter(report=self.report, created_explicitly=False)
                 .annotate(action_id=Cast('action_version__object_id', output_field=IntegerField()))
                 .values_list('action_id')
             )
@@ -157,11 +158,7 @@ def export_report_view(request, plan_identifier):
     if action_ids is not None:
         action_ids = [int(id) for id in action_ids.split(',') if id]  # `if id` is there to handle [] correctly
     output, filename = export_dashboard_report_for_plan(plan, format, user, action_ids)
-    content_type = (
-        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-        if format == 'xlsx'
-        else 'text/csv'
-    )
+    content_type = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' if format == 'xlsx' else 'text/csv'
     response = HttpResponse(
         output,
         content_type=content_type,

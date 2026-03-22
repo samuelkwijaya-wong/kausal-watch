@@ -53,9 +53,11 @@ class PledgeQuerySet(PlanRelatedModelQuerySet['Pledge'], MultilingualQuerySet['P
 
 # Manager configuration
 if TYPE_CHECKING:
+
     class PledgeManager(MLModelManager['Pledge', PledgeQuerySet]):
         def for_plan(self, plan: Plan) -> PledgeQuerySet: ...
         def visible_for_user(self, user: UserOrAnon, plan: Plan) -> PledgeQuerySet: ...
+
 else:
     PledgeManager = MLModelManager.from_queryset(PledgeQuerySet)
 
@@ -90,7 +92,7 @@ class Pledge(
         verbose_name=_('slug'),
         help_text=_(
             "The unique part of the page's URL, usually based on the title. "
-            "Use lowercase letters, numbers, and hyphens only (e.g., turn-off-electronics)."
+            'Use lowercase letters, numbers, and hyphens only (e.g., turn-off-electronics).'
         ),
     )
     description = models.TextField(
@@ -98,8 +100,8 @@ class Pledge(
         blank=True,
         verbose_name=_('description'),
         help_text=_(
-            "Brief description shown on pledge cards and at the top of the pledge page. "
-            "Keep it under 2-3 sentences. Use the body content below for additional details."
+            'Brief description shown on pledge cards and at the top of the pledge page. '
+            'Keep it under 2-3 sentences. Use the body content below for additional details.'
         ),
     )
     image: FK[AplansImage | None] = models.ForeignKey(
@@ -201,7 +203,10 @@ class Pledge(
 
     @classmethod
     def get_attribute_types_for_plan(
-        cls, plan: Plan, only_in_reporting_tab: bool = False, unless_in_reporting_tab: bool = False  # noqa: ARG003
+        cls,
+        plan: Plan,
+        only_in_reporting_tab: bool = False,
+        unless_in_reporting_tab: bool = False,  # noqa: ARG003
     ) -> list[AttributeType[Any]]:
         """Get all attribute types for Pledges in the given plan."""
         from django.contrib.contenttypes.models import ContentType

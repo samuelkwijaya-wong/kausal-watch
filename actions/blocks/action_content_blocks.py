@@ -57,12 +57,15 @@ class ActionResponsiblePartiesBlock(ActionContentBlockBase):  # block.details
         label = _('Responsible parties')
 
     heading = blocks.CharBlock(
-        required=False, help_text=_("Heading to show instead of the default"), default='',
+        required=False,
+        help_text=_('Heading to show instead of the default'),
+        default='',
     )
 
     graphql_fields = [
         GraphQLString('heading'),
     ]
+
 
 @register_streamfield_block
 class FormChoiceBlock(blocks.StructBlock):  # child
@@ -77,18 +80,28 @@ class FormChoiceBlock(blocks.StructBlock):  # child
         GraphQLString('choice_value'),
     ]
 
+
 @register_streamfield_block
 class FormFieldBlock(blocks.StructBlock):  # child
     field_label = blocks.CharBlock(required=True, label=_('Field Label'))
-    field_type = blocks.ChoiceBlock(choices=[
-        ('text', _('Text')),
-        ('checkbox', _('Checkbox')),
-        ('dropdown', _('Dropdown')),
-    ], required=True, label=_('Field Type'))
+    field_type = blocks.ChoiceBlock(
+        choices=[
+            ('text', _('Text')),
+            ('checkbox', _('Checkbox')),
+            ('dropdown', _('Dropdown')),
+        ],
+        required=True,
+        label=_('Field Type'),
+    )
     field_required = blocks.BooleanBlock(required=False, label=_('Required'))
-    choices = blocks.StreamBlock([
-        ('choice_field', FormChoiceBlock()),
-    ], required=False, min_num=0, label=_('Choices'))
+    choices = blocks.StreamBlock(
+        [
+            ('choice_field', FormChoiceBlock()),
+        ],
+        required=False,
+        min_num=0,
+        label=_('Choices'),
+    )
 
     def clean(self, value):
         cleaned_data = super().clean(value)
@@ -120,8 +133,8 @@ class FormFieldBlock(blocks.StructBlock):  # child
 
 
 class BaseContactFormBlock(blocks.StructBlock):  # block.details custom
-    heading = blocks.CharBlock(required=False, default="", label=_('Heading'))
-    description = blocks.CharBlock(required=False, default="", label=_('Description'))
+    heading = blocks.CharBlock(required=False, default='', label=_('Heading'))
+    description = blocks.CharBlock(required=False, default='', label=_('Description'))
     feedback_visible = blocks.BooleanBlock(
         default=True,
         required=False,
@@ -146,10 +159,14 @@ class BaseContactFormBlock(blocks.StructBlock):  # block.details custom
         label=_('Email required'),
         help_text=_('Make the email field required when visible.'),
     )
-    fields = blocks.StreamBlock([
-        ('form_field', FormFieldBlock()),
-    ], required=False, min_num=0, label=_('Additional form fields'),
-    help_text=_("Form fields to be shown in addition to Name, Email and Comment fields"),
+    fields = blocks.StreamBlock(
+        [
+            ('form_field', FormFieldBlock()),
+        ],
+        required=False,
+        min_num=0,
+        label=_('Additional form fields'),
+        help_text=_('Form fields to be shown in addition to Name, Email and Comment fields'),
     )
 
     graphql_fields = [
@@ -178,42 +195,45 @@ class BaseContactFormBlock(blocks.StructBlock):  # block.details custom
 
         return cleaned_data
 
+
 @register_streamfield_block
-class ActionContactFormBlock(StaticBlockToStructBlockWorkaroundMixin, BaseContactFormBlock): # block.details
-    graphql_interfaces = (FieldBlockMetaInterface, )
+class ActionContactFormBlock(StaticBlockToStructBlockWorkaroundMixin, BaseContactFormBlock):  # block.details
+    graphql_interfaces = (FieldBlockMetaInterface,)
+
     class Meta:
-        label = _("Contact form")
+        label = _('Contact form')
 
 
 @register_streamfield_block
 class IndicatorCausalChainBlock(blocks.StaticBlock):  # block.details.custom (into default!)  !!!
-    graphql_interfaces = (FieldBlockMetaInterface, )
+    graphql_interfaces = (FieldBlockMetaInterface,)
 
     class Meta:
-        label = _("Indicator Causal Chain")
+        label = _('Indicator Causal Chain')
 
 
 class BaseDatasetsBlock(blocks.StructBlock):
     heading = blocks.CharBlock(
         required=False,
-        help_text=_("What heading should be used in the public UI for the dataset?"),
+        help_text=_('What heading should be used in the public UI for the dataset?'),
         default='',
-        label=_("Heading"),
+        label=_('Heading'),
     )
     help_text = blocks.CharBlock(
         required=False,
-        help_text=_("Help text for the Dataset to be shown in the public UI"),
+        help_text=_('Help text for the Dataset to be shown in the public UI'),
         default='',
-        label = _("Help text"),
+        label=_('Help text'),
     )
 
     class Meta:
-        label = _("Datasets")
+        label = _('Datasets')
 
     graphql_fields = [
         GraphQLString('heading'),
         GraphQLString('help_text'),
     ]
+
 
 @register_streamfield_block
 class PlanDatasetsBlock(BaseDatasetsBlock):  # block.details.custom
@@ -223,19 +243,20 @@ class PlanDatasetsBlock(BaseDatasetsBlock):  # block.details.custom
         GraphQLForeignKey('dataset_schema', DatasetSchema, required=True),
     ]
 
+
 @register_streamfield_block
-class ActionOfficialNameBlock(ActionContentBlockBase): # block.details.custom
+class ActionOfficialNameBlock(ActionContentBlockBase):  # block.details.custom
     field_label = blocks.CharBlock(
         required=False,
-        help_text=_("What label should be used in the public UI for the official name?"),
+        help_text=_('What label should be used in the public UI for the official name?'),
         default='',
-        label=_("Field label"),
+        label=_('Field label'),
     )
     caption = blocks.CharBlock(
         required=False,
-        help_text=_("Description to show after the field content"),
+        help_text=_('Description to show after the field content'),
         default='',
-        label=_("Caption"),
+        label=_('Caption'),
     )
 
     class Meta:

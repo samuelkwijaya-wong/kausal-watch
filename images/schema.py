@@ -29,7 +29,11 @@ class ImageRendition(DjangoNode[AplansRendition]):
     class Meta:
         model = AplansRendition
         fields = [
-            'id', 'src', 'width', 'height', 'alt',
+            'id',
+            'src',
+            'width',
+            'height',
+            'alt',
         ]
 
     # needed for grapple
@@ -49,8 +53,16 @@ class ImageNode(DjangoNode[AplansImage]):
     class Meta:
         model = AplansImage
         fields = [
-            'id', 'title', 'focal_point_x', 'focal_point_y', 'focal_point_width',
-            'focal_point_height', 'height', 'width', 'image_credit', 'alt_text',
+            'id',
+            'title',
+            'focal_point_x',
+            'focal_point_y',
+            'focal_point_width',
+            'focal_point_height',
+            'height',
+            'width',
+            'image_credit',
+            'alt_text',
         ]
 
     # needed for grapple

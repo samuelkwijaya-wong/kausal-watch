@@ -22,9 +22,12 @@ pytestmark = pytest.mark.django_db
 @pytest.fixture
 def field_name() -> Callable[[], str]:
     seq = 1
+
     def _field_name() -> str:
         return f'field-{seq}'
+
     return _field_name
+
 
 @pytest.fixture
 def model_field_properties_factory(field_name: Callable[[], str]) -> Callable[..., ModelFieldProperties]:
@@ -32,21 +35,23 @@ def model_field_properties_factory(field_name: Callable[[], str]) -> Callable[..
         if 'field_name' not in kwargs:
             kwargs['field_name'] = field_name()
         return ModelFieldProperties(**kwargs)
+
     return model_field_property
 
 
 @pytest.fixture
 def disabled_field_factory(model_field_properties_factory):
     def _disabled_field(block_context: FieldBlockContext) -> ModelFieldProperties:
-         has = {
-             'details': 'has_details_block',
-             'dashboard': 'has_dashboard_column_block',
-             'report': 'has_report_block',
-             'list_filters': 'has_list_filters_block',
-         }
-         return model_field_properties_factory(
-             **{has[block_context]: False},
-         )
+        has = {
+            'details': 'has_details_block',
+            'dashboard': 'has_dashboard_column_block',
+            'report': 'has_report_block',
+            'list_filters': 'has_list_filters_block',
+        }
+        return model_field_properties_factory(
+            **{has[block_context]: False},
+        )
+
     return _disabled_field
 
 
@@ -56,7 +61,9 @@ def field_registry():
 
     module = sys.modules[__name__]
     return ModelFieldRegistry(
-        model=Action, target_module=module, contexts=[
+        model=Action,
+        target_module=module,
+        contexts=[
             FieldContextConfig(
                 context=FieldBlockContext.DETAILS,
                 block_base_class=ActionContentBlockBase,
@@ -69,7 +76,7 @@ def field_registry():
                 context=FieldBlockContext.LIST_FILTERS,
                 block_base_class=ActionFilterBlock,
             ),
-        ]
+        ],
     )
 
 

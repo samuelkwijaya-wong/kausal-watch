@@ -67,7 +67,9 @@ if TYPE_CHECKING:
 
     class ViewMixinBase[M: Model](WMABaseView[M]):
         pass
+
 else:
+
     class ViewMixinBase[M: Model]: ...
 
 
@@ -301,6 +303,7 @@ if TYPE_CHECKING:
 
     class TabbedInterfaceMixinBase[M: Model, FormT: ModelForm[Any] = WagtailAdminModelForm[Any]](TabbedInterface[M, FormT]):
         pass
+
 else:
 
     class FieldPanelMixinBase[M: Model, FormT: ModelForm[Any] = WagtailAdminModelForm[Any]]:
@@ -308,6 +311,7 @@ else:
 
     class TabbedInterfaceMixinBase[M: Model, FormT: ModelForm[Any] = WagtailAdminModelForm[Any]]:
         pass
+
 
 class BuiltInFieldCustomizationAwareEditHandlerMixin[M: Model, FormT: ModelForm[Any] = WagtailAdminModelForm[Any]](
     TabbedInterfaceMixinBase[M, FormT]
@@ -518,14 +522,20 @@ class AplansTabbedInterface[M: Model, F: ModelForm[Any] = ModelForm[Any]](Tabbed
 
 
 if TYPE_CHECKING:
+
     class PersistFiltersBase[M: Model](ModelFormView[M]):
         continue_editing_active: Callable[[], bool]
         model_name: str
+
     class InstanceSpecificViewBase[M: Model](InstanceSpecificView[M]):
         pass
+
 else:
+
     class PersistFiltersBase[M: Model]: ...
+
     class InstanceSpecificViewBase[M: Model]: ...
+
 
 # TODO: Reimplemented in admin_site/mixins.py to make this work without
 # ModelAdmin. Use that when implementing new classes or migrating away from
@@ -785,9 +795,12 @@ class CondensedInlinePanel[M: Model, RelatedM: Model](InlinePanel[M, RelatedM]):
 
 
 if TYPE_CHECKING:
+
     class ModelFormViewMixin[M: Model](ModelFormView[M]):
         pass
+
 else:
+
     class ModelFormViewMixin[M: Model]: ...
 
 

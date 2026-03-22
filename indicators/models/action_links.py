@@ -48,14 +48,16 @@ class ActionIndicatorQuerySet(models.QuerySet['ActionIndicator']):
             collator = utils.get_collator(lang)
 
             return self.order_by(
-                Collate("indicator__name", collator),
+                Collate('indicator__name', collator),
             )
 
         return self
 
 
 if TYPE_CHECKING:
+
     class ActionIndicatorManager(ModelManager['ActionIndicator', ActionIndicatorQuerySet]): ...
+
 else:
     ActionIndicatorManager = ModelManager.from_queryset(ActionIndicatorQuerySet)
 
@@ -65,19 +67,26 @@ class ActionIndicator(models.Model):
     """Link between an action and an indicator."""
 
     action: ParentalKey[Action, Action] = ParentalKey(
-        'actions.Action', related_name='related_indicators', on_delete=models.CASCADE,
+        'actions.Action',
+        related_name='related_indicators',
+        on_delete=models.CASCADE,
         verbose_name=_('action'),
     )
     indicator: ParentalKey[Indicator, Indicator] = ParentalKey(
-        'indicators.Indicator', related_name='related_actions', on_delete=models.CASCADE,
+        'indicators.Indicator',
+        related_name='related_actions',
+        on_delete=models.CASCADE,
         verbose_name=_('indicator'),
     )
     effect_type = models.CharField(
-        max_length=40, choices=[(val, name) for val, name in IndicatorRelationship.EFFECT_TYPES if val != 'part_of'],
-        verbose_name=_('effect type'), help_text=_('What type of effect should the action cause?'),
+        max_length=40,
+        choices=[(val, name) for val, name in IndicatorRelationship.EFFECT_TYPES if val != 'part_of'],
+        verbose_name=_('effect type'),
+        help_text=_('What type of effect should the action cause?'),
     )
     indicates_action_progress = models.BooleanField(
-        default=False, verbose_name=_('indicates action progress'),
+        default=False,
+        verbose_name=_('indicates action progress'),
         help_text=_('Set if the indicator should be used to determine action progress'),
     )
 
@@ -89,9 +98,9 @@ class ActionIndicator(models.Model):
         unique_together = (('action', 'indicator'),)
         verbose_name = _('action indicator')
         verbose_name_plural = _('action indicators')
-        ordering = ["indicator"]
+        ordering = ['indicator']
 
     get_effect_type_display: Callable[[], str]
 
     def __str__(self):
-        return "%s ➜ %s ➜ %s" % (self.action, self.get_effect_type_display(), self.indicator)
+        return '%s ➜ %s ➜ %s' % (self.action, self.get_effect_type_display(), self.indicator)

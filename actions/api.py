@@ -83,7 +83,9 @@ if TYPE_CHECKING:
     from users.models import User
 
     class ModelSerializerMixin[M: Model](serializers.ModelSerializer[M]): ...
+
 else:
+
     class ModelSerializerMixin[M: Model]: ...
 
 
@@ -474,6 +476,7 @@ if TYPE_CHECKING:
 
     class AttributesSerializerMixinBase[InstanceT: Any](serializers.Serializer[InstanceT]):
         pass
+
 else:
 
     class AttributesSerializerMixinBase[InstanceT: Any]:
@@ -624,9 +627,7 @@ class ChoiceWithTextAttributesSerializer(AttributesSerializerMixin, serializers.
     def to_representation(self, value):
         cached = self.get_cached_values()
         values = cached if cached is not None else value.all()
-        return {
-            v.type.identifier: {'choice': v.choice_id, 'text': v.text} for v in values if self.is_attribute_visible(v)
-        }
+        return {v.type.identifier: {'choice': v.choice_id, 'text': v.text} for v in values if self.is_attribute_visible(v)}
 
     def to_internal_value(self, data):
         return data
@@ -704,9 +705,7 @@ class CategoryChoiceAttributesSerializer(AttributesSerializerMixin[Any], seriali
     def to_representation(self, value):
         cached = self.get_cached_values()
         values = cached if cached is not None else value.all()
-        return {
-            v.type.identifier: [cat.id for cat in v.categories.all()] for v in values if self.is_attribute_visible(v)
-        }
+        return {v.type.identifier: [cat.id for cat in v.categories.all()] for v in values if self.is_attribute_visible(v)}
 
     def to_internal_value(self, data):
         return data
@@ -1134,14 +1133,17 @@ class ActionSerializer(  # type: ignore[misc]
             fk_name='person',
             get_existing_objects=lambda action: action.contact_persons.all(),
             get_editable_roles=lambda action, user: self._get_editable_roles_with_customization(
-                action, user, 'contact_persons',
+                action,
+                user,
+                'contact_persons',
                 lambda u, a: u.get_editable_contact_person_roles(a),
             ),
         )
         if violating_roles:
-            raise serializers.ValidationError(_(
-                'You do not have permission to change contact persons with role "%(role)s" on action "%(action)s".'
-            ) % {'role': violating_roles[0], 'action': self._instance})
+            raise serializers.ValidationError(
+                _('You do not have permission to change contact persons with role "%(role)s" on action "%(action)s".')
+                % {'role': violating_roles[0], 'action': self._instance}
+            )
         return value
 
     def validate_responsible_parties(self, value):
@@ -1150,14 +1152,17 @@ class ActionSerializer(  # type: ignore[misc]
             fk_name='organization',
             get_existing_objects=lambda action: action.responsible_parties.all(),
             get_editable_roles=lambda action, user: self._get_editable_roles_with_customization(
-                action, user, 'responsible_parties',
+                action,
+                user,
+                'responsible_parties',
                 lambda u, a: u.get_editable_responsible_party_roles(a),
             ),
         )
         if violating_roles:
-            raise serializers.ValidationError(_(
-                'You do not have permission to change responsible parties with role "%(role)s" on action "%(action)s".'
-            ) % {'role': violating_roles[0], 'action': self._instance})
+            raise serializers.ValidationError(
+                _('You do not have permission to change responsible parties with role "%(role)s" on action "%(action)s".')
+                % {'role': violating_roles[0], 'action': self._instance}
+            )
         return value
 
     def create(self, validated_data: dict):
@@ -1559,7 +1564,6 @@ class OrganizationPermission(WatchObjectPermissions):
         return False
 
 
-
 class OrganizationSerializer(TreebeardModelSerializerMixin[Organization], serializers.ModelSerializer[Organization]):  # type: ignore[misc]
     uuid = serializers.UUIDField(required=False)
 
@@ -1615,7 +1619,6 @@ class OrganizationViewSet(HandleProtectedErrorMixin, AuditLoggingBulkModelViewSe
         return Organization.objects.qs.available_for_plan(plan).order_by('id')
 
 
-
 class PersonPermission(WatchObjectPermissions):
     model = Person
 
@@ -1635,7 +1638,6 @@ class PersonPermission(WatchObjectPermissions):
                 assert isinstance(obj, Person)
                 return user.can_edit_or_delete_person_within_plan(obj, plan=plan)
         return False
-
 
 
 class PersonSerializer(BasePersonSerializer):

@@ -112,10 +112,10 @@ def camelcase_to_underscore(name):
 
 
 def underscore_to_camelcase(value: str) -> str:
-    output = ""
-    for word in value.split("_"):
+    output = ''
+    for word in value.split('_'):
         if not word:
-            output += "_"
+            output += '_'
             continue
         output += word.capitalize()
     return output
@@ -136,6 +136,7 @@ def public_fields(
     if add_fields is not None:
         fields += add_fields
     return fields
+
 
 # TODO: Remove this once the extensions are updated to use the register_view_helper from common
 def register_view_helper(view_list, klass, name=None, basename=None):
@@ -161,10 +162,12 @@ class IdentifierValidator(RegexValidator):
             regex = r'^[a-zA-Z0-9äöüåÄÖÜßÅ_.-]+$'
         super().__init__(regex, **kwargs)
 
+
 class DateFormatOptions(models.TextChoices):
     FULL = 'FULL', _('Day, month and year (31.12.2020)')
     MONTH_YEAR = 'MONTH_YEAR', _('Month and year (12.2020)')
     YEAR = 'YEAR', _('Year (2020)')
+
 
 class DateFormatField[T: str | None = str](models.CharField[T, T]):
     def __init__(self, *args, **kwargs):
@@ -172,7 +175,9 @@ class DateFormatField[T: str | None = str](models.CharField[T, T]):
         kwargs['choices'] = DateFormatOptions.choices
         super().__init__(*args, **kwargs)
 
+
 _IDT = TypeVar('_IDT', bound=str | None, default=str)
+
 
 class IdentifierField(models.CharField[_IDT, _IDT]):
     def __init__(self, *args, **kwargs):
@@ -218,7 +223,7 @@ class OrderedModel(models.Model):
     def check(cls, **kwargs) -> list[checks.CheckMessage]:
         errors = super().check(**kwargs)
         if getattr(cls.filter_siblings, '__isabstractmethod__', False):
-            errors.append(checks.Warning("filter_siblings() not defined", hint="Implement filter_siblings() method", obj=cls))
+            errors.append(checks.Warning('filter_siblings() not defined', hint='Implement filter_siblings() method', obj=cls))
         return errors
 
     # Probably for compatibility with things that expect a `sort_order` field as in wagtailorderable.models.Orderable
@@ -228,7 +233,7 @@ class OrderedModel(models.Model):
 
     @abc.abstractmethod
     def filter_siblings(self, qs: QuerySet[Self, Self]) -> QuerySet[Self, Self]:
-        raise NotImplementedError("Implement in subclass")
+        raise NotImplementedError('Implement in subclass')
 
     def get_sort_order_max(self) -> int:
         """
@@ -292,6 +297,7 @@ class PlanRelatedModelQuerySet[M: Model](QuerySet[M]):
         return self.filter(plan=plan)
 
     if TYPE_CHECKING:
+
         @classmethod
         def as_manager(cls) -> Manager[Any]: ...
 
@@ -346,10 +352,10 @@ class IndirectPlanRelatedModel(PlanRelatedModelWithRevision):
         return self.get_related_plans()
 
     def get_related_plans(self):
-        raise NotImplementedError("Implement in subclass")
+        raise NotImplementedError('Implement in subclass')
 
     def initialize_plan_defaults(self, plan: Plan):
-        raise NotImplementedError("Implement in subclass")
+        raise NotImplementedError('Implement in subclass')
 
 
 class PlanRelatedOrderedModel(OrderedModel, PlanRelatedModel):
@@ -369,7 +375,8 @@ class RestrictedVisibilityModel(models.Model):
         PUBLIC = 'public', _('Public')
 
     visibility = models.CharField(
-        blank=False, null=False,
+        blank=False,
+        null=False,
         default=VisibilityState.PUBLIC,
         choices=VisibilityState.choices,
         max_length=20,
@@ -378,6 +385,7 @@ class RestrictedVisibilityModel(models.Model):
 
     class Meta:
         abstract = True
+
 
 class InstancesEditableByMixin(models.Model):
     """
@@ -443,7 +451,7 @@ class InstancesEditableByMixin(models.Model):
             assert user.is_authenticated  # checked above
             return True
 
-        msg = f"Unexpected value for instances_editable_by: {self.instances_editable_by}"
+        msg = f'Unexpected value for instances_editable_by: {self.instances_editable_by}'
         raise Exception(msg)
 
 
@@ -513,12 +521,15 @@ class InstancesVisibleForMixin(models.Model):
             assert user.is_authenticated  # checked above
             return True
 
-        assert False, f"Unexpected value for instances_visible_for: {self.instances_visible_for}"  # noqa: B011, PT015
+        assert False, f'Unexpected value for instances_visible_for: {self.instances_visible_for}'  # noqa: B011, PT015
 
 
 if TYPE_CHECKING:
+
     class ModelMixinBase(models.Model): ...  # noqa: DJ008
+
 else:
+
     class ModelMixinBase: ...
 
 
@@ -528,8 +539,7 @@ class ReferenceIndexedModelMixin(ModelMixinBase):
 
         references = ReferenceIndex.get_references_to(self)
         for ref in references:
-            logger.debug(f"Removing referencing block '{ref.describe_source_field()}' from {ref.model_name} "
-                         f"{ref.object_id}")
+            logger.debug(f"Removing referencing block '{ref.describe_source_field()}' from {ref.model_name} {ref.object_id}")
             model_class = ref.content_type.model_class()
             assert model_class is not None
             page = model_class.objects.get(id=ref.object_id)
@@ -543,8 +553,10 @@ class ReferenceIndexedModelMixin(ModelMixinBase):
                 stream_value.remove(block)
                 page.save()
             else:
-                message = (f"Unexpected type of reference ({type(page)} expected to be Page; {type(ref.source_field)} "
-                           "expected to be StreamField)")
+                message = (
+                    f'Unexpected type of reference ({type(page)} expected to be Page; {type(ref.source_field)} '
+                    'expected to be StreamField)'
+                )
                 logger.warning(message)
                 sentry_sdk.capture_message(message)
         super().delete(*args, **kwargs)  # type: ignore
@@ -617,6 +629,7 @@ class TranslatedModelMixin:
 
 type AdminSaveOperation = Literal['edit', 'create']
 
+
 class AdminSaveContext(TypedDict):
     user: User
     operation: AdminSaveOperation
@@ -624,20 +637,30 @@ class AdminSaveContext(TypedDict):
 
 class ModificationTracking(models.Model):
     updated_at = models.DateTimeField(
-        auto_now=True, editable=False, verbose_name=_('updated at'),
+        auto_now=True,
+        editable=False,
+        verbose_name=_('updated at'),
     )
     created_at = models.DateTimeField(
-        auto_now_add=True, editable=False, verbose_name=_('created at'),
+        auto_now_add=True,
+        editable=False,
+        verbose_name=_('created at'),
     )
     updated_by = models.ForeignKey(
-        'users.User', blank=True, null=True, on_delete=models.SET_NULL,
+        'users.User',
+        blank=True,
+        null=True,
+        on_delete=models.SET_NULL,
         verbose_name=_('updated by'),
-        related_name="%(app_label)s_updated_%(class)s",
+        related_name='%(app_label)s_updated_%(class)s',
     )
     created_by = models.ForeignKey(
-        'users.User', blank=True, null=True, on_delete=models.SET_NULL,
+        'users.User',
+        blank=True,
+        null=True,
+        on_delete=models.SET_NULL,
         verbose_name=_('created by'),
-        related_name="%(app_label)s_created_%(class)s",
+        related_name='%(app_label)s_created_%(class)s',
     )
 
     class Meta:
@@ -666,6 +689,7 @@ def append_query_parameter(request: HttpRequest, url: str, parameter: str) -> st
 E = TypeVar('E', bound='MetadataEnum')
 C = TypeVar('C')
 
+
 class ConstantMetadata(Generic[E, C]):
     identifier: E
     color: str | None
@@ -679,6 +703,7 @@ class ConstantMetadata(Generic[E, C]):
 
 
 CM = TypeVar('CM', bound=ConstantMetadata[Any, Any])
+
 
 class MetadataEnum(Enum):
     value: ConstantMetadata[Any, Any]
@@ -712,6 +737,7 @@ def convert_html_to_text(html):
     text = re.sub(r'\\-', '-', text)
     return text
 
+
 LANGUAGE_COLLATORS = {
     'da': 'da-x-icu',
     'de': 'de-x-icu',
@@ -729,6 +755,7 @@ LANGUAGE_COLLATORS = {
     'pt-BR': 'pt-BR-x-icu',
 }
 
+
 def get_collator(lang: str) -> str:
     return LANGUAGE_COLLATORS.get(lang, 'en-US-x-icu')
 
@@ -737,6 +764,7 @@ if typing.TYPE_CHECKING:
     _StructBlock = StructBlock
 else:
     _StructBlock = object
+
 
 class StaticBlockToStructBlockWorkaroundMixin(_StructBlock):
     # Workaround for migration from StaticBlock to StructBlock
@@ -816,7 +844,7 @@ def get_hostname_redirect_url(
     path: str,
     redirect_hostnames: Sequence[tuple[str, str]],
     allowed_non_wildcard_hosts: set[str],
-    preserve_subdomain: bool = False
+    preserve_subdomain: bool = False,
 ) -> str | None:
     """
     Check if request should be redirected based on hostname patterns.
@@ -836,7 +864,7 @@ def get_hostname_redirect_url(
     )
     if not redirect_to_hostname:
         return None
-    redirect_url = f"{schema}://{redirect_to_hostname}{path}"
+    redirect_url = f'{schema}://{redirect_to_hostname}{path}'
     return redirect_url
 
 
@@ -851,12 +879,12 @@ def get_hostname_redirect_response(
         return None
 
     url = get_hostname_redirect_url(
-            hostname=hostname,
-            schema=request.scheme,
-            path=request.get_full_path(),
-            redirect_hostnames=redirect_hostnames,
-            allowed_non_wildcard_hosts=allowed_non_wildcard_hosts,
-        )
+        hostname=hostname,
+        schema=request.scheme,
+        path=request.get_full_path(),
+        redirect_hostnames=redirect_hostnames,
+        allowed_non_wildcard_hosts=allowed_non_wildcard_hosts,
+    )
     if url is None:
         return None
 
@@ -885,5 +913,6 @@ def _register_custom_fields() -> None:
         RichTextField: str,
         AutoSlugField: strawberry.ID,
     })
+
 
 _register_custom_fields()

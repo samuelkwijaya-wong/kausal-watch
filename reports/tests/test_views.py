@@ -17,12 +17,9 @@ def test_mark_action_as_complete_view_accepts_as_view_kwargs():
     from reports.views import MarkActionAsCompleteView
 
     # Verify the class attributes exist
-    assert hasattr(MarkActionAsCompleteView, 'action_pk'), \
-        'MarkActionAsCompleteView must have action_pk as a class attribute'
-    assert hasattr(MarkActionAsCompleteView, 'report_pk'), \
-        'MarkActionAsCompleteView must have report_pk as a class attribute'
-    assert hasattr(MarkActionAsCompleteView, 'complete'), \
-        'MarkActionAsCompleteView must have complete as a class attribute'
+    assert hasattr(MarkActionAsCompleteView, 'action_pk'), 'MarkActionAsCompleteView must have action_pk as a class attribute'
+    assert hasattr(MarkActionAsCompleteView, 'report_pk'), 'MarkActionAsCompleteView must have report_pk as a class attribute'
+    assert hasattr(MarkActionAsCompleteView, 'complete'), 'MarkActionAsCompleteView must have complete as a class attribute'
 
     # Verify as_view() accepts the kwargs (these are passed in actions/action_admin.py)
     try:
@@ -48,10 +45,8 @@ def test_mark_report_as_complete_view_accepts_as_view_kwargs():
     from reports.views import MarkReportAsCompleteView
 
     # Verify the class attributes exist
-    assert hasattr(MarkReportAsCompleteView, 'report_pk'), \
-        'MarkReportAsCompleteView must have report_pk as a class attribute'
-    assert hasattr(MarkReportAsCompleteView, 'complete'), \
-        'MarkReportAsCompleteView must have complete as a class attribute'
+    assert hasattr(MarkReportAsCompleteView, 'report_pk'), 'MarkReportAsCompleteView must have report_pk as a class attribute'
+    assert hasattr(MarkReportAsCompleteView, 'complete'), 'MarkReportAsCompleteView must have complete as a class attribute'
 
     # Verify as_view() accepts the kwargs (these are passed in reports/wagtail_admin.py)
     try:

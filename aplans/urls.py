@@ -58,6 +58,7 @@ kwe_urls: ModuleType | None = None
 if importlib.util.find_spec('kausal_watch_extensions') is not None:
     from kausal_watch_extensions import urls  # type: ignore[import-not-found,attr-defined]
     from kausal_watch_extensions.api import all_views  # type: ignore[import-not-found]
+
     extensions_api_views = all_views
     kwe_urls = urls
 
@@ -69,7 +70,7 @@ for view in actions_api_views + indicators_api_views + insight_api_views + exten
 
 
 class KausalLogoutView(LogoutView):
-    http_method_names = ["post", "options", "get"]
+    http_method_names = ['post', 'options', 'get']
 
     def get(self, request, *args, **kwargs):
         return super().post(request, *args, **kwargs)
@@ -104,6 +105,7 @@ class PageSearchView(search.SearchView):
         self.all_pages = queryset
         return super().annotate_queryset(queryset)
 
+
 for prefix, viewset, basename in datasets_api_root_router.registry:
     reg_base = basename or api_router.get_default_basename(viewset)
     if api_router.is_already_registered(reg_base):
@@ -121,29 +123,38 @@ api_urlconf = [
 urlpatterns = [
     re_path(r'^admin/change-admin-plan/(?:(?P<plan_id>\d+)/)?$', change_admin_plan, name='change-admin-plan'),
     *api_urlconf,
-    path("jsi18n/", JavaScriptCatalog.as_view(), name="javascript-catalog"),
-    path('v1/docs/', TemplateView.as_view(
-        template_name='swagger-ui.html',
-        extra_context={'schema_url': 'openapi-schema'},
-    ), name='swagger-ui'),
+    path('jsi18n/', JavaScriptCatalog.as_view(), name='javascript-catalog'),
+    path(
+        'v1/docs/',
+        TemplateView.as_view(
+            template_name='swagger-ui.html',
+            extra_context={'schema_url': 'openapi-schema'},
+        ),
+        name='swagger-ui',
+    ),
     path('v1/schema/', SpectacularAPIView.as_view(urlconf=api_urlconf), name='schema'),
     # Optional UI:
     path('v1/schema/swagger-ui/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
     path('v1/schema/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
     path('v1/graphql/', csrf_exempt(WatchGraphQLView.as_view()), name='graphql'),
-    path('v1/graphql/docs/', TemplateView.as_view(
-        template_name='graphql-voyager.html',
-    ), name='graphql-voyager'),
-
+    path(
+        'v1/graphql/docs/',
+        TemplateView.as_view(
+            template_name='graphql-voyager.html',
+        ),
+        name='graphql-voyager',
+    ),
     re_path(r'^admin/autocomplete/', include(autocomplete_admin_urls)),
-    re_path(r'^admin/reports/site-history/$', PlanScopedLogEntriesView.as_view(), name="watch-plan-history"),
+    re_path(r'^admin/reports/site-history/$', PlanScopedLogEntriesView.as_view(), name='watch-plan-history'),
     re_path(
         r'^admin/reports/site-history/results/$',
-        PlanScopedLogEntriesView.as_view(results_only=True), name="watch-plan-history-results"),
+        PlanScopedLogEntriesView.as_view(results_only=True),
+        name='watch-plan-history-results',
+    ),
     # Hide default reporting URLs provided by Wagtail
     re_path(r'^admin/reports/.*', RootRedirectView.as_view(), name='disabled-reports'),
     # FIXME: This overrides the URLs in Wagtail's admin/urls/pages.py to allow filtering the queryset
-    path("admin/pages/search/", PageSearchView.as_view(), name="search"),
+    path('admin/pages/search/', PageSearchView.as_view(), name='search'),
     re_path(r'^admin/', include(wagtailadmin_urls)),
     re_path(r'^wadmin', WadminRedirectView.as_view(), name='wadmin-redirect'),
     re_path(r'^documents/', include(wagtaildocs_urls)),
@@ -168,10 +179,9 @@ urlpatterns = [
         name='commoncategorytype-autocomplete',
     ),
     re_path(r'^person-autocomplete/$', PersonAutocomplete.as_view(), name='person-autocomplete'),
-
     re_path('^report_export/(?:(?P<plan_identifier>[-a-z0-9]+)/)?$', export_report_view, name='action-report-export'),
     path('auth/', include('social_django.urls', namespace='social')),
-    path("logout/", KausalLogoutView.as_view(), name="logout"),
+    path('logout/', KausalLogoutView.as_view(), name='logout'),
     path('healthz/', csrf_exempt(health_view)),
     path('', include('admin_site.urls')),
     path('', RootRedirectView.as_view(), name='root-redirect'),
@@ -182,9 +192,10 @@ if settings.DEBUG:
     from django.db.transaction import non_atomic_requests
 
     from asgiref.sync import sync_to_async
+
     static_serve_view = non_atomic_requests(sync_to_async(serve_static))
 
-    urlpatterns.append(re_path(r"^static/(?P<path>.*)$", static_serve_view))
+    urlpatterns.append(re_path(r'^static/(?P<path>.*)$', static_serve_view))
 
 
 if kwe_urls:

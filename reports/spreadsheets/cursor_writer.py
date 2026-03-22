@@ -25,19 +25,20 @@ class Cell(CellBase):
     value: Any
     format: str | Format | None
     url: str | None = None
+
     def is_page_break(self) -> bool:
         return False
 
 
 class CursorWriter:
     def __init__(
-            self,
-            worksheet: Worksheet,
-            formats: ExcelFormats | None = None,
-            default_format: Format | None = None,
-            start: tuple[int, int] = (0, 0),
-            width: int | None = None,
-            merge: bool =False,
+        self,
+        worksheet: Worksheet,
+        formats: ExcelFormats | None = None,
+        default_format: Format | None = None,
+        start: tuple[int, int] = (0, 0),
+        width: int | None = None,
+        merge: bool = False,
     ):
         self.default_format = default_format
         self.worksheet = worksheet
@@ -107,5 +108,7 @@ class CursorWriter:
                 if add_empty > 0:
                     self.write_empty(add_empty)
                     end_cursor = self.cursor
-                    self.worksheet.merge_range(start_cursor[0], start_cursor[1], end_cursor[0], end_cursor[1] - 1, cell.value, format)
+                    self.worksheet.merge_range(
+                        start_cursor[0], start_cursor[1], end_cursor[0], end_cursor[1] - 1, cell.value, format
+                    )
             self.newline()

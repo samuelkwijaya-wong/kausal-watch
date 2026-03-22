@@ -75,6 +75,7 @@ if TYPE_CHECKING:
     from indicators.models import Unit
 
     def mute_signals[X](signal: Signal) -> Callable[[X], X]: ...
+
 else:
     mute_signals = factory.django.mute_signals
 
@@ -405,7 +406,7 @@ class ActionTaskFactory(ModelFactory[ActionTask]):
     action = SubFactory[ActionTask, Action](ActionFactory)
     name = Sequence(lambda i: f'Action task {i}')
     state = ActionTask.NOT_STARTED
-    details = "Comment"
+    details = 'Comment'
     due_at = datetime.date(2020, 1, 1)
     completed_at: datetime.date | None = None
     completed_by: Person | None = None

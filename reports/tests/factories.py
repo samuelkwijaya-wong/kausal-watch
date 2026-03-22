@@ -98,12 +98,10 @@ class ReportFactory(DjangoModelFactory[Report]):
     name = Sequence(lambda i: f'Report {i}')
     start_date = datetime.date(year=2023, month=12, day=15)
     end_date = datetime.date(year=2024, month=5, day=31)
-    fields = StreamFieldFactory(
-        {
-            'implementation_phase': SubFactory(ActionImplementationPhaseReportFieldBlockFactory),
-            'attribute': SubFactory(ActionAttributeTypeReportFieldBlockFactory),
-            'responsible_parties': SubFactory(ActionResponsiblePartyReportFieldBlockFactory),
-        }
-    )
+    fields = StreamFieldFactory({
+        'implementation_phase': SubFactory(ActionImplementationPhaseReportFieldBlockFactory),
+        'attribute': SubFactory(ActionAttributeTypeReportFieldBlockFactory),
+        'responsible_parties': SubFactory(ActionResponsiblePartyReportFieldBlockFactory),
+    })
     is_complete = False
     is_public = False

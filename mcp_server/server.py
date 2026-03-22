@@ -38,6 +38,7 @@ def get_plan_metadata_instructions() -> str:
     with Path('./docs/architecture/plan-metadata.md').open('r') as file:
         return file.read()
 
+
 def register_tools():
     # Register tools from separate modules
     register_plan_tools(mcp)
@@ -47,5 +48,6 @@ def register_tools():
 
     for tool, tool_annotations in tool_registry:
         mcp.tool(tool, annotations=tool_annotations)
+
 
 register_tools()

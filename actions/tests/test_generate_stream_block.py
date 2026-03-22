@@ -48,16 +48,19 @@ from .fixtures_stream_block import *
 pytest.mark.django_db  # noqa: B018
 
 
-@pytest.mark.parametrize(('fixturename', 'expected_base_classes'), [
-    ('action_content_section_element_block', tuple()),
-    ('action_dashboard_column_block', tuple()),
-    ('report_field_block', tuple()),
-    ('action_main_content_block', (ActionListPageBlockPresenceMixin,)),
-    ('action_aside_content_block', (ActionListPageBlockPresenceMixin,)),
-])
+@pytest.mark.parametrize(
+    ('fixturename', 'expected_base_classes'),
+    [
+        ('action_content_section_element_block', tuple()),
+        ('action_dashboard_column_block', tuple()),
+        ('report_field_block', tuple()),
+        ('action_main_content_block', (ActionListPageBlockPresenceMixin,)),
+        ('action_aside_content_block', (ActionListPageBlockPresenceMixin,)),
+    ],
+)
 def test_expected_base_classes(fixturename, expected_base_classes, request):
     b = request.getfixturevalue(fixturename)
-    for c in expected_base_classes + (StreamBlock, ):
+    for c in expected_base_classes + (StreamBlock,):
         assert c in inspect.getmro(b)
 
 
@@ -85,61 +88,79 @@ EXPECTED_SUBBLOCK_BASES = {
 }
 
 
-@pytest.mark.parametrize(('fixturename', 'expected_subblocks'), [
-    ('action_content_section_element_block', [
-        ('attribute', ActionContentAttributeTypeBlock),
-        ('categories', ActionContentCategoryTypeBlock),
-    ]),
-    ('action_dashboard_column_block', [
-        ('identifier'),
-        ('name'),
-        ('implementation_phase'),
-        ('status'),
-        ('tasks'),
-        ('responsible_parties'),
-        ('related_indicators'),
-        ('updated_at'),
-        ('start_date'),
-        ('end_date'),
-        ('primary_org'),
-        ('attribute', FieldColumnBlock),
-    ]),
-    ('report_field_block', [
-        ('implementation_phase', ActionImplementationPhaseReportFieldBlock),
-        ('attribute_type', ActionAttributeTypeReportFieldBlock),
-        ('responsible_party', ActionResponsiblePartyReportFieldBlock),
-        ('category', ActionCategoryReportFieldBlock),
-        ('status', ActionStatusReportFieldBlock),
-        ('manual_status_reason'),
-        ('description'),
-        ('tasks'),
-    ]),
-    ('action_main_content_block', [
-        ('section', ActionContentSectionBlock),
-        ('official_name', ActionOfficialNameBlock),
-        ('attribute', ActionContentAttributeTypeBlock),
-        ('categories', ActionContentCategoryTypeBlock),
-        ('contact_form', ActionContactFormBlock),
-        ('report_comparison', ReportComparisonBlock),
-        ('indicator_causal_chain', IndicatorCausalChainBlock),
-        ('datasets', PlanDatasetsBlock),
-        ('lead_paragraph'),
-        ('description'),
-        ('links'),
-        ('tasks'),
-        ('merged_actions'),
-        ('related_actions'),
-        ('dependencies'),
-        ('related_indicators'),
-    ]),
-    ('action_aside_content_block', [
-        ('responsible_parties', ActionResponsiblePartiesBlock),
-        ('attribute', ActionContentAttributeTypeBlock),
-        ('categories', ActionContentCategoryTypeBlock),
-        ('schedule'),
-        ('contact_persons'),
-    ]),
-])
+@pytest.mark.parametrize(
+    ('fixturename', 'expected_subblocks'),
+    [
+        (
+            'action_content_section_element_block',
+            [
+                ('attribute', ActionContentAttributeTypeBlock),
+                ('categories', ActionContentCategoryTypeBlock),
+            ],
+        ),
+        (
+            'action_dashboard_column_block',
+            [
+                ('identifier'),
+                ('name'),
+                ('implementation_phase'),
+                ('status'),
+                ('tasks'),
+                ('responsible_parties'),
+                ('related_indicators'),
+                ('updated_at'),
+                ('start_date'),
+                ('end_date'),
+                ('primary_org'),
+                ('attribute', FieldColumnBlock),
+            ],
+        ),
+        (
+            'report_field_block',
+            [
+                ('implementation_phase', ActionImplementationPhaseReportFieldBlock),
+                ('attribute_type', ActionAttributeTypeReportFieldBlock),
+                ('responsible_party', ActionResponsiblePartyReportFieldBlock),
+                ('category', ActionCategoryReportFieldBlock),
+                ('status', ActionStatusReportFieldBlock),
+                ('manual_status_reason'),
+                ('description'),
+                ('tasks'),
+            ],
+        ),
+        (
+            'action_main_content_block',
+            [
+                ('section', ActionContentSectionBlock),
+                ('official_name', ActionOfficialNameBlock),
+                ('attribute', ActionContentAttributeTypeBlock),
+                ('categories', ActionContentCategoryTypeBlock),
+                ('contact_form', ActionContactFormBlock),
+                ('report_comparison', ReportComparisonBlock),
+                ('indicator_causal_chain', IndicatorCausalChainBlock),
+                ('datasets', PlanDatasetsBlock),
+                ('lead_paragraph'),
+                ('description'),
+                ('links'),
+                ('tasks'),
+                ('merged_actions'),
+                ('related_actions'),
+                ('dependencies'),
+                ('related_indicators'),
+            ],
+        ),
+        (
+            'action_aside_content_block',
+            [
+                ('responsible_parties', ActionResponsiblePartiesBlock),
+                ('attribute', ActionContentAttributeTypeBlock),
+                ('categories', ActionContentCategoryTypeBlock),
+                ('schedule'),
+                ('contact_persons'),
+            ],
+        ),
+    ],
+)
 def test_expected_subblocks(fixturename, expected_subblocks, request, generated_block_class):
     b = request.getfixturevalue(fixturename)
     for c in expected_subblocks:
@@ -160,32 +181,40 @@ def test_expected_subblocks(fixturename, expected_subblocks, request, generated_
         for base in EXPECTED_SUBBLOCK_BASES[fixturename]:
             assert base in inspect.getmro(type(block))
 
+
 @pytest.fixture
 def action_registry_factory():
     generated = importlib.import_module('actions.blocks.generated')
+
     def make_action_registry(*default_fields):
-        mfr = ModelFieldRegistry(Action, generated, contexts=[
-            FieldContextConfig(
-                context=FieldBlockContext.DASHBOARD,
-                block_base_class=ActionColumnBlock,
-            ),
-            FieldContextConfig(
-                context=FieldBlockContext.REPORT,
-                block_base_class=ActionContentBlockBase,
-            ),
-            FieldContextConfig(
-                context=FieldBlockContext.DETAILS,
-                block_base_class=ActionContentBlockBase,
-            ),
-            FieldContextConfig(
-                context=FieldBlockContext.LIST_FILTERS,
-                block_base_class=ActionFilterBlock,
-            ),
-        ])
+        mfr = ModelFieldRegistry(
+            Action,
+            generated,
+            contexts=[
+                FieldContextConfig(
+                    context=FieldBlockContext.DASHBOARD,
+                    block_base_class=ActionColumnBlock,
+                ),
+                FieldContextConfig(
+                    context=FieldBlockContext.REPORT,
+                    block_base_class=ActionContentBlockBase,
+                ),
+                FieldContextConfig(
+                    context=FieldBlockContext.DETAILS,
+                    block_base_class=ActionContentBlockBase,
+                ),
+                FieldContextConfig(
+                    context=FieldBlockContext.LIST_FILTERS,
+                    block_base_class=ActionFilterBlock,
+                ),
+            ],
+        )
         for f in default_fields:
             mfr.register(ModelFieldProperties(field_name=f))
         return mfr
+
     return make_action_registry
+
 
 def test_generate_stream_block_string_field(action_registry_factory):
     action_registry = action_registry_factory('name')

@@ -24,12 +24,13 @@ def query_action_workflow_status():
       }
     """
 
+
 def test_workflow_status_exposed_for_action(
-        graphql_client_query_data,
-        query_action_workflow_status,
-        plan_with_single_task_moderation,
-        person,
-        client,
+    graphql_client_query_data,
+    query_action_workflow_status,
+    plan_with_single_task_moderation,
+    person,
+    client,
 ):
     plan = plan_with_single_task_moderation
     action = plan.actions.first()
@@ -55,12 +56,12 @@ def test_workflow_status_exposed_for_action(
 
 
 def test_workflow_status_not_exposed_with_no_plan_access(
-        graphql_client_query,
-        query_action_workflow_status,
-        plan_with_single_task_moderation,
-        person,
-        plan,
-        client,
+    graphql_client_query,
+    query_action_workflow_status,
+    plan_with_single_task_moderation,
+    person,
+    plan,
+    client,
 ):
     action = plan_with_single_task_moderation.actions.first()
     action.draft_attributes = DraftAttributes()

@@ -13,6 +13,6 @@ if TYPE_CHECKING:
 
 @hooks.register('register_log_actions')
 def register_indicator_log_actions(actions: LogActionRegistry):
-    actions.register_action('feedback.received', _("Receive feedback"), _("Feedback received"))
-    actions.register_action('feedback.processed', _("Mark feedback as processed"), _("Feedback marked as processed"))
-    actions.register_action('feedback.unprocessed', _("Unmark feedback as processed"), _("Feedback unmarked as processed"))
+    actions.register_action('feedback.received', _('Receive feedback'), _('Feedback received'))
+    actions.register_action('feedback.processed', _('Mark feedback as processed'), _('Feedback marked as processed'))
+    actions.register_action('feedback.unprocessed', _('Unmark feedback as processed'), _('Feedback unmarked as processed'))

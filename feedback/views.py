@@ -41,14 +41,14 @@ class SetUserFeedbackProcessedView(
 
     def get_page_title(self):
         if self.set_processed:
-            return _("Mark user feedback as processed")
-        return _("Mark user feedback as unprocessed")
+            return _('Mark user feedback as processed')
+        return _('Mark user feedback as unprocessed')
 
     def get_meta_title(self):
         if self.set_processed:
-            msg = _("Confirm marking %(user_feedback)s as processed")
+            msg = _('Confirm marking %(user_feedback)s as processed')
         else:
-            msg = _("Confirm marking %(user_feedback)s as unprocessed")
+            msg = _('Confirm marking %(user_feedback)s as unprocessed')
         return msg % {'user_feedback': self.object}
 
     def confirmation_message(self):
@@ -60,7 +60,7 @@ class SetUserFeedbackProcessedView(
 
     def mark_processed(self):
         if self.object.is_processed:
-            raise ValueError(_("The user feedback is already processed"))
+            raise ValueError(_('The user feedback is already processed'))
         self.object.is_processed = True
         self.object.save()
         log(
@@ -71,7 +71,7 @@ class SetUserFeedbackProcessedView(
 
     def mark_unprocessed(self):
         if not self.object.is_processed:
-            raise ValueError(_("The user feedback is already unprocessed"))
+            raise ValueError(_('The user feedback is already unprocessed'))
         self.object.is_processed = False
         self.object.save()
         log(

@@ -255,32 +255,32 @@ class IndicatorValueSummaryContentBlock(IndicatorContentBlock):
     show_reference_value = blocks.BooleanBlock(
         default=True,
         required=False,
-        label=_("Show reference value"),
-        help_text=_("This shows the value from the reference year."),
+        label=_('Show reference value'),
+        help_text=_('This shows the value from the reference year.'),
     )
     reference_year = blocks.IntegerBlock(
         required=False,
-        help_text=_("This can be set to override the default reference year."),
+        help_text=_('This can be set to override the default reference year.'),
     )
     show_current_value = blocks.BooleanBlock(
         default=True,
         required=False,
-        label=_("Show current value"),
+        label=_('Show current value'),
     )
     show_goal_value = blocks.BooleanBlock(
         default=True,
         required=False,
-        label=_("Show goal value"),
+        label=_('Show goal value'),
     )
     default_goal_year = blocks.IntegerBlock(
         required=False,
-        help_text=_("Default year to pick for the goal value."),
+        help_text=_('Default year to pick for the goal value.'),
     )
     show_goal_gap = blocks.BooleanBlock(
         default=True,
         required=False,
-        label=_("Show goal gap"),
-        help_text=_("This shows the difference between the goal and the current value."),
+        label=_('Show goal gap'),
+        help_text=_('This shows the difference between the goal and the current value.'),
     )
 
     class Meta:

@@ -97,9 +97,7 @@ class ActionInput:
     attribute_values: list[ActionAttributeUpdateInput] | None
 
 
-@strawberry_django.input(
-    Action, description='Update input for a single action in a bulk update', partial=True
-)
+@strawberry_django.input(Action, description='Update input for a single action in a bulk update', partial=True)
 class ActionUpdateInput:
     id: sb.ID = sb.field(description='The action ID (pk)')
     name: sb.auto
@@ -153,9 +151,7 @@ class ActionMutations:
             attr_ref = str(attr_input.attribute_type_id)
             attr_type = attr_types_by_id.get(attr_ref) or attr_types_by_identifier.get(attr_ref)
             if attr_type is None:
-                raise NotFoundError(
-                    info, f'Attribute type {attr_ref} does not exist in plan {plan.identifier}.'
-                )
+                raise NotFoundError(info, f'Attribute type {attr_ref} does not exist in plan {plan.identifier}.')
 
             self._set_action_attribute(info, action, attr_type, attr_input.value, for_create=for_create)
 

@@ -29,6 +29,7 @@ if TYPE_CHECKING:
 type PlanScopedPageModel = AplansPage
 type PlanScopedModel = PlanRelatedModel | IndirectPlanRelatedModel
 
+
 class PlanScopedModelLogEntryManager(
     BaseLogEntryManager['PlanScopedModelLogEntry', LogEntryQuerySet['PlanScopedModelLogEntry'], PlanScopedModel, User]
 ):

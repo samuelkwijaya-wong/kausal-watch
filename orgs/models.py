@@ -43,6 +43,7 @@ if typing.TYPE_CHECKING:
 class OrganizationClass(BaseOrganizationClass):
     pass
 
+
 class OrganizationQuerySet(BaseOrganizationQuerySet['Organization']):  # type: ignore[override]
     @override
     def editable_by_user(self, user: User) -> Self:
@@ -132,7 +133,11 @@ class OrganizationQuerySet(BaseOrganizationQuerySet['Organization']):  # type: i
 
 
 _OrganizationManager = models.Manager.from_queryset(OrganizationQuerySet)
+
+
 class OrganizationManager(MLModelManager['Organization', OrganizationQuerySet], _OrganizationManager): ...  # pyright: ignore
+
+
 del _OrganizationManager
 
 
@@ -150,17 +155,23 @@ class Organization(BaseOrganization, IndirectPlanRelatedModel, Node[Organization
         related_name='+',
         help_text=_(
             (  # noqa: UP034
-                "Organization logo. Please provide a square image (min. 250x250px). "
+                'Organization logo. Please provide a square image (min. 250x250px). '
                 "The logo used for the organization's social media often works best."
             )
         ),
     )
     internal_abbreviation = models.CharField(
-        max_length=50, blank=True, verbose_name=_('Internal abbreviation'), help_text=_('An internally used abbreviation'),
+        max_length=50,
+        blank=True,
+        verbose_name=_('Internal abbreviation'),
+        help_text=_('An internally used abbreviation'),
     )
 
     metadata_admins: M2M[Person, OrganizationMetadataAdmin] = models.ManyToManyField(
-        'people.Person', through='orgs.OrganizationMetadataAdmin', related_name='metadata_adminable_organizations', blank=True,
+        'people.Person',
+        through='orgs.OrganizationMetadataAdmin',
+        related_name='metadata_adminable_organizations',
+        blank=True,
     )
 
     objects: ClassVar[OrganizationManager] = OrganizationManager()  # type: ignore[assignment]
@@ -292,8 +303,8 @@ class Organization(BaseOrganization, IndirectPlanRelatedModel, Node[Organization
         for parent_path in missing_parent_paths:
             cls._reported_missing_parent_paths.add(parent_path)
             sentry_sdk.capture_message(
-                f"Organization parent path not found: {parent_path}",
-                level="warning",
+                f'Organization parent path not found: {parent_path}',
+                level='warning',
                 contexts={
                     'validation': {
                         'missing_parent_path': parent_path,
@@ -358,7 +369,8 @@ class Organization(BaseOrganization, IndirectPlanRelatedModel, Node[Organization
 
         def add_children(org: Organization, tree: Tree) -> None:
             children: list[Organization] = list(
-                org.get_children()
+                org
+                .get_children()
                 .annotate_action_count()  # type: ignore
                 .annotate_contact_person_count()
                 .order_by('name'),
@@ -397,7 +409,6 @@ class Namespace(BaseNamespace):
 
 class OrganizationIdentifier(BaseOrganizationIdentifier):
     pass
-
 
 
 class OrganizationPlanAdmin(PlanRelatedModelWithRevision):
@@ -456,8 +467,8 @@ class OrganizationMetadataAdmin(models.Model):
         constraints = [
             models.UniqueConstraint(fields=['organization', 'person'], name='unique_organization_metadata_admin'),
         ]
-        verbose_name = _("metadata admin")
-        verbose_name_plural = _("metadata admins")
+        verbose_name = _('metadata admin')
+        verbose_name_plural = _('metadata admins')
 
     def __str__(self):
         return str(self.person)

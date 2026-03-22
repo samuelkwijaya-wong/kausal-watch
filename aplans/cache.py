@@ -42,6 +42,7 @@ if TYPE_CHECKING:
     from people.models import Person, PersonQuerySet
     from users.models import User
 
+
 @dataclass
 class PlanSpecificCache:
     plan: Plan
@@ -129,7 +130,8 @@ class PlanSpecificCache:
         ct_content_type = ContentType.objects.get_for_model(CategoryType)
         plan_category_type_ids = set(self.plan.category_types.values_list('id', flat=True))
         qs = (
-            DatasetSchema.objects.get_queryset()
+            DatasetSchema.objects
+            .get_queryset()
             .for_model(CategoryType)
             .filter(scopes__scope_id__in=plan_category_type_ids)
             .prefetch_related('scopes')
@@ -260,11 +262,14 @@ class PlanSpecificCache:
             AttributeType.AttributeFormat.UNORDERED_CHOICE,
         )
         for attribute_type in (
-            AttributeType.objects.filter(
+            AttributeType.objects
+            .filter(
                 scope_content_type=plan_content_type,
-            ).filter(
+            )
+            .filter(
                 scope_id=self.plan.pk,
-            ).filter(
+            )
+            .filter(
                 format__in=choice_formats,
             )
         ).prefetch_related('choice_options'):
@@ -277,18 +282,13 @@ class PlanSpecificCache:
 
     @cached_property
     def latest_reports(self) -> list[Report]:
-        qs = (
-            Report.objects
-                .filter(type__plan=self.plan)
-                .order_by('type', '-start_date')
-                .distinct('type')
-        )
+        qs = Report.objects.filter(type__plan=self.plan).order_by('type', '-start_date').distinct('type')
         return list(qs)
 
     @classmethod
     def fetch(cls, plan_id: int) -> Plan:
         plan = Plan.objects.filter(id=plan_id).select_related('features').first()
-        assert plan is not None, "Invalid plan id"
+        assert plan is not None, 'Invalid plan id'
         return plan
 
     def enrich_action(self, action: Action) -> None:
@@ -329,7 +329,7 @@ class WatchObjectCache:
         plan_cache = self.plan_caches_by_identifier.get(plan_identifier)
         if plan_cache is None:
             plan_id = Plan.objects.filter(identifier=plan_identifier).values_list('id', flat=True).first()
-            assert plan_id is not None, "Invalid plan identifier"
+            assert plan_id is not None, 'Invalid plan identifier'
             if plan_id in self.plan_caches:
                 plan_cache = self.plan_caches[plan_id]
             else:
@@ -348,6 +348,7 @@ class WatchObjectCache:
             if path.startswith(root_page.path):
                 return plan_cache
         return None
+
 
 class OrganizationActionCountCache:
     plans: list[Plan]
@@ -381,8 +382,7 @@ class OrganizationActionCountCache:
             for arp in action.responsible_parties.all():
                 result[arp.organization_id] = result.get(arp.organization_id, 0) + 1
         self.organization_responsible_party_queryset_filter = Q(
-            Q(responsible_actions__action__in=self.action_qs) |
-            Q(id__in=organization_pks_from_revisions),
+            Q(responsible_actions__action__in=self.action_qs) | Q(id__in=organization_pks_from_revisions),
         )
         return result
 

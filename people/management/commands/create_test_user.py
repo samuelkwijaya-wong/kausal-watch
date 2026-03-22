@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 
 
 class Command(BaseCommand):
-    help = "Create a test user"
+    help = 'Create a test user'
 
     def add_arguments(self, parser: CommandParser):
         parser.add_argument('email', type=str)

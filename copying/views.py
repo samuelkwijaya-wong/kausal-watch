@@ -32,42 +32,41 @@ class PlanCopyForm(forms.Form):
         self.plan = Plan.objects.get(id=plan_id)
         super().__init__(*args, **kwargs)
         self.fields['identifier'] = forms.CharField(
-            label=_("Identifier"),
+            label=_('Identifier'),
             help_text=_(
-                "A unique value that identifies the copy internally and appears in URLs of testing or preview "
-                "environments"
+                'A unique value that identifies the copy internally and appears in URLs of testing or preview environments'
             ),
             initial=self.plan.default_identifier_for_copying(),
         )
         self.fields['name'] = forms.CharField(
-            label=_("Name"),
-            help_text=_("Name to use for the copy"),
+            label=_('Name'),
+            help_text=_('Name to use for the copy'),
             initial=self.plan.default_name_for_copying(),
         )
         self.fields['version_name'] = forms.CharField(
-            label=_("Version name"),
-            help_text=_("Version name to be set for the copied plan in order to distinguish it from other versions"),
+            label=_('Version name'),
+            help_text=_('Version name to be set for the copied plan in order to distinguish it from other versions'),
             initial=self.plan.default_version_name_for_copying(),
             required=False,
         )
         self.fields['supersede_original_plan'] = forms.BooleanField(
-            label=_("Supersede original plan"),
-            help_text=_("Set if the copy should supersede the original plan"),
+            label=_('Supersede original plan'),
+            help_text=_('Set if the copy should supersede the original plan'),
             initial=False,
             required=False,
         )
         self.fields['supersede_original_actions'] = forms.BooleanField(
-            label=_("Supersede original actions"),
-            help_text=_("Set if copies of actions should supersede their original"),
+            label=_('Supersede original actions'),
+            help_text=_('Set if copies of actions should supersede their original'),
             initial=False,
             required=False,
         )
         self.fields['copy_indicators'] = forms.BooleanField(
-            label=_("Copy indicators"),
+            label=_('Copy indicators'),
             help_text=_(
-                "Set if indicators should be copied instead of being shared with the original plan. "
-                "Indicators can only be copied if no indicator is shared with another plan or is an instance of a common "
-                "indicator."
+                'Set if indicators should be copied instead of being shared with the original plan. '
+                'Indicators can only be copied if no indicator is shared with another plan or is an instance of a common '
+                'indicator.'
             ),
             initial=False,
             required=False,
@@ -77,7 +76,7 @@ class PlanCopyForm(forms.Form):
     def clean_identifier(self) -> str:
         identifier = self.cleaned_data['identifier']
         if Plan.objects.filter(identifier=identifier).exists():
-            raise ValidationError(_("A plan with this identifier already exists"))
+            raise ValidationError(_('A plan with this identifier already exists'))
         return identifier
 
     def clean_name(self) -> str:
@@ -85,16 +84,15 @@ class PlanCopyForm(forms.Form):
         # create an admin group with a duplicate name, causing an error.
         name = self.cleaned_data['name']
         if Plan.objects.filter(name=name).exists():
-            raise ValidationError(_("A plan with this name already exists"))
+            raise ValidationError(_('A plan with this name already exists'))
         return name
-
 
 
 class PlanCopyView(WagtailAdminTemplateMixin, FormView):
     plan_id: int | None = None
 
     form_class = PlanCopyForm
-    page_title = gettext_lazy("Copy plan")
+    page_title = gettext_lazy('Copy plan')
     template_name = 'wagtailadmin/generic/form.html'
     plan_list_url_name = 'wagtailsnippets_actions_plan:list'
 
@@ -118,23 +116,19 @@ class PlanCopyView(WagtailAdminTemplateMixin, FormView):
         items = list(super().get_breadcrumbs_items())
         plans_label = capfirst(Plan._meta.verbose_name_plural)
         if plans_label:  # for the type checker; should be true anyway, but I like this more than `assert plans_label`
-            items.append(
-                {
-                    'url': reverse(self.plan_list_url_name),
-                    'label': plans_label,
-                }
-            )
-        items.append(
-            {
-                'url': '',
-                'label': self.get_page_title(),
-                'sublabel': self.get_page_subtitle(),
-            }
-        )
+            items.append({
+                'url': reverse(self.plan_list_url_name),
+                'label': plans_label,
+            })
+        items.append({
+            'url': '',
+            'label': self.get_page_title(),
+            'sublabel': self.get_page_subtitle(),
+        })
         return items
 
     def form_valid(self, form) -> HttpResponse:
-        logger.info(f"Queueing task for copying plan {self.plan_id}")
+        logger.info(f'Queueing task for copying plan {self.plan_id}')
         assert isinstance(copy_plan, DjangoTask)
         copy_plan.delay_on_commit(
             plan_id=self.plan_id,
@@ -145,14 +139,17 @@ class PlanCopyView(WagtailAdminTemplateMixin, FormView):
             supersede_original_actions=form.cleaned_data['supersede_original_actions'],
             copy_indicators=form.cleaned_data['copy_indicators'],
         )
-        messages.success(self.request, _(
-            "The copy will be created in the background. This may take a few minutes. The copy will appear in the list "
-            "of plans as soon as copying is finished."
-        ))
+        messages.success(
+            self.request,
+            _(
+                'The copy will be created in the background. This may take a few minutes. The copy will appear in the list '
+                'of plans as soon as copying is finished.'
+            ),
+        )
         return super().form_valid(form)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["media"] = context["form"].media
-        context["submit_button_label"] = _("Create copy")
+        context['media'] = context['form'].media
+        context['submit_button_label'] = _('Create copy')
         return context

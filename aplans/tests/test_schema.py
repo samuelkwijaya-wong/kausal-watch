@@ -106,28 +106,33 @@ def test_organization_class_node(graphql_client_query_data, published, expose_to
     )
 
     expected = {
-        'planOrganizations': [{
-            'classification': {
-                '__typename': 'OrganizationClass',
-                'id': str(org_class.pk),
-                'name': org_class.name,
-            },
-        }] if published or not expose_to_auth_only else [],
+        'planOrganizations': [
+            {
+                'classification': {
+                    '__typename': 'OrganizationClass',
+                    'id': str(org_class.pk),
+                    'name': org_class.name,
+                },
+            }
+        ]
+        if published or not expose_to_auth_only
+        else [],
     }
 
     assert data == expected
 
 
+@pytest.mark.parametrize(('main_plan_published', 'arp_plan_published'), list(itertools.product([False, True], repeat=2)))
 @pytest.mark.parametrize(
-    ('main_plan_published', 'arp_plan_published'),
-    list(itertools.product([False, True], repeat=2)))
-@pytest.mark.parametrize(
-    ('main_plan_exposed_only_to_auth', 'arp_plan_exposed_only_to_auth'),
-    list(itertools.product([False, True], repeat=2)))
+    ('main_plan_exposed_only_to_auth', 'arp_plan_exposed_only_to_auth'), list(itertools.product([False, True], repeat=2))
+)
 def test_organization_node(
     graphql_client_query_data,
-    main_plan_published, arp_plan_published,
-    main_plan_exposed_only_to_auth, arp_plan_exposed_only_to_auth):
+    main_plan_published,
+    arp_plan_published,
+    main_plan_exposed_only_to_auth,
+    arp_plan_exposed_only_to_auth,
+):
     organization = OrganizationFactory.create()
 
     plan = PlanFactory.create(
@@ -185,9 +190,9 @@ def test_organization_node(
     # even if the expose_unpublished_plan_only_to_authenticated_user feature is false.
     if main_plan_published:
         expected_plans.append({
-        '__typename': 'Plan',
-        'id': str(plan.identifier),
-    })
+            '__typename': 'Plan',
+            'id': str(plan.identifier),
+        })
 
     if arp_plan_published:
         expected_plans.append({
@@ -196,16 +201,18 @@ def test_organization_node(
         })
 
     expected = {
-        'planOrganizations': [{
-            '__typename': 'Organization',
-            'id': str(organization.id),
-            'name': organization.name,
-            'description': str(organization.description),
-            'url': organization.url,
-            'actionCount': 1,
-            'contactPersonCount': 1,
-            'plansWithActionResponsibilities': expected_plans,
-        }],
+        'planOrganizations': [
+            {
+                '__typename': 'Organization',
+                'id': str(organization.id),
+                'name': organization.name,
+                'description': str(organization.description),
+                'url': organization.url,
+                'actionCount': 1,
+                'contactPersonCount': 1,
+                'plansWithActionResponsibilities': expected_plans,
+            }
+        ],
     }
     assert data == expected
 
@@ -233,14 +240,18 @@ def test_organization_node_ancestors(graphql_client_query_data):
         variables=dict(plan=plan.identifier),
     )
     expected = {
-        'planOrganizations': [{
-            '__typename': 'Organization',
-            'id': str(organization.pk),
-            'ancestors': [{
+        'planOrganizations': [
+            {
                 '__typename': 'Organization',
-                'id': str(superorganization.pk),
-            }],
-        }],
+                'id': str(organization.pk),
+                'ancestors': [
+                    {
+                        '__typename': 'Organization',
+                        'id': str(superorganization.pk),
+                    }
+                ],
+            }
+        ],
     }
     assert data == expected
 
@@ -268,17 +279,22 @@ def test_organization_node_ancestors_deep(graphql_client_query_data):
         variables=dict(plan=plan.identifier),
     )
     expected = {
-        'planOrganizations': [{
-            '__typename': 'Organization',
-            'id': str(organization.pk),
-            'ancestors': [{
+        'planOrganizations': [
+            {
                 '__typename': 'Organization',
-                'id': str(supersuperorganization.pk),
-            }, {
-                '__typename': 'Organization',
-                'id': str(superorganization.pk),
-            }],
-        }],
+                'id': str(organization.pk),
+                'ancestors': [
+                    {
+                        '__typename': 'Organization',
+                        'id': str(supersuperorganization.pk),
+                    },
+                    {
+                        '__typename': 'Organization',
+                        'id': str(superorganization.pk),
+                    },
+                ],
+            }
+        ],
     }
     assert data == expected
 

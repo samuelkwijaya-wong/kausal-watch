@@ -12,11 +12,13 @@ class ReportTypeChooserBlock(blocks.ChooserBlock):
     @cached_property
     def target_model(self):
         from reports.models import ReportType
+
         return ReportType
 
     @cached_property
     def widget(self):
         from reports.chooser import ReportTypeChooser
+
         return ReportTypeChooser()
 
     def get_form_state(self, value):

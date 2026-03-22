@@ -21,12 +21,15 @@ def test_indicator_updated_values_due_at_too_early():
         indicator.full_clean()
 
 
-@pytest.mark.parametrize(('time_resolution', 'should_raise'), [
-    ('year', False),
-    ('month', True),
-    ('week', True),
-    ('day', True),
-])
+@pytest.mark.parametrize(
+    ('time_resolution', 'should_raise'),
+    [
+        ('year', False),
+        ('month', True),
+        ('week', True),
+        ('day', True),
+    ],
+)
 def test_indicator_updated_values_due_at_resolution(time_resolution, should_raise):
     indicator = IndicatorFactory.create(time_resolution=time_resolution, updated_values_due_at=date(2020, 1, 1))
     if should_raise:

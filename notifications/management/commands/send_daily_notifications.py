@@ -24,7 +24,10 @@ class Command(BaseCommand):
         parser.add_argument('--only-email', type=str, help='Send only the notifications that go to this email')
         parser.add_argument('--noop', action='store_true', help='Do not actually send the emails')
         parser.add_argument(
-            '--dump', metavar='FILE', type=str, help='Dump generated MJML and HTML files',
+            '--dump',
+            metavar='FILE',
+            type=str,
+            help='Dump generated MJML and HTML files',
         )
         parser.add_argument('--time', type=datetime.fromisoformat, help='Override current time (ISO format)')
 

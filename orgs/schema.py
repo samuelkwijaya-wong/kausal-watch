@@ -45,7 +45,9 @@ class OrganizationNode(AdminButtonsMixin, BaseOrganizationNode, DjangoNode[Organ
 
     logo = graphene.Field('images.schema.ImageNode', parent_fallback=graphene.Boolean(default_value=False), required=False)
     plans_with_action_responsibilities = graphene.List(
-        graphene.NonNull('actions.schema.PlanNode'), except_plan=graphene.ID(required=False), required=True,
+        graphene.NonNull('actions.schema.PlanNode'),
+        except_plan=graphene.ID(required=False),
+        required=True,
     )
 
     @staticmethod
@@ -68,7 +70,7 @@ class OrganizationNode(AdminButtonsMixin, BaseOrganizationNode, DjangoNode[Organ
     @gql_optimizer.resolver_hints(
         only=('logo',),
         select_related=('logo',),
-        prefetch_related=(Prefetch('logo__renditions', to_attr='prefetched_renditions'),)
+        prefetch_related=(Prefetch('logo__renditions', to_attr='prefetched_renditions'),),
     )
     @staticmethod
     def resolve_logo(root: Organization, info: GQLInfo, parent_fallback=False) -> AplansImage | None:
@@ -85,7 +87,9 @@ class OrganizationNode(AdminButtonsMixin, BaseOrganizationNode, DjangoNode[Organ
 
     @staticmethod
     def resolve_plans_with_action_responsibilities(
-        root: Organization, info: GQLInfo, except_plan: str | None = None,
+        root: Organization,
+        info: GQLInfo,
+        except_plan: str | None = None,
     ) -> PlanQuerySet:
         qs = Plan.objects.qs.visible_for_user(info.context.user).filter(
             id__in=root.responsible_for_actions.values_list('plan'),
@@ -98,7 +102,15 @@ class OrganizationNode(AdminButtonsMixin, BaseOrganizationNode, DjangoNode[Organ
     class Meta:
         model = Organization
         fields = [
-            'id', 'abbreviation', 'name', 'description', 'url', 'email', 'classification', 'distinct_name', 'location',
+            'id',
+            'abbreviation',
+            'name',
+            'description',
+            'url',
+            'email',
+            'classification',
+            'distinct_name',
+            'location',
         ]
 
 

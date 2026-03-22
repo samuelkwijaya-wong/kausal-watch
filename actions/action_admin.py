@@ -300,10 +300,7 @@ class ActionAdminForm(WagtailAdminModelForm[Action]):
         return obj
 
     def _renormalize_pks_for_swaps(
-        self,
-        db_objects: list[ModelWithRole],
-        saved_objects: list[ModelWithRole],
-        wrapped_attr: str
+        self, db_objects: list[ModelWithRole], saved_objects: list[ModelWithRole], wrapped_attr: str
     ) -> None:
         """
         Renormalize PKs in formset objects to avoid swap conflicts.
@@ -318,6 +315,7 @@ class ActionAdminForm(WagtailAdminModelForm[Action]):
             wrapped_attr: Name of the FK field ('organization' or 'person')
 
         """
+
         # Define accessors for model instances
         def get_pk_model(item) -> int | None:
             return item.pk
@@ -963,6 +961,7 @@ class ActionAdmin(AplansModelAdmin[Action]):
         Action.snippet_viewset = FakeSnippetViewSet(self)
 
         from wagtail.snippets.models import SNIPPET_MODELS
+
         SNIPPET_MODELS.append(Action)
         SNIPPET_MODELS.sort(key=lambda x: x._meta.verbose_name)
 
@@ -1419,18 +1418,18 @@ def construct_snippet_action_menu(menu_items: list[ActionMenuItem], request: Htt
     model: type[Action] = context['model']
 
     class RestartWorkflowMenuItem(action_menu.RestartWorkflowMenuItem):
-        label = _("Resubmit for moderation")
+        label = _('Resubmit for moderation')
 
     class CancelWorkflowMenuItem(action_menu.CancelWorkflowMenuItem):
-        label = _("Cancel moderation")
+        label = _('Cancel moderation')
 
     class PublishMenuItem(action_menu.PublishMenuItem):
         def is_shown(self, context) -> bool:
             user = user_or_bust(context['request'].user)
             instance = context['instance']
-            return (super().is_shown(context)
-                    and user.can_publish_action(instance)
-                    and not instance.workflow_in_progress)  # If a workflow is in progress, use "approve" instead
+            return (
+                super().is_shown(context) and user.can_publish_action(instance) and not instance.workflow_in_progress
+            )  # If a workflow is in progress, use "approve" instead
 
     class SubmitForModerationMenuItem(action_menu.SubmitForModerationMenuItem):
         def is_shown(self, context) -> bool:
@@ -1470,24 +1469,24 @@ def construct_snippet_action_menu(menu_items: list[ActionMenuItem], request: Htt
             return True
 
     class DeleteMenuItem(action_menu.ActionMenuItem):
-        name = "action-delete"
-        label = _("Delete")
-        icon_name = "bin"
+        name = 'action-delete'
+        label = _('Delete')
+        icon_name = 'bin'
 
         def is_shown(self, context) -> bool:
             from wagtail.snippets.permissions import get_permission_name
 
-            delete_permission = get_permission_name("delete", context["model"])
+            delete_permission = get_permission_name('delete', context['model'])
 
             return (
-                context["view"] == "edit"
-                and context["request"].user.has_perm(delete_permission)
-                and not context.get("locked_for_user")
+                context['view'] == 'edit'
+                and context['request'].user.has_perm(delete_permission)
+                and not context.get('locked_for_user')
             )
 
         def get_url(self, context) -> str | None:
-            instance = context["instance"]
-            url_name = instance.snippet_viewset.get_url_name("delete")
+            instance = context['instance']
+            url_name = instance.snippet_viewset.get_url_name('delete')
             return reverse(url_name, args=[quote(instance.pk)])
 
     for menu_item in list(menu_items):

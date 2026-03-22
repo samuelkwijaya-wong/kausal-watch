@@ -24,6 +24,7 @@ def excel_file_from_report_factory(actions_having_attributes, report_with_all_at
         exporter = report_with_all_attributes.get_xlsx_exporter(action_ids)
         output_excel = exporter.generate_xlsx()
         return output_excel
+
     return _excel_factory
 
 
@@ -49,11 +50,11 @@ def assert_report_dimensions(excel_file, report, actions):
 
 
 def test_excel_export(
-        actions_having_attributes,
-        report_with_all_attributes,
-        excel_file_from_report_factory,
-        user,
-        django_assert_max_num_queries,
+    actions_having_attributes,
+    report_with_all_attributes,
+    excel_file_from_report_factory,
+    user,
+    django_assert_max_num_queries,
 ):
     with django_assert_max_num_queries(283):
         # report.get_live_action_versions hack still causes some extra queries
@@ -71,15 +72,14 @@ def test_excel_export(
     df_complete_minus_completion = None
     with translation.override(report_with_all_attributes.xlsx_exporter.language):
         df_complete_minus_completion = df_complete.select(
-            cs.all() - cs.by_name(_('Marked as complete by'), _('Marked as complete at')))
+            cs.all() - cs.by_name(_('Marked as complete by'), _('Marked as complete at'))
+        )
     assert df_incomplete.equals(df_complete_minus_completion)
 
 
 def test_partly_completed_report_excel_export(
-        actions_having_attributes,
-        report_with_all_attributes,
-        excel_file_from_report_factory,
-        user):
+    actions_having_attributes, report_with_all_attributes, excel_file_from_report_factory, user
+):
     actions_having_attributes[0].mark_as_complete_for_report(
         report_with_all_attributes,
         user,
@@ -88,11 +88,7 @@ def test_partly_completed_report_excel_export(
     assert_report_dimensions(excel, report_with_all_attributes, actions_having_attributes)
 
 
-def test_excel_export_action_filter(
-        actions_having_attributes,
-        report_with_all_attributes,
-        excel_file_from_report_factory,
-        user):
+def test_excel_export_action_filter(actions_having_attributes, report_with_all_attributes, excel_file_from_report_factory, user):
     actions_having_attributes[0].mark_as_complete_for_report(
         report_with_all_attributes,
         user,
@@ -103,11 +99,11 @@ def test_excel_export_action_filter(
 
 
 def test_excel_export_with_duplicate_attribute_fields(
-        plan,
-        action_attribute_type__text,
-        report_type_factory,
-        report_factory,
-        actions_having_attributes,
+    plan,
+    action_attribute_type__text,
+    report_type_factory,
+    report_factory,
+    actions_having_attributes,
 ):
     """
     Test that duplicate attribute fields don't cause a ShapeError crash.
@@ -149,11 +145,11 @@ def test_excel_export_with_duplicate_attribute_fields(
 
 
 def test_excel_export_with_duplicate_category_fields(
-        plan,
-        category_type,
-        report_type_factory,
-        report_factory,
-        actions_having_attributes,
+    plan,
+    category_type,
+    report_type_factory,
+    report_factory,
+    actions_having_attributes,
 ):
     """
     Test that duplicate category fields don't cause a ShapeError crash.
@@ -185,9 +181,9 @@ def test_excel_export_with_duplicate_category_fields(
 
 
 def test_report_type_validation_rejects_duplicate_fields(
-        plan,
-        action_attribute_type__text,
-        report_type_factory,
+    plan,
+    action_attribute_type__text,
+    report_type_factory,
 ):
     """
     Test that ReportType.clean() raises ValidationError for duplicate fields.

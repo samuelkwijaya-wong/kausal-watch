@@ -27,9 +27,11 @@ class Tree:
 
     def equals(self, other: Tree):
         """Determine equality of structure and names, ignoring indentation."""
-        return (self.name == other.name
-                and len(self.children) == len(other.children)
-                and all(x.equals(y) for (x, y) in zip(self.children, other.children, strict=True)))
+        return (
+            self.name == other.name
+            and len(self.children) == len(other.children)
+            and all(x.equals(y) for (x, y) in zip(self.children, other.children, strict=True))
+        )
 
     def reset_indent(self, indent=0, shiftwidth=4):
         """Make indentation nice."""

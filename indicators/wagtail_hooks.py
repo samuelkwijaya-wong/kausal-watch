@@ -41,16 +41,13 @@ def add_indicators_summary_item(request, items):
 
 @hooks.register('insert_editor_js')
 def editor_js():
-    return format_html(
-        '<script src="{}"></script>',
-        static('indicators/js/dashboard_blocks.js')
-    )
+    return format_html('<script src="{}"></script>', static('indicators/js/dashboard_blocks.js'))
 
 
 @hooks.register('register_log_actions')
 def register_indicator_log_actions(actions: LogActionRegistry):
-    actions.register_action('indicator.update_values', _("Update values"), _("Values updated"))
-    actions.register_action('indicator.update_goals', _("Update goals"), _("Goals updated"))
+    actions.register_action('indicator.update_values', _('Update values'), _('Values updated'))
+    actions.register_action('indicator.update_goals', _('Update goals'), _('Goals updated'))
 
 
 from . import rich_text  # noqa: E402, F401

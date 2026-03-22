@@ -9,7 +9,7 @@ logger = getLogger(__name__)
 
 
 class Command(BaseCommand):
-    help = "Reset the primary language of organizations to the one of the first related plan (trying ancestors too)"
+    help = 'Reset the primary language of organizations to the one of the first related plan (trying ancestors too)'
 
     @transaction.atomic
     def handle(self, *args, **options):
@@ -23,4 +23,4 @@ class Command(BaseCommand):
                 org.primary_language = related_plan.primary_language
                 org.save()
             else:
-                logger.warning(f"Could not determine primary language of organization {org}")
+                logger.warning(f'Could not determine primary language of organization {org}')

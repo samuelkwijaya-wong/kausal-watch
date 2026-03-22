@@ -42,7 +42,8 @@ class IndicatorChooserViewSet(ChooserViewSet[Indicator]):
 
 indicator_chooser_viewset = IndicatorChooserViewSet('indicator_chooser', url_prefix='indicator-chooser')
 
-@hooks.register("register_admin_viewset")
+
+@hooks.register('register_admin_viewset')
 def register_indicator_chooser_viewset():
     return indicator_chooser_viewset
 
@@ -60,19 +61,16 @@ class DimensionChooserMixin(ModelChooserMixin[Dimension, QuerySet[Dimension]]):
         include_plan_dimensions = request.GET.get('include_plan_dimensions', 'false').lower() == 'true'
         if indicator_id:
             try:
-                indicator = Indicator.objects.get(
-                    pk=indicator_id,
-                    plans=plan
-                )
+                indicator = Indicator.objects.get(pk=indicator_id, plans=plan)
 
                 dimension_ids = indicator.dimensions.values_list('dimension_id', flat=True)
                 return Dimension.objects.filter(id__in=dimension_ids)
-            except (Indicator.DoesNotExist, ValueError):
+            except Indicator.DoesNotExist, ValueError:
                 pass
 
-        indicator_dimensions = IndicatorDimension.objects.filter(
-            indicator__plans=plan
-        ).values_list('dimension_id', flat=True).distinct()
+        indicator_dimensions = (
+            IndicatorDimension.objects.filter(indicator__plans=plan).values_list('dimension_id', flat=True).distinct()
+        )
 
         dimensions = Dimension.objects.filter(id__in=indicator_dimensions)
         if include_plan_dimensions:
@@ -80,6 +78,7 @@ class DimensionChooserMixin(ModelChooserMixin[Dimension, QuerySet[Dimension]]):
             plan_dimensions = Dimension.objects.filter(id__in=plan_dimension_ids)
             dimensions |= plan_dimensions
         return dimensions
+
 
 class DimensionChooser(AdminChooser):
     choose_one_text = _('Choose a dimension')
@@ -93,8 +92,9 @@ class DimensionChooser(AdminChooser):
 
     def get_choose_modal_url(self):
         url = super().get_choose_modal_url()
-        url = f"{url}?include_plan_dimensions={self.include_plan_dimensions}"
+        url = f'{url}?include_plan_dimensions={self.include_plan_dimensions}'
         return url
+
 
 class DimensionChooserViewSet(ModelChooserViewSet[Dimension]):
     chooser_mixin_class = DimensionChooserMixin
@@ -110,7 +110,6 @@ def register_dimension_chooser_viewset():
     return DimensionChooserViewSet('dimension_chooser', url_prefix='dimension-chooser')
 
 
-
 class IndicatorValueChooserMixin(ModelChooserMixin[IndicatorValue, QuerySet[IndicatorValue]]):
     def get_object_string(self, item: IndicatorValue) -> str:
         return item.format_date()
@@ -124,12 +123,9 @@ class IndicatorValueChooserMixin(ModelChooserMixin[IndicatorValue, QuerySet[Indi
         if not indicator_id:
             return IndicatorValue.objects.none()
         try:
-            indicator = Indicator.objects.get_queryset().visible_for_user(user).get(
-                pk=indicator_id,
-                plans=plan
-            )
+            indicator = Indicator.objects.get_queryset().visible_for_user(user).get(pk=indicator_id, plans=plan)
             return indicator.values.all()
-        except (Indicator.DoesNotExist, ValueError):
+        except Indicator.DoesNotExist, ValueError:
             pass
 
         return IndicatorValue.objects.none()
@@ -148,7 +144,7 @@ class IndicatorValueChooser(AdminChooser):
 
     def get_choose_modal_url(self):
         url = super().get_choose_modal_url()
-        url = f"{url}?indicator_id={self.indicator_id}"
+        url = f'{url}?indicator_id={self.indicator_id}'
         return url
 
 

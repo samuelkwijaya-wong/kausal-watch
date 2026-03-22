@@ -59,13 +59,13 @@ class SiteGeneralContent(PlanRelatedModelWithRevision):
         INDICATOR = 'indicator', _('Indicator')
         MEASURE = 'measure', _('Measure')
 
-    INDICATOR_TERM_PLURAL = {
-        IndicatorTerm.INDICATOR: _('Indicators'),
-        IndicatorTerm.MEASURE: _('Measures')
-    }
+    INDICATOR_TERM_PLURAL = {IndicatorTerm.INDICATOR: _('Indicators'), IndicatorTerm.MEASURE: _('Measures')}
 
     plan = models.OneToOneField(
-        'actions.Plan', related_name='general_content', verbose_name=_('plan'), on_delete=models.CASCADE,
+        'actions.Plan',
+        related_name='general_content',
+        verbose_name=_('plan'),
+        on_delete=models.CASCADE,
         unique=True,
     )
     site_title = models.CharField(max_length=150, verbose_name=_('site title'), blank=True)
@@ -74,30 +74,43 @@ class SiteGeneralContent(PlanRelatedModelWithRevision):
     owner_name = models.CharField(blank=True, max_length=150, verbose_name=_('Name of the owner of the site'))
 
     official_name_description = models.CharField(
-        max_length=200, verbose_name=_('official name description'),
+        max_length=200,
+        verbose_name=_('official name description'),
         help_text=_('The text to show when displaying official content'),
         blank=True,
     )
     copyright_text = models.CharField(max_length=150, verbose_name=_('copyright text'), blank=True)
     creative_commons_license = models.CharField(
-        blank=True, max_length=150, default='CC BY 4.0', verbose_name=_('creative commons license'),
+        blank=True,
+        max_length=150,
+        default='CC BY 4.0',
+        verbose_name=_('creative commons license'),
         help_text=_('If the site is under a Creative Commons license, which CC license it is'),
     )
     github_api_repository = models.URLField(blank=True, verbose_name=_('Link to GitHub repository for API'))
     github_ui_repository = models.URLField(blank=True, verbose_name=_('Link to GitHub repository for UI'))
     action_term = models.CharField(
-        max_length=30, choices=ActionTerm.choices, verbose_name=_("Term to use for 'action'"), default=ActionTerm.ACTION,
+        max_length=30,
+        choices=ActionTerm.choices,
+        verbose_name=_("Term to use for 'action'"),
+        default=ActionTerm.ACTION,
     )
     action_task_term = models.CharField(
-        max_length=30, choices=ActionTaskTerm.choices, verbose_name=_("Term to use for 'task'"),
+        max_length=30,
+        choices=ActionTaskTerm.choices,
+        verbose_name=_("Term to use for 'task'"),
         default=ActionTaskTerm.TASK,
     )
     organization_term = models.CharField(
-        max_length=30, choices=OrganizationTerm.choices, verbose_name=_("Term to use for 'organization'"),
+        max_length=30,
+        choices=OrganizationTerm.choices,
+        verbose_name=_("Term to use for 'organization'"),
         default=OrganizationTerm.ORGANIZATION,
     )
     indicator_term = models.CharField(
-        max_length=30, choices=IndicatorTerm.choices, verbose_name=_("Term to use for 'indicator'"),
+        max_length=30,
+        choices=IndicatorTerm.choices,
+        verbose_name=_("Term to use for 'indicator'"),
         default=IndicatorTerm.INDICATOR,
     )
     sitewide_announcement = RichTextField[str | None, str | None](
@@ -110,15 +123,33 @@ class SiteGeneralContent(PlanRelatedModelWithRevision):
 
     i18n = TranslationField(
         fields=[
-            'site_title', 'site_description', 'official_name_description', 'copyright_text',
-            'creative_commons_license', 'owner_name', 'owner_url',
+            'site_title',
+            'site_description',
+            'official_name_description',
+            'copyright_text',
+            'creative_commons_license',
+            'owner_name',
+            'owner_url',
         ],
-        default_language_field='plan__primary_language_lowercase')
+        default_language_field='plan__primary_language_lowercase',
+    )
 
     public_fields: ClassVar = [
-        'id', 'site_title', 'site_description', 'owner_url', 'owner_name', 'official_name_description',
-        'copyright_text', 'creative_commons_license', 'github_api_repository', 'github_ui_repository', 'action_term',
-        'action_task_term', 'organization_term', 'indicator_term', 'sitewide_announcement',
+        'id',
+        'site_title',
+        'site_description',
+        'owner_url',
+        'owner_name',
+        'official_name_description',
+        'copyright_text',
+        'creative_commons_license',
+        'github_api_repository',
+        'github_ui_repository',
+        'action_term',
+        'action_task_term',
+        'organization_term',
+        'indicator_term',
+        'sitewide_announcement',
     ]
 
     class Meta:

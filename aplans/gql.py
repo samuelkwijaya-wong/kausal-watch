@@ -40,6 +40,7 @@ def get_plan_or_error(info: Info, plan_id: str) -> Plan:
 @overload
 def mutation(*, extensions: list[FieldExtension] | None = None, **kwargs: Unpack[MutationArgs]) -> DjangoMutationBase: ...
 
+
 @overload
 def mutation(resolver: ResolverFunc, **kwargs: Unpack[MutationArgs]) -> DjangoMutationBase: ...
 
@@ -54,4 +55,3 @@ def mutation(
 
 
 __all__ = ['Info', 'get_plan_or_error', 'mutation', 'parse_input', 'prepare_create_update', 'prepare_instance']
-

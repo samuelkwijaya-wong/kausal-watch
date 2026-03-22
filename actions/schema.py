@@ -165,7 +165,7 @@ class PlanDomainNode(DjangoNode[PlanDomain]):
             hostname=root.hostname,
             redirect_hostnames=redirect_hostnames,
             allowed_non_wildcard_hosts=set(),
-            preserve_subdomain=True
+            preserve_subdomain=True,
         )
         if hostname:
             sentry_sdk.capture_message(f'Wildcard hostname UI redirect: {root.hostname} -> {hostname}', level='info')
@@ -479,7 +479,7 @@ class PlanNode(DjangoNode[Plan]):
             try:
                 urlparse(client_url)
             except Exception:
-                raise GraphQLError("clientUrl must be a valid URL") from None
+                raise GraphQLError('clientUrl must be a valid URL') from None
         return root.get_view_url(client_url=client_url, active_locale=get_language(), request=info.context)
 
     @staticmethod
@@ -644,6 +644,7 @@ class PlanNode(DjangoNode[Plan]):
             return None
 
         return Pledge.objects.filter(plan=root).order_by('order')
+
     class Meta:
         model = Plan
         interfaces = (PlanInterface,)
@@ -776,6 +777,7 @@ class CategoryLevelNode(DjangoNode[CategoryLevel]):
 
 def django_choices_to_graphene(field: models.Field[Any, Any]):
     from graphene_django.registry import get_global_registry
+
     registry = get_global_registry()
     graphene_type = convert_django_field_with_choices(field, registry=registry, convert_choices_to_enum=True)
     return graphene_type._type._of_type
@@ -787,6 +789,7 @@ AttributeTypeFormat = django_choices_to_graphene(AttributeType._meta.get_field('
 @register_django_node
 class AttributeTypeNode(DjangoNode[AttributeType]):
     format = graphene.Field(AttributeTypeFormat, required=True)
+
     class Meta:
         model = AttributeType
         fields = public_fields(AttributeType)
@@ -819,7 +822,8 @@ CategoryTypeSelectWidget = django_choices_to_graphene(CategoryType._meta.get_fie
 class CategoryTypeNode(ResolveShortDescriptionFromLeadParagraphShim, DjangoNode[CategoryType]):
     attribute_types = graphene.List(graphene.NonNull(AttributeTypeNode), required=True)
     selection_type = graphene.NonNull(
-        CategoryTypeSelectWidget, description=str(CategoryType._meta.get_field('select_widget').help_text)  # pyright: ignore[reportAttributeAccessIssue]
+        CategoryTypeSelectWidget,
+        description=str(CategoryType._meta.get_field('select_widget').help_text),  # pyright: ignore[reportAttributeAccessIssue]
     )
     categories = graphene.List(
         graphene.NonNull('actions.schema.CategoryNode'),
@@ -890,7 +894,8 @@ def get_translated_category_page(_info, **_kwargs) -> Prefetch:  # pyright: igno
 
 def prefetch_workflow_states(_info, **_kwargs) -> Prefetch:  # pyright: ignore[reportMissingTypeArgument]
     workflow_states = (
-        WorkflowState.objects.get_queryset()
+        WorkflowState.objects
+        .get_queryset()
         .active()
         .select_related(
             'current_task_state__task',
@@ -943,8 +948,8 @@ class AttributesMixin:
                     attribute_value = root.draft_attributes.get_value_for_attribute_type(attribute_type)
                 except KeyError:
                     message = (
-                        f"Could not get value for attribute type {attribute_type.instance.pk} on "
-                        f"{root._meta.model.__name__} {root.id}; skipping this attribute type"
+                        f'Could not get value for attribute type {attribute_type.instance.pk} on '
+                        f'{root._meta.model.__name__} {root.id}; skipping this attribute type'
                     )
                     logger.warning(message)
                     sentry_sdk.capture_message(message)
@@ -963,7 +968,7 @@ def indicators_schema():
     return schema
 
 
-@strawberry_django.type(IndicatorCategoryRelationshipModel, description="A relationship between an indicator and a category")
+@strawberry_django.type(IndicatorCategoryRelationshipModel, description='A relationship between an indicator and a category')
 class IndicatorCategoryRelationship:
     id: auto
     indicator: Annotated[IndicatorNode, strawberry.lazy('indicators.schema')]
@@ -1110,9 +1115,7 @@ class CommonCategoryNode(ResolveShortDescriptionFromLeadParagraphShim, DjangoNod
 
     @staticmethod
     def resolve_category_instances(root: CommonCategory, info: GQLInfo):
-        return root.category_instances.filter(
-            type__plan=Plan.objects.get_queryset().live().visible_for_user(info.context.user)
-        )
+        return root.category_instances.filter(type__plan=Plan.objects.get_queryset().live().visible_for_user(info.context.user))
 
     class Meta:
         model = CommonCategory
@@ -1147,7 +1150,7 @@ def _get_pledge_body_field() -> graphene.Field:
 class PledgeNode(AttributesMixin, DjangoNode[Pledge]):
     actions = graphene.List(graphene.NonNull('actions.schema.ActionNode'))
     image = graphene.Field('images.schema.ImageNode')
-    commitment_count = graphene.Int(required=True, description="Number of commitments to this pledge")
+    commitment_count = graphene.Int(required=True, description='Number of commitments to this pledge')
 
     # Use grapple's streamfield handling for typed body blocks
     body = _get_pledge_body_field()
@@ -1205,7 +1208,7 @@ class PledgeCommitmentNode(DjangoNode[PledgeCommitment]):
 class PledgeUserNode(DjangoNode[PledgeUser]):
     commitments = graphene.List(
         graphene.NonNull(PledgeCommitmentNode),
-        plan=graphene.ID(description="Filter commitments by plan identifier"),
+        plan=graphene.ID(description='Filter commitments by plan identifier'),
     )
 
     class Meta:
@@ -1387,18 +1390,18 @@ class WorkflowInfoNode(graphene.ObjectType[Any]):
     current_workflow_state = graphene.Field(
         'actions.schema.WorkflowStateInfoNode',
         description=(
-            "The internal Wagtail workflow state of the action. "
-            "The current action data returned does not necessarily match this "
-            "workflowstate."
+            'The internal Wagtail workflow state of the action. '
+            'The current action data returned does not necessarily match this '
+            'workflowstate.'
         ),
         required=False,
     )
     matching_version = graphene.Field(
         WorkflowStateDescription,
         description=(
-            "The actual version of the action returned "
-            "when fulfilling this query, based on both the requested workflow directive value used when querying "
-            "an action, and the available versions of the action itself."
+            'The actual version of the action returned '
+            'when fulfilling this query, based on both the requested workflow directive value used when querying '
+            'an action, and the available versions of the action itself.'
         ),
     )
 
@@ -1498,9 +1501,9 @@ class ActionNode(ModelAdminAdminButtonsMixin, AttributesMixin, DjangoNode[Action
         required=True,
         show_all_contact_persons=graphene.Boolean(default_value=False),
         description=(
-            "Contact persons for this action. Results may be empty or redacted for "
+            'Contact persons for this action. Results may be empty or redacted for '
             "unauthenticated requests depending on the plan's public contact person settings "
-            "(see PlanFeatures.publicContactPersons)."
+            '(see PlanFeatures.publicContactPersons).'
         ),
     )
     next_action = graphene.Field('actions.schema.ActionNode')
@@ -2030,7 +2033,7 @@ class Query:
     pledge_user = graphene.Field(
         PledgeUserNode,
         uuid=graphene.UUID(required=True),
-        description="Get a pledge user by UUID to retrieve their commitments",
+        description='Get a pledge user by UUID to retrieve their commitments',
     )
 
     @staticmethod
@@ -2134,7 +2137,8 @@ class Query:
             action_pks = [str(pk) for pk in action_queryset.values_list('pk', flat=True)]
             if desired_workflow_task is not None:
                 workflowstates = (
-                    WorkflowState.objects.get_queryset()
+                    WorkflowState.objects
+                    .get_queryset()
                     .active()
                     .filter(content_type=ct)
                     .filter(current_task_state__task=desired_workflow_task)
@@ -2197,7 +2201,8 @@ class Query:
         persons_queryset = Person.objects.get_queryset().filter(actioncontactperson__action__plan=plan_obj).distinct()
         cache.populate_persons(persons_queryset)
         cache.populate_organizations(
-            Organization.objects.get_queryset()
+            Organization.objects
+            .get_queryset()
             .filter(Q(responsible_actions__action__plan=plan_obj) | Q(people__in=persons_queryset))
             .distinct()
             .select_related('logo')
@@ -2323,9 +2328,9 @@ class CommitToPledgeMutation(graphene.Mutation):
     """Create or remove a commitment to a pledge."""
 
     class Arguments:
-        user_uuid = graphene.UUID(required=True, description="UUID of the PledgeUser")
-        pledge_id = graphene.ID(required=True, description="ID of the Pledge")
-        committed = graphene.Boolean(required=True, description="True to commit, False to uncommit")
+        user_uuid = graphene.UUID(required=True, description='UUID of the PledgeUser')
+        pledge_id = graphene.ID(required=True, description='ID of the Pledge')
+        committed = graphene.Boolean(required=True, description='True to commit, False to uncommit')
 
     Output = CommitToPledgePayload
 
@@ -2335,17 +2340,17 @@ class CommitToPledgeMutation(graphene.Mutation):
         try:
             pledge_user = PledgeUser.objects.get(uuid=user_uuid)
         except PledgeUser.DoesNotExist:
-            raise GraphQLError("PledgeUser not found") from None
+            raise GraphQLError('PledgeUser not found') from None
 
         # Get the Pledge
         try:
             pledge = Pledge.objects.select_related('plan__features').get(id=pledge_id)
         except Pledge.DoesNotExist:
-            raise GraphQLError("Pledge not found") from None
+            raise GraphQLError('Pledge not found') from None
 
         # Check that community engagement is enabled for this plan
         if not pledge.plan.features.enable_community_engagement:
-            raise GraphQLError("Community engagement is not enabled for this plan") from None
+            raise GraphQLError('Community engagement is not enabled for this plan') from None
 
         if committed:
             # Create commitment (ignore if already exists)
@@ -2374,9 +2379,9 @@ class SetUserDataMutation(graphene.Mutation):
     """Set a key-value pair in a PledgeUser's user_data."""
 
     class Arguments:
-        user_uuid = graphene.UUID(required=True, description="UUID of the PledgeUser")
-        key = graphene.String(required=True, description="Key to set in user_data")
-        value = graphene.String(required=True, description="Value to set for the key")
+        user_uuid = graphene.UUID(required=True, description='UUID of the PledgeUser')
+        key = graphene.String(required=True, description='Key to set in user_data')
+        value = graphene.String(required=True, description='Value to set for the key')
 
     Output = SetUserDataPayload
 
@@ -2385,7 +2390,7 @@ class SetUserDataMutation(graphene.Mutation):
         try:
             pledge_user = PledgeUser.objects.get(uuid=user_uuid)
         except PledgeUser.DoesNotExist:
-            raise GraphQLError("PledgeUser not found") from None
+            raise GraphQLError('PledgeUser not found') from None
 
         pledge_user.user_data[key] = value
         pledge_user.save(update_fields=['user_data'])
@@ -2397,10 +2402,10 @@ class PledgeMutations(graphene.ObjectType[Any]):
     """Mutations related to pledges and community engagement."""
 
     register_user = RegisterPledgeUserMutation.Field(
-        description="Register a new anonymous pledge user; returns the UUID for the created user",
+        description='Register a new anonymous pledge user; returns the UUID for the created user',
     )
     commit_to_pledge = CommitToPledgeMutation.Field(
-        description="Commit to or uncommit from a pledge",
+        description='Commit to or uncommit from a pledge',
     )
     set_user_data = SetUserDataMutation.Field(
         description="Set a key-value pair in a PledgeUser's user_data.",
@@ -2433,14 +2438,14 @@ class Mutation(graphene.ObjectType[Any]):
     def resolve_plan(root, info: GQLInfo):
         user = user_or_none(info.context.user)
         if user is None or not user.is_superuser:
-            raise PermissionDeniedError(info, "Superuser required for this operation.")
+            raise PermissionDeniedError(info, 'Superuser required for this operation.')
         return get_plan_mutation_namespace()()
 
     @staticmethod
     def resolve_action(root, info: GQLInfo):
         user = user_or_none(info.context.user)
         if user is None or not user.is_superuser:
-            raise PermissionDeniedError(info, "Superuser required for this operation.")
+            raise PermissionDeniedError(info, 'Superuser required for this operation.')
         return get_action_mutation_namespace()()
 
 
@@ -2457,7 +2462,7 @@ class Subscription:
         ws = info.context.get_ws_consumer()
         channel_layer = ws.channel_layer
         if channel_layer is None:
-            raise ValueError("Channel layer is not available")
+            raise ValueError('Channel layer is not available')
         await channel_layer.group_add('plan_cache_invalidations', ws.channel_name)
         async with ws.listen_to_channel('plan.cache_invalidated') as listener:
             async for message in listener:

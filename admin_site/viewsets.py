@@ -62,7 +62,7 @@ class WatchEditView[ModelT: Model, FormT: WagtailAdminModelForm = WagtailAdminMo
         except ProtectedError as e:
             for o in e.protected_objects:
                 name = type(o)._meta.verbose_name_plural
-                error = _("Error deleting items. Try first deleting any %(name)s that are in use.") % {'name': name}
+                error = _('Error deleting items. Try first deleting any %(name)s that are in use.') % {'name': name}
                 form.add_error(None, error)
                 form.add_error(None, _('In use: "%(instance)s".') % {'instance': str(o)})
             messages.validation_error(self.request, self.get_error_message(), form)
@@ -77,7 +77,7 @@ class WatchEditView[ModelT: Model, FormT: WagtailAdminModelForm = WagtailAdminMo
         else:
             model_name = self.object._meta.verbose_name
 
-        return _("%s could not be created due to errors.") % capfirst(model_name)
+        return _('%s could not be created due to errors.') % capfirst(model_name)
 
 
 class WatchCreateView[ModelT: Model, FormT: ModelForm[Any] = WagtailAdminModelForm](
@@ -126,6 +126,7 @@ class WatchCreateView[ModelT: Model, FormT: ModelForm[Any] = WagtailAdminModelFo
             **super().get_form_kwargs(),
             'plan': user_or_bust(self.request.user).get_active_admin_plan(),
         }
+
 
 class WatchIndexView[ModelT: Model, QS: QuerySet[Any] = QuerySet[ModelT]](
     ActivatePermissionHelperPlanContextMixin,

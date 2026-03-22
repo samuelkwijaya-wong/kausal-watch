@@ -13,7 +13,7 @@ from pages.models import AplansPage
 from .models import PlanScopedModelLogEntry, PlanScopedPageLogEntry
 
 
-@hooks.register("register_log_actions")
+@hooks.register('register_log_actions')
 def register_core_log_actions(actions):
     actions.register_model(Plan, PlanScopedModelLogEntry)
     actions.register_model(PlanRelatedModel, PlanScopedModelLogEntry)

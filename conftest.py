@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 import typing
-from typing import Protocol
+from typing import Any, Protocol
 
 from django.contrib.contenttypes.models import ContentType
 from django.db.models.signals import post_save
@@ -90,7 +90,7 @@ register(actions_factories.WorkflowTaskFactory)
 register(
     actions_factories.AttributeTypeFactory,
     'action_attribute_type',
-    name=Sequence(lambda i: f"Action attribute type {i}"),
+    name=Sequence(lambda i: f'Action attribute type {i}'),
     object_content_type=LazyAttribute(lambda _: ContentType.objects.get(app_label='actions', model='action')),
     scope=SubFactory(actions_factories.PlanFactory),
 )
@@ -150,8 +150,12 @@ register(pages_factories.QuestionBlockFactory)
 register(pages_factories.RichTextBlockFactory)
 register(pages_factories.StaticPageFactory, parent=LazyFixture(lambda plan_with_pages: plan_with_pages.root_page))
 register(people_factories.PersonFactory, user=LazyFixture(lambda user: user))
-register(people_factories.PersonFactory, 'plan_admin_person', user=LazyFixture(lambda user: user),
-         general_admin_plans=LazyFixture(lambda plan: [plan]))
+register(
+    people_factories.PersonFactory,
+    'plan_admin_person',
+    user=LazyFixture(lambda user: user),
+    general_admin_plans=LazyFixture(lambda plan: [plan]),
+)
 register(users_factories.UserFactory)
 register(users_factories.UserFactory, 'superuser', is_superuser=True)
 register(wagtail_factories.blocks.ImageChooserBlockFactory)
@@ -188,16 +192,19 @@ def graphql_client_query(client):
     def func(*args, **kwargs):
         response = graphql_query(*args, **kwargs, client=client, graphql_url='/v1/graphql/')
         return json.loads(response.content)
+
     return func
 
 
 @pytest.fixture
 def graphql_client_query_data(graphql_client_query):
     """Make a GraphQL request, make sure the `error` field is not present and return the `data` field."""
+
     def func(*args, **kwargs):
         response = graphql_client_query(*args, **kwargs)
         assert 'errors' not in response
         return response['data']
+
     return func
 
 
@@ -222,6 +229,7 @@ def contains_error():
         if message is not None:
             expected_parts['message'] = message
         return any(expected_parts.items() <= error.items() for error in response['errors'])
+
     return func
 
 
@@ -233,15 +241,25 @@ def _disable_search_autoupdate(settings) -> None:
 
 class ModelAdminEditTest(Protocol):
     def __call__(
-        self, admin_class: type[ModelAdmin], instance: Model, user: User,
-        post_data: dict = {}, can_inspect: bool = True, can_edit: bool = True): ...  # noqa: B006
+        self,
+        admin_class: type[ModelAdmin[Any]],
+        instance: Model,
+        user: User,
+        post_data: dict[str, Any] | None = ...,
+        can_inspect: bool = True,
+        can_edit: bool = True,
+    ): ...
 
 
 @pytest.fixture
 def test_modeladmin_edit(client: django.test.client.Client) -> ModelAdminEditTest:
     def test_admin(
-        admin_class: type[ModelAdmin], instance: Model, user: User,
-        post_data: dict | None = None, can_inspect: bool = True, can_edit: bool = True,
+        admin_class: type[ModelAdmin[Any]],
+        instance: Model,
+        user: User,
+        post_data: dict[str, Any] | None = None,
+        can_inspect: bool = True,
+        can_edit: bool = True,
     ) -> None:
         if post_data is None:
             post_data = {}
@@ -332,7 +350,9 @@ def attribute_type_choice_option__optional(attribute_type_choice_option_factory,
 
 
 @pytest.fixture
-def attribute_choice(attribute_choice_factory, action_attribute_type__ordered_choice, action, action_attribute_type_choice_option):
+def attribute_choice(
+    attribute_choice_factory, action_attribute_type__ordered_choice, action, action_attribute_type_choice_option
+):
     return attribute_choice_factory(
         type=action_attribute_type__ordered_choice,
         content_object=action,
@@ -343,35 +363,33 @@ def attribute_choice(attribute_choice_factory, action_attribute_type__ordered_ch
 def n_of_a_kind(factory, count, context=None):
     if context is None:
         context = {}
-    return [
-        factory(**context) for i in range(count)
-    ]
+    return [factory(**context) for i in range(count)]
 
 
 @pytest.fixture
 def actions_having_attributes(
-        plan,
-        category_type,
-        category_factory,
-        action_attribute_type__text,
-        action_attribute_type__rich_text,
-        action_attribute_type__ordered_choice,
-        action_attribute_type__unordered_choice,
-        action_attribute_type__optional_choice,
-        action_attribute_type__numeric,
-        action_attribute_type__category_choice,
-        action_factory,
-        action_implementation_phase_factory,
-        organization_factory,
-        action_responsible_party_factory,
-        attribute_numeric_value_factory,
-        attribute_text_factory,
-        attribute_rich_text_factory,
-        attribute_choice_factory,
-        attribute_choice_with_text_factory,
-        attribute_category_choice_factory,
-        attribute_type_choice_option_factory,
-        attribute_type_choice_option__optional,
+    plan,
+    category_type,
+    category_factory,
+    action_attribute_type__text,
+    action_attribute_type__rich_text,
+    action_attribute_type__ordered_choice,
+    action_attribute_type__unordered_choice,
+    action_attribute_type__optional_choice,
+    action_attribute_type__numeric,
+    action_attribute_type__category_choice,
+    action_factory,
+    action_implementation_phase_factory,
+    organization_factory,
+    action_responsible_party_factory,
+    attribute_numeric_value_factory,
+    attribute_text_factory,
+    attribute_rich_text_factory,
+    attribute_choice_factory,
+    attribute_choice_with_text_factory,
+    attribute_category_choice_factory,
+    attribute_type_choice_option_factory,
+    attribute_type_choice_option__optional,
 ):
 
     ACTION_COUNT = 10
@@ -431,7 +449,6 @@ def actions_having_attributes(
             type=at,
             content_object=action,
             categories=categories,
-
         )
         c = plan_categories[i % CATEGORY_COUNT]
         action.categories.add(c)

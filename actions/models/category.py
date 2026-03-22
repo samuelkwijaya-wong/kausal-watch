@@ -66,8 +66,9 @@ class CategoryTypeBase(models.Model):
     name = models.CharField(max_length=50, verbose_name=_('name'))
     identifier = IdentifierField()
     hide_category_identifiers = models.BooleanField(
-        default=False, verbose_name=_('hide category identifiers'),
-        help_text=_("Set if the categories do not have meaningful identifiers"),
+        default=False,
+        verbose_name=_('hide category identifiers'),
+        help_text=_('Set if the categories do not have meaningful identifiers'),
     )
     lead_paragraph = models.TextField(verbose_name=_('lead paragraph'), null=True, blank=True)
     help_text = models.TextField(verbose_name=_('help text'), blank=True)
@@ -94,8 +95,10 @@ class CategoryTypeBase(models.Model):
         verbose_name=_('single or multiple selection'),
         help_text=(
             format_lazy(
-                _('Choose "{choice_multiple}" only if more than one category can be selected at a time, '
-                  'otherwise choose "{choice_single}" which is the default.'),
+                _(
+                    'Choose "{choice_multiple}" only if more than one category can be selected at a time, '
+                    'otherwise choose "{choice_single}" which is the default.'
+                ),
                 choice_multiple=SelectWidget.MULTIPLE.label,
                 choice_single=SelectWidget.SINGLE.label,
             )
@@ -103,9 +106,15 @@ class CategoryTypeBase(models.Model):
     )
 
     public_fields: ClassVar = [
-        'name', 'identifier', 'lead_paragraph', 'help_text', 'hide_category_identifiers',
-        'usable_for_indicators', 'usable_for_actions',
-        'editable_for_actions', 'editable_for_indicators',
+        'name',
+        'identifier',
+        'lead_paragraph',
+        'help_text',
+        'hide_category_identifiers',
+        'usable_for_indicators',
+        'usable_for_actions',
+        'editable_for_actions',
+        'editable_for_indicators',
     ]
 
     class Meta:
@@ -115,16 +124,24 @@ class CategoryTypeBase(models.Model):
 @reversion.register()
 class CommonCategoryType(CategoryTypeBase, ModelWithPrimaryLanguage):
     has_collection = models.BooleanField(
-        default=False, verbose_name=_('has a collection'),
+        default=False,
+        verbose_name=_('has a collection'),
         help_text=_('Set if this category type should have its own collection for images'),
     )
     # collection for photos and icons
     collection = models.OneToOneField(
-        Collection, null=True, on_delete=models.PROTECT, editable=False, related_name='common_category_type',
+        Collection,
+        null=True,
+        on_delete=models.PROTECT,
+        editable=False,
+        related_name='common_category_type',
     )
 
     primary_language = models.CharField(
-        max_length=20, choices=get_supported_languages(), default='en', verbose_name=_('primary language'),
+        max_length=20,
+        choices=get_supported_languages(),
+        default='en',
+        verbose_name=_('primary language'),
     )
     i18n = TranslationField(fields=('name', 'lead_paragraph', 'help_text'), default_language_field='primary_language_lowercase')
 
@@ -146,7 +163,7 @@ class CommonCategoryType(CategoryTypeBase, ModelWithPrimaryLanguage):
         ordering = ('identifier',)
 
     def __str__(self):
-        return f"{self.name}: {self.identifier}"
+        return f'{self.name}: {self.identifier}'
 
     def save(self, *args, **kwargs):
         ret = super().save(*args, **kwargs)
@@ -168,9 +185,7 @@ class CommonCategoryType(CategoryTypeBase, ModelWithPrimaryLanguage):
         if plan.category_types.filter(common=self).exists():
             raise Exception(f"Instantiation of common category type '{self}' for plan '{plan}' exists already")
         translated_fields = cast('TranslationField', get_i18n_field(CategoryType)).fields
-        other_languages = [lang.replace('-', '_')
-                           for lang in get_available_languages()
-                           if lang != plan.primary_language]
+        other_languages = [lang.replace('-', '_') for lang in get_available_languages() if lang != plan.primary_language]
         # Inherit fields from CategoryTypeBase, but instead of `name` we want `name_<lang>`, where `<lang>` is the
         # primary language of the the active plan, and the same for other translated fields.
         # TODO: Something like this should be put in modeltrans to implement changing the per-instance default
@@ -191,7 +206,11 @@ class CommonCategoryType(CategoryTypeBase, ModelWithPrimaryLanguage):
 
 @reversion.register()
 class CategoryType(
-    InstancesEditableByMixin, ReferenceIndexedModelMixin, CategoryTypeBase, ClusterableModel, PlanRelatedModelWithRevision,
+    InstancesEditableByMixin,
+    ReferenceIndexedModelMixin,
+    CategoryTypeBase,
+    ClusterableModel,
+    PlanRelatedModelWithRevision,
 ):
     """
     Type of the categories.
@@ -201,15 +220,22 @@ class CategoryType(
     """
 
     plan: FK[Plan] = models.ForeignKey(
-        'actions.Plan', on_delete=models.CASCADE, related_name='category_types',
+        'actions.Plan',
+        on_delete=models.CASCADE,
+        related_name='category_types',
     )
     common = models.ForeignKey(
-        CommonCategoryType, blank=True, null=True, on_delete=models.PROTECT,
-        verbose_name=_('common category type'), related_name='category_type_instances',
+        CommonCategoryType,
+        blank=True,
+        null=True,
+        on_delete=models.PROTECT,
+        verbose_name=_('common category type'),
+        related_name='category_type_instances',
     )
     synchronize_with_pages = models.BooleanField(
-        default=False, verbose_name=_("synchronize with pages"),
-        help_text=_("Set if categories of this type should be synchronized with pages"),
+        default=False,
+        verbose_name=_('synchronize with pages'),
+        help_text=_('Set if categories of this type should be synchronized with pages'),
     )
     i18n = TranslationField(
         fields=('name', 'lead_paragraph', 'help_text'), default_language_field='plan__primary_language_lowercase'
@@ -246,7 +272,7 @@ class CategoryType(
         verbose_name_plural = _('category types')
 
     def __str__(self):
-        return "%s (%s:%s)" % (self.name, self.plan.identifier, self.identifier)
+        return '%s (%s:%s)' % (self.name, self.plan.identifier, self.identifier)
 
     @transaction.atomic
     def save(self, *args, skip_page_synchronization=False, **kwargs):
@@ -257,10 +283,11 @@ class CategoryType(
     def clean(self):
         super().clean()
         if self.instance_editability_is_action_specific:
-            raise ValidationError({'instances_editable_by': _("This value is not allowed for category types")})
+            raise ValidationError({'instances_editable_by': _('This value is not allowed for category types')})
 
     def synchronize_pages(self):
         from pages.models import CategoryTypePage
+
         for root_page in self.plan.root_page.get_translations(inclusive=True):
             with override(root_page.locale.language_code):
                 try:
@@ -268,7 +295,10 @@ class CategoryType(
                     ct_page = cast('CategoryTypePage', root_page.get_descendants().type(CategoryTypePage).get(id__in=ct_pages))
                 except Page.DoesNotExist:
                     ct_page = CategoryTypePage(
-                        category_type=self, title=self.name_i18n, show_in_menus=True, show_in_footer=True,
+                        category_type=self,
+                        title=self.name_i18n,
+                        show_in_menus=True,
+                        show_in_footer=True,
                     )
                     root_page.add_child(instance=ct_page)
             for category in self.categories.filter(parent__isnull=True):
@@ -324,7 +354,9 @@ class CategoryLevel(OrderedModel):
     """
 
     type: ParentalKey[CategoryType] = ParentalKey(
-        CategoryType, on_delete=models.CASCADE, related_name='levels',
+        CategoryType,
+        on_delete=models.CASCADE,
+        related_name='levels',
         verbose_name=_('type'),
     )
     name = models.CharField(max_length=100, verbose_name=_('name'))
@@ -336,7 +368,11 @@ class CategoryLevel(OrderedModel):
     )
 
     public_fields: ClassVar = [
-        'id', 'name', 'name_plural', 'order', 'type',
+        'id',
+        'name',
+        'name_plural',
+        'order',
+        'type',
     ]
 
     # type annotations
@@ -361,23 +397,44 @@ class CategoryBase(OrderedModel):
     identifier = IdentifierField(max_length=70)
     name = models.CharField(max_length=200, verbose_name=_('name'))
     lead_paragraph = models.TextField(
-        max_length=300, blank=True, verbose_name=_('lead paragraph'),
+        max_length=300,
+        blank=True,
+        verbose_name=_('lead paragraph'),
     )
     image = models.ForeignKey(
-        'images.AplansImage', null=True, blank=True, on_delete=models.SET_NULL, related_name='+',
+        'images.AplansImage',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='+',
     )
     color = ColorField(
-        max_length=50, blank=True, default='', verbose_name=_('theme color'),
+        max_length=50,
+        blank=True,
+        default='',
+        verbose_name=_('theme color'),
         help_text=_('Set if the category has a theme color'),
     )
     kausal_paths_node_uuid = models.CharField(
-        max_length=200, blank=True, null=False, default='', verbose_name=_('Kausal Paths node UUID'),
+        max_length=200,
+        blank=True,
+        null=False,
+        default='',
+        verbose_name=_('Kausal Paths node UUID'),
         help_text=_('Kausal Paths node to link this category to'),
     )
     help_text = models.TextField(verbose_name=_('help text'), blank=True)
 
     public_fields: ClassVar = [
-        'id', 'uuid', 'identifier', 'name', 'lead_paragraph', 'image', 'color', 'help_text', 'order',
+        'id',
+        'uuid',
+        'identifier',
+        'name',
+        'lead_paragraph',
+        'image',
+        'color',
+        'help_text',
+        'order',
         'kausal_paths_node_uuid',
     ]
 
@@ -388,7 +445,9 @@ class CategoryBase(OrderedModel):
 @reversion.register()
 class CommonCategory(CategoryBase, ClusterableModel):
     type = models.ForeignKey(
-        CommonCategoryType,  on_delete=models.CASCADE, related_name='categories',
+        CommonCategoryType,
+        on_delete=models.CASCADE,
+        related_name='categories',
         verbose_name=_('type'),
     )
 
@@ -400,7 +459,8 @@ class CommonCategory(CategoryBase, ClusterableModel):
     )
 
     public_fields: ClassVar = CategoryBase.public_fields + [
-        'type', 'category_instances',
+        'type',
+        'category_instances',
     ]
 
     icons: RevMany[CommonCategoryIcon]
@@ -420,14 +480,13 @@ class CommonCategory(CategoryBase, ClusterableModel):
     def instantiate_for_category_type(self, category_type):
         """Create category corresponding to this one and set its type to the given one."""
         if category_type.categories.filter(common=self).exists():
-            raise Exception(f"Instantiation of common category '{self}' for category type '{category_type}' exists "
-                            "already")
+            raise Exception(f"Instantiation of common category '{self}' for category type '{category_type}' exists already")
         i18n_field = get_i18n_field(Category)
         assert i18n_field is not None
         translated_fields = list(i18n_field.fields)
-        other_languages = [lang.replace('-', '_')
-                           for lang in get_available_languages()
-                           if lang != category_type.plan.primary_language]
+        other_languages = [
+            lang.replace('-', '_') for lang in get_available_languages() if lang != category_type.plan.primary_language
+        ]
         # Inherit fields from CategoryBase, but instead of `name` we want `name_<lang>`, where `<lang>` is the primary
         # language of the the active plan, and the same for other translated fields.
         # TODO: Duplicated in CommonCategoryType.instantiate_for_plan()
@@ -463,17 +522,27 @@ class Category(ModelWithAttributes, CategoryBase, ClusterableModel, PlanRelatedM
     """A category for actions and indicators."""
 
     type: FK[CategoryType] = models.ForeignKey(
-        CategoryType, on_delete=models.CASCADE, related_name='categories',
+        CategoryType,
+        on_delete=models.CASCADE,
+        related_name='categories',
         verbose_name=_('type'),
     )
     type_id: int
     common: FK[CommonCategory | None] = models.ForeignKey(
-        CommonCategory, on_delete=models.PROTECT, related_name='category_instances',
-        null=True, blank=True, verbose_name=_('common category'),
+        CommonCategory,
+        on_delete=models.PROTECT,
+        related_name='category_instances',
+        null=True,
+        blank=True,
+        verbose_name=_('common category'),
     )
     external_identifier = models.CharField[str | None, str | None](max_length=50, blank=True, null=True, editable=False)
     parent: FK[Category | None] = models.ForeignKey(
-        'self', null=True, blank=True, on_delete=models.SET_NULL, related_name='children',
+        'self',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='children',
         verbose_name=_('parent category'),
     )
 
@@ -496,7 +565,13 @@ class Category(ModelWithAttributes, CategoryBase, ClusterableModel, PlanRelatedM
     objects: ClassVar[Manager[Category]]
 
     public_fields: ClassVar[list[str]] = CategoryBase.public_fields + [
-        'type', 'common', 'external_identifier', 'parent', 'children', 'category_pages', 'indicators',
+        'type',
+        'common',
+        'external_identifier',
+        'parent',
+        'children',
+        'category_pages',
+        'indicators',
     ]
 
     class Meta:
@@ -536,6 +611,7 @@ class Category(ModelWithAttributes, CategoryBase, ClusterableModel, PlanRelatedM
 
     def get_public_change_log_message(self) -> BaseChangeLogMessage | None:
         from actions.models import CategoryChangeLogMessage
+
         return CategoryChangeLogMessage.objects.filter(category=self).order_by('-created_at').first()
 
     def generate_identifier(self):
@@ -560,10 +636,14 @@ class Category(ModelWithAttributes, CategoryBase, ClusterableModel, PlanRelatedM
                 body: list[tuple[str, dict[str, Any]]] = [('action_list', {'category_filter': self})]
                 if self.children.exists():
                     # TODO: Make heading customizable
-                    category_list_block = ('category_list', {'heading': _("Subcategories"), 'style': 'cards'})
+                    category_list_block = ('category_list', {'heading': _('Subcategories'), 'style': 'cards'})
                     body.insert(0, category_list_block)
                 page = CategoryPage(
-                    category=self, title=self.name_i18n, show_in_menus=is_root, show_in_footer=is_root, body=body,
+                    category=self,
+                    title=self.name_i18n,
+                    show_in_menus=is_root,
+                    show_in_footer=is_root,
+                    body=body,
                 )
                 parent.add_child(instance=page)
             else:
@@ -590,10 +670,10 @@ class Category(ModelWithAttributes, CategoryBase, ClusterableModel, PlanRelatedM
                     page = refreshed_page
 
                 is_changed = (
-                    page.title != self.name_i18n or
-                    page.draft_title != self.name_i18n or
-                    page.show_in_menus != is_root or
-                    page.show_in_footer != is_root
+                    page.title != self.name_i18n
+                    or page.draft_title != self.name_i18n
+                    or page.show_in_menus != is_root
+                    or page.show_in_footer != is_root
                 )
                 if is_changed:
                     page.title = self.name_i18n
@@ -618,7 +698,7 @@ class Category(ModelWithAttributes, CategoryBase, ClusterableModel, PlanRelatedM
 
     def __str__(self):
         if self.identifier and self.type and not self.type.hide_category_identifiers:
-            return "%s %s" % (self.identifier, self.name)
+            return '%s %s' % (self.identifier, self.name)
         return self.name
 
     def _get_icon_without_fallback_to_common_category(self, language: str | None = None) -> CategoryIcon | None:
@@ -704,7 +784,7 @@ class Category(ModelWithAttributes, CategoryBase, ClusterableModel, PlanRelatedM
         while c.parent is not None:
             level += 1
             if level > 50:
-                raise Exception("Maximum category hierarchy depth exceeded")
+                raise Exception('Maximum category hierarchy depth exceeded')
             c = c.parent
         levels = list(self.type.levels.all())
         if len(levels) <= level:
@@ -742,7 +822,9 @@ class Icon(models.Model):
 
 class CommonCategoryIcon(Icon):
     common_category = ParentalKey(
-        CommonCategory, on_delete=models.CASCADE, related_name='icons',
+        CommonCategory,
+        on_delete=models.CASCADE,
+        related_name='icons',
         verbose_name=_('common category'),
     )
 

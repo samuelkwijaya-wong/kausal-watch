@@ -24,6 +24,7 @@ class CategoryChooserBlock(blocks.ChooserBlock[Category]):
     @cached_property
     def widget(self):
         from actions.chooser import CategoryChooser
+
         return CategoryChooser()
 
     def get_form_state(self, value):
@@ -41,6 +42,7 @@ class CategoryTypeChooserBlock(blocks.ChooserBlock[CategoryType]):
     @cached_property
     def widget(self) -> CategoryTypeChooser:
         from actions.chooser import CategoryTypeChooser
+
         return CategoryTypeChooser()
 
     def get_form_state(self, value):
@@ -67,6 +69,7 @@ class CategoryLevelChooserBlock(blocks.ChooserBlock[CategoryLevel]):
     @cached_property
     def widget(self):
         from actions.chooser import CategoryLevelChooser
+
         linked_fields = {
             'type': {
                 'match': self._match,
@@ -90,6 +93,7 @@ class AttributeTypeChooserBlock(blocks.ChooserBlock[AttributeType]):
     @cached_property
     def widget(self):
         from actions.chooser import AttributeTypeChooser
+
         return AttributeTypeChooser()
 
     def get_form_state(self, value):
@@ -100,6 +104,7 @@ class ActionAttributeTypeChooserBlock(AttributeTypeChooserBlock):
     @cached_property
     def widget(self):
         from actions.chooser import AttributeTypeChooser
+
         return AttributeTypeChooser(scope='action')
 
 
@@ -108,7 +113,9 @@ class CategoryAttributeTypeChooserBlock(AttributeTypeChooserBlock):
     @cached_property
     def widget(self):
         from actions.chooser import AttributeTypeChooser
+
         return AttributeTypeChooser(scope='category')
+
 
 class DatasetSchemaChooserBlock(blocks.ChooserBlock[DatasetSchema]):
     class Meta:
@@ -121,6 +128,7 @@ class DatasetSchemaChooserBlock(blocks.ChooserBlock[DatasetSchema]):
     @cached_property
     def widget(self):
         from actions.chooser import DatasetSchemaChooser
+
         return DatasetSchemaChooser()
 
     def get_form_state(self, value):
@@ -131,6 +139,7 @@ class PlanDatasetSchemaChooserBlock(DatasetSchemaChooserBlock):
     @cached_property
     def widget(self):
         from actions.chooser import DatasetSchemaChooser
+
         return DatasetSchemaChooser(scope='plan')
 
 
@@ -138,4 +147,5 @@ class CategoryTypeDatasetSchemaChooserBlock(DatasetSchemaChooserBlock):
     @cached_property
     def widget(self):
         from actions.chooser import DatasetSchemaChooser
+
         return DatasetSchemaChooser(scope='categorytype')

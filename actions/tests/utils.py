@@ -1,4 +1,5 @@
 """Utility functions for action tests."""
+
 from __future__ import annotations
 
 from typing import Any
@@ -12,10 +13,7 @@ def assert_log_entry_created(instance, action, user, plan):
     """Assert that a PlanScopedModelLogEntry was created for a given instance."""
     content_type = ContentType.objects.get_for_model(instance, for_concrete_model=False)
     log_entry = PlanScopedModelLogEntry.objects.filter(
-        content_type=content_type,
-        object_id=str(instance.pk),
-        action=action,
-        plan=plan
+        content_type=content_type, object_id=str(instance.pk), action=action, plan=plan
     ).first()
     assert log_entry is not None, (
         f'Expected PlanScopedModelLogEntry for {instance.__class__.__name__} '

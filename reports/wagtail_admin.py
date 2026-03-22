@@ -72,10 +72,10 @@ class ReportAdminButtonHelper(QueryParameterButtonHelper):
         cn = self.finalise_classname(classnames, classnames_exclude)
         return {
             'url': self.url_helper.get_action_url('download', quote(report_pk)),
-            'label': _("Download XLSX"),
+            'label': _('Download XLSX'),
             'classname': cn,
             'icon': 'download',
-            'title': _("Download report as spreadsheet file"),
+            'title': _('Download report as spreadsheet file'),
         }
 
     def mark_as_complete_button(self, report_pk, **kwargs):
@@ -85,10 +85,10 @@ class ReportAdminButtonHelper(QueryParameterButtonHelper):
         cn = self.finalise_classname(classnames, classnames_exclude)
         return {
             'url': self.url_helper.get_action_url('mark_report_as_complete', quote(report_pk)),
-            'label': _("Mark as complete"),
+            'label': _('Mark as complete'),
             'classname': cn,
             'icon': 'check',
-            'title': _("Mark this report as complete"),
+            'title': _('Mark this report as complete'),
         }
 
     def undo_marking_as_complete_button(self, report_pk, **kwargs):
@@ -98,10 +98,10 @@ class ReportAdminButtonHelper(QueryParameterButtonHelper):
         cn = self.finalise_classname(classnames, classnames_exclude)
         return {
             'url': self.url_helper.get_action_url('undo_marking_report_as_complete', quote(report_pk)),
-            'label': _("Undo marking as complete"),
+            'label': _('Undo marking as complete'),
             'classname': cn,
             'icon': 'fontawesome-rotate-left',
-            'title': _("Undo marking this report as complete"),
+            'title': _('Undo marking this report as complete'),
         }
 
     def get_buttons_for_obj(self, obj, *args, **kwargs):
@@ -179,7 +179,7 @@ class ReportAdminMenuItem(ModelAdminMenuItem):
 class ReportAdmin(AplansModelAdmin):
     model = Report
     menu_label = _('Reports')
-    list_display= ('name', 'is_complete', 'is_public')
+    list_display = ('name', 'is_complete', 'is_public')
     list_filter = (ReportTypeFilter,)
     base_url_path = 'plan_reports/report'
 

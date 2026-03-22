@@ -28,7 +28,7 @@ class FieldBlockWithHelpPanel(ActionReportContentField):
         value = self.value_for_action_snapshot(block_value, snapshot) or ''
         if not isinstance(value, Iterable) or isinstance(value, str):
             value = [value]
-        value = "; ".join(str(v) for v in value)
+        value = '; '.join(str(v) for v in value)
         label = self.get_help_label(block_value)
         if label is None:
             label = self.label
@@ -51,7 +51,7 @@ class ActionAttributeTypeReportFieldBlock(FieldBlockWithHelpPanel):
         return None
 
     class Meta:
-        label = _("Action field")
+        label = _('Action field')
 
 
 @register_streamfield_block
@@ -63,7 +63,7 @@ class ActionCategoryReportFieldBlock(FieldBlockWithHelpPanel):
         return formatters.ActionCategoryReportFieldFormatter
 
     class Meta:
-        label = _("Action category")
+        label = _('Action category')
 
 
 @register_streamfield_block
@@ -72,7 +72,7 @@ class ActionImplementationPhaseReportFieldBlock(FieldBlockWithHelpPanel):
         return formatters.ActionImplementationPhaseReportFieldFormatter
 
     class Meta:
-        label = _("Implementation phase")
+        label = _('Implementation phase')
         field_name = 'implementation_phase'
 
 
@@ -82,7 +82,7 @@ class ActionStatusReportFieldBlock(FieldBlockWithHelpPanel):
         return formatters.ActionStatusReportFieldFormatter
 
     class Meta:
-        label = _("Status")
+        label = _('Status')
 
 
 @register_streamfield_block
@@ -109,11 +109,9 @@ class ActionResponsiblePartyReportFieldBlock(FieldBlockWithHelpPanel):
         return formatters.ActionResponsiblePartyReportFieldFormatter
 
     class Meta:
-        label = _("Primary responsible party")
+        label = _('Primary responsible party')
         field_name = 'primary_org'
-        default = {
-            'target_ancestor_depth': None
-        }
+        default = {'target_ancestor_depth': None}
 
 
 """
@@ -123,7 +121,7 @@ field name, instead of implenting a custom ReportFieldBlock from scratch.
 """
 ReportFieldBlock = generate_stream_block(
     'ReportFieldBlock',
-    fields = (
+    fields=(
         'implementation_phase',
         'attribute',
         'responsible_parties',

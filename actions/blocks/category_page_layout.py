@@ -48,7 +48,7 @@ class CategoryPageCategoryListBlock(blocks.StructBlock):
 @register_streamfield_block
 class CategoryPageContactFormBlock(BaseContactFormBlock):
     class Meta:
-        label = _("Contact form")
+        label = _('Contact form')
 
 
 @register_streamfield_block
@@ -59,15 +59,20 @@ class CategoryTypeDatasetsBlock(BaseDatasetsBlock):
         GraphQLForeignKey('dataset_schema', DatasetSchema, required=True),
     ]
 
+
 @register_streamfield_block
 class CategoryPageProgressBlock(blocks.StructBlock):
-    basis = blocks.ChoiceBlock(label=_('Basis'), choices=[
-        ('implementation_phase', _('Implementation phase')),
-        ('status', _('Status')),
-    ])
+    basis = blocks.ChoiceBlock(
+        label=_('Basis'),
+        choices=[
+            ('implementation_phase', _('Implementation phase')),
+            ('status', _('Status')),
+        ],
+    )
 
     class Meta:
         label = _('Progress')
+
 
 @register_streamfield_block
 class CategoryPageMainTopBlock(blocks.StreamBlock):

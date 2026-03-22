@@ -10,7 +10,7 @@ from people.models import Person
 
 
 class Command(BaseCommand):
-    help = "Set password for given users if they have not logged in yet"
+    help = 'Set password for given users if they have not logged in yet'
 
     def add_arguments(self, parser):
         parser.add_argument(
@@ -18,24 +18,24 @@ class Command(BaseCommand):
             metavar='EMAIL',
             type=str,
             nargs='+',
-            help="Set password for the user with the given email, unless they logged in already",
+            help='Set password for the user with the given email, unless they logged in already',
         )
         parser.add_argument(
             '--no-initials',
             action='store_true',
-            help="Do not insert the initials (first letter of first name, first letter of last name) in lower case, "
-            "followed by an underscore, before the main part",
+            help='Do not insert the initials (first letter of first name, first letter of last name) in lower case, '
+            'followed by an underscore, before the main part',
         )
         parser.add_argument(
             '--main-part',
             type=str,
-            help="Main part of the password; will be randomly generated if omitted",
+            help='Main part of the password; will be randomly generated if omitted',
         )
         parser.add_argument(
             '-n',
             type=int,
             default=8,
-            help="Length of the main part of the password, if it is generated randomly (default: 8)",
+            help='Length of the main part of the password, if it is generated randomly (default: 8)',
         )
 
     def handle(self, *args, **options):
@@ -56,17 +56,17 @@ class Command(BaseCommand):
         try:
             person = Person.objects.get(email__iexact=email)
         except Person.DoesNotExist:
-            message = f"User does not exist: {email}"
+            message = f'User does not exist: {email}'
             self.stdout.write(self.style.WARNING(message))
             return
 
         if person.user is None:
-            message = f"Not setting password for {email} because they have no user."
+            message = f'Not setting password for {email} because they have no user.'
             self.stdout.write(self.style.WARNING(message))
             return
 
         if person.user.last_login:
-            message = f"Not setting password for {email} because they already logged in."
+            message = f'Not setting password for {email} because they already logged in.'
             self.stdout.write(self.style.WARNING(message))
             return
 
@@ -77,4 +77,4 @@ class Command(BaseCommand):
             password = main_part
         person.user.set_password(password)
         person.user.save()
-        self.stdout.write(f"Set password of {email} to {password}")
+        self.stdout.write(f'Set password of {email} to {password}')

@@ -20,7 +20,9 @@ class ZoomableFormat(Format):
 
 register_image_format(
     ZoomableFormat(
-        'fullwidth-zoomable', _('Full width (zoomable) only if width > 1000 px'),
-        'richtext-image full-width zoomable', 'width-800',
+        'fullwidth-zoomable',
+        _('Full width (zoomable) only if width > 1000 px'),
+        'richtext-image full-width zoomable',
+        'width-800',
     ),
 )

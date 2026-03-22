@@ -86,9 +86,7 @@ def test_person_api_get_for_plan_unauthenticated(api_client, person_list_url, pl
 
 
 @pytest.mark.parametrize('admin_type', ['plan_admin', 'organization_plan_admin'])
-def test_person_api_get_authenticated_and_authorized_for_single_plan(
-    client, person_list_url, api_client, admin_type
-):
+def test_person_api_get_authenticated_and_authorized_for_single_plan(client, person_list_url, api_client, admin_type):
     plan_of_admin_person = PlanFactory.create()
 
     match admin_type:
@@ -100,9 +98,7 @@ def test_person_api_get_authenticated_and_authorized_for_single_plan(
         case 'organization_plan_admin':
             admin_person = PersonFactory.create(organization=plan_of_admin_person.organization)
             OrganizationPlanAdminFactory.create(
-                person=admin_person,
-                organization=plan_of_admin_person.organization,
-                plan=plan_of_admin_person
+                person=admin_person, organization=plan_of_admin_person.organization, plan=plan_of_admin_person
             )
         case _:
             pytest.fail('Unexpected admin_type')
@@ -129,8 +125,8 @@ def test_person_api_get_authenticated_and_authorized_for_single_plan(
 
 
 def test_person_api_get_authenticated_and_unauthorized(
-        client, person_list_url, api_client, plan_factory,
-        person_factory, action_contact_factory):
+    client, person_list_url, api_client, plan_factory, person_factory, action_contact_factory
+):
 
     admin_person = person_factory(general_admin_plans=[plan_factory()])
 
@@ -146,9 +142,7 @@ def test_person_api_get_authenticated_and_unauthorized(
     assert 'detail' in keys
 
 
-def test_person_api_get_unknown_plan(
-        client, person_list_url, api_client, plan_factory,
-        person_factory, action_contact_factory):
+def test_person_api_get_unknown_plan(client, person_list_url, api_client, plan_factory, person_factory, action_contact_factory):
 
     plan = plan_factory()
     admin_person = person_factory(general_admin_plans=[plan])
@@ -163,19 +157,20 @@ def test_person_api_get_unknown_plan(
     assert 'detail' in keys
 
 
-def test_action_api_post_unauthenticated(
-        api_client, action_list_url, action):
+def test_action_api_post_unauthenticated(api_client, action_list_url, action):
     response = api_client.post(action_list_url, {'name': 'foo'})
     assert response.status_code == 401
 
 
-def test_action_api_put_unauthenticated(
-        api_client, action, action_detail_url):
-    response = api_client.put(action_detail_url, data={
-        'id': action.pk,
-        'identifier': action.identifier,
-        'name': 'renamed',
-    })
+def test_action_api_put_unauthenticated(api_client, action, action_detail_url):
+    response = api_client.put(
+        action_detail_url,
+        data={
+            'id': action.pk,
+            'identifier': action.identifier,
+            'name': 'renamed',
+        },
+    )
     assert response.status_code == 401
 
 
@@ -195,11 +190,14 @@ def test_action_put_as_contact_person_denied_for_other_action(api_client, action
     assert action.plan not in user.person.general_admin_plans.all()
     assert contact.action != action
     api_client.force_login(user)
-    response = api_client.put(action_detail_url, data={
-        'identifier': 'ID-1',
-        'id': action.id,
-        'name': 'bar',
-    })
+    response = api_client.put(
+        action_detail_url,
+        data={
+            'identifier': 'ID-1',
+            'id': action.id,
+            'name': 'bar',
+        },
+    )
     assert response.status_code == 403
 
 
@@ -211,11 +209,16 @@ def test_action_bulk_put_as_contact_person_denied_for_other_action(api_client, a
     assert action.plan not in user.person.general_admin_plans.all()
     assert contact.action != action
     api_client.force_login(user)
-    response = api_client.put(action_list_url, data=[{
-        'identifier': 'ID-1',
-        'id': action.id,
-        'name': 'bar',
-    }])
+    response = api_client.put(
+        action_list_url,
+        data=[
+            {
+                'identifier': 'ID-1',
+                'id': action.id,
+                'name': 'bar',
+            }
+        ],
+    )
     assert response.status_code == 403
 
 
@@ -227,10 +230,7 @@ def test_action_put_as_contact_person_allowed_for_own_action(api_client, plan):
     assert contact.action.plan not in user.person.general_admin_plans.all()
     api_client.force_login(user)
     url = reverse('action-detail', kwargs={'plan_pk': plan.pk, 'pk': contact.action.pk})
-    response = api_client.put(url, data={
-        'identifier': 'ID-1',
-        'id': contact.action.id,
-        'name': 'bar'})
+    response = api_client.put(url, data={'identifier': 'ID-1', 'id': contact.action.id, 'name': 'bar'})
     assert response.status_code == 200
 
 
@@ -241,21 +241,14 @@ def test_action_bulk_put_as_contact_person_allowed_for_own_action(api_client, pl
     assert not user.is_superuser
     assert contact.action.plan not in user.person.general_admin_plans.all()
     api_client.force_login(user)
-    response = api_client.put(action_list_url, data=[{
-        'identifier': 'ID-1',
-        'id': contact.action.id,
-        'name': 'bar'}])
+    response = api_client.put(action_list_url, data=[{'identifier': 'ID-1', 'id': contact.action.id, 'name': 'bar'}])
     assert response.status_code == 200
 
 
-def test_action_post_as_plan_admin_allowed(
-        api_client, plan, action_list_url, plan_factory, person_factory):
+def test_action_post_as_plan_admin_allowed(api_client, plan, action_list_url, plan_factory, person_factory):
     admin_person = person_factory(general_admin_plans=[plan])
     api_client.force_login(admin_person.user)
-    response = api_client.post(action_list_url, data={
-        'identifier': 'ID-1',
-        'name': '_name_',
-        'plan': plan.pk})
+    response = api_client.post(action_list_url, data={'identifier': 'ID-1', 'name': '_name_', 'plan': plan.pk})
     assert response.status_code == 201
 
     # Verify that a log entry was created for the new action
@@ -263,16 +256,13 @@ def test_action_post_as_plan_admin_allowed(
     assert_log_entry_created(created_action, 'wagtail.create', admin_person.user, plan)
 
 
-def test_action_put_as_plan_admin_allowed(
-        api_client, plan, action, action_detail_url, person_factory):
+def test_action_put_as_plan_admin_allowed(api_client, plan, action, action_detail_url, person_factory):
     plan_of_admin_person = action.plan
     admin_person = person_factory(general_admin_plans=[plan_of_admin_person])
     api_client.force_login(admin_person.user)
-    response = api_client.put(action_detail_url, data={
-        'id': action.pk,
-        'identifier': 'ID-1',
-        'name': 'bar',
-        'plan': plan_of_admin_person.pk})
+    response = api_client.put(
+        action_detail_url, data={'id': action.pk, 'identifier': 'ID-1', 'name': 'bar', 'plan': plan_of_admin_person.pk}
+    )
     assert response.status_code == 200
 
     # Verify that a log entry was created for the updated action
@@ -280,8 +270,7 @@ def test_action_put_as_plan_admin_allowed(
     assert_log_entry_created(action, 'wagtail.edit', admin_person.user, plan_of_admin_person)
 
 
-def test_action_responsible_party_patch(
-        api_client, action, action_detail_url, plan_admin_user):
+def test_action_responsible_party_patch(api_client, action, action_detail_url, plan_admin_user):
     plan = action.plan
     plan_org = plan.organization
     other_org = OrganizationFactory.create()
@@ -290,9 +279,12 @@ def test_action_responsible_party_patch(
 
     # Check that normal case works
     initial_log_count = count_log_entries(instance=action, action='wagtail.edit', plan=plan)
-    response = api_client.patch(action_detail_url, data={
-        'responsible_parties': [{'organization': plan_org.pk, 'role': None}],
-    })
+    response = api_client.patch(
+        action_detail_url,
+        data={
+            'responsible_parties': [{'organization': plan_org.pk, 'role': None}],
+        },
+    )
     assert response.status_code == 200
 
     assert action.responsible_parties.count() == 1
@@ -303,34 +295,45 @@ def test_action_responsible_party_patch(
 
     # Ensure that only orgs that are available for the plan
     # can be selected.
-    response = api_client.patch(action_detail_url, data={
-        'responsible_parties': [{'organization': other_org.pk, 'role': None}],
-    })
+    response = api_client.patch(
+        action_detail_url,
+        data={
+            'responsible_parties': [{'organization': other_org.pk, 'role': None}],
+        },
+    )
     assert response.status_code == 400
 
     current_log_count = count_log_entries(instance=action, action='wagtail.edit', plan=plan)
-    response = api_client.patch(action_detail_url, data={
-        'responsible_parties': [],
-    })
+    response = api_client.patch(
+        action_detail_url,
+        data={
+            'responsible_parties': [],
+        },
+    )
     assert response.status_code == 200
     assert action.responsible_parties.count() == 0
 
     # Verify log entry was created for second successful PATCH
     assert count_log_entries(instance=action, action='wagtail.edit', plan=plan) == current_log_count + 1
 
-    response = api_client.patch(action_detail_url, data={
-        'responsible_parties': [{'organization': 'abc', 'role': None}],
-    })
+    response = api_client.patch(
+        action_detail_url,
+        data={
+            'responsible_parties': [{'organization': 'abc', 'role': None}],
+        },
+    )
     assert response.status_code == 400
 
-    response = api_client.patch(action_detail_url, data={
-        'responsible_parties': {'organization': plan_org.pk, 'role': None},
-    })
+    response = api_client.patch(
+        action_detail_url,
+        data={
+            'responsible_parties': {'organization': plan_org.pk, 'role': None},
+        },
+    )
     assert response.status_code == 400
 
 
-def test_action_delete_creates_log_entry(
-        api_client, plan, action_list_url, person_factory):
+def test_action_delete_creates_log_entry(api_client, plan, action_list_url, person_factory):
     """Test that deleting an action creates a PlanScopedModelLogEntry with action='wagtail.delete'."""
     admin_person = person_factory(general_admin_plans=[plan])
     api_client.force_login(admin_person.user)
@@ -350,12 +353,9 @@ def test_action_delete_creates_log_entry(
     # Verify that a log entry was created for the deletion
     content_type = ContentType.objects.get_for_model(Action, for_concrete_model=False)
     log_entry = PlanScopedModelLogEntry.objects.filter(
-        content_type=content_type,
-        object_id=str(action_pk),
-        action='wagtail.delete',
-        plan=plan
+        content_type=content_type, object_id=str(action_pk), action='wagtail.delete', plan=plan
     ).first()
-    assert log_entry is not None, f"Expected log entry for deleted action {action_pk}"
+    assert log_entry is not None, f'Expected log entry for deleted action {action_pk}'
     assert log_entry.user_id == admin_person.user.pk
 
 
@@ -400,8 +400,7 @@ def test_action_bulk_serializer_reorder(plan, order):
     assert [a1.order == a2.order for a1, a2 in zip(actions_after_save, actions, strict=False)]
 
 
-def test_bulk_action_post_creates_individual_log_entries(
-        api_client, plan, action_list_url, person_factory):
+def test_bulk_action_post_creates_individual_log_entries(api_client, plan, action_list_url, person_factory):
     """Test that bulk POST of actions creates individual PlanScopedModelLogEntry for each action."""
     admin_person = person_factory(general_admin_plans=[plan])
     api_client.force_login(admin_person.user)
@@ -409,11 +408,14 @@ def test_bulk_action_post_creates_individual_log_entries(
     initial_log_count = PlanScopedModelLogEntry.objects.filter(plan=plan, action='wagtail.create').count()
 
     # Bulk create 3 actions
-    response = api_client.post(action_list_url, data=[
-        {'identifier': 'BULK-1', 'name': 'Action 1', 'plan': plan.pk},
-        {'identifier': 'BULK-2', 'name': 'Action 2', 'plan': plan.pk},
-        {'identifier': 'BULK-3', 'name': 'Action 3', 'plan': plan.pk},
-    ])
+    response = api_client.post(
+        action_list_url,
+        data=[
+            {'identifier': 'BULK-1', 'name': 'Action 1', 'plan': plan.pk},
+            {'identifier': 'BULK-2', 'name': 'Action 2', 'plan': plan.pk},
+            {'identifier': 'BULK-3', 'name': 'Action 3', 'plan': plan.pk},
+        ],
+    )
     assert response.status_code == 201
 
     # Verify 3 actions were created
@@ -429,17 +431,13 @@ def test_bulk_action_post_creates_individual_log_entries(
         assert count_log_entries(instance=action, action='wagtail.create', plan=plan) == 1
 
 
-def test_bulk_action_put_creates_individual_log_entries(
-        api_client, plan, action_list_url, person_factory):
+def test_bulk_action_put_creates_individual_log_entries(api_client, plan, action_list_url, person_factory):
     """Test that bulk PUT of actions creates individual PlanScopedModelLogEntry for each action."""
     admin_person = person_factory(general_admin_plans=[plan])
     api_client.force_login(admin_person.user)
 
     # Create 3 actions to update
-    actions = [
-        ActionFactory.create(plan=plan, identifier=f'UPDATE-{i}', name=f'Original {i}')
-        for i in range(1, 4)
-    ]
+    actions = [ActionFactory.create(plan=plan, identifier=f'UPDATE-{i}', name=f'Original {i}') for i in range(1, 4)]
 
     # Clear any existing log entries for these actions to have a clean count
     initial_log_count = PlanScopedModelLogEntry.objects.filter(plan=plan, action='wagtail.edit').count()
@@ -463,7 +461,7 @@ def test_bulk_action_put_creates_individual_log_entries(
         action.refresh_from_db()
         # At minimum, there should be a wagtail.edit log entry
         total_logs = count_log_entries(instance=action, plan=plan)
-        assert total_logs >= 1, f"Expected at least 1 log entry for action {action.identifier}"
+        assert total_logs >= 1, f'Expected at least 1 log entry for action {action.identifier}'
 
 
 def test_category_api_get(api_client, category_list_url, category):
@@ -477,61 +475,49 @@ def test_category_api_get(api_client, category_list_url, category):
     assert obj['identifier'] == category.identifier
 
 
-def test_category_post_creates_log_entry(
-        api_client, plan, category_type, category_list_url, person_factory):
+def test_category_post_creates_log_entry(api_client, plan, category_type, category_list_url, person_factory):
     """Test that creating a category creates a PlanScopedModelLogEntry with action='wagtail.create'."""
     admin_person = person_factory(general_admin_plans=[plan])
     api_client.force_login(admin_person.user)
 
-    response = api_client.post(category_list_url, data={
-        'identifier': 'CAT-1',
-        'name': 'Test Category',
-        'type': category_type.pk,
-        'parent': None
-    })
+    response = api_client.post(
+        category_list_url, data={'identifier': 'CAT-1', 'name': 'Test Category', 'type': category_type.pk, 'parent': None}
+    )
     assert response.status_code == 201
 
     created_category = Category.objects.get(identifier='CAT-1', type=category_type)
     assert_log_entry_created(created_category, 'wagtail.create', admin_person.user, plan)
 
 
-def test_category_put_creates_log_entry(
-        api_client, plan, category_type, category_list_url, category_factory, person_factory):
+def test_category_put_creates_log_entry(api_client, plan, category_type, category_list_url, category_factory, person_factory):
     """Test that updating a category creates a PlanScopedModelLogEntry with action='wagtail.edit'."""
     admin_person = person_factory(general_admin_plans=[plan])
     api_client.force_login(admin_person.user)
 
     category = category_factory(type=category_type, name='Original Name')
-    category_detail_url = reverse('category-detail', kwargs={
-        'plan_pk': plan.pk,
-        'category_type_pk': category_type.pk,
-        'pk': category.pk
-    })
+    category_detail_url = reverse(
+        'category-detail', kwargs={'plan_pk': plan.pk, 'category_type_pk': category_type.pk, 'pk': category.pk}
+    )
 
-    response = api_client.put(category_detail_url, data={
-        'identifier': category.identifier,
-        'name': 'Updated Name',
-        'type': category_type.pk,
-        'parent': None
-    })
+    response = api_client.put(
+        category_detail_url,
+        data={'identifier': category.identifier, 'name': 'Updated Name', 'type': category_type.pk, 'parent': None},
+    )
     assert response.status_code == 200
 
     assert_log_entry_created(category, 'wagtail.edit', admin_person.user, plan)
 
 
-def test_category_delete_creates_log_entry(
-        api_client, plan, category_type, category_factory, person_factory):
+def test_category_delete_creates_log_entry(api_client, plan, category_type, category_factory, person_factory):
     """Test that deleting a category creates a PlanScopedModelLogEntry with action='wagtail.delete'."""
     admin_person = person_factory(general_admin_plans=[plan])
     api_client.force_login(admin_person.user)
 
     category = category_factory(type=category_type, identifier='DELETE-CAT')
     category_pk = category.pk
-    category_detail_url = reverse('category-detail', kwargs={
-        'plan_pk': plan.pk,
-        'category_type_pk': category_type.pk,
-        'pk': category.pk
-    })
+    category_detail_url = reverse(
+        'category-detail', kwargs={'plan_pk': plan.pk, 'category_type_pk': category_type.pk, 'pk': category.pk}
+    )
 
     response = api_client.delete(category_detail_url)
     assert response.status_code == 204
@@ -540,47 +526,43 @@ def test_category_delete_creates_log_entry(
 
     content_type = ContentType.objects.get_for_model(Category, for_concrete_model=False)
     log_entry = PlanScopedModelLogEntry.objects.filter(
-        content_type=content_type,
-        object_id=str(category_pk),
-        action='wagtail.delete',
-        plan=plan
+        content_type=content_type, object_id=str(category_pk), action='wagtail.delete', plan=plan
     ).first()
-    assert log_entry is not None, f"Expected log entry for deleted category {category_pk}"
+    assert log_entry is not None, f'Expected log entry for deleted category {category_pk}'
     assert log_entry.user_id == admin_person.user.pk
 
 
-def test_bulk_category_post_creates_individual_log_entries(
-        api_client, plan, category_type, category_list_url, person_factory):
+def test_bulk_category_post_creates_individual_log_entries(api_client, plan, category_type, category_list_url, person_factory):
     """Test that bulk POST of categories creates individual PlanScopedModelLogEntry for each category."""
     admin_person = person_factory(general_admin_plans=[plan])
     api_client.force_login(admin_person.user)
 
     initial_log_count = PlanScopedModelLogEntry.objects.filter(plan=plan, action='wagtail.create').count()
 
-    response = api_client.post(category_list_url, data=[
-        {'identifier': 'BULK-CAT-1', 'name': 'Category 1', 'type': category_type.pk, 'parent': None},
-        {'identifier': 'BULK-CAT-2', 'name': 'Category 2', 'type': category_type.pk, 'parent': None},
-        {'identifier': 'BULK-CAT-3', 'name': 'Category 3', 'type': category_type.pk, 'parent': None},
-    ])
+    response = api_client.post(
+        category_list_url,
+        data=[
+            {'identifier': 'BULK-CAT-1', 'name': 'Category 1', 'type': category_type.pk, 'parent': None},
+            {'identifier': 'BULK-CAT-2', 'name': 'Category 2', 'type': category_type.pk, 'parent': None},
+            {'identifier': 'BULK-CAT-3', 'name': 'Category 3', 'type': category_type.pk, 'parent': None},
+        ],
+    )
     assert response.status_code == 201
 
     assert Category.objects.filter(type=category_type, identifier__startswith='BULK-CAT-').count() == 3
 
     final_log_count = PlanScopedModelLogEntry.objects.filter(plan=plan, action='wagtail.create').count()
-    assert final_log_count == initial_log_count + 3, \
-        f"Expected 3 new log entries, got {final_log_count - initial_log_count}"
+    assert final_log_count == initial_log_count + 3, f'Expected 3 new log entries, got {final_log_count - initial_log_count}'
 
 
 def test_bulk_category_put_creates_individual_log_entries(
-        api_client, plan, category_type, category_list_url, category_factory, person_factory):
+    api_client, plan, category_type, category_list_url, category_factory, person_factory
+):
     """Test that bulk PUT of categories creates individual PlanScopedModelLogEntry for each category."""
     admin_person = person_factory(general_admin_plans=[plan])
     api_client.force_login(admin_person.user)
 
-    categories = [
-        category_factory(type=category_type, identifier=f'UPDATE-CAT-{i}', name=f'Original {i}')
-        for i in range(1, 4)
-    ]
+    categories = [category_factory(type=category_type, identifier=f'UPDATE-CAT-{i}', name=f'Original {i}') for i in range(1, 4)]
 
     initial_log_count = PlanScopedModelLogEntry.objects.filter(plan=plan, action='wagtail.edit').count()
 
@@ -594,69 +576,51 @@ def test_bulk_category_put_creates_individual_log_entries(
     assert response.status_code == 200
 
     final_log_count = PlanScopedModelLogEntry.objects.filter(plan=plan, action='wagtail.edit').count()
-    assert final_log_count == initial_log_count + 3, \
-        f"Expected 3 new log entries for bulk update, got {final_log_count - initial_log_count}"
+    assert final_log_count == initial_log_count + 3, (
+        f'Expected 3 new log entries for bulk update, got {final_log_count - initial_log_count}'
+    )
 
     for category in categories:
         total_logs = count_log_entries(instance=category, plan=plan)
-        assert total_logs >= 1, f"Expected at least 1 log entry for category {category.identifier}"
+        assert total_logs >= 1, f'Expected at least 1 log entry for category {category.identifier}'
 
 
-def test_action_task_post_creates_log_entry(
-        api_client, plan, action, action_task_list_url, person_factory):
+def test_action_task_post_creates_log_entry(api_client, plan, action, action_task_list_url, person_factory):
     """Test that creating an action task creates a PlanScopedModelLogEntry with action='wagtail.create'."""
     admin_person = person_factory(general_admin_plans=[plan])
     api_client.force_login(admin_person.user)
 
-    response = api_client.post(action_task_list_url, data={
-        'action': action.pk,
-        'name': 'Test Task',
-        'due_at': '2025-12-31',
-        'state': 'not_started'
-    })
+    response = api_client.post(
+        action_task_list_url, data={'action': action.pk, 'name': 'Test Task', 'due_at': '2025-12-31', 'state': 'not_started'}
+    )
     assert response.status_code == 201
 
     created_task = ActionTask.objects.get(action=action, name='Test Task')
     assert_log_entry_created(created_task, 'wagtail.create', admin_person.user, plan)
 
 
-def test_action_task_put_creates_log_entry(
-        api_client, plan, action, action_task_list_url, person_factory):
+def test_action_task_put_creates_log_entry(api_client, plan, action, action_task_list_url, person_factory):
     """Test that updating an action task creates a PlanScopedModelLogEntry with action='wagtail.edit'."""
     admin_person = person_factory(general_admin_plans=[plan])
     api_client.force_login(admin_person.user)
 
-    task = ActionTask.objects.create(
-        action=action,
-        name='Original Task',
-        due_at='2025-12-31',
-        state='not_started'
-    )
+    task = ActionTask.objects.create(action=action, name='Original Task', due_at='2025-12-31', state='not_started')
     task_detail_url = reverse('action-task-detail', kwargs={'plan_pk': plan.pk, 'pk': task.pk})
 
-    response = api_client.put(task_detail_url, data={
-        'action': action.pk,
-        'name': 'Updated Task',
-        'due_at': '2025-12-31',
-        'state': 'in_progress'
-    })
+    response = api_client.put(
+        task_detail_url, data={'action': action.pk, 'name': 'Updated Task', 'due_at': '2025-12-31', 'state': 'in_progress'}
+    )
     assert response.status_code == 200
 
     assert_log_entry_created(task, 'wagtail.edit', admin_person.user, plan)
 
 
-def test_action_task_delete_creates_log_entry(
-        api_client, plan, action, person_factory):
+def test_action_task_delete_creates_log_entry(api_client, plan, action, person_factory):
     """Test that deleting an action task creates a PlanScopedModelLogEntry with action='wagtail.delete'."""
     admin_person = person_factory(general_admin_plans=[plan])
     api_client.force_login(admin_person.user)
 
-    task = ActionTask.objects.create(
-        action=action,
-        name='Task to Delete',
-        due_at='2025-12-31',
-        state='not_started'
-    )
+    task = ActionTask.objects.create(action=action, name='Task to Delete', due_at='2025-12-31', state='not_started')
     task_pk = task.pk
     task_detail_url = reverse('action-task-detail', kwargs={'plan_pk': plan.pk, 'pk': task.pk})
 
@@ -667,50 +631,42 @@ def test_action_task_delete_creates_log_entry(
 
     content_type = ContentType.objects.get_for_model(ActionTask, for_concrete_model=False)
     log_entry = PlanScopedModelLogEntry.objects.filter(
-        content_type=content_type,
-        object_id=str(task_pk),
-        action='wagtail.delete',
-        plan=plan
+        content_type=content_type, object_id=str(task_pk), action='wagtail.delete', plan=plan
     ).first()
-    assert log_entry is not None, f"Expected log entry for deleted action task {task_pk}"
+    assert log_entry is not None, f'Expected log entry for deleted action task {task_pk}'
     assert log_entry.user_id == admin_person.user.pk
 
 
-def test_bulk_action_task_post_creates_individual_log_entries(
-        api_client, plan, action, action_task_list_url, person_factory):
+def test_bulk_action_task_post_creates_individual_log_entries(api_client, plan, action, action_task_list_url, person_factory):
     """Test that bulk POST of action tasks creates individual PlanScopedModelLogEntry for each task."""
     admin_person = person_factory(general_admin_plans=[plan])
     api_client.force_login(admin_person.user)
 
     initial_log_count = PlanScopedModelLogEntry.objects.filter(plan=plan, action='wagtail.create').count()
 
-    response = api_client.post(action_task_list_url, data=[
-        {'action': action.pk, 'name': 'Task 1', 'due_at': '2025-12-31', 'state': 'not_started'},
-        {'action': action.pk, 'name': 'Task 2', 'due_at': '2025-12-31', 'state': 'not_started'},
-        {'action': action.pk, 'name': 'Task 3', 'due_at': '2025-12-31', 'state': 'not_started'},
-    ])
+    response = api_client.post(
+        action_task_list_url,
+        data=[
+            {'action': action.pk, 'name': 'Task 1', 'due_at': '2025-12-31', 'state': 'not_started'},
+            {'action': action.pk, 'name': 'Task 2', 'due_at': '2025-12-31', 'state': 'not_started'},
+            {'action': action.pk, 'name': 'Task 3', 'due_at': '2025-12-31', 'state': 'not_started'},
+        ],
+    )
     assert response.status_code == 201
 
     assert ActionTask.objects.filter(action=action, name__startswith='Task ').count() == 3
 
     final_log_count = PlanScopedModelLogEntry.objects.filter(plan=plan, action='wagtail.create').count()
-    assert final_log_count == initial_log_count + 3, \
-        f"Expected 3 new log entries, got {final_log_count - initial_log_count}"
+    assert final_log_count == initial_log_count + 3, f'Expected 3 new log entries, got {final_log_count - initial_log_count}'
 
 
-def test_bulk_action_task_put_creates_individual_log_entries(
-        api_client, plan, action, action_task_list_url, person_factory):
+def test_bulk_action_task_put_creates_individual_log_entries(api_client, plan, action, action_task_list_url, person_factory):
     """Test that bulk PUT of action tasks creates individual PlanScopedModelLogEntry for each task."""
     admin_person = person_factory(general_admin_plans=[plan])
     api_client.force_login(admin_person.user)
 
     tasks = [
-        ActionTask.objects.create(
-            action=action,
-            name=f'Original Task {i}',
-            due_at='2025-12-31',
-            state='not_started'
-        )
+        ActionTask.objects.create(action=action, name=f'Original Task {i}', due_at='2025-12-31', state='not_started')
         for i in range(1, 4)
     ]
 
@@ -731,21 +687,23 @@ def test_bulk_action_task_put_creates_individual_log_entries(
     assert response.status_code == 200, response.content
 
     final_log_count = PlanScopedModelLogEntry.objects.filter(plan=plan, action='wagtail.edit').count()
-    assert final_log_count == initial_log_count + 3, \
-        f"Expected 3 new log entries for bulk update, got {final_log_count - initial_log_count}"
+    assert final_log_count == initial_log_count + 3, (
+        f'Expected 3 new log entries for bulk update, got {final_log_count - initial_log_count}'
+    )
 
     for task in tasks:
         total_logs = count_log_entries(instance=task, plan=plan)
-        assert total_logs >= 1, f"Expected at least 1 log entry for task {task.name}"
+        assert total_logs >= 1, f'Expected at least 1 log entry for task {task.name}'
 
 
-@pytest.mark.parametrize(('field_name', 'role'), [
-    ('contact_persons', 'editor'),  # ActionContactPerson requires a role (no blank allowed)
-    ('responsible_parties', None),  # ActionResponsibleParty allows blank/None role
-])
-def test_action_field_customization_restricts_editing(
-    api_client, plan, action, field_name, role
-):
+@pytest.mark.parametrize(
+    ('field_name', 'role'),
+    [
+        ('contact_persons', 'editor'),  # ActionContactPerson requires a role (no blank allowed)
+        ('responsible_parties', None),  # ActionResponsibleParty allows blank/None role
+    ],
+)
+def test_action_field_customization_restricts_editing(api_client, plan, action, field_name, role):
     """
     Test that BuiltInFieldCustomization restrictions are respected in the REST API.
 
@@ -784,13 +742,14 @@ def test_action_field_customization_restricts_editing(
     assert 'do not have permission' in response.json_data[field_name][0].lower()
 
 
-@pytest.mark.parametrize(('field_name', 'role'), [
-    ('contact_persons', 'editor'),  # ActionContactPerson requires a role (no blank allowed)
-    ('responsible_parties', None),  # ActionResponsibleParty allows blank/None role
-])
-def test_action_field_customization_allows_plan_admin(
-    api_client, plan, action, field_name, role
-):
+@pytest.mark.parametrize(
+    ('field_name', 'role'),
+    [
+        ('contact_persons', 'editor'),  # ActionContactPerson requires a role (no blank allowed)
+        ('responsible_parties', None),  # ActionResponsibleParty allows blank/None role
+    ],
+)
+def test_action_field_customization_allows_plan_admin(api_client, plan, action, field_name, role):
     """Test that plan admins can edit fields even when BuiltInFieldCustomization restricts to plan_admins."""
 
     from aplans.utils import InstancesEditableByMixin

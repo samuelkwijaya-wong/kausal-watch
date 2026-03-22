@@ -14,9 +14,9 @@ if TYPE_CHECKING:
     from grapple.types.streamfield import StreamFieldBlock
 
 
-
 def get_report_field_block() -> StreamFieldBlock | None:
     from reports.blocks.action_content import ReportFieldBlock
+
     return grapple_registry.streamfield_blocks.get(ReportFieldBlock)
 
 

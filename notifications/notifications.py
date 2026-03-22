@@ -122,20 +122,21 @@ class TaskLateNotification(DeadlinePassedNotification):
     def get_default_intro_text(cls):
         return pgettext(
             'task_late',
-            "This is an automatic reminder about updating "
-            "the task information of your action in the action plan. "
-            "There is an action whose deadline has passed. The action "
-            "is shown to be late until you mark it as done and fill in "
-            "some details.",
+            'This is an automatic reminder about updating '
+            'the task information of your action in the action plan. '
+            'There is an action whose deadline has passed. The action '
+            'is shown to be late until you mark it as done and fill in '
+            'some details.',
         )
 
     @classmethod
     def get_verbose_name(cls):
-        return _("Task is late")
+        return _('Task is late')
 
 
 class UpdatedIndicatorValuesLateNotification(DeadlinePassedNotification):
     obj: Indicator
+
     def __init__(self, plan: Plan, indicator: Indicator, days_late: int):
         super().__init__(NotificationType.UPDATED_INDICATOR_VALUES_LATE, plan, indicator, days_late)
 
@@ -144,18 +145,19 @@ class UpdatedIndicatorValuesLateNotification(DeadlinePassedNotification):
 
     @classmethod
     def get_verbose_name(cls):
-        return _("Updated indicator values are late")
+        return _('Updated indicator values are late')
 
     @classmethod
     def get_default_intro_text(cls):
         return pgettext(
             'updated_indicator_values_late',
-            "This is an automatic "
-            "reminder about updating indicator details in the action "
-            "plan.  The deadline for updating the indicator values has "
-            "passed. Please go and update the indicator with the latest "
-            "values.",
+            'This is an automatic '
+            'reminder about updating indicator details in the action '
+            'plan.  The deadline for updating the indicator values has '
+            'passed. Please go and update the indicator with the latest '
+            'values.',
         )
+
 
 class DeadlineSoonNotification(Notification):
     def __init__(self, type: NotificationType, plan: Plan, obj, days_left: int):
@@ -185,6 +187,7 @@ class DeadlineSoonNotification(Notification):
 
 class TaskDueSoonNotification(DeadlineSoonNotification):
     obj: ActionTask
+
     def __init__(self, plan: Plan, task: ActionTask, days_left: int):
         super().__init__(NotificationType.TASK_DUE_SOON, plan, task, days_left)
 
@@ -193,24 +196,25 @@ class TaskDueSoonNotification(DeadlineSoonNotification):
 
     @classmethod
     def get_verbose_name(cls):
-        return _("Task is due soon")
+        return _('Task is due soon')
 
     @classmethod
     def get_default_intro_text(cls):
         return pgettext(
             'task_due_soon',
-            "This is an automatic reminder about "
-            "updating the task information of your action in the action "
-            "plan.  There is an action in the action plan with a "
-            "deadline approaching. Please remember to mark the task as "
-            "done as soon as it has been completed. After the deadline "
-            "has gone, the action will be marked as late. You can edit "
-            "the task details from the link below.",
+            'This is an automatic reminder about '
+            'updating the task information of your action in the action '
+            'plan.  There is an action in the action plan with a '
+            'deadline approaching. Please remember to mark the task as '
+            'done as soon as it has been completed. After the deadline '
+            'has gone, the action will be marked as late. You can edit '
+            'the task details from the link below.',
         )
 
 
 class UpdatedIndicatorValuesDueSoonNotification(DeadlineSoonNotification):
     obj: Indicator
+
     def __init__(self, plan: Plan, indicator: Indicator, days_left: int):
         super().__init__(NotificationType.UPDATED_INDICATOR_VALUES_DUE_SOON, plan, indicator, days_left)
 
@@ -219,22 +223,23 @@ class UpdatedIndicatorValuesDueSoonNotification(DeadlineSoonNotification):
 
     @classmethod
     def get_verbose_name(cls):
-        return _("Updated indicator values are due soon")
+        return _('Updated indicator values are due soon')
 
     @classmethod
     def get_default_intro_text(cls):
         return pgettext(
             'updated_indicator_values_due_soon',
-            "This is an automatic "
-            "reminder about updating indicator details in the action "
-            "plan.  The deadline for updating the indicator values is "
-            "approaching. Please go and update the indicator with the "
-            "latest values.",
+            'This is an automatic '
+            'reminder about updating indicator details in the action '
+            'plan.  The deadline for updating the indicator values is '
+            'approaching. Please go and update the indicator with the '
+            'latest values.',
         )
 
 
 class NotEnoughTasksNotification(Notification):
     obj: Action
+
     def __init__(self, plan: Plan, action: Action):
         super().__init__(NotificationType.NOT_ENOUGH_TASKS, plan, action)
 
@@ -260,19 +265,20 @@ class NotEnoughTasksNotification(Notification):
     def get_default_intro_text(cls):
         return pgettext(
             'not_enough_tasks',
-            "This is an automatic reminder about "
-            "updating the action details in the action plan.  You can "
-            "see on the action plan watch site what has already been "
-            "done to further the actions and what has been planned for "
-            "the future.  This means that it would be preferrable for "
-            "each action to have at least one upcoming task within the "
-            "next year. Please go and add tasks for the action which "
-            "show what the next planned steps for the action are.",
+            'This is an automatic reminder about '
+            'updating the action details in the action plan.  You can '
+            'see on the action plan watch site what has already been '
+            'done to further the actions and what has been planned for '
+            'the future.  This means that it would be preferrable for '
+            'each action to have at least one upcoming task within the '
+            'next year. Please go and add tasks for the action which '
+            'show what the next planned steps for the action are.',
         )
 
 
 class ActionNotUpdatedNotification(Notification):
     obj: Action
+
     def __init__(self, plan: Plan, action: Action):
         super().__init__(NotificationType.ACTION_NOT_UPDATED, plan, action)
 
@@ -292,20 +298,20 @@ class ActionNotUpdatedNotification(Notification):
 
     @classmethod
     def get_verbose_name(cls):
-        return _("Action metadata has not been updated recently")
+        return _('Action metadata has not been updated recently')
 
     @classmethod
     def get_default_intro_text(cls):
         return pgettext(
             'action_not_updated',
-            "This is an automatic reminder about "
-            "updating the action details in the action plan.  You can "
-            "see on the action plan watch site what has already been done "
-            "to further the actions and what has been planned for the "
+            'This is an automatic reminder about '
+            'updating the action details in the action plan.  You can '
+            'see on the action plan watch site what has already been done '
+            'to further the actions and what has been planned for the '
             "future.  It's already six months since you last updated an "
-            "action. Please go and update the action with the latest "
-            "information. You can add an upcoming task to the action at "
-            "the same time.",
+            'action. Please go and update the action with the latest '
+            'information. You can add an upcoming task to the action at '
+            'the same time.',
         )
 
 
@@ -326,13 +332,13 @@ class UserFeedbackReceivedNotification(Notification):
 
     @classmethod
     def get_verbose_name(cls):
-        return _("User feedback received")
+        return _('User feedback received')
 
     @classmethod
     def get_default_intro_text(cls):
         return pgettext(
             'user_feedback_received',
-            "A user has submitted feedback.",
+            'A user has submitted feedback.',
         )
 
 
@@ -349,7 +355,8 @@ class ManuallyScheduledNotification(Notification):
         if now is None:
             now = self.plan.now_in_local_timezone()
         trigger_datetime = datetime.datetime.combine(
-            self.obj.date, datetime.datetime.min.time(),
+            self.obj.date,
+            datetime.datetime.min.time(),
         ).replace(tzinfo=self.plan.tzinfo)
 
         last_sent = self.notification_last_sent_datetime()
@@ -377,7 +384,7 @@ class ManuallyScheduledNotification(Notification):
 
     @classmethod
     def get_verbose_name(cls):
-        return _("Manually scheduled notification")
+        return _('Manually scheduled notification')
 
     @classmethod
     def get_default_intro_text(cls) -> None:

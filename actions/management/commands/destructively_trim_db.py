@@ -54,11 +54,7 @@ class Command(BaseCommand):
             action='store_true',
             help='Do not ask for confirmation but delete right away',
         )
-        parser.add_argument(
-            '--thorough',
-            action='store_true',
-            help='Delete more data, including revision history and audit logs'
-        )
+        parser.add_argument('--thorough', action='store_true', help='Delete more data, including revision history and audit logs')
 
     def handle(self, *args, **options):
         if not settings.DEBUG or settings.DEPLOYMENT_TYPE == 'production':
@@ -147,6 +143,7 @@ class Command(BaseCommand):
 
         from audit_logging.models import PlanScopedModelLogEntry, PlanScopedPageLogEntry
         from notifications.models import SentNotification
+
         try:
             from kausal_watch_extensions.models import AuthIDToken  # type: ignore[import-not-found]
         except ImportError:
@@ -175,7 +172,7 @@ class Command(BaseCommand):
             self.delete_all(AuthIDToken)
 
         with connection.cursor() as cursor, contextlib.suppress(ProgrammingError):
-            cursor.execute("DELETE FROM postgres_search_indexentry;")
+            cursor.execute('DELETE FROM postgres_search_indexentry;')
 
     @transaction.atomic
     def delete_data(

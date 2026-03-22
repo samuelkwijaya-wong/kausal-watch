@@ -17,18 +17,21 @@ def compute_dataset_goal_values(dataset):
     return compute_for_queryset(dataset, dataset.goal_data_points.all())
 
 
-@pytest.mark.parametrize(('op', 'a', 'b', 'expected'), [
-    ('multiply', Decimal(3), Decimal(5), Decimal(15)),
-    ('multiply', Decimal(0), Decimal(5), Decimal(0)),
-    ('multiply', Decimal(-2), Decimal(3), Decimal(-6)),
-    ('divide', Decimal(10), Decimal(2), Decimal(5)),
-    ('divide', Decimal(7), Decimal(3), Decimal(7) / Decimal(3)),
-    ('divide', Decimal(10), Decimal(0), None),
-    ('add', Decimal(3), Decimal(5), Decimal(8)),
-    ('add', Decimal(-3), Decimal(5), Decimal(2)),
-    ('subtract', Decimal(10), Decimal(3), Decimal(7)),
-    ('subtract', Decimal(3), Decimal(10), Decimal(-7)),
-])
+@pytest.mark.parametrize(
+    ('op', 'a', 'b', 'expected'),
+    [
+        ('multiply', Decimal(3), Decimal(5), Decimal(15)),
+        ('multiply', Decimal(0), Decimal(5), Decimal(0)),
+        ('multiply', Decimal(-2), Decimal(3), Decimal(-6)),
+        ('divide', Decimal(10), Decimal(2), Decimal(5)),
+        ('divide', Decimal(7), Decimal(3), Decimal(7) / Decimal(3)),
+        ('divide', Decimal(10), Decimal(0), None),
+        ('add', Decimal(3), Decimal(5), Decimal(8)),
+        ('add', Decimal(-3), Decimal(5), Decimal(2)),
+        ('subtract', Decimal(10), Decimal(3), Decimal(7)),
+        ('subtract', Decimal(3), Decimal(10), Decimal(-7)),
+    ],
+)
 def test_apply_op(op, a, b, expected):
     assert _apply_op(op, a, b) == expected
 
@@ -161,7 +164,10 @@ class TestComputeDatasetGoalValues:
         metric = DatasetMetric.objects.create(schema=schema, label='M')
         dataset = Dataset.objects.create(schema=schema)
         IndicatorGoalDataPoint.objects.create(
-            dataset=dataset, metric=metric, date=datetime.date(2030, 1, 1), value=Decimal(10),
+            dataset=dataset,
+            metric=metric,
+            date=datetime.date(2030, 1, 1),
+            value=Decimal(10),
         )
 
         assert compute_dataset_goal_values(dataset) == []

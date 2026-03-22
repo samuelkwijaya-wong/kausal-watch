@@ -11,4 +11,5 @@ if TYPE_CHECKING:
 class IndicatorGoalDataPointPermissionPolicy(DataPointPermissionPolicyBase['IndicatorGoalDataPoint']):
     def __init__(self):
         from indicators.models.goal_data_point import IndicatorGoalDataPoint
+
         super().__init__(IndicatorGoalDataPoint)

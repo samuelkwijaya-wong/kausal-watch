@@ -8,12 +8,12 @@ from ...main import copy_plan
 
 
 class Command(BaseCommand):
-    help = "Copy a plan"
+    help = 'Copy a plan'
 
     def add_arguments(self, parser):
         parser.add_argument(
             'identifier',
-            help="Copy the plan with the given identifier",
+            help='Copy the plan with the given identifier',
         )
         parser.add_argument(
             '--dest-identifier',
@@ -25,30 +25,30 @@ class Command(BaseCommand):
         )
         parser.add_argument(
             '--name-suffix',
-            help="Append the given suffix to the names of copies for models other than Plan (default: no suffix)",
+            help='Append the given suffix to the names of copies for models other than Plan (default: no suffix)',
         )
         parser.add_argument(
             '--root-page-title-suffix',
-            help="Append the given suffix to the title of the plan root page and its translations (default: no suffix)",
+            help='Append the given suffix to the title of the plan root page and its translations (default: no suffix)',
         )
         parser.add_argument(
             '--version-name',
-            help="Set the version name of the plan copy",
+            help='Set the version name of the plan copy',
         )
         parser.add_argument(
             '--supersede-original-plan',
-            help="Supersede original plan by its copy",
+            help='Supersede original plan by its copy',
             action='store_true',
         )
         parser.add_argument(
             '--supersede-original-actions',
-            help="Supersede original actions by their copies",
+            help='Supersede original actions by their copies',
             action='store_true',
         )
         parser.add_argument(
-            "--copy-indicators",
+            '--copy-indicators',
             help="Copy the plan's indicators instead of referencing the same existing indicators in both plans.",
-            action="store_true",
+            action='store_true',
         )
 
     def handle(self, *args, **options):

@@ -39,11 +39,16 @@ class DocumentationRootPage(DefaultSlugForCopyingMixin, Page):  # type: ignore[m
 
 
 class DocumentationPage(Page):
-    body = StreamField([
-        ('text', blocks.RichTextBlock(label=_('Text'))),
-    ], blank=True)
+    body = StreamField(
+        [
+            ('text', blocks.RichTextBlock(label=_('Text'))),
+        ],
+        blank=True,
+    )
     css_style = models.CharField[str, str](
-        max_length=1000, blank=True, verbose_name=_('CSS style'),
+        max_length=1000,
+        blank=True,
+        verbose_name=_('CSS style'),
         help_text=_('CSS style to be applied to the container of the body'),
     )
 

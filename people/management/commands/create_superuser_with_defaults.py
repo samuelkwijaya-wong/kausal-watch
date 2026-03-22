@@ -20,6 +20,7 @@ This command extends the default django command with Watch-specific additions.
 
 """
 
+
 class Command(SuperUserCommand):
     help = HELP
 
@@ -27,28 +28,24 @@ class Command(SuperUserCommand):
     def add_arguments(self, parser):
         super().add_arguments(parser)
         _ = parser.add_argument(
-            "--auth-backend",
-            help="Specifies the used auth backend for the client. If empty or left out, use password login.",
-            required=False
+            '--auth-backend',
+            help='Specifies the used auth backend for the client. If empty or left out, use password login.',
+            required=False,
         )
+        _ = parser.add_argument('--organization', help='Specifies the name used for the organization and client.', required=True)
         _ = parser.add_argument(
-            "--organization",
-            help="Specifies the name used for the organization and client.",
-            required=True
-        )
-        _ = parser.add_argument(
-            "--uuid",
-            help="Set the User UUID",
+            '--uuid',
+            help='Set the User UUID',
             required=False,
         )
         _ = parser.add_argument(
-            "--first-name",
-            help="Set the first name",
+            '--first-name',
+            help='Set the first name',
             required=False,
         )
         _ = parser.add_argument(
-            "--last-name",
-            help="Set the last name",
+            '--last-name',
+            help='Set the last name',
             required=False,
         )
 
@@ -63,9 +60,7 @@ class Command(SuperUserCommand):
             if not organization.is_root():
                 raise CommandError('Organization already exists but is not root.')
         if organization is None:
-            organization = Organization.add_root(
-                name=organization_name
-            )
+            organization = Organization.add_root(name=organization_name)
         return organization
 
     def ensure_client(self, organization_name: str, auth_backend: str, email_domain: str) -> Client:
@@ -101,7 +96,7 @@ class Command(SuperUserCommand):
                 'first_name': user.first_name,
                 'last_name': user.last_name,
                 'organization': organization,
-            }
+            },
         )
         if person.organization.name != organization.name:
             raise CommandError(f'Person already exists but has organization {person.organization.name}.')
@@ -130,13 +125,7 @@ class Command(SuperUserCommand):
         user.save()
 
     def ensure_superuser_has_defaults(
-        self,
-        user: User,
-        auth_backend: str,
-        organization_name: str,
-        first_name: str,
-        last_name: str,
-        uuid: UUID | None = None
+        self, user: User, auth_backend: str, organization_name: str, first_name: str, last_name: str, uuid: UUID | None = None
     ):
         """Apply app-specific defaults to ensure superuser can actually login."""
         assert user.is_superuser

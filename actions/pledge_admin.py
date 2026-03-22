@@ -87,7 +87,7 @@ class PledgeAdminForm(WatchAdminModelForm[Pledge]):
         slug = self.cleaned_data['slug']
         plan = self.instance.plan
         if Pledge.objects.filter(plan=plan, slug=slug).exclude(pk=self.instance.pk).exists():
-            raise ValidationError(_("There is already a pledge with this slug."))
+            raise ValidationError(_('There is already a pledge with this slug.'))
         return slug
 
     def save(self, commit=True):
@@ -206,9 +206,7 @@ class PledgeIndexView(WatchIndexView[Pledge]):
 
     @property
     def list_export(self) -> list[str]:
-        return ['id', 'name', 'slug', 'commitment_count'] + [
-            f'user_data:{key}' for key in self._user_data_keys
-        ]
+        return ['id', 'name', 'slug', 'commitment_count'] + [f'user_data:{key}' for key in self._user_data_keys]
 
     @list_export.setter
     def list_export(self, value: list[str]) -> None:
@@ -248,9 +246,7 @@ class PledgeIndexView(WatchIndexView[Pledge]):
     def stream_csv(self, queryset):
         """Override to use QUOTE_ALL so fields with spaces aren't split into separate columns."""
         writer = csv.DictWriter(Echo(), fieldnames=self.list_export, quoting=csv.QUOTE_ALL)
-        yield writer.writerow(
-            {field: self.get_heading(queryset, field) for field in self.list_export}
-        )
+        yield writer.writerow({field: self.get_heading(queryset, field) for field in self.list_export})
         for item in queryset:
             yield self.write_csv_row(writer, self.to_row_dict(item))
 
@@ -263,16 +259,10 @@ class PledgeIndexView(WatchIndexView[Pledge]):
 
         # Collect user_data values from all commitments for this pledge
         commitments_user_data = list(
-            item.commitments
-            .exclude(pledge_user__user_data={})
-            .values_list('pledge_user__user_data', flat=True)
+            item.commitments.exclude(pledge_user__user_data={}).values_list('pledge_user__user_data', flat=True)
         )
         for key in self._user_data_keys:
-            values = [
-                str(ud.get(key))
-                for ud in commitments_user_data
-                if ud and key in ud
-            ]
+            values = [str(ud.get(key)) for ud in commitments_user_data if ud and key in ud]
             row[f'user_data:{key}'] = ', '.join(values)
 
         return row

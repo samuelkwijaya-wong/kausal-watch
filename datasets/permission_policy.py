@@ -32,6 +32,7 @@ class ScopeInheritedDatasetPermissionPolicy(ModelPermissionPolicy[Dataset, HttpR
 
     def __init__(self):
         from kausal_common.datasets.models import Dataset
+
         super().__init__(model=Dataset)
 
     def construct_perm_q(self, user: User, action: ObjectSpecificAction) -> Q | None:
@@ -47,9 +48,9 @@ class ScopeInheritedDatasetPermissionPolicy(ModelPermissionPolicy[Dataset, HttpR
         editable_indicators = Indicator.objects.qs.modifiable_by(user)
 
         return Q(
-            Q(scope_content_type=action_ct, scope_id__in=editable_actions) |
-            Q(scope_content_type=category_ct, scope_id__in=editable_categories) |
-            Q(scope_content_type=indicator_ct, scope_id__in=editable_indicators)
+            Q(scope_content_type=action_ct, scope_id__in=editable_actions)
+            | Q(scope_content_type=category_ct, scope_id__in=editable_categories)
+            | Q(scope_content_type=indicator_ct, scope_id__in=editable_indicators)
         )
 
     def construct_perm_q_anon(self, action: ObjectSpecificAction) -> Q | None:
@@ -123,6 +124,7 @@ class ScopeInheritedDatasetPermissionPolicy(ModelPermissionPolicy[Dataset, HttpR
 
         return False
 
+
 type DataPointLike = DataPoint | IndicatorGoalDataPoint
 
 
@@ -186,21 +188,22 @@ class DataPointPermissionPolicyBase[DataPointM: DataPointLike](ModelPermissionPo
         dataset_policy = ScopeInheritedDatasetPermissionPolicy()
 
         # Check if user can edit any datasets
-        return Dataset.objects.filter(
-            dataset_policy.construct_perm_q(user, 'change')
-        ).exists()
+        return Dataset.objects.filter(dataset_policy.construct_perm_q(user, 'change')).exists()
 
 
 class DataPointPermissionPolicy(DataPointPermissionPolicyBase[DataPoint]):
     def __init__(self):
         from kausal_common.datasets.models import DataPoint
+
         super().__init__(DataPoint)
+
 
 class DatasetSchemaPermissionPolicy(ModelPermissionPolicy[DatasetSchema, None, DatasetSchemaQuerySet]):
     # To be implemented; creating schemas in the UI is not yet supported in Watch
 
     def __init__(self):
         from kausal_common.datasets.models import DatasetSchema
+
         super().__init__(model=DatasetSchema)
 
     def construct_perm_q(self, user: User, action: ObjectSpecificAction) -> Q | None:
@@ -215,8 +218,8 @@ class DatasetSchemaPermissionPolicy(ModelPermissionPolicy[DatasetSchema, None, D
         adminable_categories = Category.objects.filter(type__plan__in=adminable_plans)
 
         return Q(
-            Q(scopes__scope_content_type=plan_ct, scopes__scope_id__in=adminable_plans) |
-            Q(scopes__scope_content_type=category_ct, scopes__scope_id__in=adminable_categories)
+            Q(scopes__scope_content_type=plan_ct, scopes__scope_id__in=adminable_plans)
+            | Q(scopes__scope_content_type=category_ct, scopes__scope_id__in=adminable_categories)
         )
 
     def construct_perm_q_anon(self, action: ObjectSpecificAction) -> Q | None:
@@ -249,6 +252,7 @@ class DataSourcePermissionPolicy(ModelPermissionPolicy[DataSource, None, Permiss
 
     def __init__(self):
         from kausal_common.datasets.models import DataSource
+
         super().__init__(model=DataSource)
 
     @override

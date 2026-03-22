@@ -104,9 +104,10 @@ def get_default_action_filter_blocks(plan: Plan) -> dict[str, blocks.StreamValue
     action_ats: AttributeTypeQuerySet = AttributeType.objects.for_actions(plan)
     for atype in action_ats:
         if atype.format not in (
-                atype.AttributeFormat.UNORDERED_CHOICE,
-                atype.AttributeFormat.ORDERED_CHOICE,
-                atype.AttributeFormat.OPTIONAL_CHOICE_WITH_TEXT):
+            atype.AttributeFormat.UNORDERED_CHOICE,
+            atype.AttributeFormat.ORDERED_CHOICE,
+            atype.AttributeFormat.OPTIONAL_CHOICE_WITH_TEXT,
+        ):
             continue
         f = {'type': 'attribute', 'value': {'attribute_type': atype.id}}
         filter_blocks.append(f)

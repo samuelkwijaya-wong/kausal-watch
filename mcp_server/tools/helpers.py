@@ -44,17 +44,20 @@ WRITE_AUTH_DURATION_MAP: dict[str, timedelta] = {
     '24h': timedelta(hours=24),
 }
 
+
 @overload
 def register_tool[F: ToolFunc](func: F) -> F: ...
 
+
 @overload
 def register_tool[F: ToolFunc](*, annotations: ToolAnnotations | None = None) -> Callable[[F], F]: ...
+
 
 def register_tool[F: ToolFunc](func: F | None = None, *, annotations: ToolAnnotations | None = None) -> F | Callable[[F], F]:
     def decorator(f: F) -> F:
         for existing_func, _ in tool_registry:
             if existing_func is f:
-                raise ValueError(f"Tool {f.__name__} already registered")
+                raise ValueError(f'Tool {f.__name__} already registered')
         tool_registry.append((f, annotations))
         return f
 
@@ -136,15 +139,12 @@ async def prompt_mcp_plan_write_authorization(
     plan = await resolve_plan_by_id_or_identifier(plan_ref)
     choices = duration_choices or WRITE_AUTH_DURATION_CHOICES
     if len(choices) == 1:
-        duration_prompt = f"Confirm the {choices[0]} authorization duration."
+        duration_prompt = f'Confirm the {choices[0]} authorization duration.'
     else:
-        duration_prompt = "Choose how long this authorization should remain valid."
+        duration_prompt = 'Choose how long this authorization should remain valid.'
 
     response = await ctx.elicit(
-        (
-            f"Authorize write access for plan {plan.name} ({plan.identifier}) using tool '{tool_name}'. "
-            f'{duration_prompt}'
-        ),
+        (f"Authorize write access for plan {plan.name} ({plan.identifier}) using tool '{tool_name}'. {duration_prompt}"),
         choices,  # type: ignore[arg-type]
     )
     if isinstance(response, (DeclinedElicitation, CancelledElicitation)):
@@ -167,8 +167,7 @@ async def require_mcp_plan_write_authorization(plan_ref: str, tool_name: str, ct
         await _persist_write_authorization_grant(plan_ref=plan_ref, granted_by_tool=tool_name, duration_key=duration_key)
         return
     raise ToolError(
-        f"No active write authorization for plan '{plan.identifier}' when calling '{tool_name}'. "
-        'Call authorize_plan_edits first.'
+        f"No active write authorization for plan '{plan.identifier}' when calling '{tool_name}'. Call authorize_plan_edits first."
     )
 
 
@@ -178,10 +177,7 @@ async def authorize_mcp_plan_write_access(plan_ref: str, duration_key: str, gran
         granted_by_tool=granted_by_tool,
         duration_key=duration_key,
     )
-    return (
-        f"Write access authorized for plan '{plan.identifier}' until "
-        f'{timezone.localtime(expires_at).isoformat()}.'
-    )
+    return f"Write access authorized for plan '{plan.identifier}' until {timezone.localtime(expires_at).isoformat()}."
 
 
 async def execute_schema_query(query: str, variables: dict[str, Any] | None = None) -> ExecutionResult:
@@ -220,7 +216,7 @@ async def execute_operation[T: QueryModel | MutationModel](operation_class: type
 
     if result.errors:
         error_msgs = '; '.join(str(e) for e in result.errors)
-        msg = f"GraphQL errors: {error_msgs}"
+        msg = f'GraphQL errors: {error_msgs}'
         raise RuntimeError(msg)
 
     # Validate and return the result

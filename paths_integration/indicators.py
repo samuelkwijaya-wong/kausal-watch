@@ -27,16 +27,19 @@ async def get_indicator_values(plan: Plan, indicator: Indicator) -> dict[str, An
     instance = response.instance
     if node is None:
         raise ValueError(
-            _('Node %(node)s not found in Paths instance %(instance)s') % {
+            _('Node %(node)s not found in Paths instance %(instance)s')
+            % {
                 'node': indicator.kausal_paths_node_uuid,
                 'instance': plan.kausal_paths_instance_uuid,
-            })
+            }
+        )
     metric_dim = node.metric_dim
     if metric_dim is None:
         raise ValueError(
-            _('No values received for node %(node)s in Paths instance %(instance)') % {
+            _('No values received for node %(node)s in Paths instance %(instance)')
+            % {
                 'node': indicator.kausal_paths_node_uuid,
-                'instance':  plan.kausal_paths_instance_uuid,
+                'instance': plan.kausal_paths_instance_uuid,
             }
         )
 
@@ -45,4 +48,4 @@ async def get_indicator_values(plan: Plan, indicator: Indicator) -> dict[str, An
         'node': node,
         'dimensional_metric': metric_dim,
         'source_url': client_url,
-        }
+    }

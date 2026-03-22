@@ -57,6 +57,7 @@ class SerializedAttributeVersion(SerializedVersion):
             attribute_path=attribute_path,
         )
 
+
 @dataclass
 class SerializedActionVersion(SerializedVersion):
     completed_at: datetime | None

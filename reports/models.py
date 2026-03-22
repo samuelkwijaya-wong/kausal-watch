@@ -37,7 +37,6 @@ from .types import LiveVersions, SerializedActionVersion
 from actions.models import AttributeType
 
 if TYPE_CHECKING:
-
     from wagtail.blocks.struct_block import StructValue
 
     from kausal_common.models.types import FK
@@ -57,9 +56,13 @@ class ReportType(PlanRelatedModelWithRevision):
     name = models.CharField(max_length=100, verbose_name=_('name'))
     fields: StreamField[StreamValue] = StreamField(block_types=ReportFieldBlock(), null=True, blank=True)  # type: ignore[misc, assignment]  # FIXME: Should not be nullable?
     only_plan_admins_can_mark_actions_as_complete = models.BooleanField(
-        default=False, help_text=_('Only plan admins can mark actions as complete for reports of this type'))
+        default=False, help_text=_('Only plan admins can mark actions as complete for reports of this type')
+    )
     public_fields: ClassVar[list[str]] = [
-        'id', 'plan', 'name', 'reports',
+        'id',
+        'plan',
+        'name',
+        'reports',
     ]
 
     id: int
@@ -72,15 +75,16 @@ class ReportType(PlanRelatedModelWithRevision):
     def generate_for_plan_dashboard(plan: Plan, user: UserOrAnon) -> ReportType:
         report_type = ReportType(plan=plan, name='Dashboard export', fields=None)
         action_list_page = cast('ActionListPage', plan.root_page.get_children().type(ActionListPage).get().specific)
-        dashboard_blocks = [
-            (x.block_type, x.value)
-            for x in action_list_page.dashboard_columns
-        ] if action_list_page.dashboard_columns else []
+        dashboard_blocks = (
+            [(x.block_type, x.value) for x in action_list_page.dashboard_columns] if action_list_page.dashboard_columns else []
+        )
         dashboard_blocks = [
             # filter out non-public attribute fields
-            (bt, val) for bt, val in dashboard_blocks
+            (bt, val)
+            for bt, val in dashboard_blocks
             if bt != 'attribute' or val['attribute_type'].instances_visible_for == 'public'
         ]
+
         def get_value(field_id: str, value: StructValue) -> StructValue | dict:
             if field_id == 'attribute':
                 # Once the report block and the dashboard column block share the implementation,
@@ -162,9 +166,10 @@ class ReportType(PlanRelatedModelWithRevision):
         if duplicates:
             raise ValidationError({
                 'fields': _(
-                    "Duplicate fields detected: %(duplicates)s. "
-                    "Each field type (attribute type, category type) can only be added once."
-                ) % {'duplicates': ', '.join(duplicates)}
+                    'Duplicate fields detected: %(duplicates)s. '
+                    'Each field type (attribute type, category type) can only be added once.'
+                )
+                % {'duplicates': ', '.join(duplicates)}
             })
 
 
@@ -180,11 +185,13 @@ class Report(PlanRelatedModelWithRevision):
     start_date = models.DateField(verbose_name=_('start date'))
     end_date = models.DateField(verbose_name=_('end date'))
     is_complete = models.BooleanField(
-        default=False, verbose_name=_('complete'),
+        default=False,
+        verbose_name=_('complete'),
         help_text=_('Set if report cannot be changed anymore'),
     )
     is_public = models.BooleanField(
-        default=False, verbose_name=_('public'),
+        default=False,
+        verbose_name=_('public'),
         help_text=_('Set if report can be shown to the public'),
     )
     show_in_reporting_tab = models.BooleanField(
@@ -201,7 +208,12 @@ class Report(PlanRelatedModelWithRevision):
     fields: StreamField[StreamValue] = StreamField(block_types=ReportFieldBlock(), null=True, blank=True)  # type: ignore[misc, assignment]  # FIXME: Should not be nullable?
 
     public_fields: ClassVar[list[str]] = [
-        'type', 'name', 'identifier', 'start_date', 'end_date', 'fields',
+        'type',
+        'name',
+        'identifier',
+        'start_date',
+        'end_date',
+        'fields',
     ]
 
     # Non-persisted fields used only for action dashboard UI reports
@@ -234,7 +246,7 @@ class Report(PlanRelatedModelWithRevision):
         return self.xlsx_exporter
 
     def _raise_complete(self) -> Never:
-        raise ValueError(_("The report is already marked as complete."))
+        raise ValueError(_('The report is already marked as complete.'))
 
     def get_live_versions(self, action_ids: list[int] | None = None) -> LiveVersions:
         """
@@ -247,26 +259,46 @@ class Report(PlanRelatedModelWithRevision):
         if self.is_complete:
             self._raise_complete()
 
-        if ((child_plans := self.type.plan.children.get_queryset().live().values_list('id', flat=True)) and
+        if (
+            (child_plans := self.type.plan.children.get_queryset().live().values_list('id', flat=True))
+            and
             # TODO: add .visible_for_user() when it is implemented
-                self.type.get_action_list_page().include_related_plans):
+            self.type.get_action_list_page().include_related_plans
+        ):
             plans = list(child_plans) + [self.type.plan.id]
             actions_to_snapshot = (
-                Action.objects.get_queryset().filter(plan__in=plans).visible_for_user(None)
+                Action.objects
+                .get_queryset()
+                .filter(plan__in=plans)
+                .visible_for_user(None)
                 .prefetch_related(
-                    'responsible_parties__organization', 'categories__type', 'choice_attributes__choice',
-                    'choice_with_text_attributes__choice', 'text_attributes__type', 'rich_text_attributes__type',
-                    'numeric_value_attributes__type', 'category_choice_attributes__type', 'related_indicators',
+                    'responsible_parties__organization',
+                    'categories__type',
+                    'choice_attributes__choice',
+                    'choice_with_text_attributes__choice',
+                    'text_attributes__type',
+                    'rich_text_attributes__type',
+                    'numeric_value_attributes__type',
+                    'category_choice_attributes__type',
+                    'related_indicators',
                     'action_category_through__category',
                 )
             ).order_by('plan', 'order')
         else:
             actions_to_snapshot = (
-                self.type.plan.actions.get_queryset().visible_for_user(None)
+                self.type.plan.actions
+                .get_queryset()
+                .visible_for_user(None)
                 .prefetch_related(
-                    'responsible_parties__organization', 'categories__type', 'choice_attributes__choice',
-                    'choice_with_text_attributes__choice', 'text_attributes__type', 'rich_text_attributes__type',
-                    'numeric_value_attributes__type', 'category_choice_attributes__type', 'related_indicators',
+                    'responsible_parties__organization',
+                    'categories__type',
+                    'choice_attributes__choice',
+                    'choice_with_text_attributes__choice',
+                    'text_attributes__type',
+                    'rich_text_attributes__type',
+                    'numeric_value_attributes__type',
+                    'category_choice_attributes__type',
+                    'related_indicators',
                     'action_category_through__category',
                 )
             ).order_by('order')
@@ -284,23 +316,25 @@ class Report(PlanRelatedModelWithRevision):
         )
 
         # Fetch all relevant ActionSnapshots in a single query
-        all_snapshots = ActionSnapshot.objects.filter(
-            action_version__in=version_qs,
-            report_id=self.pk
-        ).select_related(
-            'action_version__revision',
-        ).order_by(
-            '-action_version__revision__date_created',
+        all_snapshots = (
+            ActionSnapshot.objects
+            .filter(action_version__in=version_qs, report_id=self.pk)
+            .select_related(
+                'action_version__revision',
+            )
+            .order_by(
+                '-action_version__revision__date_created',
+            )
         )
 
-        snapshot_counts = all_snapshots.values('action_version__object_id').annotate(
-            snapshot_count=models.Count('id')
-        ).values('action_version__object_id', 'snapshot_count')
+        snapshot_counts = (
+            all_snapshots
+            .values('action_version__object_id')
+            .annotate(snapshot_count=models.Count('id'))
+            .values('action_version__object_id', 'snapshot_count')
+        )
 
-        counts_by_action = {
-            str(item['action_version__object_id']): item['snapshot_count']
-            for item in snapshot_counts
-        }
+        counts_by_action = {str(item['action_version__object_id']): item['snapshot_count'] for item in snapshot_counts}
 
         action_snapshots_by_action_pk: dict[int, ActionSnapshot] = dict()
 
@@ -309,9 +343,9 @@ class Report(PlanRelatedModelWithRevision):
             if action_pk not in action_snapshots_by_action_pk:
                 action_snapshots_by_action_pk[int(action_pk)] = snapshot
                 if counts_by_action.get(action_pk, 0) > 1:
-                    capture_message("Database consistency error: snapshot has multiple versions")
+                    capture_message('Database consistency error: snapshot has multiple versions')
 
-        related_versions: set[Version] = set() # non-Action versions from the same revision as any of our actions
+        related_versions: set[Version] = set()  # non-Action versions from the same revision as any of our actions
 
         for action in actions_to_snapshot:
             snapshot = action_snapshots_by_action_pk.get(action.pk)  # type: ignore[assignment]
@@ -365,7 +399,7 @@ class Report(PlanRelatedModelWithRevision):
 
     def undo_marking_as_complete(self, user):
         if not self.is_complete:
-            raise ValueError(_("The report is not marked as complete."))
+            raise ValueError(_('The report is not marked as complete.'))
         with reversion.create_revision():
             reversion.set_comment(_("Undid marking report '%s' as complete") % self)
             reversion.set_user(user)
@@ -418,7 +452,10 @@ class ActionSnapshot(models.Model):
         return revision.version_set.select_related('content_type')
 
     def get_attribute_for_type_from_versions(
-        self, attribute_type: AttributeType, versions: models.QuerySet[Version], ct: ContentType,
+        self,
+        attribute_type: AttributeType,
+        versions: models.QuerySet[Version],
+        ct: ContentType,
     ) -> models.Model | None:
         # FIXME: This relies on `serialized_data` to contain strings exactly in a certain syntax, which is an
         # implementation detail. Unfortunately, `serialized_data` is not a JSON field, so we can't use Django's
@@ -465,7 +502,9 @@ class ActionSnapshot(models.Model):
         """
         ct = ContentType.objects.get_for_model(Action)
         return self.get_attribute_for_type_from_versions(
-            attribute_type, self.get_related_versions(), ct,
+            attribute_type,
+            self.get_related_versions(),
+            ct,
         )
 
     def get_serialized_data(self) -> SerializedActionVersion:

@@ -114,13 +114,18 @@ class AdaptiveEmbedBlock(blocks.StructBlock):
     # The extra inner field is just to enable the custom
     # resolve_html method
     embed: blocks.StructBlock = blocks.StructBlock(
-        [('url', blocks.CharBlock(label=_('URL'))),
-         # The height value is actually used as a generic size parameter whose interpretation dependends on
-         # the type of embed (the provider)
-         ('height', blocks.ChoiceBlock(
-             choices=[('s', _('small')), ('m', _('medium')), ('l', _('large'))],
-             label=_('Size'),
-         ))],
+        [
+            ('url', blocks.CharBlock(label=_('URL'))),
+            # The height value is actually used as a generic size parameter whose interpretation dependends on
+            # the type of embed (the provider)
+            (
+                'height',
+                blocks.ChoiceBlock(
+                    choices=[('s', _('small')), ('m', _('medium')), ('l', _('large'))],
+                    label=_('Size'),
+                ),
+            ),
+        ],
     )
     full_width: blocks.BooleanBlock = blocks.BooleanBlock(required=False)
 
@@ -133,7 +138,7 @@ class AdaptiveEmbedBlock(blocks.StructBlock):
         try:
             get_finder_for_embed(url)
         except EmbedUnsupportedProviderException as e:
-            raise ValidationError(_("The source URL of the embed is invalid or not supported.")) from e
+            raise ValidationError(_('The source URL of the embed is invalid or not supported.')) from e
         return result
 
     class Meta:
@@ -167,10 +172,12 @@ class QuestionAnswerBlock(blocks.StructBlock):
 
 @register_streamfield_block
 class FrontPageHeroBlock(blocks.StructBlock):
-    layout = blocks.ChoiceBlock(choices=[
-        ('big_image', _('Big image')),
-        ('small_image', _('Small image')),
-    ])
+    layout = blocks.ChoiceBlock(
+        choices=[
+            ('big_image', _('Big image')),
+            ('small_image', _('Small image')),
+        ]
+    )
     image = ImageChooserBlock(label=_('Image'))
     heading = blocks.CharBlock(classname='full title', label=_('Heading'), required=False)
     lead = blocks.RichTextBlock(label=_('Lead'), required=False)
@@ -284,7 +291,8 @@ class AccessibilityStatementPreparationInformationBlock(blocks.StaticBlock):
 class AccessibilityStatementContactInformationBlock(blocks.StructBlock):
     publisher_name = blocks.CharBlock(label=_('Publisher name'))
     maintenance_responsibility_paragraph = blocks.CharBlock(
-        required=False, label=_('Maintenance responsibility paragraph'),
+        required=False,
+        label=_('Maintenance responsibility paragraph'),
         help_text=_('If this is set, it will be displayed instead of "This service is published by [publisher]".'),
     )
     email = blocks.CharBlock(label=_('Email address'))

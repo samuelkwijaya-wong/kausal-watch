@@ -59,10 +59,13 @@ def assert_body_block(graphql_client_query_data, plan, block_fields, expected, e
           }
         }
         %(extra_fragments)s
-        """ % {'page_type': type(page).__name__,
-               'block_type': block_type,
-               'block_fields': block_fields,
-               'extra_fragments': extra_fragments_str},
+        """
+        % {
+            'page_type': type(page).__name__,
+            'block_type': block_type,
+            'block_fields': block_fields,
+            'extra_fragments': extra_fragments_str,
+        },
         variables={
             'plan': plan.identifier,
             'path': page.url_path,
@@ -199,27 +202,29 @@ def test_indicator_group_block(graphql_client_query_data, indicator, indicator_b
         """,
         expected={
             'title': indicator_group_block['title'],
-            'indicators': [{
-                'style': 'graph',
-                'indicator': {
-                    'id': str(indicator.id),
-                    'identifier': indicator.identifier,
-                    'name': indicator.name,
-                    'unit': {
-                        'id': str(unit.id),
-                        'shortName': unit.short_name,
-                        'name': unit.name,
+            'indicators': [
+                {
+                    'style': 'graph',
+                    'indicator': {
+                        'id': str(indicator.id),
+                        'identifier': indicator.identifier,
+                        'name': indicator.name,
+                        'unit': {
+                            'id': str(unit.id),
+                            'shortName': unit.short_name,
+                            'name': unit.name,
+                        },
+                        'minValue': indicator.min_value,
+                        'maxValue': indicator.max_value,
+                        'description': indicator.description,
+                        # graphene_django puts choices into upper case in converter.convert_choice_name()
+                        'timeResolution': indicator.time_resolution.upper(),
+                        'latestValue': None,
+                        'goals': [],
+                        'level': None,
                     },
-                    'minValue': indicator.min_value,
-                    'maxValue': indicator.max_value,
-                    'description': indicator.description,
-                    # graphene_django puts choices into upper case in converter.convert_choice_name()
-                    'timeResolution': indicator.time_resolution.upper(),
-                    'latestValue': None,
-                    'goals': [],
-                    'level': None,
-                },
-            }],
+                }
+            ],
         },
     )
 
@@ -337,12 +342,14 @@ def test_card_list_block(graphql_client_query_data, card_block, plan_with_pages)
         expected={
             'heading': card_list_block['heading'],
             'lead': card_list_block['lead'],
-            'cards': [{
-                'image': expected_result_multi_use_image_fragment(card_block['image']),
-                'heading': card_block['heading'],
-                'content': card_block['content'],
-                'link': card_block['link'],
-            }],
+            'cards': [
+                {
+                    'image': expected_result_multi_use_image_fragment(card_block['image']),
+                    'heading': card_block['heading'],
+                    'content': card_block['content'],
+                    'link': card_block['link'],
+                }
+            ],
         },
     )
 
@@ -369,10 +376,12 @@ def test_question_answer_block(graphql_client_query_data, plan_with_pages, stati
         """,
         expected={
             'heading': question_answer_block['heading'],
-            'questions': [{
-                'question': question_block['question'],
-                'answer': str(question_block['answer']),
-            }],
+            'questions': [
+                {
+                    'question': question_block['question'],
+                    'answer': str(question_block['answer']),
+                }
+            ],
         },
     )
 
@@ -419,7 +428,8 @@ def test_static_page_header_image(graphql_client_query_data, plan_with_pages, st
             }
           }
         }
-        """ + MULTI_USE_IMAGE_FRAGMENT,
+        """
+        + MULTI_USE_IMAGE_FRAGMENT,
         variables={
             'plan': plan_with_pages.identifier,
             'path': static_page.url_path,
@@ -472,23 +482,31 @@ def test_static_page_body(graphql_client_query_data, plan_with_pages, static_pag
     )
     expected = {
         'planPage': {
-            'body': [{
-                'id': static_page.body[0].id,
-                'blockType': 'RichTextBlock',
-                'field': 'paragraph',
-                'value': str(static_page.body[0].value),
-            }, {
-                'id': static_page.body[1].id,
-                'blockType': 'QuestionAnswerBlock',
-                'field': 'qa_section',
-            }],
+            'body': [
+                {
+                    'id': static_page.body[0].id,
+                    'blockType': 'RichTextBlock',
+                    'field': 'paragraph',
+                    'value': str(static_page.body[0].value),
+                },
+                {
+                    'id': static_page.body[1].id,
+                    'blockType': 'QuestionAnswerBlock',
+                    'field': 'qa_section',
+                },
+            ],
         },
     }
     assert data == expected
 
 
 def test_attribute_category_choices_are_resolved_correctly(
-    graphql_client_query_data, plan_with_pages, category_factory, category_page, category_type_factory, attribute_type_factory,
+    graphql_client_query_data,
+    plan_with_pages,
+    category_factory,
+    category_page,
+    category_type_factory,
+    attribute_type_factory,
     attribute_category_choice_factory,
 ):
     category_type_host = category_page.category.type
@@ -523,10 +541,12 @@ def test_attribute_category_choices_are_resolved_correctly(
     expected = {
         'planPage': {
             'category': {
-                'attributes': [{
-                    'keyIdentifier': at0.identifier,
-                    'categories': [{'id': str(c.id)} for c in acc0.categories.all()],
-                }],
+                'attributes': [
+                    {
+                        'keyIdentifier': at0.identifier,
+                        'categories': [{'id': str(c.id)} for c in acc0.categories.all()],
+                    }
+                ],
             },
         },
     }
@@ -535,7 +555,12 @@ def test_attribute_category_choices_are_resolved_correctly(
 
 
 def test_attribute_order_as_in_attribute_type(
-    graphql_client_query_data, plan_with_pages, category, category_page, category_type, attribute_type_factory,
+    graphql_client_query_data,
+    plan_with_pages,
+    category,
+    category_page,
+    category_type,
+    attribute_type_factory,
     attribute_rich_text_factory,
 ):
     at0 = attribute_type_factory(scope=category_type)
@@ -567,13 +592,16 @@ def test_attribute_order_as_in_attribute_type(
     expected = {
         'planPage': {
             'category': {
-                'attributes': [{
-                    'keyIdentifier': at0.identifier,
-                    'value': art0.text,
-                }, {
-                    'keyIdentifier': at1.identifier,
-                    'value': art1.text,
-                }],
+                'attributes': [
+                    {
+                        'keyIdentifier': at0.identifier,
+                        'value': art0.text,
+                    },
+                    {
+                        'keyIdentifier': at1.identifier,
+                        'value': art1.text,
+                    },
+                ],
             },
         },
     }

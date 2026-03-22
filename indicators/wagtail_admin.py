@@ -120,10 +120,7 @@ class IndicatorPermissionHelper(PermissionHelper[Indicator]):
             if user.is_general_admin_for_plan(plan):
                 return True
 
-        return (
-            user.is_contact_person_for_indicator(obj) or
-            user.is_organization_admin_for_indicator(obj)
-        )
+        return user.is_contact_person_for_indicator(obj) or user.is_organization_admin_for_indicator(obj)
 
     def user_can_delete_obj(self, user: User, obj: Indicator):
         if not super().user_can_delete_obj(user, obj):
@@ -149,7 +146,7 @@ class IndicatorPermissionHelper(PermissionHelper[Indicator]):
 class QuantityChooserViewSet(ModelChooserViewSet[Quantity]):
     icon = 'kausal-dimension'  # FIXME
     model = Quantity
-    page_title = _("Choose a quantity")
+    page_title = _('Choose a quantity')
     per_page = 10
     order_by = 'name'
     fields = ['name']
@@ -177,10 +174,8 @@ class DimensionCreateView(AplansCreateView[Dimension]):
 
         if plan:
             from indicators.models import PlanDimension
-            PlanDimension.objects.get_or_create(
-                plan=plan,
-                dimension=dimension
-            )
+
+            PlanDimension.objects.get_or_create(plan=plan, dimension=dimension)
 
         return response
 
@@ -194,9 +189,10 @@ class DimensionDeleteView(DeleteView[Dimension]):
         if other_plans.exists():
             messages.error(
                 request,
-                _('Cannot delete dimension "%(dimension)s" at this time, please contact support.') % {
+                _('Cannot delete dimension "%(dimension)s" at this time, please contact support.')
+                % {
                     'dimension': dimension.name,
-                }
+                },
             )
             return redirect(self.index_url)
 
@@ -214,10 +210,14 @@ class DimensionAdmin(AplansModelAdmin[Dimension]):
 
     panels = [
         FieldPanel('name'),
-        InlinePanel('categories', panels=[
-            FieldPanel('name'),
-            NativeColorPanel('default_color'),
-        ], heading=_('Categories')),
+        InlinePanel(
+            'categories',
+            panels=[
+                FieldPanel('name'),
+                NativeColorPanel('default_color'),
+            ],
+            heading=_('Categories'),
+        ),
     ]
 
     def get_queryset(self, request):
@@ -316,7 +316,7 @@ class IndicatorForm(AplansAdminModelForm[Indicator]):
         organization = self.cleaned_data['organization']
         if self.instance.pk is not None and self.instance.organization.primary_language != organization.primary_language:
             raise ValidationError(
-                _("Changing the organization to one with a different primary language is currently not supported"),
+                _('Changing the organization to one with a different primary language is currently not supported'),
             )
         return organization
 
@@ -337,7 +337,7 @@ class IndicatorForm(AplansAdminModelForm[Indicator]):
                 # true. Another weird issue: If, for example you add a new dimension to the indicator that's not in the
                 # common indicator, you'll get this validation error but the condensed inline panel will be gone. WTF?
                 # This may also affect CommonIndicatorForm.
-                raise ValidationError(_("Dimensions must be the same as in common indicator"))
+                raise ValidationError(_('Dimensions must be the same as in common indicator'))
 
         return self.cleaned_data
 
@@ -348,10 +348,15 @@ class IndicatorForm(AplansAdminModelForm[Indicator]):
             initial_plan = Plan.objects.get(id=initial_plan_id)
 
             request = ctx_request.get()
-            messages.add_message(request, messages.WARNING,
-                                 _('While editing this indicator you have switched to a different plan. '
-                                   'This indicator was still saved with the original plan "%s".')
-                                 % initial_plan.name)
+            messages.add_message(
+                request,
+                messages.WARNING,
+                _(
+                    'While editing this indicator you have switched to a different plan. '
+                    'This indicator was still saved with the original plan "%s".'
+                )
+                % initial_plan.name,
+            )
             self.plan = initial_plan
 
         if self.instance.organization_id is None:
@@ -460,7 +465,7 @@ class IndicatorEditHandler(
         self.base_form_class = type(
             'IndicatorForm',
             (IndicatorForm,),
-            {**cat_fields },
+            {**cat_fields},
         )
 
         form_class = super().get_form_class()
@@ -492,7 +497,7 @@ class IndicatorAdmin(AplansModelAdmin[Indicator]):
         is_linked_to_common_indicator = bool(instance and instance.common)
         dimensions_str: str = ', '.join(instance.dimensions.values_list('dimension__name', flat=True))
         if not dimensions_str:
-            dimensions_str = str(_("none"))
+            dimensions_str = str(_('none'))
 
         # Basic panels
         indicator_settings_panels: list[Panel] = [
@@ -502,8 +507,8 @@ class IndicatorAdmin(AplansModelAdmin[Indicator]):
         ]
         if is_linked_to_common_indicator:
             info_text = _(
-                "This indicator is linked to a common indicator, so quantity, unit and dimensions cannot be edited. "
-                "Current quantity: %(quantity)s; unit: %(unit)s; dimensions: %(dimensions)s",
+                'This indicator is linked to a common indicator, so quantity, unit and dimensions cannot be edited. '
+                'Current quantity: %(quantity)s; unit: %(unit)s; dimensions: %(dimensions)s',
             ) % {
                 'quantity': instance.quantity,
                 'unit': instance.unit,
@@ -537,15 +542,12 @@ class IndicatorAdmin(AplansModelAdmin[Indicator]):
                     CustomizableBuiltInFieldPanel('description'),
                     CustomizableBuiltInFieldPanel('reference'),
                 ],
-                heading=_("Description"),
+                heading=_('Description'),
                 classname='collapsed',
             ),
         )
 
-        indicator_page_settings_panels = [
-            FieldPanel('hide_indicator_graph'),
-            FieldPanel('hide_indicator_table')
-        ]
+        indicator_page_settings_panels = [FieldPanel('hide_indicator_graph'), FieldPanel('hide_indicator_table')]
 
         # Visualisation settings
         visualisation_settings_panels = [
@@ -588,9 +590,7 @@ class IndicatorAdmin(AplansModelAdmin[Indicator]):
             FieldPanel('organization', widget=autocomplete.ModelSelect2(url='organization-autocomplete')),
         ]
         if instance and instance.pk and not instance.dimensions.exists():
-            advanced_panels.append(
-                FieldPanel('reference_value', widget=IndicatorValueChooser(indicator_id=instance.id))
-            )
+            advanced_panels.append(FieldPanel('reference_value', widget=IndicatorValueChooser(indicator_id=instance.id)))
 
         advanced_panels.append(
             FieldPanel('sort_key'),
@@ -603,25 +603,25 @@ class IndicatorAdmin(AplansModelAdmin[Indicator]):
         ])
 
         if instance and instance.pk and plan.kausal_paths_instance_uuid:
-            advanced_panels.append(
-                FieldPanel('kausal_paths_node_uuid')
-            )
+            advanced_panels.append(FieldPanel('kausal_paths_node_uuid'))
 
         if not is_linked_to_common_indicator and is_general_admin:
             advanced_panels.append(
-                CondensedInlinePanel('dimensions', panels=[
-                    FieldPanel('dimension', widget=DimensionChooser(include_plan_dimensions=True))
-                ], heading=_("Dimensions")),
+                CondensedInlinePanel(
+                    'dimensions',
+                    panels=[FieldPanel('dimension', widget=DimensionChooser(include_plan_dimensions=True))],
+                    heading=_('Dimensions'),
+                ),
             )
 
             # If the indicator has values, show a warning that these would be deleted by changing dimensions
             num_values = instance.values.count() if instance else 0
             if num_values:
                 warning_text = ngettext_lazy(
-                    "If you change the dimensions of this indicator (currently %(dimensions)s), its single value will "
-                    "be deleted.",
-                    "If you change the dimensions of this indicator (currently %(dimensions)s), all its %(num)d "
-                    "values will be deleted.",
+                    'If you change the dimensions of this indicator (currently %(dimensions)s), its single value will '
+                    'be deleted.',
+                    'If you change the dimensions of this indicator (currently %(dimensions)s), all its %(num)d '
+                    'values will be deleted.',
                     num_values,
                 ) % {
                     'dimensions': dimensions_str,
@@ -663,12 +663,13 @@ class IndicatorAdmin(AplansModelAdmin[Indicator]):
             InlinePanel(
                 'related_actions',
                 panels=[
-                    CustomizableBuiltInFieldPanel('action', widget=autocomplete.ModelSelect2(
-                        url='action-autocomplete',
-                        forward=(
-                            dal_forward.Const(val=True, dst='only_modifiable'),
+                    CustomizableBuiltInFieldPanel(
+                        'action',
+                        widget=autocomplete.ModelSelect2(
+                            url='action-autocomplete',
+                            forward=(dal_forward.Const(val=True, dst='only_modifiable'),),
                         ),
-                    )),
+                    ),
                     CustomizableBuiltInFieldPanel('effect_type'),
                     CustomizableBuiltInFieldPanel('indicates_action_progress'),
                 ],
@@ -741,7 +742,7 @@ class IndicatorAdmin(AplansModelAdmin[Indicator]):
             qs = qs.filter(organization__in=Organization.objects.qs.available_for_plan(plan))
         else:
             orgs = [plan.organization.id]
-            orgs.extend(Organization.objects.qs.user_is_plan_admin_for(user, plan).values_list("id", flat=True))
+            orgs.extend(Organization.objects.qs.user_is_plan_admin_for(user, plan).values_list('id', flat=True))
             qs = qs.filter(organization_id__in=orgs)
         return qs.select_related('unit', 'quantity')
 
@@ -755,7 +756,7 @@ class CommonIndicatorForm(AplansAdminModelForm[CommonIndicator]):
             for indicator in self.instance.indicators.all():
                 indicator_dimensions = list(indicator.dimensions.values_list('dimension', flat=True))
                 if new_dimensions != indicator_dimensions:
-                    raise ValidationError(_("Dimensions must be the same as in all indicators linked to this one"))
+                    raise ValidationError(_('Dimensions must be the same as in all indicators linked to this one'))
         return super().clean()
 
 
@@ -787,17 +788,27 @@ class CommonIndicatorAdmin(AplansModelAdmin[CommonIndicator]):
         if not instance.pk or not instance.indicators.exists():
             basic_panels.insert(1, FieldPanel('quantity'))
             basic_panels.insert(2, FieldPanel('unit'))
-            basic_panels.append(CondensedInlinePanel('dimensions', panels=[
-                FieldPanel('dimension'),
-            ], heading=_("Dimensions")))
+            basic_panels.append(
+                CondensedInlinePanel(
+                    'dimensions',
+                    panels=[
+                        FieldPanel('dimension'),
+                    ],
+                    heading=_('Dimensions'),
+                )
+            )
         else:
             dimensions_str: str = ', '.join(instance.dimensions.values_list('dimension__name', flat=True))
             if not dimensions_str:
-                dimensions_str = str(_("none"))
-            info_text = _("This common indicator has indicators linked to it, so quantity, unit and dimensions cannot "
-                          "be edited. Current quantity: %(quantity)s; unit: %(unit)s; dimensions: %(dimensions)s") % {
-                              'quantity': instance.quantity, 'unit': instance.unit, 'dimensions': dimensions_str,
-                          }
+                dimensions_str = str(_('none'))
+            info_text = _(
+                'This common indicator has indicators linked to it, so quantity, unit and dimensions cannot '
+                'be edited. Current quantity: %(quantity)s; unit: %(unit)s; dimensions: %(dimensions)s'
+            ) % {
+                'quantity': instance.quantity,
+                'unit': instance.unit,
+                'dimensions': dimensions_str,
+            }
             basic_panels.insert(0, HelpPanel(f'<p class="help-block help-info">{info_text}</p>'))
 
         handler = ObjectList[CommonIndicator, CommonIndicatorForm](basic_panels)
@@ -810,7 +821,11 @@ class IndicatorGroup(ModelAdminGroup):
     menu_icon = 'kausal-indicator'
     menu_order = 20
     items: tuple[type[AplansModelAdmin[Any]], ...] = (
-        IndicatorAdmin, CommonIndicatorAdmin, DimensionAdmin, UnitAdmin, QuantityAdmin
+        IndicatorAdmin,
+        CommonIndicatorAdmin,
+        DimensionAdmin,
+        UnitAdmin,
+        QuantityAdmin,
     )
 
 

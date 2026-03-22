@@ -64,10 +64,12 @@ def test_wildcard_redirects_to_different_domain(graphql_client_query_data):
     assert result == 'sunnydale.watch.example.dev'
 
 
-@override_settings(REDIRECT_UI_HOSTNAMES=(
-    ('*.watch.example.com', 'watch.example.dev'),
-    ('*.old.example.com', 'new.example.com'),
-))
+@override_settings(
+    REDIRECT_UI_HOSTNAMES=(
+        ('*.watch.example.com', 'watch.example.dev'),
+        ('*.old.example.com', 'new.example.com'),
+    )
+)
 def test_multiple_patterns_first_match_wins(graphql_client_query_data):
     """Test that first matching pattern is used."""
     plan1 = PlanFactory.create()

@@ -16,7 +16,7 @@ class NamespaceFactory(DjangoModelFactory['Namespace']):
         model = Namespace
 
     identifier = Sequence(lambda i: f'namespace-{i}')
-    name = Sequence(lambda i: f"Namespace {i}")
+    name = Sequence(lambda i: f'Namespace {i}')
 
 
 class OrganizationClassFactory(DjangoModelFactory['OrganizationClass']):
@@ -24,7 +24,7 @@ class OrganizationClassFactory(DjangoModelFactory['OrganizationClass']):
         model = OrganizationClass
 
     identifier = Sequence(lambda i: f'organization-class-{i}')
-    name = Sequence(lambda i: f"Organization class {i}")
+    name = Sequence(lambda i: f'Organization class {i}')
 
 
 class OrganizationFactory(ModelFactory[Organization]):
@@ -32,9 +32,9 @@ class OrganizationFactory(ModelFactory[Organization]):
         model = Organization
 
     classification = SubFactory[Organization, OrganizationClass](OrganizationClassFactory)
-    name = Sequence(lambda i: f"Organization {i}")
+    name = Sequence(lambda i: f'Organization {i}')
     abbreviation = Sequence(lambda i: f'org{i}')
-    description = RichText("<p>Description</p>")
+    description = RichText('<p>Description</p>')
     url = 'https://example.org'
 
     @classmethod

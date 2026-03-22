@@ -25,15 +25,16 @@ from actions.tests.factories import ActionFactory, PlanFactory
 
 class DimensionFactory(ModelFactory[Dimension]):
     uuid = LazyFunction(uuid.uuid4)
-    name = Sequence(lambda i: f"Dimension {i}")
+    name = Sequence(lambda i: f'Dimension {i}')
 
     class Meta:
         model = Dimension
 
+
 class DimensionCategoryFactory(ModelFactory[DimensionCategory]):
     uuid = LazyFunction(uuid.uuid4)
     dimension = SubFactory[DimensionCategory, Dimension](DimensionFactory)
-    label = Sequence(lambda i: f"Dimension category {i}")
+    label = Sequence(lambda i: f'Dimension category {i}')
 
     class Meta:
         model = DimensionCategory
@@ -52,7 +53,7 @@ class DimensionScopeFactory(ModelFactory[DimensionScope]):
 class DatasetSchemaFactory(ModelFactory[DatasetSchema]):
     uuid = LazyFunction(uuid.uuid4)
     time_resolution = DatasetSchema.TimeResolution.YEARLY
-    name = Sequence(lambda i: f"Dataset schema {i}")
+    name = Sequence(lambda i: f'Dataset schema {i}')
 
     class Meta:
         model = DatasetSchema
@@ -89,8 +90,8 @@ class DatasetSchemaScopeFactory(ModelFactory[DatasetSchemaScope]):
 
 class DatasetMetricFactory(ModelFactory[DatasetMetric]):
     schema = SubFactory[DatasetMetric, DatasetSchema](DatasetSchemaFactory)
-    name = Sequence(lambda i: f"Dataset metric {i}")
-    unit = Sequence(lambda i: f"Dataset metric unit {i}")
+    name = Sequence(lambda i: f'Dataset metric {i}')
+    unit = Sequence(lambda i: f'Dataset metric unit {i}')
 
     class Meta:
         model = DatasetMetric
@@ -100,7 +101,7 @@ class DataPointFactory(ModelFactory[DataPoint]):
     uuid = LazyFunction(uuid.uuid4)
     dataset = SubFactory[DataPoint, Dataset](DatasetFactory)
     metric = SubFactory[DataPoint, DatasetMetric](DatasetMetricFactory)
-    date = Sequence(lambda i: date(2023, 1, i+1))
+    date = Sequence(lambda i: date(2023, 1, i + 1))
     value = Sequence(float)
 
     class Meta:

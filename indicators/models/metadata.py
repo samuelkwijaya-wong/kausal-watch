@@ -52,15 +52,21 @@ class Quantity(ClusterableModel, TranslatedModelMixin, ModificationTracking):
 class Unit(ClusterableModel, ModificationTracking):
     name = models.CharField(max_length=40, verbose_name=_('name'), unique=True)
     short_name = models.CharField(
-        max_length=40, null=True, blank=True,
+        max_length=40,
+        null=True,
+        blank=True,
         verbose_name=_('short name'),
     )
     verbose_name = models.CharField(
-        max_length=100, null=True, blank=True,
+        max_length=100,
+        null=True,
+        blank=True,
         verbose_name=_('verbose name'),
     )
     verbose_name_plural = models.CharField(
-        max_length=100, null=True, blank=True,
+        max_length=100,
+        null=True,
+        blank=True,
         verbose_name=_('verbose name plural'),
     )
 

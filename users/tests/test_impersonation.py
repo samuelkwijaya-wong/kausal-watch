@@ -6,6 +6,7 @@ from users.tests.factories import UserFactory
 
 pytestmark = pytest.mark.django_db
 
+
 def test_superuser_can_impersonate_and_release(client):
     superuser = UserFactory.create(username='superuser', is_superuser=True)
     regular_user = UserFactory.create(username='regular_user')
@@ -19,6 +20,7 @@ def test_superuser_can_impersonate_and_release(client):
     response = client.post(url)
     assert response.status_code == 302  # Redirect on success
     assert response.wsgi_request.user == superuser  # User is back to own user
+
 
 def test_regular_user_cannot_impersonate(client):
     regular_user = UserFactory.create(username='regular_user')
@@ -38,6 +40,7 @@ def test_superuser_cannot_impersonate_themselves(client):
     url = reverse('hijack:acquire')
     response = client.post(url, {'user_pk': superuser.pk})
     assert response.status_code == 403  # Forbidden
+
 
 def test_impersonated_cannot_impersonate(client):
     superuser = UserFactory.create(username='superuser', is_superuser=True)

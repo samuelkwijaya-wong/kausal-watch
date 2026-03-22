@@ -91,6 +91,7 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
+
 @cache
 def get_timezones() -> list[tuple[str, str]]:
     return [(x, x) for x in sorted(zoneinfo.available_timezones(), key=str.lower)]
@@ -119,7 +120,7 @@ def get_page_translation(page: Page, fallback=True) -> Page:
     try:
         locale = Locale.objects.get(language_code__iexact=language)
         page = page.get_translation(locale)
-    except (Locale.DoesNotExist, Page.DoesNotExist):
+    except Locale.DoesNotExist, Page.DoesNotExist:
         if not fallback:
             raise
     return page
@@ -163,7 +164,9 @@ class PlanQuerySet(PermissionedQuerySet['Plan'], MultilingualQuerySet['Plan']):
 
 if TYPE_CHECKING:
     _PlanManager = models.Manager.from_queryset(PlanQuerySet)
+
     class PlanManager(MLModelManager['Plan', PlanQuerySet], _PlanManager): ...  # pyright: ignore
+
     del _PlanManager
 else:
     PlanManager = MLModelManager.from_queryset(PlanQuerySet)
@@ -196,9 +199,12 @@ class UsageStatus(models.TextChoices):
     DEPRECATED = 'deprecated', _('Deprecated, should be deleted')
 
 
-@reversion.register(follow=[
-    'action_statuses', 'action_implementation_phases',  # fixme
-])
+@reversion.register(
+    follow=[
+        'action_statuses',
+        'action_implementation_phases',  # fixme
+    ]
+)
 class Plan(ClusterableModel, ModelWithPrimaryLanguage, PermissionedModel, SearchableModel[PlanQuerySet]):
     """
     The Action Plan under monitoring.
@@ -225,8 +231,10 @@ class Plan(ClusterableModel, ModelWithPrimaryLanguage, PermissionedModel, Search
         ),
     )
     short_name = models.CharField(
-        max_length=50, verbose_name=_('short name'),
-        null=True, blank=True,
+        max_length=50,
+        verbose_name=_('short name'),
+        null=True,
+        blank=True,
         help_text=_('A shorter version of the plan name'),
     )
     short_identifier = models.CharField(
@@ -234,17 +242,21 @@ class Plan(ClusterableModel, ModelWithPrimaryLanguage, PermissionedModel, Search
         null=True,
         blank=True,
         verbose_name=_('short identifier'),
-        help_text=_(
-            'A unique short identifier for the plan to be shown in the UI. Could be, e.g., a number or an abbreviation.'
-        ),
+        help_text=_('A unique short identifier for the plan to be shown in the UI. Could be, e.g., a number or an abbreviation.'),
     )
 
     version_name = models.CharField(
-        max_length=100, blank=True, verbose_name=_('version name'),
+        max_length=100,
+        blank=True,
+        verbose_name=_('version name'),
         help_text=_('If this plan has multiple versions, name of this version'),
     )
     image = models.ForeignKey(
-        'images.AplansImage', null=True, blank=True, on_delete=models.SET_NULL, related_name='+',
+        'images.AplansImage',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='+',
     )
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
     published_at = models.DateTimeField(null=True, blank=True, verbose_name=_('published at'))
@@ -268,40 +280,66 @@ class Plan(ClusterableModel, ModelWithPrimaryLanguage, PermissionedModel, Search
     )
 
     site_url = models.URLField(
-        blank=True, null=True, verbose_name=_('site URL'),
+        blank=True,
+        null=True,
+        verbose_name=_('site URL'),
         validators=[URLValidator(('http', 'https'))],
     )
     actions_locked = models.BooleanField(
-        default=False, verbose_name=_('actions locked'),
+        default=False,
+        verbose_name=_('actions locked'),
         help_text=_('Can actions be added and the official metadata edited?'),
     )
     organization: FK[Organization] = models.ForeignKey(
-        Organization, related_name='plans', on_delete=models.PROTECT, verbose_name=_('organization'),
+        Organization,
+        related_name='plans',
+        on_delete=models.PROTECT,
+        verbose_name=_('organization'),
         help_text=_('The main organization for the plan'),
     )
 
     general_admins = models.ManyToManyField['Person', 'GeneralPlanAdmin'](
-        Person, blank=True, related_name='general_admin_plans', through='actions.GeneralPlanAdmin',
+        Person,
+        blank=True,
+        related_name='general_admin_plans',
+        through='actions.GeneralPlanAdmin',
         verbose_name=_('general administrators'),
         help_text=_('Persons that can modify everything related to the action plan'),
     )
 
     site: OneToOne[Site | None] = models.OneToOneField(
-        Site, null=True, on_delete=models.SET_NULL, editable=False, related_name='plan',
+        Site,
+        null=True,
+        on_delete=models.SET_NULL,
+        editable=False,
+        related_name='plan',
     )
     root_collection: OneToOne[Collection | None] = models.OneToOneField(
-        Collection, null=True, on_delete=models.PROTECT, editable=False, related_name='plan',
+        Collection,
+        null=True,
+        on_delete=models.PROTECT,
+        editable=False,
+        related_name='plan',
     )
     admin_group = models.OneToOneField(
-        Group, null=True, on_delete=models.PROTECT, editable=False, related_name='admin_for_plan',
+        Group,
+        null=True,
+        on_delete=models.PROTECT,
+        editable=False,
+        related_name='admin_for_plan',
     )
     contact_person_group = models.OneToOneField(
-        Group, null=True, on_delete=models.PROTECT, editable=False, related_name='contact_person_for_plan',
+        Group,
+        null=True,
+        on_delete=models.PROTECT,
+        editable=False,
+        related_name='contact_person_for_plan',
     )
 
     other_languages: ChoiceArrayField[list[str]] = ChoiceArrayField(
         models.CharField(max_length=8, choices=get_supported_languages(), default=get_default_language),
-        default=list, blank=True,
+        default=list,
+        blank=True,
     )
     accessibility_statement_url = models.URLField(
         blank=True,
@@ -314,7 +352,7 @@ class Plan(ClusterableModel, ModelWithPrimaryLanguage, PermissionedModel, Search
         verbose_name=_('Link to external feedback form'),
         help_text=_(
             "If not empty, the system's built-in user feedback feature will be replaced by "
-            "a link to an external feedback form available at this web address.",
+            'a link to an external feedback form available at this web address.',
         ),
     )
 
@@ -323,38 +361,56 @@ class Plan(ClusterableModel, ModelWithPrimaryLanguage, PermissionedModel, Search
     theme_identifier: IdentifierField[str | None] = IdentifierField(verbose_name=_('Theme identifier'), null=True, blank=True)
 
     related_organizations: models.ManyToManyField[Organization, Organization] = models.ManyToManyField(
-        Organization, blank=True, related_name='related_plans',
+        Organization,
+        blank=True,
+        related_name='related_plans',
         through='actions.PlanRelatedOrganizationsThrough',
     )
     related_plans: models.ManyToManyField[Plan, Plan] = models.ManyToManyField('self', blank=True)
     parent: FK[Plan | None] = models.ForeignKey(
-        'self', verbose_name=pgettext_lazy('plan', 'parent'), blank=True, null=True, related_name='children',
+        'self',
+        verbose_name=pgettext_lazy('plan', 'parent'),
+        blank=True,
+        null=True,
+        related_name='children',
         on_delete=models.SET_NULL,
     )
     common_category_types: M2M[CommonCategoryType] = models.ManyToManyField(
-        'actions.CommonCategoryType', blank=True, related_name='plans',
+        'actions.CommonCategoryType',
+        blank=True,
+        related_name='plans',
         through='actions.PlanCommonCategoryTypesThrough',
     )
 
     primary_action_classification = models.OneToOneField(
         # null=False would be nice, but we need to avoid on_delete=CASCADE and use on_delete=SET_NULL instead
-        'actions.CategoryType', blank=False, null=True, on_delete=models.SET_NULL,
+        'actions.CategoryType',
+        blank=False,
+        null=True,
+        on_delete=models.SET_NULL,
         related_name='primary_classification_for_plan',
         verbose_name=_('Primary action classification'),
         help_text=_('Used for primary navigation and grouping of actions'),
     )
     secondary_action_classification = models.OneToOneField(
-        'actions.CategoryType', blank=True, null=True, on_delete=models.SET_NULL,
+        'actions.CategoryType',
+        blank=True,
+        null=True,
+        on_delete=models.SET_NULL,
         related_name='secondary_classification_for_plan',
         verbose_name=_('Secondary action classification'),
-        help_text=(_(
-            'Leave empty unless specifically required. Action filters based on this category are displayed '
-            'more prominently than filters of other categories.',
-        )),
+        help_text=(
+            _(
+                'Leave empty unless specifically required. Action filters based on this category are displayed '
+                'more prominently than filters of other categories.',
+            )
+        ),
     )
 
     action_days_until_considered_stale = models.PositiveIntegerField(
-        null=True, blank=True, validators=[MaxValueValidator(MAX_ACTION_DAYS_UNTIL_CONSIDERED_STALE)],
+        null=True,
+        blank=True,
+        validators=[MaxValueValidator(MAX_ACTION_DAYS_UNTIL_CONSIDERED_STALE)],
         verbose_name=_('Days until actions considered stale'),
         help_text=help_text_with_default_disclaimer(
             _('Actions not updated since this many days are considered stale.'),
@@ -363,7 +419,9 @@ class Plan(ClusterableModel, ModelWithPrimaryLanguage, PermissionedModel, Search
     )
 
     settings_action_update_target_interval = models.PositiveIntegerField(
-        null=True, blank=True, validators=[MaxValueValidator(365), MinValueValidator(1)],
+        null=True,
+        blank=True,
+        validators=[MaxValueValidator(365), MinValueValidator(1)],
         verbose_name=_('Target interval in days to update actions'),
         help_text=help_text_with_default_disclaimer(
             _('A desirable time interval in days within which actions should be updated in the optimal case.'),
@@ -371,7 +429,9 @@ class Plan(ClusterableModel, ModelWithPrimaryLanguage, PermissionedModel, Search
         ),
     )
     settings_action_update_acceptable_interval = models.PositiveIntegerField(
-        null=True, blank=True, validators=[MaxValueValidator(730), MinValueValidator(1)],
+        null=True,
+        blank=True,
+        validators=[MaxValueValidator(730), MinValueValidator(1)],
         verbose_name=_('Acceptable interval in days to update actions'),
         help_text=help_text_with_default_disclaimer(
             _('A maximum time interval in days within which actions should always be updated.'),
@@ -380,26 +440,39 @@ class Plan(ClusterableModel, ModelWithPrimaryLanguage, PermissionedModel, Search
     )
 
     superseded_by: FK[Plan | None] = models.ForeignKey(
-        'self', verbose_name=pgettext_lazy('plan', 'superseded by'), blank=True, null=True, on_delete=models.SET_NULL,
-        related_name='superseded_plans', help_text=_('Set if this plan is superseded by another plan'),
+        'self',
+        verbose_name=pgettext_lazy('plan', 'superseded by'),
+        blank=True,
+        null=True,
+        on_delete=models.SET_NULL,
+        related_name='superseded_plans',
+        help_text=_('Set if this plan is superseded by another plan'),
     )
     copy_of: FK[Plan | None] = models.ForeignKey(
-        'self', verbose_name=pgettext_lazy('plan', 'copy of'), blank=True, null=True, on_delete=models.SET_NULL,
-        related_name='copies', help_text=_('Set if this plan has been created by copying another plan'),
+        'self',
+        verbose_name=pgettext_lazy('plan', 'copy of'),
+        blank=True,
+        null=True,
+        on_delete=models.SET_NULL,
+        related_name='copies',
+        help_text=_('Set if this plan has been created by copying another plan'),
     )
     timezone = models.CharField[str, str](max_length=64, choices=get_timezones, default='UTC')  # type: ignore[arg-type]
     country = CountryField()
     daily_notifications_triggered_at = models.DateTimeField(blank=True, null=True)
 
     kausal_paths_instance_uuid = models.CharField(
-        blank=True, max_length=100, default='', verbose_name=_('Kausal Paths instance UUID'),
+        blank=True,
+        max_length=100,
+        default='',
+        verbose_name=_('Kausal Paths instance UUID'),
         help_text=_('UUID of the corresponding Kausal Paths instance for Kausal Paths integration'),
     )
 
     is_active = models.BooleanField(
         default=True,
         verbose_name=_('is active'),
-        help_text=_("Inactive plans are only visible to superusers."),
+        help_text=_('Inactive plans are only visible to superusers.'),
     )
 
     cache_invalidated_at = models.DateTimeField(auto_now=True)
@@ -415,16 +488,44 @@ class Plan(ClusterableModel, ModelWithPrimaryLanguage, PermissionedModel, Search
     notification_base_template: RevOne[Plan, BaseTemplate]
 
     public_fields: ClassVar = [
-        'id', 'name', 'short_name', 'version_name', 'identifier', 'short_identifier', 'image', 'action_schedules',
-        'actions', 'category_types', 'action_statuses', 'indicator_levels',
-        'action_impacts', 'general_content', 'impact_groups',
-        'monitoring_quality_points', 'scenarios',
-        'primary_language', 'other_languages', 'accessibility_statement_url',
-        'action_implementation_phases', 'actions_locked', 'organization',
-        'related_plans', 'theme_identifier', 'parent', 'children',
-        'primary_action_classification', 'secondary_action_classification', 'superseded_by', 'superseded_plans',
-        'copy_of', 'copies', 'report_types', 'external_feedback_url', 'action_dependency_roles',
-        'kausal_paths_instance_uuid', 'is_active',
+        'id',
+        'name',
+        'short_name',
+        'version_name',
+        'identifier',
+        'short_identifier',
+        'image',
+        'action_schedules',
+        'actions',
+        'category_types',
+        'action_statuses',
+        'indicator_levels',
+        'action_impacts',
+        'general_content',
+        'impact_groups',
+        'monitoring_quality_points',
+        'scenarios',
+        'primary_language',
+        'other_languages',
+        'accessibility_statement_url',
+        'action_implementation_phases',
+        'actions_locked',
+        'organization',
+        'related_plans',
+        'theme_identifier',
+        'parent',
+        'children',
+        'primary_action_classification',
+        'secondary_action_classification',
+        'superseded_by',
+        'superseded_plans',
+        'copy_of',
+        'copies',
+        'report_types',
+        'external_feedback_url',
+        'action_dependency_roles',
+        'kausal_paths_instance_uuid',
+        'is_active',
     ]
 
     search_fields = [
@@ -436,10 +537,13 @@ class Plan(ClusterableModel, ModelWithPrimaryLanguage, PermissionedModel, Search
         index.AutocompleteField('identifier', boost=5),
         index.FilterField('organization'),
         index.FilterField('is_active'),
-        index.RelatedFields('organization', [
-            index.SearchField('name'),
-            index.AutocompleteField('name'),
-        ]),
+        index.RelatedFields(
+            'organization',
+            [
+                index.SearchField('name'),
+                index.AutocompleteField('name'),
+            ],
+        ),
     ]
 
     objects: ClassVar[PlanManager] = PlanManager()
@@ -527,33 +631,44 @@ class Plan(ClusterableModel, ModelWithPrimaryLanguage, PermissionedModel, Search
                 raise ValidationError({field: _('Category type must belong to plan')})
 
         if self.actions.exists() and self.primary_action_classification is None:
-            raise ValidationError(
-                {'primary_action_classification': _(
+            raise ValidationError({
+                'primary_action_classification': _(
                     'You must create and choose a primary category type for classifying actions',
-                )})
+                )
+            })
 
-        if (self.secondary_action_classification and
-                self.secondary_action_classification == self.primary_action_classification):
-            raise ValidationError({'secondary_action_classification': _(
-                'Primary and secondary classification cannot be the same')})
+        if self.secondary_action_classification and self.secondary_action_classification == self.primary_action_classification:
+            raise ValidationError({
+                'secondary_action_classification': _('Primary and secondary classification cannot be the same')
+            })
 
         if self.short_identifier:
             if self.parent:
-                if Plan.objects.filter(
-                    parent=self.parent,
-                    short_identifier=self.short_identifier,
-                ).exclude(pk=self.pk).exists():
+                if (
+                    Plan.objects
+                    .filter(
+                        parent=self.parent,
+                        short_identifier=self.short_identifier,
+                    )
+                    .exclude(pk=self.pk)
+                    .exists()
+                ):
                     raise ValidationError({
                         'short_identifier': _(
                             'This short identifier is already in use within the parent plan.',
                         ),
                     })
             # Check uniqueness within organization for top-level plans
-            elif Plan.objects.filter(
-                organization=self.organization,
-                short_identifier=self.short_identifier,
-                parent__isnull=True,
-            ).exclude(pk=self.pk).exists():
+            elif (
+                Plan.objects
+                .filter(
+                    organization=self.organization,
+                    short_identifier=self.short_identifier,
+                    parent__isnull=True,
+                )
+                .exclude(pk=self.pk)
+                .exists()
+            ):
                 raise ValidationError({
                     'short_identifier': _(
                         'This short identifier is already in use for a top-level plan within this organization.',
@@ -563,7 +678,7 @@ class Plan(ClusterableModel, ModelWithPrimaryLanguage, PermissionedModel, Search
     @property
     def root_page(self) -> Page:
         if self.site_id is None or self.site is None:
-            raise Exception("Cannot get root page from plan without site")
+            raise Exception('Cannot get root page from plan without site')
         page: Page = self.site.root_page
         return page
 
@@ -585,9 +700,7 @@ class Plan(ClusterableModel, ModelWithPrimaryLanguage, PermissionedModel, Search
         If `fallback` is true, falls back to to the plan's primary language or, if this fails, to any language.
         """
         activated_language = translation.get_language()
-        root_pages = {
-            page.locale.language_code: page for page in self.documentation_root_pages.all()
-        }
+        root_pages = {page.locale.language_code: page for page in self.documentation_root_pages.all()}
         try:
             return root_pages[activated_language]
         except KeyError:
@@ -646,7 +759,7 @@ class Plan(ClusterableModel, ModelWithPrimaryLanguage, PermissionedModel, Search
                 with translation.override(language_code):
                     try:
                         root_page = self.get_translated_root_page()
-                    except (Locale.DoesNotExist, Page.DoesNotExist):
+                    except Locale.DoesNotExist, Page.DoesNotExist:
                         pass
                     else:
                         if root_page is not None:
@@ -715,6 +828,7 @@ class Plan(ClusterableModel, ModelWithPrimaryLanguage, PermissionedModel, Search
             PlanRootPage,
             PrivacyPolicyPage,
         )
+
         for language_code in [self.primary_language] + self.other_languages:
             if not Locale.objects.filter(language_code=language_code):
                 Locale.objects.create(language_code=language_code)
@@ -727,7 +841,10 @@ class Plan(ClusterableModel, ModelWithPrimaryLanguage, PermissionedModel, Search
             primary_root_page = self.site.root_page.specific
         else:
             primary_root_page = PlanRootPage(
-                title=self.name, slug=self.identifier, url_path='', locale=primary_locale,
+                title=self.name,
+                slug=self.identifier,
+                url_path='',
+                locale=primary_locale,
             )
             cast('Page', Page.get_first_root_node()).add_child(instance=primary_root_page)
 
@@ -742,15 +859,16 @@ class Plan(ClusterableModel, ModelWithPrimaryLanguage, PermissionedModel, Search
         # Create subpages of root page
         def _dummy_function_so_makemessages_finds_strings():  # noqa: ANN202  # pyright: ignore[reportUnusedFunction]
             # This is never called
-            pgettext_lazy("Action model", "Actions")
-            _("Indicators")
-            _("Privacy")
-            _("Accessibility")
+            pgettext_lazy('Action model', 'Actions')
+            _('Indicators')
+            _('Privacy')
+            _('Accessibility')
+
         subpages = [
-            (ActionListPage, "Actions", {'show_in_menus': True, 'show_in_footer': True}),
-            (IndicatorListPage, "Indicators", {'show_in_menus': True, 'show_in_footer': True}),
-            (PrivacyPolicyPage, "Privacy", {'show_in_additional_links': False}),
-            (AccessibilityStatementPage, "Accessibility", {'show_in_additional_links': False}),
+            (ActionListPage, 'Actions', {'show_in_menus': True, 'show_in_footer': True}),
+            (IndicatorListPage, 'Indicators', {'show_in_menus': True, 'show_in_footer': True}),
+            (PrivacyPolicyPage, 'Privacy', {'show_in_additional_links': False}),
+            (AccessibilityStatementPage, 'Accessibility', {'show_in_additional_links': False}),
         ]
 
         for page_model, title_en, kwargs in subpages:
@@ -791,7 +909,7 @@ class Plan(ClusterableModel, ModelWithPrimaryLanguage, PermissionedModel, Search
             return str(self.PublicationState.INTERNAL.label)
 
         utc_time = self.published_at.astimezone(UTC)
-        formatted_date = f"{date_format(utc_time, 'SHORT_DATETIME_FORMAT')} (UTC)"
+        formatted_date = f'{date_format(utc_time, "SHORT_DATETIME_FORMAT")} (UTC)'
         now = timezone.now()
 
         if self.published_at > now:
@@ -922,6 +1040,7 @@ class Plan(ClusterableModel, ModelWithPrimaryLanguage, PermissionedModel, Search
             plan.short_name = short_name
         if client_name:
             from admin_site.models import Client, ClientPlan
+
             client = Client.objects.filter(name=client_name).first()
             if client is None:
                 client = Client.objects.create(name=client_name)
@@ -931,12 +1050,13 @@ class Plan(ClusterableModel, ModelWithPrimaryLanguage, PermissionedModel, Search
     @classmethod
     @transaction.atomic()
     def apply_defaults(
-            cls,
-            plan: Plan,
-            base_path: str | None = None,
-            hostname: str | None = None,
+        cls,
+        plan: Plan,
+        base_path: str | None = None,
+        hostname: str | None = None,
     ) -> Plan:
         from actions.defaults import DEFAULT_ACTION_IMPLEMENTATION_PHASES, DEFAULT_ACTION_STATUSES
+
         plan.statuses_updated_manually = True
         if not hostname:
             hostname = plan.default_hostname()
@@ -952,14 +1072,19 @@ class Plan(ClusterableModel, ModelWithPrimaryLanguage, PermissionedModel, Search
 
             for st in DEFAULT_ACTION_STATUSES:
                 status = ActionStatus(
-                    plan=plan, identifier=st['identifier'], name=cast('str', st['name']),
+                    plan=plan,
+                    identifier=st['identifier'],
+                    name=cast('str', st['name']),
                     is_completed=st.get('is_completed', False),
                 )
                 status.save()
 
             for idx, ip in enumerate(DEFAULT_ACTION_IMPLEMENTATION_PHASES):
                 phase = ActionImplementationPhase(
-                    plan=plan, order=idx, identifier=ip['identifier'], name=ip['name'],
+                    plan=plan,
+                    order=idx,
+                    identifier=ip['identifier'],
+                    name=ip['name'],
                 )
                 phase.save()
 
@@ -973,7 +1098,7 @@ class Plan(ClusterableModel, ModelWithPrimaryLanguage, PermissionedModel, Search
         try:
             default_domain = next(iter(hostname_plan_domains))
         except StopIteration as e:
-            raise Exception("Cannot create default hostname if no hostname plan domains are configured") from e
+            raise Exception('Cannot create default hostname if no hostname plan domains are configured') from e
         return '%s.%s' % (self.identifier, default_domain)
 
     def get_all_related_plans(self, inclusive=False) -> PlanQuerySet:
@@ -1009,7 +1134,6 @@ class Plan(ClusterableModel, ModelWithPrimaryLanguage, PermissionedModel, Search
             # To optimize, use recursive queries as in https://stackoverflow.com/a/39933958/14595546
             result += self.superseded_by.get_superseding_plans(recursive=True, user=user)
         return result
-
 
     def get_action_days_until_considered_stale(self):
         days = self.action_days_until_considered_stale
@@ -1074,6 +1198,7 @@ class Plan(ClusterableModel, ModelWithPrimaryLanguage, PermissionedModel, Search
 
         """
         from aplans.graphql_types import WorkflowStateEnum
+
         workflow_tasks = self.get_workflow_tasks()
         if workflow_state == WorkflowStateEnum.PUBLISHED:
             return None
@@ -1092,14 +1217,18 @@ class Plan(ClusterableModel, ModelWithPrimaryLanguage, PermissionedModel, Search
     def has_indicator_relationships(self, user: UserOrAnon | None):
         visible_levels = IndicatorLevel.objects.qs.filter(plan=self).visible_for_user(user)
         visible_indicators = Indicator.objects.qs.filter(levels__in=visible_levels)
-        return RelatedIndicator.objects.filter(Q(causal_indicator__in=visible_indicators) &
-                                               Q(effect_indicator__in=visible_indicators)).exists()
+        return RelatedIndicator.objects.filter(
+            Q(causal_indicator__in=visible_indicators) & Q(effect_indicator__in=visible_indicators)
+        ).exists()
 
     def shared_indicators(self) -> models.QuerySet[IndicatorLevel, dict[str, Any]]:
         """Return the indicators of this plan that are also linked to some other plan."""
         return (
-            IndicatorLevel.objects.filter(indicator__in=self.indicators.all())
-            .values('indicator').annotate(num_plans=Count('plan')).filter(num_plans__gt=1)
+            IndicatorLevel.objects
+            .filter(indicator__in=self.indicators.all())
+            .values('indicator')
+            .annotate(num_plans=Count('plan'))
+            .filter(num_plans__gt=1)
         )
 
     def default_identifier_for_copying(self) -> str:
@@ -1111,40 +1240,51 @@ class Plan(ClusterableModel, ModelWithPrimaryLanguage, PermissionedModel, Search
         identifier_base = f'{self.identifier}-copy'
         regex = rf'^{identifier_base}\d+$'
         max_copy_number = (
-            Plan.objects.filter(identifier__regex=regex)
+            Plan.objects
+            .filter(identifier__regex=regex)
             .annotate(copy_number=Cast(Substr('identifier', len(identifier_base) + 1), models.IntegerField()))
             .aggregate(Max('copy_number'))['copy_number__max']
         )
         if not max_copy_number:
             max_copy_number = 0
-        return f'{identifier_base}{max_copy_number+1}'
+        return f'{identifier_base}{max_copy_number + 1}'
 
     def default_name_for_copying(self) -> str:
         """Get a name a copy of this plan should have by default."""
         with translation.override(self.primary_language):
             now = self.now_in_local_timezone()
             today = date_format(now.date(), format='SHORT_DATE_FORMAT', use_l10n=True)
-            candidate = _("%(plan)s (copy from %(date)s)") % {'plan': self.name, 'date': today}
+            candidate = _('%(plan)s (copy from %(date)s)') % {'plan': self.name, 'date': today}
             if not Plan.objects.filter(name=candidate).exists():
                 return candidate
             # Build a regex from the translated template to find existing numbered copies
             num_marker = 'XNUMMARKERX'
-            template = _("%(plan)s (copy %(n)s from %(date)s)") % {
-                'plan': self.name, 'n': num_marker, 'date': today,
+            template = _('%(plan)s (copy %(n)s from %(date)s)') % {
+                'plan': self.name,
+                'n': num_marker,
+                'date': today,
             }
             num_pos = template.index(num_marker)
             chars_after_num = len(template) - num_pos - len(num_marker)
             regex = '^' + re.escape(template).replace(num_marker, r'\d+') + '$'
             max_copy_number = (
-                Plan.objects.filter(name__regex=regex)
-                .annotate(copy_number=Cast(
-                    Substr('name', num_pos + 1, Length('name') - num_pos - chars_after_num),
-                    models.IntegerField(),
-                ))
-                .aggregate(Max('copy_number'))['copy_number__max']
-            ) or 1
-            return _("%(plan)s (copy %(n)s from %(date)s)") % {
-                'plan': self.name, 'n': max_copy_number + 1, 'date': today,
+                (
+                    Plan.objects
+                    .filter(name__regex=regex)
+                    .annotate(
+                        copy_number=Cast(
+                            Substr('name', num_pos + 1, Length('name') - num_pos - chars_after_num),
+                            models.IntegerField(),
+                        )
+                    )
+                    .aggregate(Max('copy_number'))['copy_number__max']
+                )
+                or 1
+            )
+            return _('%(plan)s (copy %(n)s from %(date)s)') % {
+                'plan': self.name,
+                'n': max_copy_number + 1,
+                'date': today,
             }
 
     def default_version_name_for_copying(self) -> str:
@@ -1152,11 +1292,11 @@ class Plan(ClusterableModel, ModelWithPrimaryLanguage, PermissionedModel, Search
         with translation.override(self.primary_language):
             now = self.now_in_local_timezone()
             today = date_format(now.date(), format='SHORT_DATE_FORMAT', use_l10n=True)
-            return _("Copy from %(date)s") % {'date': today}
+            return _('Copy from %(date)s') % {'date': today}
 
     @admin.display(description=_('Clients'), ordering='clients__client__name')
     def clients_as_string(self) -> str:
-        return "; ".join(self.clients.values_list('client__name', flat=True))
+        return '; '.join(self.clients.values_list('client__name', flat=True))
 
     def delete(self, *args, **kwargs):
         from audit_logging.models import PlanScopedModelLogEntry, PlanScopedPageLogEntry
@@ -1186,6 +1326,7 @@ class Plan(ClusterableModel, ModelWithPrimaryLanguage, PermissionedModel, Search
         # We index all plans for all languages
         _ = language
         return qs
+
 
 class PlanRelatedOrganizationsThrough(models.Model):
     plan = models.ForeignKey(Plan, on_delete=models.CASCADE, related_name='plan_related_organizations_through')
@@ -1226,8 +1367,9 @@ class PublicationStatus(models.TextChoices):
 # Unfortunately the reverse accessors then point to instances of the through model, not the actual target.
 class GeneralPlanAdmin(OrderedModel):
     plan = ParentalKey(Plan, on_delete=models.CASCADE, verbose_name=_('plan'), related_name='general_admins_ordered')
-    person = models.ForeignKey(Person, on_delete=models.CASCADE, verbose_name=_('person'),
-                               related_name='general_admin_plans_ordered')
+    person = models.ForeignKey(
+        Person, on_delete=models.CASCADE, verbose_name=_('person'), related_name='general_admin_plans_ordered'
+    )
 
     class Meta:
         ordering = ['plan', 'order']
@@ -1240,6 +1382,7 @@ class GeneralPlanAdmin(OrderedModel):
 
     def save(self, *args, **kwargs):
         from notifications.models import GeneralPlanAdminNotificationPreferences
+
         result = super().save(*args, **kwargs)
         GeneralPlanAdminNotificationPreferences.objects.get_or_create(
             general_plan_admin=self,
@@ -1255,8 +1398,9 @@ class GeneralPlanAdmin(OrderedModel):
 
 class PlanPublicSiteViewer(models.Model):
     plan = models.ForeignKey(Plan, on_delete=models.CASCADE, verbose_name=_('plan'), related_name='public_site_viewers')
-    person = models.ForeignKey(Person, on_delete=models.CASCADE, verbose_name=_('person'),
-                               related_name='plans_with_public_site_access')
+    person = models.ForeignKey(
+        Person, on_delete=models.CASCADE, verbose_name=_('person'), related_name='plans_with_public_site_access'
+    )
 
     class Meta:
         unique_together = (('plan', 'person'),)
@@ -1269,10 +1413,10 @@ class PlanPublicSiteViewer(models.Model):
 
 def is_valid_hostname(hostname: str):
     if len(hostname) > 255:
-        raise ValidationError("Hostname too long")
-    allowed = re.compile(r"(?!-)[A-Z\d-]{1,63}(?<!-)$", re.IGNORECASE)
-    if not all(allowed.match(x) for x in hostname.split(".")):
-        raise ValidationError("Invalid hostname format")
+        raise ValidationError('Hostname too long')
+    allowed = re.compile(r'(?!-)[A-Z\d-]{1,63}(?<!-)$', re.IGNORECASE)
+    if not all(allowed.match(x) for x in hostname.split('.')):
+        raise ValidationError('Invalid hostname format')
 
 
 class PlanDomain(models.Model):
@@ -1284,30 +1428,44 @@ class PlanDomain(models.Model):
         DEVELOPMENT = 'development', _('Development')
 
     plan: ParentalKey[Plan] = ParentalKey(
-        Plan, on_delete=models.CASCADE, related_name='domains', verbose_name=_('plan'),
+        Plan,
+        on_delete=models.CASCADE,
+        related_name='domains',
+        verbose_name=_('plan'),
     )
     hostname = models.CharField(
-        max_length=200, verbose_name=_('host name'), db_index=True,
+        max_length=200,
+        verbose_name=_('host name'),
+        db_index=True,
         validators=[is_valid_hostname],
         help_text=_('The fully qualified domain name, eg. climate.cityname.gov. Leave blank if not yet known.'),
     )
     redirect_to_hostname = models.CharField(
-        max_length=200, verbose_name=_('redirect to host name'),
+        max_length=200,
+        verbose_name=_('redirect to host name'),
         validators=[is_valid_hostname],
         null=True,
         blank=True,
         help_text=_('The UI will redirect to this hostname if set.'),
     )
     base_path = models.CharField(
-        max_length=200, verbose_name=_('base path'), null=True, blank=True,
+        max_length=200,
+        verbose_name=_('base path'),
+        null=True,
+        blank=True,
         help_text=_('Fill this for a multi-plan site when the plan does not live in the root of the domain.'),
-        validators=[RegexValidator(
-            regex=r'^\/[a-z0-9_-]+',
-            message=_("Base path must begin with a '/' and not end with '/'"),
-        )],
+        validators=[
+            RegexValidator(
+                regex=r'^\/[a-z0-9_-]+',
+                message=_("Base path must begin with a '/' and not end with '/'"),
+            )
+        ],
     )
     deployment_environment = models.CharField[DeploymentEnvironment, DeploymentEnvironment](
-        max_length=30, choices=DeploymentEnvironment.choices, verbose_name=_('deployment environment'), blank=True,
+        max_length=30,
+        choices=DeploymentEnvironment.choices,
+        verbose_name=_('deployment environment'),
+        blank=True,
     )
     redirect_aliases = ArrayField(
         models.CharField(max_length=80),
@@ -1315,7 +1473,7 @@ class PlanDomain(models.Model):
         default=list,
         verbose_name='redirect aliases',
         help_text=_(
-            "Domain names that will be used to redirect to the main hostname. Multiple domains are separated by commas.",
+            'Domain names that will be used to redirect to the main hostname. Multiple domains are separated by commas.',
         ),
     )
     google_site_verification_tag = models.CharField(max_length=50, null=True, blank=True)
@@ -1385,8 +1543,7 @@ class PlanDomain(models.Model):
         dn = dn.removesuffix('.')
         if len(dn) < 1 or len(dn) > 253:
             return False
-        ldh_re = re.compile('^[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?$',
-                            re.IGNORECASE)
+        ldh_re = re.compile('^[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?$', re.IGNORECASE)
         return all(ldh_re.match(x) for x in dn.split('.'))
 
     def clean(self):
@@ -1396,7 +1553,9 @@ class PlanDomain(models.Model):
 
 class Scenario(PlanRelatedModelWithRevision):
     plan = models.ForeignKey(
-        Plan, on_delete=models.CASCADE, related_name='scenarios',
+        Plan,
+        on_delete=models.CASCADE,
+        related_name='scenarios',
         verbose_name=_('plan'),
     )
     name = models.CharField(max_length=100, verbose_name=_('name'))
@@ -1404,7 +1563,11 @@ class Scenario(PlanRelatedModelWithRevision):
     description = models.TextField(null=True, blank=True, verbose_name=_('description'))
 
     public_fields: ClassVar = [
-        'id', 'plan', 'name', 'identifier', 'description',
+        'id',
+        'plan',
+        'name',
+        'identifier',
+        'description',
     ]
 
     class Meta:
@@ -1418,13 +1581,19 @@ class Scenario(PlanRelatedModelWithRevision):
 
 class ImpactGroup(PlanRelatedModelWithRevision):
     plan: FK[Plan] = models.ForeignKey(
-        Plan, on_delete=models.CASCADE, related_name='impact_groups',
+        Plan,
+        on_delete=models.CASCADE,
+        related_name='impact_groups',
         verbose_name=_('plan'),
     )
     name = models.CharField[str, str](verbose_name=_('name'), max_length=200)
     identifier = IdentifierField()
     parent: FK[ImpactGroup | None] = models.ForeignKey(
-        'self', on_delete=models.SET_NULL, related_name='children', null=True, blank=True,
+        'self',
+        on_delete=models.SET_NULL,
+        related_name='children',
+        null=True,
+        blank=True,
         verbose_name=pgettext_lazy('impact group', 'parent'),
     )
     weight = models.FloatField(verbose_name=_('weight'), null=True, blank=True)
@@ -1433,7 +1602,14 @@ class ImpactGroup(PlanRelatedModelWithRevision):
     i18n = TranslationField(fields=('name',), default_language_field='plan__primary_language_lowercase')
 
     public_fields: ClassVar = [
-        'id', 'plan', 'identifier', 'parent', 'weight', 'name', 'color', 'actions',
+        'id',
+        'plan',
+        'identifier',
+        'parent',
+        'weight',
+        'name',
+        'color',
+        'actions',
     ]
 
     class Meta:
@@ -1450,7 +1626,7 @@ class MonitoringQualityPoint(PlanRelatedModelWithRevision, OrderedModel):
     name = models.CharField(max_length=100, verbose_name=_('name'))
     description_yes = models.CharField(
         max_length=200,
-        verbose_name=_("description when action fulfills criteria"),
+        verbose_name=_('description when action fulfills criteria'),
     )
     description_no = models.CharField(
         max_length=200,
@@ -1458,7 +1634,9 @@ class MonitoringQualityPoint(PlanRelatedModelWithRevision, OrderedModel):
     )
 
     plan = models.ForeignKey(
-        Plan, on_delete=models.CASCADE, related_name='monitoring_quality_points',
+        Plan,
+        on_delete=models.CASCADE,
+        related_name='monitoring_quality_points',
         verbose_name=_('plan'),
     )
     identifier = IdentifierField()
@@ -1469,7 +1647,12 @@ class MonitoringQualityPoint(PlanRelatedModelWithRevision, OrderedModel):
     )
 
     public_fields: ClassVar = [
-        'id', 'name', 'description_yes', 'description_no', 'plan', 'identifier',
+        'id',
+        'name',
+        'description_yes',
+        'description_no',
+        'plan',
+        'identifier',
     ]
 
     def filter_siblings(self, qs: models.QuerySet[Self]) -> models.QuerySet[Self]:

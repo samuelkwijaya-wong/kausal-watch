@@ -39,8 +39,8 @@ logger = logging.getLogger(__name__)
 
 class WatchMapping(Elasticsearch8Mapping):
     edgengram_analyzer_config = {
-        "analyzer": "edgengram_analyzer",
-        "search_analyzer": "standard",
+        'analyzer': 'edgengram_analyzer',
+        'search_analyzer': 'standard',
     }
 
 
@@ -91,9 +91,7 @@ class WatchAutocompleteQueryCompiler(Elasticsearch8AutocompleteQueryCompiler):
         return super()._process_filter(field_attname, lookup, value, check_only)
 
 
-def es_results_from_hits[M: Model](
-    hits: list[dict[str, Any]], qs: QuerySet[M], score_field: str | None = None
-) -> Generator[M]:
+def es_results_from_hits[M: Model](hits: list[dict[str, Any]], qs: QuerySet[M], score_field: str | None = None) -> Generator[M]:
     """Yield Django model instances from a page of hits returned by Elasticsearch."""
 
     pks = [hit['fields']['pk'][0] for hit in hits]
@@ -112,9 +110,8 @@ def es_results_from_hits[M: Model](
         if result:
             yield result
 
-def es_results_from_more_like_this[M: Model](
-    hits: list[Hit], qs: QuerySet[M], score_field: str | None = None
-) -> Generator[M]:
+
+def es_results_from_more_like_this[M: Model](hits: list[Hit], qs: QuerySet[M], score_field: str | None = None) -> Generator[M]:
     """Yield Django model instances from a page of hits returned by Elasticsearch."""
 
     pks = [hit.pk for hit in hits]
@@ -130,6 +127,7 @@ def es_results_from_more_like_this[M: Model](
         if result:
             yield result
 
+
 class WatchSearchResults(Elasticsearch8SearchResults):
     _score_field: str | None
 
@@ -139,11 +137,11 @@ class WatchSearchResults(Elasticsearch8SearchResults):
     def _get_es_body(self, for_count=False) -> dict[str, Any]:
         body = super()._get_es_body(for_count)
         if not for_count:
-            body["highlight"] = {
-                "pre_tags": ["<em>"],
-                "post_tags": ["</em>"],
-                "fields": {"_all_text": {}},
-                "require_field_match": False,
+            body['highlight'] = {
+                'pre_tags': ['<em>'],
+                'post_tags': ['</em>'],
+                'fields': {'_all_text': {}},
+                'require_field_match': False,
             }
         return body
 
@@ -212,16 +210,16 @@ class ModeltransFieldProxy(index.SearchField):
         for field in obj._meta.get_field('i18n').get_translated_fields():
             field_name = field.get_field_name()
             if (
-                    field.original_field == self.original_field and
-                    '_i18n' not in field_name and
-                    getattr(obj, field_name) is not None and
-                    field.get_language()[0:2].lower() == lang
+                field.original_field == self.original_field
+                and '_i18n' not in field_name
+                and getattr(obj, field_name) is not None
+                and field.get_language()[0:2].lower() == lang
             ):
                 trans_field_name = field_name
         return getattr(obj, trans_field_name)
 
     def get_internal_type(self):
-        return "CharField"
+        return 'CharField'
 
     def __getattr__(self, name: str, /):
         return getattr(self.original_field, name)

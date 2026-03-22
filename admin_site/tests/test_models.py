@@ -88,23 +88,29 @@ def test_built_in_field_customization_is_action_field_visible_for(
     assert built_in_field_customization.is_instance_visible_for(plan_admin_user, action.plan, action) == expect_admin
 
 
-@pytest.mark.parametrize('editable_by', [
-    InstancesEditableByMixin.EditableBy.AUTHENTICATED,
-    InstancesEditableByMixin.EditableBy.CONTACT_PERSONS,
-    InstancesEditableByMixin.EditableBy.MODERATORS,
-    InstancesEditableByMixin.EditableBy.PLAN_ADMINS,
-    InstancesEditableByMixin.EditableBy.NOT_EDITABLE,
-])
+@pytest.mark.parametrize(
+    'editable_by',
+    [
+        InstancesEditableByMixin.EditableBy.AUTHENTICATED,
+        InstancesEditableByMixin.EditableBy.CONTACT_PERSONS,
+        InstancesEditableByMixin.EditableBy.MODERATORS,
+        InstancesEditableByMixin.EditableBy.PLAN_ADMINS,
+        InstancesEditableByMixin.EditableBy.NOT_EDITABLE,
+    ],
+)
 def test_built_in_field_customization_accepts_any_editability(editable_by):
     BuiltInFieldCustomizationFactory.create(instances_editable_by=editable_by).full_clean()
 
 
-@pytest.mark.parametrize('visible_for', [
-    InstancesVisibleForMixin.VisibleFor.PUBLIC,
-    InstancesVisibleForMixin.VisibleFor.AUTHENTICATED,
-    InstancesVisibleForMixin.VisibleFor.CONTACT_PERSONS,
-    InstancesVisibleForMixin.VisibleFor.MODERATORS,
-    InstancesVisibleForMixin.VisibleFor.PLAN_ADMINS,
-])
+@pytest.mark.parametrize(
+    'visible_for',
+    [
+        InstancesVisibleForMixin.VisibleFor.PUBLIC,
+        InstancesVisibleForMixin.VisibleFor.AUTHENTICATED,
+        InstancesVisibleForMixin.VisibleFor.CONTACT_PERSONS,
+        InstancesVisibleForMixin.VisibleFor.MODERATORS,
+        InstancesVisibleForMixin.VisibleFor.PLAN_ADMINS,
+    ],
+)
 def test_built_in_field_customization_accepts_any_visibility(visible_for):
     BuiltInFieldCustomizationFactory.create(instances_visible_for=visible_for).full_clean()

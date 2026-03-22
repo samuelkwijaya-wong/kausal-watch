@@ -54,15 +54,15 @@ class QuestionBlockFactory(StructBlockFactory):
     class Meta:
         model = pages.blocks.QuestionBlock
 
-    question = "What is your quest?"
-    answer = RichText("<p>To seek the holy grail.</p>")
+    question = 'What is your quest?'
+    answer = RichText('<p>To seek the holy grail.</p>')
 
 
 class QuestionAnswerBlockFactory(StructBlockFactory):
     class Meta:
         model = pages.blocks.QuestionAnswerBlock
 
-    heading = "QA block heading"
+    heading = 'QA block heading'
     questions = ListBlockFactory(QuestionBlockFactory)
 
 
@@ -72,15 +72,15 @@ class FrontPageHeroBlockFactory(StructBlockFactory):
 
     layout = 'big_image'
     image = SubFactory[pages.blocks.FrontPageHeroBlock, ImageChooserBlock](ImageChooserBlockFactory)
-    heading = "Front page hero block heading"
-    lead = RichText("<p>Front page hero block lead</p>")
+    heading = 'Front page hero block heading'
+    lead = RichText('<p>Front page hero block lead</p>')
 
 
 class PageLinkBlockFactory(StructBlockFactory):
     class Meta:
         model = pages.blocks.PageLinkBlock
 
-    text = "Page link block text"
+    text = 'Page link block text'
     page = SubFactory[pages.blocks.PageLinkBlock, PageChooserBlock](PageChooserBlockFactory)
 
 
@@ -89,7 +89,7 @@ class StaticPageFactory(PageFactory):
         model = pages.models.StaticPage
 
     header_image = SubFactory[pages.models.StaticPage, AplansImage](AplansImageFactory)
-    lead_paragraph = "Lead paragraph"
+    lead_paragraph = 'Lead paragraph'
     # Used to work but then got broken at some point
     # body = [
     #     ('paragraph', RichText("<p>Paragraph</p>")),
@@ -106,10 +106,10 @@ class StaticPageFactory(PageFactory):
         'paragraph': SubFactory(RichTextBlockFactory),
         'qa_section': SubFactory(QuestionAnswerBlockFactory),
     })
-    body__0__paragraph = RichText("<p>Test paragraph</p>")
-    body__1__qa_section__heading = "QA section heading"
-    body__1__qa_section__questions__0__question = "Question"
-    body__1__qa_section__questions__0__answer = RichText("<p>Answer<p>")
+    body__0__paragraph = RichText('<p>Test paragraph</p>')
+    body__1__qa_section__heading = 'QA section heading'
+    body__1__qa_section__questions__0__question = 'Question'
+    body__1__qa_section__questions__0__answer = RichText('<p>Answer<p>')
 
 
 class CategoryPageFactory(PageFactory):
@@ -129,7 +129,7 @@ class CategoryPageFactory(PageFactory):
     #     # 'action_list': ActionListBlockFactory,
     # })
     body = [
-        ('text', RichText("<p>Hello</p>")),
+        ('text', RichText('<p>Hello</p>')),
     ]
     # A category page must have a parent (assumed in CategoryPage.set_url_path)
     parent = SelfAttribute[pages.models.CategoryPage, Page]('category.type.plan.root_page')
@@ -159,8 +159,8 @@ class CardBlockFactory(StructBlockFactory):
         model = pages.blocks.CardBlock
 
     image = SubFactory[pages.blocks.CardBlock, ImageChooserBlock](ImageChooserBlockFactory)
-    heading = "Card block heading"
-    content = "Card block content"
+    heading = 'Card block heading'
+    content = 'Card block content'
     link = 'http://example.com'
 
 
@@ -168,6 +168,6 @@ class CardListBlockFactory(StructBlockFactory):
     class Meta:
         model = pages.blocks.CardListBlock
 
-    heading = "Card list block heading"
-    lead = "<p>Card list block lead</p>"
+    heading = 'Card list block heading'
+    lead = '<p>Card list block lead</p>'
     cards = ListBlockFactory(CardBlockFactory)

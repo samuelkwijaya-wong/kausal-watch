@@ -26,6 +26,7 @@ class AplansDocumentQuerySet(SearchableQuerySetMixin, models.QuerySet['AplansDoc
 if TYPE_CHECKING:
 
     class AplansDocumentManager(ModelManager['AplansDocument', AplansDocumentQuerySet]): ...
+
 else:
     AplansDocumentManager = ModelManager.from_queryset(AplansDocumentQuerySet)
 

@@ -13,6 +13,6 @@ class Command(BaseCommand):
             action.recalculate_status()
             new_status = action.status
             if old_status != new_status:
-                print("%s:\n\t%s -> %s" % (action, old_status, new_status))
+                print('%s:\n\t%s -> %s' % (action, old_status, new_status))
             if old_completion != action.completion:
-                print("%s:\n\t%s -> %s" % (action, old_completion, action.completion))
+                print('%s:\n\t%s -> %s' % (action, old_completion, action.completion))

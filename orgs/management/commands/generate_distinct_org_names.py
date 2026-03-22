@@ -10,7 +10,9 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument(
-            '--all', help='Generate distinct names for all orgs (not duplicates)', action='store_true',
+            '--all',
+            help='Generate distinct names for all orgs (not duplicates)',
+            action='store_true',
         )
 
     def handle(self, *args, **options):
@@ -34,7 +36,7 @@ class Command(BaseCommand):
             if not options['all'] and len(duplicate_orgs) == 1:
                 continue
             if len(duplicate_orgs) > 1:
-                print("%d duplicates for %s" % (len(duplicate_orgs), org_name))
+                print('%d duplicates for %s' % (len(duplicate_orgs), org_name))
 
             if options['all']:
                 levels = 4
@@ -50,7 +52,7 @@ class Command(BaseCommand):
 
             for org in duplicate_orgs:
                 distinct_name = org.generate_distinct_name(levels)
-                print("\t%s" % distinct_name)
+                print('\t%s' % distinct_name)
                 if org.distinct_name != distinct_name:
                     org.distinct_name = distinct_name
                     org.save(update_fields=['distinct_name'])

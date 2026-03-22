@@ -13,7 +13,6 @@ if typing.TYPE_CHECKING:
     from aplans.types import WatchAdminRequest
 
 
-
 class ActionAutocomplete(autocomplete.Select2QuerySetView):
     request: WatchAdminRequest
 
@@ -78,8 +77,7 @@ class CategoryAutocomplete(autocomplete.Select2QuerySetView):
         if self.q:
             q = self.q.strip()
             categories = categories.filter(
-                Q(identifier__istartswith=q) |
-                Q(name__icontains=q),
+                Q(identifier__istartswith=q) | Q(name__icontains=q),
             )
         return categories
 

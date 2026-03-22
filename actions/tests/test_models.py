@@ -119,9 +119,9 @@ def test_category_type_synchronize_pages_exists(plan_with_pages):
     category.type.synchronize_pages()
     ct_page = category.type.category_type_pages.get_queryset().child_of(plan.root_page).get()
     old_page_title = ct_page.title
-    category.type.name = "Changed category type name"
+    category.type.name = 'Changed category type name'
     category.type.save()
-    category.name = "Changed category name"
+    category.name = 'Changed category name'
     category.save()
     category.type.synchronize_pages()
     # assert ct_page.title == category.type.name
@@ -159,8 +159,7 @@ def test_category_move_to_new_parent_changes_page_hierarchy(plan_with_pages):
     assert cat1_parent_page is not None
     assert cat2_parent_page is not None
     assert cat1_parent_page.specific == ct_page
-    assert (cat2_parent_page.specific ==
-            cat1.category_pages.filter(locale=locale).get())
+    assert cat2_parent_page.specific == cat1.category_pages.filter(locale=locale).get()
 
 
 def test_category_move_to_new_sibling_changes_page_hierarchy(plan_with_pages):
@@ -189,39 +188,39 @@ def category_type_with_category_hierarchy(category_type, category_level_factory,
     for _ in range(3):
         category_level_factory(type=category_type)
 
-    p1 = category_factory(type=ct_id, identifier="C1", parent_id=None)
+    p1 = category_factory(type=ct_id, identifier='C1', parent_id=None)
 
-    p1_1 = category_factory(type=ct_id, identifier="C1.1", parent=p1)
-    category_factory(type=ct_id, identifier="C1.1.1", parent=p1_1)
-    category_factory(type=ct_id, identifier="C1.1.2", parent=p1_1)
-    category_factory(type=ct_id, identifier="C1.1.3", parent=p1_1)
+    p1_1 = category_factory(type=ct_id, identifier='C1.1', parent=p1)
+    category_factory(type=ct_id, identifier='C1.1.1', parent=p1_1)
+    category_factory(type=ct_id, identifier='C1.1.2', parent=p1_1)
+    category_factory(type=ct_id, identifier='C1.1.3', parent=p1_1)
 
-    p1_2 = category_factory(type=ct_id, identifier="C1.2", parent=p1)
-    category_factory(type=ct_id, identifier="C1.2.1", parent=p1_2)
-    category_factory(type=ct_id, identifier="C1.2.2", parent=p1_2)
-    category_factory(type=ct_id, identifier="C1.2.3", parent=p1_2)
+    p1_2 = category_factory(type=ct_id, identifier='C1.2', parent=p1)
+    category_factory(type=ct_id, identifier='C1.2.1', parent=p1_2)
+    category_factory(type=ct_id, identifier='C1.2.2', parent=p1_2)
+    category_factory(type=ct_id, identifier='C1.2.3', parent=p1_2)
 
-    p1_3 = category_factory(type=ct_id, identifier="C1.3", parent=p1)
-    category_factory(type=ct_id, identifier="C1.3.1", parent=p1_3)
-    category_factory(type=ct_id, identifier="C1.3.2", parent=p1_3)
-    category_factory(type=ct_id, identifier="C1.3.3", parent=p1_3)
+    p1_3 = category_factory(type=ct_id, identifier='C1.3', parent=p1)
+    category_factory(type=ct_id, identifier='C1.3.1', parent=p1_3)
+    category_factory(type=ct_id, identifier='C1.3.2', parent=p1_3)
+    category_factory(type=ct_id, identifier='C1.3.3', parent=p1_3)
 
-    p2 = category_factory(type=ct_id, identifier="C2", parent_id=None)
+    p2 = category_factory(type=ct_id, identifier='C2', parent_id=None)
 
-    p2_1 = category_factory(type=ct_id, identifier="C2.1", parent=p2)
-    category_factory(type=ct_id, identifier="C2.1.1", parent=p2_1)
-    category_factory(type=ct_id, identifier="C2.1.2", parent=p2_1)
-    category_factory(type=ct_id, identifier="C2.1.3", parent=p2_1)
+    p2_1 = category_factory(type=ct_id, identifier='C2.1', parent=p2)
+    category_factory(type=ct_id, identifier='C2.1.1', parent=p2_1)
+    category_factory(type=ct_id, identifier='C2.1.2', parent=p2_1)
+    category_factory(type=ct_id, identifier='C2.1.3', parent=p2_1)
 
-    p2_2 = category_factory(type=ct_id, identifier="C2.2", parent=p2)
-    category_factory(type=ct_id, identifier="C2.2.1", parent=p2_2)
-    category_factory(type=ct_id, identifier="C2.2.2", parent=p2_2)
-    category_factory(type=ct_id, identifier="C2.2.3", parent=p2_2)
+    p2_2 = category_factory(type=ct_id, identifier='C2.2', parent=p2)
+    category_factory(type=ct_id, identifier='C2.2.1', parent=p2_2)
+    category_factory(type=ct_id, identifier='C2.2.2', parent=p2_2)
+    category_factory(type=ct_id, identifier='C2.2.3', parent=p2_2)
 
-    p2_3 = category_factory(type=ct_id, identifier="C2.3", parent=p2)
-    category_factory(type=ct_id, identifier="C2.3.1", parent=p2_3)
-    category_factory(type=ct_id, identifier="C2.3.2", parent=p2_3)
-    category_factory(type=ct_id, identifier="C2.3.3", parent=p2_3)
+    p2_3 = category_factory(type=ct_id, identifier='C2.3', parent=p2)
+    category_factory(type=ct_id, identifier='C2.3.1', parent=p2_3)
+    category_factory(type=ct_id, identifier='C2.3.2', parent=p2_3)
+    category_factory(type=ct_id, identifier='C2.3.3', parent=p2_3)
 
     return category_type
 
@@ -235,7 +234,7 @@ def test_categories_projected_by_level(category_type_with_category_hierarchy):
     for depth in range(3):
         level_proj = level_projections[levels[depth].pk]
         for cat in cat_by_pk.values():
-            identifier_prefix = cat.identifier[0:(2*(depth+1))]
+            identifier_prefix = cat.identifier[0 : (2 * (depth + 1))]
             try:
                 map_target = level_proj[cat.pk]
                 assert map_target.identifier == identifier_prefix
@@ -304,101 +303,133 @@ def test_plan_should_trigger_daily_notifications_due(plan):
     assert plan.should_trigger_daily_notifications(now)
 
 
-@pytest.mark.parametrize('editable_by', [
-    InstancesEditableByMixin.EditableBy.CONTACT_PERSONS,
-    InstancesEditableByMixin.EditableBy.MODERATORS,
-])
+@pytest.mark.parametrize(
+    'editable_by',
+    [
+        InstancesEditableByMixin.EditableBy.CONTACT_PERSONS,
+        InstancesEditableByMixin.EditableBy.MODERATORS,
+    ],
+)
 def test_category_type_does_not_accept_action_specific_editability(editable_by):
     with pytest.raises(ValidationError):
         CategoryTypeFactory.create(instances_editable_by=editable_by).full_clean()
 
 
-@pytest.mark.parametrize('editable_by', [
-    InstancesEditableByMixin.EditableBy.AUTHENTICATED,
-    InstancesEditableByMixin.EditableBy.PLAN_ADMINS,
-    InstancesEditableByMixin.EditableBy.NOT_EDITABLE,
-])
+@pytest.mark.parametrize(
+    'editable_by',
+    [
+        InstancesEditableByMixin.EditableBy.AUTHENTICATED,
+        InstancesEditableByMixin.EditableBy.PLAN_ADMINS,
+        InstancesEditableByMixin.EditableBy.NOT_EDITABLE,
+    ],
+)
 def test_category_type_accepts_non_action_specific_editability(editable_by):
     CategoryTypeFactory.create(instances_editable_by=editable_by).full_clean()
 
 
-@pytest.mark.parametrize(('model', 'scope_factory', 'editable_by_accepted', 'editable_by_raises'), [
-    ('action', PlanFactory, [
-        # accepted
-        InstancesEditableByMixin.EditableBy.AUTHENTICATED,
-        InstancesEditableByMixin.EditableBy.CONTACT_PERSONS,
-        InstancesEditableByMixin.EditableBy.MODERATORS,
-        InstancesEditableByMixin.EditableBy.PLAN_ADMINS,
-        InstancesEditableByMixin.EditableBy.NOT_EDITABLE,
-    ], [
-        # raises
-        # [never]
-    ]),
-    ('category', CategoryTypeFactory, [
-        # accepted
-        InstancesEditableByMixin.EditableBy.AUTHENTICATED,
-        InstancesEditableByMixin.EditableBy.PLAN_ADMINS,
-        InstancesEditableByMixin.EditableBy.NOT_EDITABLE,
-    ], [
-        # raises
-        InstancesEditableByMixin.EditableBy.CONTACT_PERSONS,
-        InstancesEditableByMixin.EditableBy.MODERATORS,
-    ]),
-])
+@pytest.mark.parametrize(
+    ('model', 'scope_factory', 'editable_by_accepted', 'editable_by_raises'),
+    [
+        (
+            'action',
+            PlanFactory,
+            [
+                # accepted
+                InstancesEditableByMixin.EditableBy.AUTHENTICATED,
+                InstancesEditableByMixin.EditableBy.CONTACT_PERSONS,
+                InstancesEditableByMixin.EditableBy.MODERATORS,
+                InstancesEditableByMixin.EditableBy.PLAN_ADMINS,
+                InstancesEditableByMixin.EditableBy.NOT_EDITABLE,
+            ],
+            [
+                # raises
+                # [never]
+            ],
+        ),
+        (
+            'category',
+            CategoryTypeFactory,
+            [
+                # accepted
+                InstancesEditableByMixin.EditableBy.AUTHENTICATED,
+                InstancesEditableByMixin.EditableBy.PLAN_ADMINS,
+                InstancesEditableByMixin.EditableBy.NOT_EDITABLE,
+            ],
+            [
+                # raises
+                InstancesEditableByMixin.EditableBy.CONTACT_PERSONS,
+                InstancesEditableByMixin.EditableBy.MODERATORS,
+            ],
+        ),
+    ],
+)
 def test_attribute_type_editability_validation(model, scope_factory, editable_by_accepted, editable_by_raises):
     scope = scope_factory()
     for editable_by in editable_by_accepted:
         AttributeTypeFactory.create(
-           object_content_type=ContentType.objects.get(app_label='actions', model=model),
-           scope=scope,
-           instances_editable_by=editable_by,
+            object_content_type=ContentType.objects.get(app_label='actions', model=model),
+            scope=scope,
+            instances_editable_by=editable_by,
         ).full_clean()
     for editable_by in editable_by_raises:
         with pytest.raises(ValidationError):
             AttributeTypeFactory.create(
-               object_content_type=ContentType.objects.get(app_label='actions', model=model),
-               scope=scope,
-               instances_editable_by=editable_by,
+                object_content_type=ContentType.objects.get(app_label='actions', model=model),
+                scope=scope,
+                instances_editable_by=editable_by,
             ).full_clean()
 
 
-@pytest.mark.parametrize(('model', 'scope_factory', 'visible_for_accepted', 'visible_for_raises'), [
-    ('action', PlanFactory, [
-        # accepted
-        InstancesVisibleForMixin.VisibleFor.PUBLIC,
-        InstancesVisibleForMixin.VisibleFor.AUTHENTICATED,
-        InstancesVisibleForMixin.VisibleFor.CONTACT_PERSONS,
-        InstancesVisibleForMixin.VisibleFor.MODERATORS,
-        InstancesVisibleForMixin.VisibleFor.PLAN_ADMINS,
-    ], [
-        # raises
-        # [never]
-    ]),
-    ('category', CategoryTypeFactory, [
-        # accepted
-        InstancesVisibleForMixin.VisibleFor.PUBLIC,
-        InstancesVisibleForMixin.VisibleFor.AUTHENTICATED,
-        InstancesVisibleForMixin.VisibleFor.PLAN_ADMINS,
-    ], [
-        # raises
-        InstancesVisibleForMixin.VisibleFor.CONTACT_PERSONS,
-        InstancesVisibleForMixin.VisibleFor.MODERATORS,
-    ]),
-])
+@pytest.mark.parametrize(
+    ('model', 'scope_factory', 'visible_for_accepted', 'visible_for_raises'),
+    [
+        (
+            'action',
+            PlanFactory,
+            [
+                # accepted
+                InstancesVisibleForMixin.VisibleFor.PUBLIC,
+                InstancesVisibleForMixin.VisibleFor.AUTHENTICATED,
+                InstancesVisibleForMixin.VisibleFor.CONTACT_PERSONS,
+                InstancesVisibleForMixin.VisibleFor.MODERATORS,
+                InstancesVisibleForMixin.VisibleFor.PLAN_ADMINS,
+            ],
+            [
+                # raises
+                # [never]
+            ],
+        ),
+        (
+            'category',
+            CategoryTypeFactory,
+            [
+                # accepted
+                InstancesVisibleForMixin.VisibleFor.PUBLIC,
+                InstancesVisibleForMixin.VisibleFor.AUTHENTICATED,
+                InstancesVisibleForMixin.VisibleFor.PLAN_ADMINS,
+            ],
+            [
+                # raises
+                InstancesVisibleForMixin.VisibleFor.CONTACT_PERSONS,
+                InstancesVisibleForMixin.VisibleFor.MODERATORS,
+            ],
+        ),
+    ],
+)
 def test_attribute_type_visibility_validation(model, scope_factory, visible_for_accepted, visible_for_raises):
     scope = scope_factory()
     for visible_for in visible_for_accepted:
         AttributeTypeFactory.create(
-           object_content_type=ContentType.objects.get(app_label='actions', model=model),
-           scope=scope,
-           instances_visible_for=visible_for,
+            object_content_type=ContentType.objects.get(app_label='actions', model=model),
+            scope=scope,
+            instances_visible_for=visible_for,
         ).full_clean()
     for visible_for in visible_for_raises:
         with pytest.raises(ValidationError):
             AttributeTypeFactory.create(
-               object_content_type=ContentType.objects.get(app_label='actions', model=model),
-               scope=scope,
-               instances_visible_for=visible_for,
+                object_content_type=ContentType.objects.get(app_label='actions', model=model),
+                scope=scope,
+                instances_visible_for=visible_for,
             ).full_clean()
 
 
@@ -495,7 +526,7 @@ def test_action_i18n_when_saving(plan, action_factory, primary_language, active_
         action.save()
         active_lang_translation_without_fallback = getattr(
             action,
-            f"name_{active_language.replace('-', '_').lower()}",
+            f'name_{active_language.replace("-", "_").lower()}',
         )
         if active_language == primary_language:
             assert action.name == 'action.name_i18n'
@@ -507,14 +538,22 @@ def test_action_i18n_when_saving(plan, action_factory, primary_language, active_
 
 
 def test_action_on_form_save_no_commit(
-    actions_having_attributes, action_attribute_type__text, action_attribute_type__rich_text,
-    action_attribute_type__ordered_choice, action_attribute_type__unordered_choice,
-    action_attribute_type__optional_choice, action_attribute_type__numeric,
+    actions_having_attributes,
+    action_attribute_type__text,
+    action_attribute_type__rich_text,
+    action_attribute_type__ordered_choice,
+    action_attribute_type__unordered_choice,
+    action_attribute_type__optional_choice,
+    action_attribute_type__numeric,
 ):
     action = actions_having_attributes[0]
     attribute_types = [
-        action_attribute_type__text, action_attribute_type__rich_text, action_attribute_type__ordered_choice,
-        action_attribute_type__unordered_choice, action_attribute_type__optional_choice, action_attribute_type__numeric,
+        action_attribute_type__text,
+        action_attribute_type__rich_text,
+        action_attribute_type__ordered_choice,
+        action_attribute_type__unordered_choice,
+        action_attribute_type__optional_choice,
+        action_attribute_type__numeric,
     ]
     for attribute_type in attribute_types:
         # Further down, we rely on data being present due to the other language
@@ -550,20 +589,13 @@ def test_action_on_form_save_no_commit(
 
     # Set all attributes to some values
     cleaned_data_attributes_set = {
-        f'attribute_type_{action_attribute_type__numeric.pk}':
-         123.0,
-        f'attribute_type_{action_attribute_type__optional_choice.pk}_choice':
-         action_attribute_type__optional_choice.choice_options.first(),
-        f'attribute_type_{action_attribute_type__optional_choice.pk}_text':
-         'foo',
-        f'attribute_type_{action_attribute_type__ordered_choice.pk}':
-         action_attribute_type__ordered_choice.choice_options.first(),
-        f'attribute_type_{action_attribute_type__rich_text.pk}':
-         'bar',
-        f'attribute_type_{action_attribute_type__text.pk}':
-         'baz',
-        f'attribute_type_{action_attribute_type__unordered_choice.pk}':
-         action_attribute_type__unordered_choice.choice_options.first(),
+        f'attribute_type_{action_attribute_type__numeric.pk}': 123.0,
+        f'attribute_type_{action_attribute_type__optional_choice.pk}_choice': action_attribute_type__optional_choice.choice_options.first(),  # noqa: E501
+        f'attribute_type_{action_attribute_type__optional_choice.pk}_text': 'foo',
+        f'attribute_type_{action_attribute_type__ordered_choice.pk}': action_attribute_type__ordered_choice.choice_options.first(),  # noqa: E501
+        f'attribute_type_{action_attribute_type__rich_text.pk}': 'bar',
+        f'attribute_type_{action_attribute_type__text.pk}': 'baz',
+        f'attribute_type_{action_attribute_type__unordered_choice.pk}': action_attribute_type__unordered_choice.choice_options.first(),  # noqa: E501
     }
     save_form(cleaned_data_attributes_set)
     expected_result_attributes_set = {
@@ -575,14 +607,12 @@ def test_action_on_form_save_no_commit(
             },
         },
         'ordered_choice': {
-            str(action_attribute_type__ordered_choice.id):
-            action_attribute_type__ordered_choice.choice_options.first().id,
+            str(action_attribute_type__ordered_choice.id): action_attribute_type__ordered_choice.choice_options.first().id,
         },
         'rich_text': {str(action_attribute_type__rich_text.id): {'text': 'bar', 'text_fi': None}},
         'text': {str(action_attribute_type__text.id): {'text': 'baz', 'text_fi': None}},
         'unordered_choice': {
-            str(action_attribute_type__unordered_choice.id):
-            action_attribute_type__unordered_choice.choice_options.first().id,
+            str(action_attribute_type__unordered_choice.id): action_attribute_type__unordered_choice.choice_options.first().id,
         },
     }
     assert action.draft_attributes.get_serialized_data() == expected_result_attributes_set
@@ -663,18 +693,18 @@ class TestPlanDefaultNameForCopying:
         today = self._get_expected_date(plan_fi)
         result = plan_fi.default_name_for_copying()
         with translation.override('fi'):
-            expected = _("%(plan)s (copy from %(date)s)") % {'plan': plan_fi.name, 'date': today}
+            expected = _('%(plan)s (copy from %(date)s)') % {'plan': plan_fi.name, 'date': today}
         assert result == expected
 
     def test_numbered_copy_uses_plan_primary_language(self):
         plan_fi = PlanFactory.create(primary_language='fi', other_languages=['en'])
         today = self._get_expected_date(plan_fi)
         with translation.override('fi'):
-            unnumbered = _("%(plan)s (copy from %(date)s)") % {'plan': plan_fi.name, 'date': today}
+            unnumbered = _('%(plan)s (copy from %(date)s)') % {'plan': plan_fi.name, 'date': today}
         PlanFactory.create(name=unnumbered)
         result = plan_fi.default_name_for_copying()
         with translation.override('fi'):
-            expected = _("%(plan)s (copy %(n)s from %(date)s)") % {'plan': plan_fi.name, 'n': 2, 'date': today}
+            expected = _('%(plan)s (copy %(n)s from %(date)s)') % {'plan': plan_fi.name, 'n': 2, 'date': today}
         assert result == expected
 
 

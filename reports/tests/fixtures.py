@@ -1,4 +1,3 @@
-
 import pytest
 from pytest_factoryboy import register
 
@@ -21,16 +20,16 @@ register(ReportFactory)
 
 @pytest.fixture
 def report_type_with_all_attributes(
-        plan,
-        category_type,
-        report_type_factory,
-        action_attribute_type__text,
-        action_attribute_type__rich_text,
-        action_attribute_type__ordered_choice,
-        action_attribute_type__unordered_choice,
-        action_attribute_type__optional_choice,
-        action_attribute_type__numeric,
-        action_attribute_type__category_choice,
+    plan,
+    category_type,
+    report_type_factory,
+    action_attribute_type__text,
+    action_attribute_type__rich_text,
+    action_attribute_type__ordered_choice,
+    action_attribute_type__unordered_choice,
+    action_attribute_type__optional_choice,
+    action_attribute_type__numeric,
+    action_attribute_type__category_choice,
 ):
     plan.features.output_report_action_print_layout = True
     plan.features.save()
@@ -68,9 +67,9 @@ def report_type_with_all_attributes(
 
 @pytest.fixture
 def report_with_all_attributes(
-        report_type_with_all_attributes,
-        report_factory,
-        actions_having_attributes,
+    report_type_with_all_attributes,
+    report_factory,
+    actions_having_attributes,
 ):
     report = report_factory(type=report_type_with_all_attributes)
     report.fields = report_type_with_all_attributes.fields
@@ -80,9 +79,9 @@ def report_with_all_attributes(
 
 @pytest.fixture
 def plan_with_report_and_attributes(
-        plan,
-        actions_having_attributes,
-        report_with_all_attributes,
+    plan,
+    actions_having_attributes,
+    report_with_all_attributes,
 ):
     assert report_with_all_attributes.type.plan == plan
     for a in actions_having_attributes:

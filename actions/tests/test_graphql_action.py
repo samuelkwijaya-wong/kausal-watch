@@ -97,10 +97,7 @@ def test_action_visibility(graphql_client_query_data, actions_with_relations_fac
         )['plan']['actions'],
     ]
 
-    individual_data = {
-        a.id: graphql_client_query_data(RETRIEVE_ACTION_QUERY, variables={'id': str(a.id)})
-        for a in actions
-    }
+    individual_data = {a.id: graphql_client_query_data(RETRIEVE_ACTION_QUERY, variables={'id': str(a.id)}) for a in actions}
 
     for action in actions:
         should_be_public = False
@@ -128,15 +125,12 @@ def test_action_visibility(graphql_client_query_data, actions_with_relations_fac
         # ActionIndicator.action
         for indicator in Indicator.objects.all():
             data = graphql_client_query_data(
-                RETRIEVE_INDICATOR_QUERY, variables={'id': indicator.id},
+                RETRIEVE_INDICATOR_QUERY,
+                variables={'id': indicator.id},
             )
             assert data['indicator']['id'] == str(indicator.id)
-            assert str(action.id) not in (
-                a['action']['id'] for a in data['indicator']['relatedActions']
-            )
-            assert str(action.id) not in (
-                a.get('action', {}).get('id') for a in data['indicator']['actions']
-            )
+            assert str(action.id) not in (a['action']['id'] for a in data['indicator']['relatedActions'])
+            assert str(action.id) not in (a.get('action', {}).get('id') for a in data['indicator']['actions'])
 
 
 def _action_visible(action, data):
@@ -178,20 +172,23 @@ def test_action_contact_person_hide_moderators(graphql_client_query_data, plan, 
     data = graphql_client_query_data(query, variables={'action': action.id})
     expected = {
         'action': {
-            'contactPersons': [{
-                '__typename': 'ActionContactPerson',
-                'id': str(acp.id),
-                'action': {
-                   '__typename': 'Action',
-                   'id': str(action.id),
-                },
-                'person': {
-                   '__typename': 'Person',
-                   'id': str(acp.person.id),
-                },
-                'order': acp.order,
-                'primaryContact': acp.primary_contact,
-            } for acp in [acp1, acp2, acp3]],
+            'contactPersons': [
+                {
+                    '__typename': 'ActionContactPerson',
+                    'id': str(acp.id),
+                    'action': {
+                        '__typename': 'Action',
+                        'id': str(action.id),
+                    },
+                    'person': {
+                        '__typename': 'Person',
+                        'id': str(acp.person.id),
+                    },
+                    'order': acp.order,
+                    'primaryContact': acp.primary_contact,
+                }
+                for acp in [acp1, acp2, acp3]
+            ],
         },
     }
     assert data == expected
@@ -201,20 +198,22 @@ def test_action_contact_person_hide_moderators(graphql_client_query_data, plan, 
     data = graphql_client_query_data(query, variables={'action': action.id})
     expected = {
         'action': {
-            'contactPersons': [{
-                '__typename': 'ActionContactPerson',
-                'id': str(acp3.id),
-                'action': {
-                   '__typename': 'Action',
-                   'id': str(action.id),
-                },
-                'person': {
-                   '__typename': 'Person',
-                   'id': str(acp3.person.id),
-                },
-                'order': acp3.order,
-                'primaryContact': acp3.primary_contact,
-            }],
+            'contactPersons': [
+                {
+                    '__typename': 'ActionContactPerson',
+                    'id': str(acp3.id),
+                    'action': {
+                        '__typename': 'Action',
+                        'id': str(action.id),
+                    },
+                    'person': {
+                        '__typename': 'Person',
+                        'id': str(acp3.person.id),
+                    },
+                    'order': acp3.order,
+                    'primaryContact': acp3.primary_contact,
+                }
+            ],
         },
     }
     assert data == expected

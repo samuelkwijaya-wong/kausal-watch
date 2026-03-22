@@ -105,8 +105,10 @@ class IndicatorQuerySet(SearchableQuerySetMixin, MultilingualQuerySet['Indicator
 
 
 if TYPE_CHECKING:
+
     class IndicatorManager(MLModelManager['Indicator', IndicatorQuerySet]):
         pass
+
 else:
     IndicatorManager = MLModelManager.from_queryset(IndicatorQuerySet)
 
@@ -330,19 +332,19 @@ class Indicator(
         unique=True,
         blank=True,
         null=True,
-        verbose_name=_("Node identifier"),  # TODO: change to Node UUID once it"s actually a UUID
+        verbose_name=_('Node identifier'),  # TODO: change to Node UUID once it"s actually a UUID
         help_text=_("The node identifier of the node in Paths where this indicator's data is imported from."),
     )
 
     hide_indicator_graph = models.BooleanField(
         verbose_name=_('Hide graph'),
-        help_text=_("Do not show the graph for this indicator on the indicator page."),
+        help_text=_('Do not show the graph for this indicator on the indicator page.'),
         default=False,
     )
     hide_indicator_table = models.BooleanField(
-        verbose_name=_("Hide table"),
+        verbose_name=_('Hide table'),
         help_text=_("Do not show this indicator's values in a table on the indicator page."),
-        default=False
+        default=False,
     )
 
     sent_notifications = GenericRelation('notifications.SentNotification', related_query_name='indicator')
@@ -446,6 +448,7 @@ class Indicator(
 
     def get_public_change_log_message(self) -> BaseChangeLogMessage | None:
         from actions.models import IndicatorChangeLogMessage
+
         return IndicatorChangeLogMessage.objects.filter(indicator=self).order_by('-created_at').first()
 
     def initialize_plan_defaults(self, plan):
@@ -514,6 +517,7 @@ class Indicator(
 
     def get_notification_context(self, plan, request=None):
         from django.conf import settings
+
         if 'kausal_watch_extensions' in settings.INSTALLED_APPS:
             edit_values_url = reverse('indicators_indicator_modeladmin_edit_values', kwargs=dict(instance_pk=self.id))
         else:
@@ -542,33 +546,29 @@ class Indicator(
     def clean(self):
         if self.updated_values_due_at:
             if self.time_resolution != 'year':
-                raise ValidationError(
-                    {'updated_values_due_at': _('Deadlines for value updates are currently only possible for yearly indicators')}
-                )
+                raise ValidationError({
+                    'updated_values_due_at': _('Deadlines for value updates are currently only possible for yearly indicators')
+                })
             if self.latest_value is not None and self.updated_values_due_at <= self.latest_value.date + relativedelta(years=1):
-                raise ValidationError(
-                    {'updated_values_due_at': _('There is already an indicator value for the year preceding the deadline')}
-                )
+                raise ValidationError({
+                    'updated_values_due_at': _('There is already an indicator value for the year preceding the deadline')
+                })
 
         if self.common:
             if self.common.quantity != self.quantity:
-                raise ValidationError(
-                    {
-                        'quantity': _(
-                            'Quantity must be the same as in common indicator (%s)'  # noqa: INT003
-                            % self.common.quantity
-                        )
-                    }
-                )
+                raise ValidationError({
+                    'quantity': _(
+                        'Quantity must be the same as in common indicator (%s)'  # noqa: INT003
+                        % self.common.quantity
+                    )
+                })
             if self.common.unit != self.unit:
-                raise ValidationError(
-                    {
-                        'unit': _(
-                            'Unit must be the same as in common indicator (%s)'  # noqa: INT003
-                            % self.common.unit
-                        )
-                    }
-                )
+                raise ValidationError({
+                    'unit': _(
+                        'Unit must be the same as in common indicator (%s)'  # noqa: INT003
+                        % self.common.unit
+                    )
+                })
             # Unfortunately it seems we need to check whether dimensions are equal in the form
 
     def set_categories(self, ctype: CategoryType | str, categories: list[int | Category], plan: Plan | None = None):
@@ -685,22 +685,18 @@ class Indicator(
 
     @transaction.atomic
     def set_values_from_import(
-        self,
-        metric_dim: NodeValuesNodeMetricDim,
-        import_parameters: dict[str, str],
-        max_year: int | None = None
+        self, metric_dim: NodeValuesNodeMetricDim, import_parameters: dict[str, str], max_year: int | None = None
     ):
         if len(metric_dim.dimensions) > 0:
             raise NotImplementedError('Only dimensionless nodes supported at the moment')
         if len(metric_dim.years) != len(metric_dim.values):
             raise ValueError('Years and values do not match')
 
-        values_to_remove = IndicatorValue.objects.filter(
-            indicator=self
-        ).exclude(
-            date__year__in=metric_dim.years
-        ).exclude(
-            date__year__gt=max_year
+        values_to_remove = (
+            IndicatorValue.objects
+            .filter(indicator=self)
+            .exclude(date__year__in=metric_dim.years)
+            .exclude(date__year__gt=max_year)
         )
         values_to_remove.delete()
 
@@ -708,12 +704,7 @@ class Indicator(
             if max_year and year > max_year:
                 break
             IndicatorValue.objects.update_or_create(
-                indicator=self,
-                date__year=year,
-                defaults={
-                    'value': value,
-                    'date': date(year=year, month=12, day=31)
-                }
+                indicator=self, date__year=year, defaults={'value': value, 'date': date(year=year, month=12, day=31)}
             )
         IndicatorValuesImportLog.objects.create(
             indicator=self,
@@ -786,7 +777,9 @@ class IndicatorLevelQuerySet(SearchableQuerySetMixin, models.QuerySet['Indicator
 
 
 if TYPE_CHECKING:
+
     class IndicatorLevelManager(ModelManager['IndicatorLevel', IndicatorLevelQuerySet]): ...
+
 else:
     IndicatorLevelManager = ModelManager.from_queryset(IndicatorLevelQuerySet)
 

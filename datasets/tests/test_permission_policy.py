@@ -12,6 +12,7 @@ Covered code paths:
   - construct_perm_q filters correctly (queryset level)
   - user_can_create respects model/object_id query params
 """
+
 from __future__ import annotations
 
 import uuid
@@ -74,6 +75,7 @@ def indicator_contact_user(indicator_contact):
 # user_has_perm — action-scoped dataset
 # ---------------------------------------------------------------------------
 
+
 class TestUserHasPermActionScoped:
     def test_superuser(self, policy, superuser, action_dataset):
         assert policy.user_has_perm(superuser, 'change', action_dataset) is True
@@ -92,6 +94,7 @@ class TestUserHasPermActionScoped:
 # user_has_perm — category-scoped dataset
 # ---------------------------------------------------------------------------
 
+
 class TestUserHasPermCategoryScoped:
     def test_plan_admin(self, policy, plan_admin_user, category_dataset):
         assert policy.user_has_perm(plan_admin_user, 'change', category_dataset) is True
@@ -103,6 +106,7 @@ class TestUserHasPermCategoryScoped:
 # ---------------------------------------------------------------------------
 # user_has_perm — indicator-scoped dataset
 # ---------------------------------------------------------------------------
+
 
 class TestUserHasPermIndicatorScoped:
     def test_superuser(self, policy, superuser, indicator_dataset):
@@ -122,6 +126,7 @@ class TestUserHasPermIndicatorScoped:
 # user_has_perm — dataset with no scope
 # ---------------------------------------------------------------------------
 
+
 class TestUserHasPermNoScope:
     def test_superuser_can_access_scopeless_dataset(self, policy, superuser):
         schema = DatasetSchemaFactory.create()
@@ -138,6 +143,7 @@ class TestUserHasPermNoScope:
 # anon_has_perm
 # ---------------------------------------------------------------------------
 
+
 class TestAnonHasPerm:
     def test_anon_cannot_view_dataset(self, policy, action_dataset):
         assert policy.anon_has_perm('view', action_dataset) is False
@@ -149,6 +155,7 @@ class TestAnonHasPerm:
 # ---------------------------------------------------------------------------
 # construct_perm_q — queryset filtering
 # ---------------------------------------------------------------------------
+
 
 class TestConstructPermQ:
     def test_superuser_sees_all(self, policy, superuser, action_dataset, category_dataset, indicator_dataset):
@@ -169,9 +176,7 @@ class TestConstructPermQ:
         assert category_dataset in qs
         assert indicator_dataset in qs
 
-    def test_action_contact_sees_own_action_dataset(
-        self, policy, action_contact_person_user, action_dataset
-    ):
+    def test_action_contact_sees_own_action_dataset(self, policy, action_contact_person_user, action_dataset):
         # Create a category in a completely different plan to verify it is not accessible
         other_plan = PlanFactory.create()
         other_ct = CategoryTypeFactory.create(plan=other_plan)
@@ -188,25 +193,19 @@ class TestConstructPermQ:
         assert action_dataset in qs
         assert other_category_dataset not in qs
 
-    def test_action_contact_sees_own_action_dataset_via_perm_q(
-        self, policy, action_contact_person_user, action_dataset
-    ):
+    def test_action_contact_sees_own_action_dataset_via_perm_q(self, policy, action_contact_person_user, action_dataset):
         q = policy.construct_perm_q(action_contact_person_user, 'change')
         assert q is not None
         qs = Dataset.objects.filter(q)
         assert action_dataset in qs
 
-    def test_indicator_contact_sees_own_indicator_dataset(
-        self, policy, indicator_contact_user, indicator_dataset
-    ):
+    def test_indicator_contact_sees_own_indicator_dataset(self, policy, indicator_contact_user, indicator_dataset):
         q = policy.construct_perm_q(indicator_contact_user, 'change')
         assert q is not None
         qs = Dataset.objects.filter(q)
         assert indicator_dataset in qs
 
-    def test_unrelated_user_sees_nothing(
-        self, policy, user, action_dataset, category_dataset, indicator_dataset
-    ):
+    def test_unrelated_user_sees_nothing(self, policy, user, action_dataset, category_dataset, indicator_dataset):
         q = policy.construct_perm_q(user, 'change')
         assert q is not None
         qs = Dataset.objects.filter(q)
@@ -221,6 +220,7 @@ class TestConstructPermQ:
 # ---------------------------------------------------------------------------
 # user_can_create
 # ---------------------------------------------------------------------------
+
 
 class TestUserCanCreate:
     def _request(self, model=None, object_id=None):
@@ -274,22 +274,17 @@ class TestUserCanCreate:
         request = self._request(model='unknown.Model', object_id=action.pk)
         assert policy.user_can_create(plan_admin_user, context=request) is False
 
-    def test_action_contact_person_can_create_dataset_for_their_action(
-        self, policy, action_contact_person_user, action
-    ):
+    def test_action_contact_person_can_create_dataset_for_their_action(self, policy, action_contact_person_user, action):
         request = self._request(model='actions.Action', object_id=action.pk)
         assert policy.user_can_create(action_contact_person_user, context=request) is True
 
-    def test_action_contact_person_cannot_create_dataset_for_other_action(
-        self, policy, action_contact_person_user, plan
-    ):
+    def test_action_contact_person_cannot_create_dataset_for_other_action(self, policy, action_contact_person_user, plan):
         from actions.tests.factories import ActionFactory
+
         other_action = ActionFactory.create(plan=plan)
         request = self._request(model='actions.Action', object_id=other_action.pk)
         assert policy.user_can_create(action_contact_person_user, context=request) is False
 
-    def test_indicator_contact_person_can_create_dataset_for_their_indicator(
-        self, policy, indicator_contact_user, indicator
-    ):
+    def test_indicator_contact_person_can_create_dataset_for_their_indicator(self, policy, indicator_contact_user, indicator):
         request = self._request(model='indicators.Indicator', object_id=indicator.pk)
         assert policy.user_can_create(indicator_contact_user, context=request) is True

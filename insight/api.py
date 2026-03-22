@@ -1,3 +1,5 @@
+from typing import TYPE_CHECKING
+
 from django.utils.translation import override
 from rest_framework import viewsets
 from rest_framework.exceptions import ValidationError
@@ -11,7 +13,10 @@ from orgs.models import Organization, OrganizationClass
 
 from .generator import ActionGraphGenerator, OrganizationGraphGenerator
 
-all_views: list = []
+if TYPE_CHECKING:
+    from kausal_common.api.utils import RegisteredAPIView
+
+all_views: list[RegisteredAPIView] = []
 
 
 def register_view(klass, *args, **kwargs):
@@ -26,14 +31,14 @@ class InsightViewSet(viewsets.ViewSet):
         with override(language):
             return self._list(request)
 
-    def _list(self, request):
+    def _list(self, request):  # noqa: ANN202, C901, PLR0912
         params = request.query_params
         object_type = params.get('type', 'action').strip().lower()
         if object_type == 'organization':
             orgs = Organization.objects.filter(dissolution_date__isnull=True)
             classes = OrganizationClass.objects.all()
-            generator: ActionGraphGenerator | OrganizationGraphGenerator = (
-                OrganizationGraphGenerator(request=request, orgs=orgs, classifications=classes)
+            generator: ActionGraphGenerator | OrganizationGraphGenerator = OrganizationGraphGenerator(
+                request=request, orgs=orgs, classifications=classes
             )
         else:
             plan_id = params.get('plan', '').strip()
@@ -42,14 +47,14 @@ class InsightViewSet(viewsets.ViewSet):
             try:
                 plan = Plan.objects.get(identifier=plan_id)
             except Plan.DoesNotExist:
-                raise ValidationError("Plan %s does not exist" % plan_id)
+                raise ValidationError('Plan %s does not exist' % plan_id) from None
 
             action_id = params.get('action', '').strip()
             if action_id:
                 try:
                     action = Action.objects.get_queryset().visible_for_user(request.user).get(id=action_id, plan=plan)
                 except Action.DoesNotExist:
-                    raise ValidationError("Action %s does not exist in plan %s" % (action_id, plan_id))
+                    raise ValidationError('Action %s does not exist in plan %s' % (action_id, plan_id)) from None
             else:
                 action = None
 
@@ -60,7 +65,7 @@ class InsightViewSet(viewsets.ViewSet):
                 try:
                     indicator = Indicator.objects.get_queryset().visible_for_user(request.user).get(id=indicator_id, plans=plan)
                 except Indicator.DoesNotExist:
-                    raise ValidationError("Indicator %s does not exist in plan %s" % (indicator_id, plan_id))
+                    raise ValidationError('Indicator %s does not exist in plan %s' % (indicator_id, plan_id)) from None
             else:
                 indicator = None
 
@@ -72,8 +77,13 @@ class InsightViewSet(viewsets.ViewSet):
                 nodes = [indicator]
             else:
                 traverse_direction = 'both'
-                nodes = Action.objects.get_queryset().visible_for_user(request.user).filter(
-                    plan=plan, indicators__isnull=False).unmerged()
+                nodes = (
+                    Action.objects
+                    .get_queryset()
+                    .visible_for_user(request.user)
+                    .filter(plan=plan, indicators__isnull=False)
+                    .unmerged()
+                )
 
             generator = ActionGraphGenerator(request=request, plan=plan, traverse_direction=traverse_direction)
             generator.fetch_data()

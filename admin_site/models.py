@@ -203,15 +203,13 @@ class BuiltInFieldCustomization(
         try:
             model._meta.get_field(self.field_name)
         except FieldDoesNotExist as err:
-            raise ValidationError(
-                {
-                    'field_name': _("%(field)s is not a valid field in the model '%(model)s'")
-                    % {
-                        'field': self.field_name,
-                        'model': self.content_type.model,
-                    }
+            raise ValidationError({
+                'field_name': _("%(field)s is not a valid field in the model '%(model)s'")
+                % {
+                    'field': self.field_name,
+                    'model': self.content_type.model,
                 }
-            ) from err
+            }) from err
         return self.field_name
 
     def __str__(self):
@@ -244,10 +242,14 @@ class BaseChangeLogMessage(PlanRelatedModel):
     )
 
     created_at = models.DateTimeField(
-        auto_now_add=True, editable=False, verbose_name=_('created at'),
+        auto_now_add=True,
+        editable=False,
+        verbose_name=_('created at'),
     )
     updated_at = models.DateTimeField(
-        auto_now=True, editable=False, verbose_name=_('updated at'),
+        auto_now=True,
+        editable=False,
+        verbose_name=_('updated at'),
     )
     created_by = models.ForeignKey(
         User,
@@ -286,5 +288,5 @@ class BaseChangeLogMessage(PlanRelatedModel):
         return self.get_str_template() % {
             'verbose_name': verbose_name.title(),
             'instance': self.get_instance(),
-            'date': formats.date_format(self.created_at.date())
+            'date': formats.date_format(self.created_at.date()),
         }

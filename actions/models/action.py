@@ -171,7 +171,8 @@ class ActionQuerySet(SearchableQuerySetMixin, MultilingualQuerySet['Action'], Pl
         from reports.models import ActionSnapshot
 
         action_ids = (
-            ActionSnapshot.objects.filter(report=report)
+            ActionSnapshot.objects
+            .filter(report=report)
             .annotate(action_id=Cast('action_version__object_id', output_field=IntegerField()))
             .values_list('action_id')
         )
@@ -186,7 +187,8 @@ class ActionQuerySet(SearchableQuerySetMixin, MultilingualQuerySet['Action'], Pl
             indicators_with_goals_count=Count(
                 'related_indicators',
                 filter=Q(
-                    related_indicators__indicator__in=Indicator.objects.qs.available_for_plan(plan)
+                    related_indicators__indicator__in=Indicator.objects.qs
+                    .available_for_plan(plan)
                     .visible_for_user(user)
                     .filter(goals__isnull=False)
                 ),
@@ -205,7 +207,9 @@ class ActionQuerySet(SearchableQuerySetMixin, MultilingualQuerySet['Action'], Pl
 
 
 if TYPE_CHECKING:
+
     class ActionManager(MLModelManager['Action', ActionQuerySet]): ...
+
 else:
     ActionManager = MLModelManager.from_queryset(ActionQuerySet)
 
@@ -283,11 +287,7 @@ def _renormalize_pks_for_unique_constraint(
         return
 
     # Build mapping: wrapped_id -> current DB pk
-    wrapped_to_pk_db = {
-        get_wrapped_id_db(item): get_pk_db(item)
-        for item in db_items
-        if get_pk_db(item) is not None
-    }
+    wrapped_to_pk_db = {get_wrapped_id_db(item): get_pk_db(item) for item in db_items if get_pk_db(item) is not None}
 
     # Detect if any wrapped ID is moving to a different PK
     needs_renormalization = False
@@ -607,11 +607,7 @@ class Action(
             clean=clean,
         )
         if not self.plan.features.enable_moderation_workflow:
-            new_revision.publish(
-                user=user,
-                skip_permission_checks=True,
-                log_action=False
-            )
+            new_revision.publish(user=user, skip_permission_checks=True, log_action=False)
         return new_revision
 
     def commit_attributes(self, attributes: dict[str, Any], user):
@@ -863,7 +859,8 @@ class Action(
 
     def get_next_action(self, user: User | None):
         return (
-            Action.objects.get_queryset()
+            Action.objects
+            .get_queryset()
             .visible_for_user(user)
             .filter(plan=self.plan_id, order__gt=self.order)
             .unmerged()
@@ -872,7 +869,8 @@ class Action(
 
     def get_previous_action(self, user: User | None) -> Action | None:
         return (
-            Action.objects.get_queryset()
+            Action.objects
+            .get_queryset()
             .visible_for_user(user)
             .filter(plan=self.plan_id, order__lt=self.order)
             .unmerged()
@@ -1335,10 +1333,7 @@ class Action(
         # connected to that previous version, pre-publishing
         previous_revision_to_published_revision = self.live_revision.content['latest_revision']
         try:
-            return ActionChangeLogMessage.objects.get(
-                action=self,
-                revision=previous_revision_to_published_revision
-            )
+            return ActionChangeLogMessage.objects.get(action=self, revision=previous_revision_to_published_revision)
         except ActionChangeLogMessage.DoesNotExist:
             return None
 
@@ -1417,7 +1412,8 @@ class Action(
         from .action_deps import ActionDependencyRelationship
 
         return (
-            ActionDependencyRelationship.objects.qs.all_for_action(self)
+            ActionDependencyRelationship.objects.qs
+            .all_for_action(self)
             .select_related('preceding', 'dependent')
             .visible_for_user(user, plan)
         )
@@ -1874,6 +1870,7 @@ if TYPE_CHECKING:
 
     class ActionTaskManager(MLModelManager['ActionTask', ActionTaskQuerySet]):
         pass
+
 else:
     ActionTaskManager = MLModelManager.from_queryset(ActionTaskQuerySet)
 
@@ -2207,7 +2204,6 @@ class ActionStatusUpdate(models.Model):
         verbose_name=_('created by'),
         editable=False,
     )
-
 
     public_fields: ClassVar = [
         'id',

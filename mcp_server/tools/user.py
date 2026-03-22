@@ -23,7 +23,7 @@ async def user_details() -> UserDetailsMe:
     result = await execute_operation(UserDetails, UserDetails.Arguments())
 
     if result.me is None:
-        raise ToolError("Not authenticated or user not found")
+        raise ToolError('Not authenticated or user not found')
 
     return result.me
 

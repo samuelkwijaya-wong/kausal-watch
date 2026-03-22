@@ -32,6 +32,7 @@ class AuthenticatedWatchRequest(WatchRequest):
 class WatchAdminRequest(AuthenticatedWatchRequest):
     admin_cache: PlanSpecificCache
     if TYPE_CHECKING:
+
         def get_active_admin_plan(self) -> Plan: ...
 
 
@@ -42,6 +43,7 @@ class WatchAPIRequest(WatchRequest):
     _plan_hostname: str
 
     if TYPE_CHECKING:
+
         def get_active_admin_plan(self) -> Plan: ...
 
 
@@ -60,6 +62,7 @@ def mixin_for_base[T](baseclass: type[T]) -> type[T]:
 
 
 if TYPE_CHECKING:
+
     @type_check_only
     class WatchGQLContext(CommonGQLContext):  # pyright: ignore[reportGeneralTypeIssues]
         graphql_operation_name: str | None

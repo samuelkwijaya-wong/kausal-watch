@@ -35,12 +35,14 @@ class ActionStatusSummary(ConstantMetadata['ActionStatusSummaryIdentifier', Summ
     sentiment: Sentiment
     label: StrOrPromise
 
-    def __init__(self,
-                 default_label: StrOrPromise = '',
-                 color: str = '',
-                 is_completed: bool = False,
-                 is_active: bool = False,
-                 sentiment: Sentiment = Sentiment.NEUTRAL):
+    def __init__(
+        self,
+        default_label: StrOrPromise = '',
+        color: str = '',
+        is_completed: bool = False,
+        is_active: bool = False,
+        sentiment: Sentiment = Sentiment.NEUTRAL,
+    ):
         self.default_label = default_label
         self.color = color
         self.is_completed = is_completed
@@ -193,7 +195,8 @@ class ActionTimeliness(ConstantMetadata['ActionTimelinessIdentifier', SummaryCon
     identifier: ActionTimelinessIdentifier
     days: int
 
-    def __init__(self,
+    def __init__(
+        self,
         boundary: Callable[[Plan], int],
         color: str | None = None,
         sentiment: Sentiment | None = None,

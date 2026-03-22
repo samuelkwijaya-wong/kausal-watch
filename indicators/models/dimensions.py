@@ -47,19 +47,16 @@ class Dimension(ClusterableModel):
 
     @override
     def delete(
-        self, using: Any | None = None,
-        keep_parents: bool = False,
-        **kwargs: dict[str, Any]
+        self, using: Any | None = None, keep_parents: bool = False, **kwargs: dict[str, Any]
     ) -> tuple[int, dict[str, int]]:
         # Check if dimension is used by multiple plans
         if self.plans.count() > 1:
             from django.core.exceptions import ValidationError
+
             plan_names = [str(pd.plan) for pd in self.plans.all()]
             raise ValidationError(
-                _('Cannot delete dimension "%(dimension)s" because it is linked to multiple plans: %(plans)s') % {
-                    'dimension': self.name,
-                    'plans': ', '.join(plan_names)
-                }
+                _('Cannot delete dimension "%(dimension)s" because it is linked to multiple plans: %(plans)s')
+                % {'dimension': self.name, 'plans': ', '.join(plan_names)}
             )
         return super().delete(using=using, keep_parents=keep_parents, **kwargs)
 
@@ -74,7 +71,10 @@ class DimensionCategory(OrderedModel):
     dimension = ParentalKey('indicators.Dimension', on_delete=models.CASCADE, related_name='categories')
     name = models.CharField(max_length=100, verbose_name=_('name'))
     default_color = ColorField(
-        max_length=50, blank=True, default='', verbose_name=_('default color'),
+        max_length=50,
+        blank=True,
+        default='',
+        verbose_name=_('default color'),
         help_text=_('Default color for this dimension category in charts'),
     )
 
@@ -107,7 +107,7 @@ class PlanDimension(models.Model):
         unique_together = (('plan', 'dimension'),)
 
     def __str__(self):
-        return "%s ∈ %s" % (str(self.dimension), str(self.plan))
+        return '%s ∈ %s' % (str(self.dimension), str(self.plan))
 
 
 class IndicatorDimension(OrderedModel):
@@ -131,7 +131,7 @@ class IndicatorDimension(OrderedModel):
         unique_together = (('indicator', 'dimension'),)
 
     def __str__(self):
-        return "%s ∈ %s" % (str(self.dimension), str(self.indicator))
+        return '%s ∈ %s' % (str(self.dimension), str(self.indicator))
 
 
 class CommonIndicatorDimension(OrderedModel):
@@ -155,4 +155,4 @@ class CommonIndicatorDimension(OrderedModel):
         unique_together = (('common_indicator', 'dimension'),)
 
     def __str__(self):
-        return "%s ∈ %s" % (str(self.dimension), str(self.common_indicator))
+        return '%s ∈ %s' % (str(self.dimension), str(self.common_indicator))

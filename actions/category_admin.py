@@ -160,16 +160,20 @@ class CategoryTypeAdmin(AplansModelAdmin[CategoryType]):
         FieldPanel('help_text'),
         FieldPanel('hide_category_identifiers'),
         FieldPanel('select_widget'),
-        MultiFieldPanel([
-            FieldRowPanel([
-                FieldPanel('usable_for_actions'),
-                FieldPanel('editable_for_actions'),
-            ]),
-            FieldRowPanel([
-                FieldPanel('usable_for_indicators'),
-                FieldPanel('editable_for_indicators'),
-            ]),
-        ], heading=_('Action and indicator categorization'), classname='collapsible'),
+        MultiFieldPanel(
+            [
+                FieldRowPanel([
+                    FieldPanel('usable_for_actions'),
+                    FieldPanel('editable_for_actions'),
+                ]),
+                FieldRowPanel([
+                    FieldPanel('usable_for_indicators'),
+                    FieldPanel('editable_for_indicators'),
+                ]),
+            ],
+            heading=_('Action and indicator categorization'),
+            classname='collapsible',
+        ),
         FieldPanel('synchronize_with_pages'),
         FieldPanel('instances_editable_by'),
         FieldPanel('action_list_filter_section'),
@@ -204,7 +208,7 @@ class CategoryTypeAdmin(AplansModelAdmin[CategoryType]):
 
         levels_panels = insert_model_translation_panels(CategoryLevel, self.levels_panels, request, plan)
         panels.append(
-            CondensedInlinePanel('levels', panels=levels_panels, heading=_("Category levels")),
+            CondensedInlinePanel('levels', panels=levels_panels, heading=_('Category levels')),
         )
 
         tabs: list[Panel[Any]] = [ObjectList(panels, heading=_('Basic information'))]
@@ -231,7 +235,7 @@ class CategoryAdminForm(WagtailAdminModelForm[Category]):
         identifier = self.cleaned_data['identifier']
         type = self.instance.type
         if Category.objects.filter(type=type, identifier=identifier).exclude(pk=self.instance.pk).exists():
-            raise ValidationError(_("There is already a category with this identifier."))
+            raise ValidationError(_('There is already a category with this identifier.'))
         return identifier
 
     def save(self, commit=True):
@@ -258,9 +262,11 @@ class CategoryEditHandler(AplansTabbedInterface[Category, CategoryAdminForm]):
         plan = request.get_active_admin_plan()
         if instance is not None:
             attribute_types = instance.get_visible_attribute_types(user)
-            attribute_fields = {field.name: field.django_field
-                                for attribute_type in attribute_types
-                                for field in attribute_type.get_form_fields(user, plan, instance)}
+            attribute_fields = {
+                field.name: field.django_field
+                for attribute_type in attribute_types
+                for field in attribute_type.get_form_fields(user, plan, instance)
+            }
         else:
             attribute_fields = {}
 
@@ -293,10 +299,15 @@ class CategoryTypeForm(ActionListPageBlockFormMixin, AplansAdminModelForm[Catego
         if initial_plan_id and str(initial_plan_id) != str(self.plan.id):
             initial_plan = Plan.objects.get(pk=initial_plan_id)
             request = ctx_request.get_admin_request()
-            messages.add_message(request, messages.WARNING,
-                                 _('While editing this category type you have switched to a different plan. '
-                                   'This category type was still saved with the original plan "%s".')
-                                 % initial_plan.name)
+            messages.add_message(
+                request,
+                messages.WARNING,
+                _(
+                    'While editing this category type you have switched to a different plan. '
+                    'This category type was still saved with the original plan "%s".'
+                )
+                % initial_plan.name,
+            )
             self.plan = initial_plan
             obj.plan = self.plan
             obj.save()
@@ -317,8 +328,10 @@ class CategoryTypeEditHandler(AplansTabbedInterface[CategoryType, CategoryTypeFo
 
 
 if TYPE_CHECKING:
+
     class ModelAdminMixinBase[M: Model](InstanceSpecificView[M]):
         pass
+
 else:
 
     class ModelAdminMixinBase[M: Model]:
@@ -383,7 +396,6 @@ class CategoryEditView(CategoryTypeQueryParameterMixin[Category], AplansEditView
             change_log_create_url = reverse('wagtailsnippets_actions_categorychangelogmessage:add')
             return f'{change_log_create_url}?category={self.instance.pk}'
         return super().get_success_url()
-
 
 
 class CategoryDeleteView(CategoryTypeQueryParameterMixin[Category], DeleteView[Category]):
@@ -502,16 +514,28 @@ class CategoryAdmin(OrderableMixin, AplansModelAdmin[Category]):
             # Didn't use CondensedInlinePanel for the following because there is a bug:
             # When editing a CommonCategory that already has an icon, clicking "save" will yield a validation error if
             # and only if the inline instance is collapsed.
-            all_panels.append(InlinePanel('icons', heading=_("Icons"), panels=[
-                FieldPanel('language'),
-                FieldPanel('image'),
-            ]))
+            all_panels.append(
+                InlinePanel(
+                    'icons',
+                    heading=_('Icons'),
+                    panels=[
+                        FieldPanel('language'),
+                        FieldPanel('image'),
+                    ],
+                )
+            )
             all_panels.append(FieldPanel('kausal_paths_node_uuid'))
 
-        all_panels.append(InlinePanel('indicator_relationships', heading=_('Indicators'), panels=[
-            FieldPanel('indicator', widget=autocomplete.ModelSelect2(url='indicator-autocomplete')),
-            FieldPanel('type', heading=_('Type')),
-        ]))
+        all_panels.append(
+            InlinePanel(
+                'indicator_relationships',
+                heading=_('Indicators'),
+                panels=[
+                    FieldPanel('indicator', widget=autocomplete.ModelSelect2(url='indicator-autocomplete')),
+                    FieldPanel('type', heading=_('Type')),
+                ],
+            )
+        )
 
         tabs: list[Panel[Any]] = [ObjectList(panels, heading=_('Basic information'))]
 
@@ -558,16 +582,20 @@ class CommonCategoryTypeAdmin(AplansModelAdmin[CommonCategoryType]):
         FieldPanel('primary_language'),
         FieldPanel('select_widget'),
         FieldPanel('has_collection'),
-        MultiFieldPanel([
-            FieldRowPanel([
-                FieldPanel('usable_for_actions'),
-                FieldPanel('editable_for_actions'),
-            ]),
-            FieldRowPanel([
-                FieldPanel('usable_for_indicators'),
-                FieldPanel('editable_for_indicators'),
-            ]),
-        ], heading=_('Action and indicator categorization'), classname='collapsible'),
+        MultiFieldPanel(
+            [
+                FieldRowPanel([
+                    FieldPanel('usable_for_actions'),
+                    FieldPanel('editable_for_actions'),
+                ]),
+                FieldRowPanel([
+                    FieldPanel('usable_for_indicators'),
+                    FieldPanel('editable_for_indicators'),
+                ]),
+            ],
+            heading=_('Action and indicator categorization'),
+            classname='collapsible',
+        ),
     ]
 
     def get_edit_handler(self):
@@ -699,10 +727,16 @@ class CommonCategoryAdmin(OrderableMixin, AplansModelAdmin[CommonCategory]):
             # Didn't use CondensedInlinePanel for the following because there is a bug:
             # When editing a CommonCategory that already has an icon, clicking "save" will yield a validation error if
             # and only if the inline instance is collapsed.
-            panels.append(InlinePanel('icons', heading=_("Icons"), panels=[
-                FieldPanel('language'),
-                FieldPanel('image'),
-            ]))
+            panels.append(
+                InlinePanel(
+                    'icons',
+                    heading=_('Icons'),
+                    panels=[
+                        FieldPanel('language'),
+                        FieldPanel('image'),
+                    ],
+                )
+            )
 
         tabs: list[Panel[Any]] = [ObjectList(panels, heading=_('Basic information'))]
 

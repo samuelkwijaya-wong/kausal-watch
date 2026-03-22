@@ -43,6 +43,7 @@ class OrganizationEditView(BaseOrganizationEditView):
 class OrganizationDeleteView(BaseOrganizationDeleteView):
     pass
 
+
 class OrganizationIndexView(BaseOrganizationIndexView):
     def get_list_more_buttons(self, instance: Organization):
         assert self.view_set is not None
@@ -59,15 +60,15 @@ class SetOrganizationRelatedToActivePlanView(
 ):
     model = Organization
     permission_required = 'set_related_to_plan'
-    page_title = gettext_lazy("Add organization to active plan")
+    page_title = gettext_lazy('Add organization to active plan')
     set_related = True
     template_name = 'aplans/confirmation.html'
     index_url_name: str | None = None
 
     def get_page_title(self):
         if self.set_related:
-            return _("Add organization to active plan")
-        return _("Exclude organization from active plan")
+            return _('Add organization to active plan')
+        return _('Exclude organization from active plan')
 
     def user_has_permission(self, permission):
         user = admin_req(self.request).user
@@ -76,9 +77,9 @@ class SetOrganizationRelatedToActivePlanView(
     def get_page_subtitle(self):
         plan = admin_req(self.request).user.get_active_admin_plan()
         if self.set_related:
-            msg = _("Confirm including %(org)s in plan %(plan)s")
+            msg = _('Confirm including %(org)s in plan %(plan)s')
         else:
-            msg = _("Confirm excluding %(org)s from plan %(plan)s")
+            msg = _('Confirm excluding %(org)s from plan %(plan)s')
         return msg % {'org': self.object.name, 'plan': plan}
 
     def confirmation_message(self):
@@ -91,12 +92,12 @@ class SetOrganizationRelatedToActivePlanView(
 
     def add_to_plan(self, plan):
         if self.object.pk in plan.related_organizations.values_list('pk', flat=True):
-            raise ValueError(_("The organization is already included in the plan"))
+            raise ValueError(_('The organization is already included in the plan'))
         plan.related_organizations.add(self.object)
 
     def remove_from_plan(self, plan):
         if self.object.pk not in plan.related_organizations.values_list('pk', flat=True):
-            raise ValueError(_("The organization is not included in the plan"))
+            raise ValueError(_('The organization is not included in the plan'))
         plan.related_organizations.remove(self.object)
 
     def post(self, request, *args, **kwargs):

@@ -36,19 +36,24 @@ from reports.blocks.action_content import (
 
 @pytest.fixture
 def populated_action_registry():
-    action_registry = ModelFieldRegistry(model=Action, target_module=generated, contexts=[
-        FieldContextConfig(
-            context=FieldBlockContext.DASHBOARD,
-            block_base_class=ActionColumnBlock,
-        ),
-        FieldContextConfig(
-            context=FieldBlockContext.REPORT,
-            block_base_class=ActionContentBlockBase,
-        ),
-    ])
+    action_registry = ModelFieldRegistry(
+        model=Action,
+        target_module=generated,
+        contexts=[
+            FieldContextConfig(
+                context=FieldBlockContext.DASHBOARD,
+                block_base_class=ActionColumnBlock,
+            ),
+            FieldContextConfig(
+                context=FieldBlockContext.REPORT,
+                block_base_class=ActionContentBlockBase,
+            ),
+        ],
+    )
 
     def report():  # noqa: ANN202
         from reports.blocks import action_content
+
         return action_content
 
     def register(*field_names, **kwargs):  # noqa: ANN202

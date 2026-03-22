@@ -6,6 +6,7 @@ It exposes the WSGI callable as a module-level variable named ``application``.
 For more information on this file, see
 https://docs.djangoproject.com/en/2.1/howto/deployment/wsgi/
 """
+
 from __future__ import annotations
 
 import os
@@ -50,6 +51,7 @@ def run_deployment_checks():
 #   - keep the state of the system closer to how it is under runserver
 try:
     import uwsgi  # type: ignore  # pyright: ignore
+
     run_deployment_checks()
 except ImportError:
     uwsgi = None  # type: ignore[assignment]
@@ -57,6 +59,7 @@ except ImportError:
 
 def set_log_vars(resp):
     from .log_handler import ISO_FORMAT
+
     now = datetime.now(UTC)
     uwsgi.set_logvar('isotime', now.strftime(ISO_FORMAT).replace('+00:00', 'Z'))  # type: ignore  # pyright: ignore
     if hasattr(resp, '_response'):

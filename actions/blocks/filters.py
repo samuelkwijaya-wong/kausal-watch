@@ -28,22 +28,26 @@ class ActionAttributeTypeFilterBlock(blocks.StructBlock):
     ]
 
     class Meta:
-        label = _("Field")
+        label = _('Field')
 
 
 @register_streamfield_block
 class CategoryTypeFilterBlock(blocks.StructBlock):
-    style = blocks.ChoiceBlock(choices=[
-        ('dropdown', _("Dropdown")),
-        ('buttons', _("Buttons")),
-    ], label=_("Style"), default='dropdown')
+    style = blocks.ChoiceBlock(
+        choices=[
+            ('dropdown', _('Dropdown')),
+            ('buttons', _('Buttons')),
+        ],
+        label=_('Style'),
+        default='dropdown',
+    )
     show_all_label = blocks.CharBlock(required=False, label=_("Label for 'show all'"))
     category_type = CategoryTypeChooserBlock(required=True)
     depth = blocks.IntegerBlock(
         required=False,
-        help_text=_("How many levels of category hierarchy to show"),
+        help_text=_('How many levels of category hierarchy to show'),
         min_value=1,
-        label=_("Depth"),
+        label=_('Depth'),
     )
 
     model_instance_container_blocks = {
@@ -58,49 +62,49 @@ class CategoryTypeFilterBlock(blocks.StructBlock):
     ]
 
     class Meta:
-        label = _("Category")
+        label = _('Category')
 
 
 @register_streamfield_block
 class ResponsiblePartyFilterBlock(ActionFilterBlock):
     class Meta:
-        label = _("Responsible party")
+        label = _('Responsible party')
 
 
 @register_streamfield_block
 class PrimaryOrganizationFilterBlock(ActionFilterBlock):
     class Meta:
-        label = _("Primary organization")
+        label = _('Primary organization')
 
 
 @register_streamfield_block
 class ActionImplementationPhaseFilterBlock(ActionFilterBlock):
     class Meta:
-        label = _("Implementation phase")
+        label = _('Implementation phase')
 
 
 @register_streamfield_block
 class ActionStatusFilterBlock(ActionFilterBlock):
     class Meta:
-        label = _("Status")
+        label = _('Status')
 
 
 @register_streamfield_block
 class PlanFilterBlock(ActionFilterBlock):
     class Meta:
-        label = _("Plan")
+        label = _('Plan')
 
 
 @register_streamfield_block
 class ActionScheduleFilterBlock(ActionFilterBlock):
     class Meta:
-        label = _("Schedule")
+        label = _('Schedule')
+
 
 @register_streamfield_block
 class ContinuousActionFilterBlock(ActionFilterBlock):
-
     class Meta:
-        label = _("Continuous Action")
+        label = _('Continuous Action')
 
 
 @register_streamfield_block
@@ -121,7 +125,13 @@ class ActionListFilterBlock(ActionListPageBlockPresenceMixin, blocks.StreamBlock
     }
 
     graphql_types = [
-        ResponsiblePartyFilterBlock, PrimaryOrganizationFilterBlock, ActionImplementationPhaseFilterBlock,
-        ActionStatusFilterBlock, ActionScheduleFilterBlock, ActionAttributeTypeFilterBlock, CategoryTypeFilterBlock,
-        PlanFilterBlock, ContinuousActionFilterBlock,
+        ResponsiblePartyFilterBlock,
+        PrimaryOrganizationFilterBlock,
+        ActionImplementationPhaseFilterBlock,
+        ActionStatusFilterBlock,
+        ActionScheduleFilterBlock,
+        ActionAttributeTypeFilterBlock,
+        CategoryTypeFilterBlock,
+        PlanFilterBlock,
+        ContinuousActionFilterBlock,
     ]

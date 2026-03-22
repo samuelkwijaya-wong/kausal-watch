@@ -60,11 +60,11 @@ def edit_button_shown(rf, client, user, plan) -> bool:
     )
 
 
-@pytest.mark.parametrize("user__is_staff", [False])
+@pytest.mark.parametrize('user__is_staff', [False])
 def test_no_access_for_non_staff_user(user, client):
     client.force_login(user)
     response = client.get(reverse('wagtailadmin_home'), follow=True)
-    assertContains(response, "You do not have permission to access the admin")
+    assertContains(response, 'You do not have permission to access the admin')
 
 
 def test_login_removes_user_from_staff_if_no_plan_admin(user, client):
@@ -129,27 +129,49 @@ def test_cannot_access_other_plan_edit_page(plan, plan_admin_user, client):
 
 
 def test_action_admin(
-    plan_admin_user: User, action_contact_person: Person, action: Action,
+    plan_admin_user: User,
+    action_contact_person: Person,
+    action: Action,
     test_modeladmin_edit: ModelAdminEditTest,
 ):
     ClientPlanFactory(plan=action.plan)
     post_data = dict(name='Modified name', identifier=action.identifier)
     test_modeladmin_edit(
-        ActionAdmin, action, plan_admin_user, post_data=post_data, can_inspect=True, can_edit=True,
+        ActionAdmin,
+        action,
+        plan_admin_user,
+        post_data=post_data,
+        can_inspect=True,
+        can_edit=True,
     )
     return
     # FIXME
     action.refresh_from_db()
-    #assert action.name == post_data['name']
+    # assert action.name == post_data['name']
     test_modeladmin_edit(
-        ActionAdmin, action, action_contact_person.user, post_data=post_data, can_inspect=True, can_edit=True,
+        ActionAdmin,
+        action,
+        action_contact_person.user,
+        post_data=post_data,
+        can_inspect=True,
+        can_edit=True,
     )
     other_action = ActionFactory.create(plan=action.plan)
     test_modeladmin_edit(
-        ActionAdmin, other_action, plan_admin_user, post_data=post_data, can_inspect=True, can_edit=True,
+        ActionAdmin,
+        other_action,
+        plan_admin_user,
+        post_data=post_data,
+        can_inspect=True,
+        can_edit=True,
     )
     test_modeladmin_edit(
-        ActionAdmin, other_action, action_contact_person.user, post_data=post_data, can_inspect=True, can_edit=False,
+        ActionAdmin,
+        other_action,
+        action_contact_person.user,
+        post_data=post_data,
+        can_inspect=True,
+        can_edit=False,
     )
 
 
@@ -194,8 +216,13 @@ class TestAttributeTypeAdminQueryset:
         )
 
     def test_pledge_attribute_types_excluded_when_community_engagement_disabled(
-        self, rf, plan, plan_admin_user,
-        action_attribute_type, category_attribute_type, pledge_attribute_type,
+        self,
+        rf,
+        plan,
+        plan_admin_user,
+        action_attribute_type,
+        category_attribute_type,
+        pledge_attribute_type,
     ):
         """Pledge attribute types should not appear when community engagement is disabled."""
         plan.features.enable_community_engagement = False
@@ -212,8 +239,13 @@ class TestAttributeTypeAdminQueryset:
         assert pledge_attribute_type not in qs
 
     def test_pledge_attribute_types_included_when_community_engagement_enabled(
-        self, rf, plan, plan_admin_user,
-        action_attribute_type, category_attribute_type, pledge_attribute_type,
+        self,
+        rf,
+        plan,
+        plan_admin_user,
+        action_attribute_type,
+        category_attribute_type,
+        pledge_attribute_type,
     ):
         """Pledge attribute types should appear when community engagement is enabled."""
         plan.features.enable_community_engagement = True
@@ -245,9 +277,7 @@ class TestAttributeTypeAdminButtonHelper:
             name='Test Attribute',
         )
 
-    def test_add_button_shown_with_content_type_parameter(
-        self, rf, plan, plan_admin_user, attribute_type
-    ):
+    def test_add_button_shown_with_content_type_parameter(self, rf, plan, plan_admin_user, attribute_type):
         """Add button should be shown when content_type parameter is present."""
         from actions.attribute_type_admin import AttributeTypeAdmin, AttributeTypeAdminButtonHelper
 
@@ -285,9 +315,7 @@ class TestAttributeTypeAdminButtonHelper:
 
         assert result is None
 
-    def test_edit_button_preserves_content_type_parameter(
-        self, rf, plan, plan_admin_user, attribute_type
-    ):
+    def test_edit_button_preserves_content_type_parameter(self, rf, plan, plan_admin_user, attribute_type):
         """Edit button should preserve content_type parameter in URL."""
         from actions.attribute_type_admin import AttributeTypeAdminButtonHelper
 
@@ -297,9 +325,7 @@ class TestAttributeTypeAdminButtonHelper:
         view = Mock()
         view.model = AttributeType._meta.model
         view.url_helper = Mock()
-        view.url_helper.get_action_url = Mock(
-            side_effect=lambda action, pk: f'/admin/{action}/{pk}/'
-        )
+        view.url_helper.get_action_url = Mock(side_effect=lambda action, pk: f'/admin/{action}/{pk}/')
         view.permission_helper = Mock()
 
         helper = AttributeTypeAdminButtonHelper(view, request)
@@ -317,9 +343,7 @@ class TestCategoryAdminButtonHelper:
         """Create a category type for testing."""
         return CategoryTypeFactory.create(plan=plan, name='Test Category Type')
 
-    def test_add_button_shown_with_category_type_parameter(
-        self, rf, plan, plan_admin_user, category_type
-    ):
+    def test_add_button_shown_with_category_type_parameter(self, rf, plan, plan_admin_user, category_type):
         """Add button should be shown when category_type parameter is present."""
         from actions.category_admin import CategoryAdmin, CategoryAdminButtonHelper
 
@@ -357,9 +381,7 @@ class TestCategoryAdminButtonHelper:
 
         assert result is None
 
-    def test_inspect_button_preserves_category_type_parameter(
-        self, rf, plan, plan_admin_user, category_type
-    ):
+    def test_inspect_button_preserves_category_type_parameter(self, rf, plan, plan_admin_user, category_type):
         """Inspect button should preserve category_type parameter in URL."""
         from actions.category_admin import CategoryAdminButtonHelper
 
@@ -369,9 +391,7 @@ class TestCategoryAdminButtonHelper:
         view = Mock()
         view.model = CategoryType._meta.model
         view.url_helper = Mock()
-        view.url_helper.get_action_url = Mock(
-            side_effect=lambda action, pk: f'/admin/{action}/{pk}/'
-        )
+        view.url_helper.get_action_url = Mock(side_effect=lambda action, pk: f'/admin/{action}/{pk}/')
         view.permission_helper = Mock()
 
         helper = CategoryAdminButtonHelper(view, request)
@@ -462,24 +482,26 @@ def test_action_responsible_party_swap_should_succeed(plan_admin_user, action, c
     response = client.post(edit_url, data=post_data)
 
     # Verify successful save (redirect to the action list or detail page)
-    assert response.status_code == 302, f"Expected redirect, got {response.status_code}"
+    assert response.status_code == 302, f'Expected redirect, got {response.status_code}'
 
     # Query for the responsible parties after the swap
     # Note: The delete-recreate approach means the old PKs no longer exist,
     # so we need to query by organization
     responsible_parties = ActionResponsibleParty.objects.filter(action=action)
-    assert responsible_parties.count() == 2, "Should have exactly 2 responsible parties"
+    assert responsible_parties.count() == 2, 'Should have exactly 2 responsible parties'
 
     # Find the parties by organization
     party_with_org_a = responsible_parties.get(organization=org_a)
     party_with_org_b = responsible_parties.get(organization=org_b)
 
     # Verify the organizations have been swapped to the correct roles
-    assert party_with_org_b.role == ActionResponsibleParty.Role.PRIMARY, \
-        f"org_b should now be PRIMARY, but has role {party_with_org_b.role}"
+    assert party_with_org_b.role == ActionResponsibleParty.Role.PRIMARY, (
+        f'org_b should now be PRIMARY, but has role {party_with_org_b.role}'
+    )
 
-    assert party_with_org_a.role == ActionResponsibleParty.Role.COLLABORATOR, \
-        f"org_a should now be COLLABORATOR, but has role {party_with_org_a.role}"
+    assert party_with_org_a.role == ActionResponsibleParty.Role.COLLABORATOR, (
+        f'org_a should now be COLLABORATOR, but has role {party_with_org_a.role}'
+    )
 
 
 def test_action_responsible_party_swap_on_publish_draft(plan):
@@ -543,6 +565,7 @@ def test_action_responsible_party_swap_on_publish_draft(plan):
 
     # Create a new revision with the swapped content
     from wagtail.models import Revision
+
     swapped_revision: Revision = Revision(
         content_type=initial_revision.content_type,
         base_content_type=initial_revision.base_content_type,
@@ -657,22 +680,24 @@ def test_action_contact_person_swap_should_succeed(plan_admin_user, action, clie
     response = client.post(edit_url, data=post_data)
 
     # Verify successful save (redirect to the action list or detail page)
-    assert response.status_code == 302, f"Expected redirect, got {response.status_code}"
+    assert response.status_code == 302, f'Expected redirect, got {response.status_code}'
 
     # Query for the contact persons after the swap
     contact_persons = ActionContactPerson.objects.filter(action=action)
-    assert contact_persons.count() == 2, "Should have exactly 2 contact persons"
+    assert contact_persons.count() == 2, 'Should have exactly 2 contact persons'
 
     # Find the contacts by person
     contact_with_person_a = contact_persons.get(person=person_a)
     contact_with_person_b = contact_persons.get(person=person_b)
 
     # Verify the persons have been swapped to the correct roles
-    assert contact_with_person_b.role == ActionContactPerson.Role.EDITOR, \
-        f"person_b should now be EDITOR, but has role {contact_with_person_b.role}"
+    assert contact_with_person_b.role == ActionContactPerson.Role.EDITOR, (
+        f'person_b should now be EDITOR, but has role {contact_with_person_b.role}'
+    )
 
-    assert contact_with_person_a.role == ActionContactPerson.Role.MODERATOR, \
-        f"person_a should now be MODERATOR, but has role {contact_with_person_a.role}"
+    assert contact_with_person_a.role == ActionContactPerson.Role.MODERATOR, (
+        f'person_a should now be MODERATOR, but has role {contact_with_person_a.role}'
+    )
 
 
 def test_action_contact_person_swap_on_publish_draft(plan):
@@ -734,6 +759,7 @@ def test_action_contact_person_swap_on_publish_draft(plan):
 
     # Create a new revision with the swapped content
     from wagtail.models import Revision
+
     swapped_revision: Revision = Revision(
         content_type=initial_revision.content_type,
         base_content_type=initial_revision.base_content_type,

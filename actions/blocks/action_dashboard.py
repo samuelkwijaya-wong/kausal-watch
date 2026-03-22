@@ -17,8 +17,9 @@ from .stream_block import generate_stream_block
 @register_streamfield_block
 class FieldColumnBlock(ColumnBlockBase):
     attribute_type = ActionAttributeTypeChooserBlock()
+
     class Meta:
-        label = _("Field")
+        label = _('Field')
 
     graphql_fields = ColumnBlockBase.graphql_fields + [
         GraphQLForeignKey('attribute_type', AttributeType),
@@ -27,7 +28,7 @@ class FieldColumnBlock(ColumnBlockBase):
 
 ActionDashboardColumnBlock = generate_stream_block(
     'ActionDashboardColumnBlock',
-    fields = (
+    fields=(
         'identifier',
         'name',
         'implementation_phase',

@@ -40,7 +40,7 @@ def clean(value: ReportCellValue) -> ReportCellValue:
     r"""Translate Windows linefeeds to \n for Excel."""
     if not isinstance(value, str):
         return value
-    return value.replace("\r\n", "\n")
+    return value.replace('\r\n', '\n')
 
 
 # T = TypeVar('T')
@@ -95,7 +95,9 @@ class ExcelReport:
         def _keyed_dict[T: Model](seq: Iterable[T]) -> dict[int, T]:
             return {el.pk: el for el in seq}
 
-    def __init__(self, report: Report, language: str|None = None, is_dynamic: bool = False, action_ids: list[int] | None = None):
+    def __init__(
+        self, report: Report, language: str | None = None, is_dynamic: bool = False, action_ids: list[int] | None = None
+    ):
         # Currently only language None is properly supported, defaulting
         # to the plan's primary language. When implementing support for
         # other languages, make sure the action contents and other
@@ -109,7 +111,7 @@ class ExcelReport:
             self.output,
             {
                 'in_memory': True,
-            }
+            },
         )
         self.formats = ExcelFormats(self.workbook)
         self.plan = self.report.type.plan
@@ -121,9 +123,11 @@ class ExcelReport:
         else:
             self.has_macros = False
 
-        if (child_plans := report.type.plan.children.get_queryset().prefetch_related(
-                'category_types', 'action_implementation_phases', 'action_statuses', 'related_organizations')) and \
-                report.type.get_action_list_page().include_related_plans:
+        if (
+            child_plans := report.type.plan.children.get_queryset().prefetch_related(
+                'category_types', 'action_implementation_phases', 'action_statuses', 'related_organizations'
+            )
+        ) and report.type.get_action_list_page().include_related_plans:
             self.child_plans = list(child_plans)  # TODO: add .visible_for_user() when it is implemented
             self.plan_current_related_objects = self.PlanRelatedObjects(self.report, self.child_plans)
         else:
@@ -198,10 +202,10 @@ class ExcelReport:
         return self._write_sheet(self.workbook.add_worksheet(pgettext('Action model', 'Actions')), df)
 
     def _write_sheet(
-            self,
-            worksheet: xlsxwriter.worksheet.Worksheet,
-            df: pl.DataFrame,
-            small: bool = False,
+        self,
+        worksheet: xlsxwriter.worksheet.Worksheet,
+        df: pl.DataFrame,
+        small: bool = False,
     ) -> xlsxwriter.worksheet.Worksheet:
 
         # col_width = 40 if small else 50
@@ -232,16 +236,28 @@ class ExcelReport:
                 width = None
             worksheet.set_column(i, i, width, _format)
             i += 1
-        worksheet.conditional_format(1, 0, df.height, df.width-1, {
-            'type': 'formula',
-            'criteria': '=MOD(ROW(),2)=0',
-            'format': self.formats.odd_row,
-        })
-        worksheet.conditional_format(1, 0, df.height, df.width-1, {
-            'type': 'formula',
-            'criteria': '=NOT(MOD(ROW(),2)=0)',
-            'format': self.formats.even_row,
-        })
+        worksheet.conditional_format(
+            1,
+            0,
+            df.height,
+            df.width - 1,
+            {
+                'type': 'formula',
+                'criteria': '=MOD(ROW(),2)=0',
+                'format': self.formats.odd_row,
+            },
+        )
+        worksheet.conditional_format(
+            1,
+            0,
+            df.height,
+            df.width - 1,
+            {
+                'type': 'formula',
+                'criteria': '=NOT(MOD(ROW(),2)=0)',
+                'format': self.formats.even_row,
+            },
+        )
         # Header row
         worksheet.set_row(0, 20)
         worksheet.write_row(0, 0, df.columns, self.formats.header_row)
@@ -254,15 +270,14 @@ class ExcelReport:
 
     def _prepare_serialized_report_data(self) -> tuple[list[SerializedActionVersion], list[SerializedVersion]]:
         from reports.types import SerializedActionVersion, SerializedVersion
+
         if self.report.is_complete:
             serialized_actions: list[SerializedActionVersion] = []
             snapshots = self.report.action_snapshots.all()
             if self.action_ids is not None:
                 snapshots.filter(action_version__object_id__in=self.action_ids)
-            snapshots = (
-                snapshots
-                .select_related('action_version__revision__user')
-                .prefetch_related('action_version__revision__version_set')
+            snapshots = snapshots.select_related('action_version__revision__user').prefetch_related(
+                'action_version__revision__version_set'
             )
             related_versions: QuerySet[Version] = Version.objects.none()
             for snapshot in snapshots:
@@ -283,11 +298,12 @@ class ExcelReport:
         return self.field_to_column_labels.get(field_name, set())
 
     def create_populated_actions_dataframe(
-            self,
-            all_actions: list[SerializedActionVersion],
-            all_related_versions: list[SerializedVersion],
+        self,
+        all_actions: list[SerializedActionVersion],
+        all_related_versions: list[SerializedVersion],
     ):
         from reports.types import SerializedAttributeVersion
+
         data: dict[str, list[Any]] = {}
 
         def append_to_key(key: str, value: ReportCellValue, field_name: str) -> None:
@@ -298,25 +314,25 @@ class ExcelReport:
         completed_at_label = _('Marked as complete at')
 
         related_objects = group_by_model(all_related_versions)
-        attribute_versions = {
-            v.attribute_path: v
-            for v in all_related_versions
-            if isinstance(v, SerializedAttributeVersion)
-        }
+        attribute_versions = {v.attribute_path: v for v in all_related_versions if isinstance(v, SerializedAttributeVersion)}
 
         fields = []
         seen_field_keys: set[str] = set()
         for field in self.report.type.fields:
-            if field is not None and field.value is not None and 'attribute_type' in field.value and \
-                    field.value['attribute_type'] is None:
-                logger.error(f"Field has NoneType attribute_type in report type {self.report.type.name}.")
+            if (
+                field is not None
+                and field.value is not None
+                and 'attribute_type' in field.value
+                and field.value['attribute_type'] is None
+            ):
+                logger.error(f'Field has NoneType attribute_type in report type {self.report.type.name}.')
                 continue
             # Generate a unique key for this field to detect duplicates
             field_key = get_field_unique_key(field)
             if field_key in seen_field_keys:
                 logger.warning(
                     f"Duplicate field '{field_key}' detected in report type '{self.report.type.name}'. "
-                    "Skipping duplicate to prevent DataFrame column length mismatch."
+                    'Skipping duplicate to prevent DataFrame column length mismatch.'
                 )
                 continue
             seen_field_keys.add(field_key)
@@ -324,7 +340,7 @@ class ExcelReport:
         for action in all_actions:
             action_identifier = action.data['identifier']
             action_obj = Action(**{key: action.data[key] for key in ['identifier', 'name', 'plan_id', 'i18n']})
-            action_name = action_obj.name.replace("\n", " ")
+            action_name = action_obj.name.replace('\n', ' ')
 
             # FIXME: Right now, we print the user who made the last change to the action, which may be different from
             # the user who marked the action as complete.
@@ -339,7 +355,11 @@ class ExcelReport:
             for field in fields:
                 labels = list(field.block.xlsx_column_labels(field.value, plan=self.report.type.plan))
                 values = field.block.extract_action_values(
-                    self, field.value, action.data, related_objects, attribute_versions,
+                    self,
+                    field.value,
+                    action.data,
+                    related_objects,
+                    attribute_versions,
                 )
                 field_name = field.block.name
                 if field_name == 'attribute':
@@ -365,16 +385,13 @@ class ExcelReport:
             raise ValueError('Only one or two dimensional pivot tables supported')
         action_df = action_df.fill_null('[' + _('Unknown') + ']')
         if len(labels) == 1:
-            return (action_df
-                    .group_by(labels)
-                    .len()
-                    .rename({'len': pgettext('Action model', 'Actions')}))
+            return action_df.group_by(labels).len().rename({'len': pgettext('Action model', 'Actions')})
         return action_df.pivot(
-            values=_("Identifier"),
+            values=_('Identifier'),
             index=labels[0],
             on=labels[1],
-            aggregate_function="len",
-            ).sort(labels[0])
+            aggregate_function='len',
+        ).sort(labels[0])
 
     def post_process(self, action_df: pl.DataFrame):
         if self.report.disable_summary_sheets:
@@ -390,9 +407,7 @@ class ExcelReport:
             },
             # Pivot sheet: Organization parent x Implementation phase
             {
-                'group': (
-                    pgettext('organization', 'Parent'),
-                    _('Implementation phase')),
+                'group': (pgettext('organization', 'Parent'), _('Implementation phase')),
                 'type': 'column',
             },
         ]
@@ -420,7 +435,7 @@ class ExcelReport:
             aggregated = self._get_aggregates(grouping, action_df)
             if aggregated is None:
                 continue
-            sheet_name = _("Summary") + f" {sheet_number}"
+            sheet_name = _('Summary') + f' {sheet_number}'
             sheet_number += 1
             worksheet = self.workbook.add_worksheet(sheet_name)
             self._write_sheet(worksheet, aggregated, small=True)

@@ -38,8 +38,7 @@ def _get_language_choices():
             # the Django settings.
             lang_name_local = settings.LOCAL_LANGUAGE_NAMES[lang_code]
         language_choices.append((lang_code, lang_name_local))
-    return sorted(BLANK_CHOICE_DASH + language_choices,
-                  key=lambda lng: lng[1].lower())
+    return sorted(BLANK_CHOICE_DASH + language_choices, key=lambda lng: lng[1].lower())
 
 
 class AdminSiteConfig(AdminConfig):
@@ -54,6 +53,7 @@ class AdminSiteConfig(AdminConfig):
 
         if _wagtail_collection_save_instance is None:
             from wagtail.admin.views.collections import Create, Index
+
             _wagtail_collection_save_instance = Create.save_instance
             Create.save_instance = collection_save_instance
             Index.get_queryset = collection_index_get_queryset
@@ -63,10 +63,12 @@ class AdminSiteConfig(AdminConfig):
         # Monkey-patch Wagtail's _get_language_choices to transform language codes to lower case. See the comment above
         # LANGUAGES in settings.py for details about this.
         from wagtail.admin.forms import account
+
         account.LocalePreferencesForm.base_fields['preferred_language']._choices.func = _get_language_choices
 
         # Remove the ThemeSettingsPanel
         from wagtail.admin.views.account import ThemeSettingsPanel
+
         ThemeSettingsPanel.is_active = lambda self: False  # type: ignore
 
         from wagtail.admin.rich_text import DraftailRichTextArea
@@ -82,9 +84,10 @@ class AdminSiteConfig(AdminConfig):
         # We use this just for overriding some Django translations that are weird in some languages
         def _dummy_function_so_makemessages_finds_strings() -> None:
             # This is never called
-            _("History")
+            _('History')
 
         from kausal_common.mail import register_signal_handlers
+
         register_signal_handlers()
 
 
@@ -94,4 +97,5 @@ class AdminSiteStatic(AppConfig):
 
 if find_spec('kausal_watch_extensions') is not None:
     from kausal_watch_extensions import perform_early_init  # type: ignore[import-not-found]
+
     perform_early_init()

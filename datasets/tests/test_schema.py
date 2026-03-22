@@ -49,19 +49,25 @@ def test_dimension_node(graphql_client_query_data, plan, category):
         variables={'plan': plan.identifier},
     )
     expected = {
-        'planCategories': [{
-            'datasets': [{
-                'schema': {
-                    'dimensions': [{
-                        'dimension': {
-                            '__typename': 'DatasetsDimension',
-                            'uuid': str(dimension.uuid),
-                            'name': dimension.name,
-                        }
-                    }],
-                },
-            }],
-        }],
+        'planCategories': [
+            {
+                'datasets': [
+                    {
+                        'schema': {
+                            'dimensions': [
+                                {
+                                    'dimension': {
+                                        '__typename': 'DatasetsDimension',
+                                        'uuid': str(dimension.uuid),
+                                        'name': dimension.name,
+                                    }
+                                }
+                            ],
+                        },
+                    }
+                ],
+            }
+        ],
     }
     assert data == expected
 
@@ -95,22 +101,23 @@ def test_dimension_scope_node(graphql_client_query_data, plan, category):
         variables={'plan': plan.identifier},
     )
     expected = {
-        'planCategories': [{
-            'datasets': [{
-                'schema': {
-                    'dimensions': [{
-                        'dimension': {
-                            'scopes': [{
-                                '__typename': 'DimensionScope',
-                                'scope': {
-                                    '__typename': 'CategoryType'
+        'planCategories': [
+            {
+                'datasets': [
+                    {
+                        'schema': {
+                            'dimensions': [
+                                {
+                                    'dimension': {
+                                        'scopes': [{'__typename': 'DimensionScope', 'scope': {'__typename': 'CategoryType'}}]
+                                    }
                                 }
-                            }]
+                            ]
                         }
-                    }]
-                }
-            }]
-        }]
+                    }
+                ]
+            }
+        ]
     }
     assert data == expected
 
@@ -139,19 +146,25 @@ def test_data_point_node(graphql_client_query_data, plan, category):
         variables={'plan': plan.identifier},
     )
     expected = {
-        'planCategories': [{
-            'datasets': [{
-                'dataPoints': [{
-                    '__typename': 'DataPoint',
-                    'uuid': str(data_point.uuid),
-                    'dataset': {
-                        '__typename': 'Dataset',
-                    },
-                    'date': data_point.date.isoformat(),
-                    'value': data_point.value,
-                }],
-            }],
-        }],
+        'planCategories': [
+            {
+                'datasets': [
+                    {
+                        'dataPoints': [
+                            {
+                                '__typename': 'DataPoint',
+                                'uuid': str(data_point.uuid),
+                                'dataset': {
+                                    '__typename': 'Dataset',
+                                },
+                                'date': data_point.date.isoformat(),
+                                'value': data_point.value,
+                            }
+                        ],
+                    }
+                ],
+            }
+        ],
     }
     assert data == expected
 
@@ -181,18 +194,24 @@ def test_dataset_schema_scope_node(graphql_client_query_data, plan, category):
         variables={'plan': plan.identifier},
     )
     expected = {
-        'planCategories': [{
-            'datasets': [{
-                'schema': {
-                    'scopes': [{
-                        '__typename': 'DatasetSchemaScope',
-                        'scope': {
-                            '__typename': 'CategoryType',
+        'planCategories': [
+            {
+                'datasets': [
+                    {
+                        'schema': {
+                            'scopes': [
+                                {
+                                    '__typename': 'DatasetSchemaScope',
+                                    'scope': {
+                                        '__typename': 'CategoryType',
+                                    },
+                                }
+                            ],
                         },
-                    }],
-                },
-            }],
-        }],
+                    }
+                ],
+            }
+        ],
     }
     assert data == expected
 
@@ -225,18 +244,22 @@ def test_dataset_schema_node(graphql_client_query_data, plan, category):
         variables={'plan': plan.identifier},
     )
     expected = {
-        'planCategories': [{
-            'datasets': [{
-                'schema': {
-                    '__typename': 'DatasetSchema',
-                    'uuid': str(schema.uuid),
-                    'timeResolution': schema.time_resolution.upper(),
-                    'name': schema.name,
-                    'scopes': [],
-                    'dimensions': [],
-                },
-            }],
-        }],
+        'planCategories': [
+            {
+                'datasets': [
+                    {
+                        'schema': {
+                            '__typename': 'DatasetSchema',
+                            'uuid': str(schema.uuid),
+                            'timeResolution': schema.time_resolution.upper(),
+                            'name': schema.name,
+                            'scopes': [],
+                            'dimensions': [],
+                        },
+                    }
+                ],
+            }
+        ],
     }
     assert data == expected
 
@@ -263,16 +286,20 @@ def test_dataset_node(graphql_client_query_data, plan, category):
         variables={'plan': plan.identifier},
     )
     expected = {
-        'planCategories': [{
-            'datasets': [{
-                '__typename': 'Dataset',
-                'uuid': str(dataset.uuid),
-                'schema': {
-                    '__typename': 'DatasetSchema',
-                },
-                'dataPoints': [],
-            }],
-        }],
+        'planCategories': [
+            {
+                'datasets': [
+                    {
+                        '__typename': 'Dataset',
+                        'uuid': str(dataset.uuid),
+                        'schema': {
+                            '__typename': 'DatasetSchema',
+                        },
+                        'dataPoints': [],
+                    }
+                ],
+            }
+        ],
     }
     assert data == expected
 
@@ -588,24 +615,30 @@ def test_dataset_metric_node(graphql_client_query_data, plan, category):
         variables={'plan': plan.identifier},
     )
     expected = {
-        'planCategories': [{
-            'datasets': [{
-                'schema': {
-                    'metrics': [{
-                        '__typename': 'DatasetMetricNode',
-                        'uuid': str(metric.uuid),
-                        'name': metric.name,
-                        'label': metric.label,
-                        'unit': metric.unit,
-                        'order': metric.order,
+        'planCategories': [
+            {
+                'datasets': [
+                    {
                         'schema': {
-                            '__typename': 'DatasetSchema',
-                            'uuid': str(schema.uuid),
+                            'metrics': [
+                                {
+                                    '__typename': 'DatasetMetricNode',
+                                    'uuid': str(metric.uuid),
+                                    'name': metric.name,
+                                    'label': metric.label,
+                                    'unit': metric.unit,
+                                    'order': metric.order,
+                                    'schema': {
+                                        '__typename': 'DatasetSchema',
+                                        'uuid': str(schema.uuid),
+                                    },
+                                }
+                            ],
                         },
-                    }],
-                },
-            }],
-        }],
+                    }
+                ],
+            }
+        ],
     }
     assert data == expected
 
@@ -676,27 +709,36 @@ def test_dimension_node_categories(graphql_client_query_data, plan, category):
         variables={'plan': plan.identifier},
     )
     expected = {
-        'planCategories': [{
-            'datasets': [{
-                'schema': {
-                    'dimensions': [{
-                        'dimension': {
-                            'categories': [{
-                                '__typename': 'DatasetsDimensionCategory',
-                                'uuid': str(dim_category.uuid),
-                                'label': dim_category.label,
-                            }],
+        'planCategories': [
+            {
+                'datasets': [
+                    {
+                        'schema': {
+                            'dimensions': [
+                                {
+                                    'dimension': {
+                                        'categories': [
+                                            {
+                                                '__typename': 'DatasetsDimensionCategory',
+                                                'uuid': str(dim_category.uuid),
+                                                'label': dim_category.label,
+                                            }
+                                        ],
+                                    },
+                                }
+                            ],
                         },
-                    }],
-                },
-            }],
-        }],
+                    }
+                ],
+            }
+        ],
     }
     assert data == expected
 
 
 def test_dimension_category_dimension_field(graphql_client_query_data, plan, category):
     from datetime import date as date_type
+
     dimension = DimensionFactory.create()
     dim_category = DimensionCategoryFactory.create(dimension=dimension)
     schema = DatasetSchemaFactory.create()
@@ -803,20 +845,26 @@ def test_dataset_schema_dimension_order_and_schema(graphql_client_query_data, pl
         variables={'plan': plan.identifier},
     )
     expected = {
-        'planCategories': [{
-            'datasets': [{
-                'schema': {
-                    'dimensions': [{
-                        '__typename': 'DatasetSchemaDimension',
-                        'order': schema_dim.order,
+        'planCategories': [
+            {
+                'datasets': [
+                    {
                         'schema': {
-                            '__typename': 'DatasetSchema',
-                            'uuid': str(schema.uuid),
+                            'dimensions': [
+                                {
+                                    '__typename': 'DatasetSchemaDimension',
+                                    'order': schema_dim.order,
+                                    'schema': {
+                                        '__typename': 'DatasetSchema',
+                                        'uuid': str(schema.uuid),
+                                    },
+                                }
+                            ],
                         },
-                    }],
-                },
-            }],
-        }],
+                    }
+                ],
+            }
+        ],
     }
     assert data == expected
 

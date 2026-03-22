@@ -17,10 +17,13 @@ def set_subtree(root, parent=None):
 
 def migrate_page(old_page):
     # Get questions and answers
-    questions = [{
-        'question': question.title,
-        'answer': question.answer,
-    } for question in old_page.questions.all()]
+    questions = [
+        {
+            'question': question.title,
+            'answer': question.answer,
+        }
+        for question in old_page.questions.all()
+    ]
     qa_section_block = {
         'heading': 'Usein kysytyt kysymykset',
         'questions': questions,
@@ -62,7 +65,7 @@ def migrate_page(old_page):
 
 
 class Command(BaseCommand):
-    help = "Migrate legacy static pages from the `content` app to the `pages` app"
+    help = 'Migrate legacy static pages from the `content` app to the `pages` app'
 
     @transaction.atomic
     def handle(self, *args, **options):

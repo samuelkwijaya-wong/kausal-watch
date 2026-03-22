@@ -63,9 +63,9 @@ class AttributeFieldPanel[M: models.ModelWithAttributes](FieldPanel[M]):
 
         def value_from_instance(self):
             if (
-                isinstance(self.instance, DraftStateMixin) and
-                isinstance(self.instance, RevisionMixin) and
-                self.instance.has_unpublished_changes
+                isinstance(self.instance, DraftStateMixin)
+                and isinstance(self.instance, RevisionMixin)
+                and self.instance.has_unpublished_changes
             ):
                 rev = self.instance.get_latest_revision()
                 assert rev is not None
@@ -82,10 +82,10 @@ class AttributeFieldPanel[M: models.ModelWithAttributes](FieldPanel[M]):
                         return str(attribute)
 
                 return ''
+
             def get_value() -> str:
-                return " ".join(
-                    str(x) for x in self.panel.attribute_type.get_attributes(self.instance)
-                )
+                return ' '.join(str(x) for x in self.panel.attribute_type.get_attributes(self.instance))
+
             if not self.panel.language:
                 return get_value()
             with translation.override(self.panel.language):
@@ -140,7 +140,9 @@ class AttributeValue(ABC):
 
     @classmethod
     def from_serialized_value_with_warning(
-        cls, value: Any, cache: PlanSpecificCache | None = None,
+        cls,
+        value: Any,
+        cache: PlanSpecificCache | None = None,
     ) -> tuple[AttributeValue, str | None]:
         """
         Deserialize a value and return any warning message.
@@ -192,7 +194,9 @@ class OrderedChoiceAttributeValue(AttributeValue):
 
     @classmethod
     def from_serialized_value_with_warning(
-        cls, value: Any, cache: PlanSpecificCache | None = None,
+        cls,
+        value: Any,
+        cache: PlanSpecificCache | None = None,
     ) -> tuple[OrderedChoiceAttributeValue, str | None]:
         warning: str | None = None
         if value is None:
@@ -208,9 +212,9 @@ class OrderedChoiceAttributeValue(AttributeValue):
                 except models.AttributeTypeChoiceOption.DoesNotExist:
                     logger.warning(
                         f"Could not deserialize ordered choice attribute value '{value}' because "
-                        "AttributeTypeChoiceOption does not exist. Setting to None."
+                        'AttributeTypeChoiceOption does not exist. Setting to None.'
                     )
-                    warning = str(_("A choice option used in this draft no longer exists. The selection has been cleared."))
+                    warning = str(_('A choice option used in this draft no longer exists. The selection has been cleared.'))
         return (OrderedChoiceAttributeValue(option=option), warning)
 
     def serialize(self) -> Any:
@@ -236,6 +240,7 @@ class CategoryChoiceAttributeValue(AttributeValue):
     def from_serialized_value(cls, value: Any, cache: PlanSpecificCache | None = None) -> CategoryChoiceAttributeValue:
         assert isinstance(value, list)
         from actions.models import Category
+
         categories = Category.objects.filter(pk__in=value)
         return CategoryChoiceAttributeValue(categories)
 
@@ -262,6 +267,7 @@ class CategoryChoiceAttributeValue(AttributeValue):
 
     def replace_references(self, clone_visitor: CloneVisitor):
         from actions.models import Category
+
         replaced = []
         for cat in self.categories:
             try:
@@ -283,7 +289,9 @@ class OptionalChoiceWithTextAttributeValue(AttributeValue):
 
     @classmethod
     def from_serialized_value_with_warning(
-        cls, value: Any, cache: PlanSpecificCache | None = None,
+        cls,
+        value: Any,
+        cache: PlanSpecificCache | None = None,
     ) -> tuple[OptionalChoiceWithTextAttributeValue, str | None]:
         warning: str | None = None
         if value['choice'] is None:
@@ -299,9 +307,9 @@ class OptionalChoiceWithTextAttributeValue(AttributeValue):
                 except models.AttributeTypeChoiceOption.DoesNotExist:
                     logger.warning(
                         f"Could not deserialize optional choice with text attribute value '{value}' because "
-                        "AttributeTypeChoiceOption does not exist. Setting choice to None."
+                        'AttributeTypeChoiceOption does not exist. Setting choice to None.'
                     )
-                    warning = str(_("A choice option used in this draft no longer exists. The selection has been cleared."))
+                    warning = str(_('A choice option used in this draft no longer exists. The selection has been cleared.'))
         text_vals = value['text']
         assert isinstance(text_vals, dict)
         return (OptionalChoiceWithTextAttributeValue(option=option, text_vals=text_vals), warning)
@@ -366,6 +374,8 @@ class NumericAttributeValue(AttributeValue):
 
 T = TypeVar('T', bound=models.Attribute)
 M = TypeVar('M', bound=models.ModelWithAttributes)
+
+
 class AttributeType(ABC, Generic[T]):
     # In subclasses, define ATTRIBUTE_MODEL to be the model of the attributes of that type. It needs to have a foreign
     # key to actions.models.attributes.AttributeType called `type` with a defined `related_name`.
@@ -400,7 +410,10 @@ class AttributeType(ABC, Generic[T]):
         """
 
         all_fields = self.get_all_form_fields(
-            user, plan, obj, draft_attributes,
+            user,
+            plan,
+            obj,
+            draft_attributes,
         )
         if include_read_only_fields:
             return all_fields
@@ -428,7 +441,9 @@ class AttributeType(ABC, Generic[T]):
 
     @abstractmethod
     def xlsx_values(
-        self, attribute: SerializedAttributeVersion | None, related_data_objects: dict[str, list[SerializedVersion]],
+        self,
+        attribute: SerializedAttributeVersion | None,
+        related_data_objects: dict[str, list[SerializedVersion]],
     ) -> list[Any]:
         """Return the value for each of this attribute type's columns for the given attribute (can be None)."""
         pass
@@ -443,7 +458,11 @@ class AttributeType(ABC, Generic[T]):
         main_panels = []
         i18n_panels: dict[str, list[AttributeFieldPanel[M]]] = {}
         fields: list[FormField[M]] = self.get_form_fields(
-            user, plan, obj, draft_attributes=draft_attributes, include_read_only_fields=True,
+            user,
+            plan,
+            obj,
+            draft_attributes=draft_attributes,
+            include_read_only_fields=True,
         )
         for field in fields:
             if field.language:
@@ -490,18 +509,21 @@ class AttributeType(ABC, Generic[T]):
         assert content_type.app_label == 'actions'
         if content_type.model == 'action':
             from actions.models import Action
+
             assert isinstance(obj, Action)
             assert self.instance.scope == obj.plan
         elif content_type.model == 'category':
             from actions.models.category import Category
+
             assert isinstance(obj, Category)
             assert self.instance.scope == obj.type
         elif content_type.model == 'pledge':
             from actions.models.pledge import Pledge
+
             assert isinstance(obj, Pledge)
             assert self.instance.scope == obj.plan
         else:
-            raise ValueError(f"Invalid content type {content_type.app_label}.{content_type.model} of object {obj}")
+            raise ValueError(f'Invalid content type {content_type.app_label}.{content_type.model} of object {obj}')
         return self.attributes.filter(content_type=content_type, object_id=obj.id)
 
     def create_attribute(self, obj: models.ModelWithAttributes, attribute_value: AttributeValue) -> T:
@@ -548,6 +570,7 @@ class AttributeType(ABC, Generic[T]):
 
     def is_editable(self, user: User, plan: Plan, obj: models.ModelWithAttributes | None) -> bool:
         from actions.models.action import Action
+
         if obj is None:
             # Probably we're not editing but creating an instance of a model with attributes?
             return True
@@ -593,17 +616,22 @@ class OrderedChoice(AttributeType[models.AttributeChoice]):
 
         choice_options = self.instance.choice_options.all()
         field = forms.ModelChoiceField(
-            choice_options, initial=initial_choice, required=False, help_text=self.instance.help_text_i18n,
+            choice_options,
+            initial=initial_choice,
+            required=False,
+            help_text=self.instance.help_text_i18n,
         )
         is_public = self.instance.instances_visible_for == self.instance.VisibleFor.PUBLIC
-        return [FormField(
-            plan=plan,
-            attribute_type=self,
-            django_field=field,
-            name=self.form_field_name,
-            is_public=is_public,
-            read_only=not self.is_editable(user, plan, obj),
-        )]
+        return [
+            FormField(
+                plan=plan,
+                attribute_type=self,
+                django_field=field,
+                name=self.form_field_name,
+                is_public=is_public,
+                read_only=not self.is_editable(user, plan, obj),
+            )
+        ]
 
     def get_value_from_form_data(self, cleaned_data: dict[str, Any]) -> OrderedChoiceAttributeValue | None:
         if self.form_field_name not in cleaned_data:
@@ -618,8 +646,10 @@ class OrderedChoice(AttributeType[models.AttributeChoice]):
         if not attribute:
             return [None]
         choice = next(
-            o.data['name'] for o in related_data_objects['actions.models.attributes.AttributeTypeChoiceOption']
-             if o.data['id'] == attribute.data['choice_id'])
+            o.data['name']
+            for o in related_data_objects['actions.models.attributes.AttributeTypeChoiceOption']
+            if o.data['id'] == attribute.data['choice_id']
+        )
         return [choice]
 
 
@@ -639,6 +669,7 @@ class CategoryChoice(AttributeType[models.AttributeCategoryChoice]):
         draft_attributes: DraftAttributes | None = None,
     ) -> list[FormField]:
         from actions.models.category import Category
+
         initial_categories: list[Category] | None = None
         if draft_attributes:
             try:
@@ -667,14 +698,16 @@ class CategoryChoice(AttributeType[models.AttributeCategoryChoice]):
             ),
         )
         is_public = self.instance.instances_visible_for == self.instance.VisibleFor.PUBLIC
-        return [FormField(
-            plan=plan,
-            attribute_type=self,
-            django_field=field,
-            name=self.form_field_name,
-            is_public=is_public,
-            read_only=not self.is_editable(user, plan, obj),
-        )]
+        return [
+            FormField(
+                plan=plan,
+                attribute_type=self,
+                django_field=field,
+                name=self.form_field_name,
+                is_public=is_public,
+                read_only=not self.is_editable(user, plan, obj),
+            )
+        ]
 
     def get_value_from_form_data(self, cleaned_data: dict[str, Any]) -> CategoryChoiceAttributeValue | None:
         if self.form_field_name not in cleaned_data:
@@ -692,9 +725,7 @@ class CategoryChoice(AttributeType[models.AttributeCategoryChoice]):
         # TODO i18n doesn't really work easily with the serialized
         # models
         category_names = [
-            d.data['name']
-            for d in related_data_objects['actions.models.category.Category']
-            if d.data['id'] in category_ids
+            d.data['name'] for d in related_data_objects['actions.models.category.Category'] if d.data['id'] in category_ids
         ]
         return ['; '.join(sorted(category_names))]
 
@@ -742,20 +773,25 @@ class OptionalChoiceWithText(AttributeType[models.AttributeChoiceWithText]):
             initial_choice = committed_attribute.choice
         choice_options = self.instance.choice_options.all()
         choice_field = forms.ModelChoiceField(
-            choice_options, initial=initial_choice, required=False, help_text=self.instance.help_text_i18n,
+            choice_options,
+            initial=initial_choice,
+            required=False,
+            help_text=self.instance.help_text_i18n,
         )
         is_public = self.instance.instances_visible_for == self.instance.VisibleFor.PUBLIC
         fields: list[FormField] = []
         if editable:
-            fields.append(FormField(
-                plan=plan,
-                attribute_type=self,
-                django_field=choice_field,
-                name=self.choice_form_field_name,
-                is_public=is_public,
-                label=_('%(attribute_type)s (choice)') % {'attribute_type': self.instance.name_i18n},
-                read_only=False,
-            ))
+            fields.append(
+                FormField(
+                    plan=plan,
+                    attribute_type=self,
+                    django_field=choice_field,
+                    name=self.choice_form_field_name,
+                    is_public=is_public,
+                    label=_('%(attribute_type)s (choice)') % {'attribute_type': self.instance.name_i18n},
+                    read_only=False,
+                )
+            )
 
         # Text (one field for each language)
         languages = [convert_language_code(language, 'modeltrans') for language in self.instance.other_languages]
@@ -770,22 +806,25 @@ class OptionalChoiceWithText(AttributeType[models.AttributeChoiceWithText]):
             if self.instance.max_length:
                 form_field_kwargs.update(max_length=self.instance.max_length)
             text_field = cast(
-                'forms.Field', self.ATTRIBUTE_MODEL._meta.get_field(attribute_text_field_name).formfield(**form_field_kwargs)  # type: ignore[union-attr]
+                'forms.Field',
+                self.ATTRIBUTE_MODEL._meta.get_field(attribute_text_field_name).formfield(**form_field_kwargs),  # type: ignore[union-attr]
             )
             if editable:
                 label = _('%(attribute_type)s (text)') % {'attribute_type': self.instance.name_i18n}
             else:
                 label = _('%(attribute_type)s') % {'attribute_type': self.instance.name_i18n}
-            fields.append(FormField(
-                plan=plan,
-                attribute_type=self,
-                django_field=text_field,
-                name=self.get_text_form_field_name(language),
-                language=language,
-                label=label,
-                is_public=is_public,
-                read_only=not editable,
-            ))
+            fields.append(
+                FormField(
+                    plan=plan,
+                    attribute_type=self,
+                    django_field=text_field,
+                    name=self.get_text_form_field_name(language),
+                    language=language,
+                    label=label,
+                    is_public=is_public,
+                    read_only=not editable,
+                )
+            )
         return fields
 
     def get_value_from_form_data(self, cleaned_data: dict[str, Any]) -> OptionalChoiceWithTextAttributeValue | None:
@@ -809,8 +848,10 @@ class OptionalChoiceWithText(AttributeType[models.AttributeChoiceWithText]):
             return [None, None]
         try:
             choice = next(
-                o.data['name'] for o in related_data_objects['actions.models.attributes.AttributeTypeChoiceOption']
-                 if o.data['id'] == attribute.data['choice_id'])
+                o.data['name']
+                for o in related_data_objects['actions.models.attributes.AttributeTypeChoiceOption']
+                if o.data['id'] == attribute.data['choice_id']
+            )
         except StopIteration:
             choice = None
         rich_text = attribute.data['text']
@@ -867,15 +908,17 @@ class GenericTextAttributeType(AttributeType[T]):
             db_field = cast('Field', self.ATTRIBUTE_MODEL._meta.get_field(attribute_text_field_name))
             field = cast('forms.Field', db_field.formfield(**form_field_kwargs))
             is_public = self.instance.instances_visible_for == self.instance.VisibleFor.PUBLIC
-            fields.append(FormField(
-                plan=plan,
-                attribute_type=self,
-                django_field=field,
-                name=self.get_form_field_name(language),
-                language=language,
-                is_public=is_public,
-                read_only=not editable,
-            ))
+            fields.append(
+                FormField(
+                    plan=plan,
+                    attribute_type=self,
+                    django_field=field,
+                    name=self.get_form_field_name(language),
+                    language=language,
+                    is_public=is_public,
+                    read_only=not editable,
+                )
+            )
         return fields
 
     def get_value_from_form_data(self, cleaned_data: dict[str, Any]) -> GenericTextAttributeAttributeValue | None:
@@ -950,14 +993,16 @@ class Numeric(AttributeType[models.AttributeNumericValue]):
                 initial_value = committed_attribute.value
         field = forms.FloatField(initial=initial_value, required=False, help_text=self.instance.help_text_i18n)
         is_public = self.instance.instances_visible_for == self.instance.VisibleFor.PUBLIC
-        return [FormField(
-            plan=plan,
-            attribute_type=self,
-            django_field=field,
-            name=self.form_field_name,
-            is_public=is_public,
-            read_only=not self.is_editable(user, plan, obj),
-        )]
+        return [
+            FormField(
+                plan=plan,
+                attribute_type=self,
+                django_field=field,
+                name=self.form_field_name,
+                is_public=is_public,
+                read_only=not self.is_editable(user, plan, obj),
+            )
+        ]
 
     def get_value_from_form_data(self, cleaned_data: dict[str, Any]) -> NumericAttributeValue | None:
         if self.form_field_name not in cleaned_data:
@@ -1029,19 +1074,22 @@ class DraftAttributes:
             attr_type_instance = models.AttributeType.objects.get(pk=attr_type_id)
         except models.AttributeType.DoesNotExist:
             logger.warning(
-                f"Could not deserialize attribute for AttributeType {attr_type_id} because "
-                "the AttributeType does not exist. This attribute will be lost."
+                f'Could not deserialize attribute for AttributeType {attr_type_id} because '
+                'the AttributeType does not exist. This attribute will be lost.'
             )
-            msg = _("A field used in this draft no longer exists. The field and its value have been removed from the "
-                    "draft.")
-            return (None, DeserializationWarning(
-                attribute_type_id=attr_type_id,
-                attribute_type_name=None,
-                message=str(msg),
-            ))
+            msg = _('A field used in this draft no longer exists. The field and its value have been removed from the draft.')
+            return (
+                None,
+                DeserializationWarning(
+                    attribute_type_id=attr_type_id,
+                    attribute_type_name=None,
+                    message=str(msg),
+                ),
+            )
         # Deserialize the value, checking for choice option issues
         attribute_value, choice_warning = value_class.from_serialized_value_with_warning(
-            serialized_value, cache=cache,
+            serialized_value,
+            cache=cache,
         )
         warning = None
         if choice_warning:
@@ -1063,7 +1111,10 @@ class DraftAttributes:
             for str_id, serialized_value in id_to_serialized_value.items():
                 attr_type_id = int(str_id)
                 value, warning = cls._deserialize_single_attribute(
-                    attr_type_id, serialized_value, at_class.VALUE_CLASS, cache,
+                    attr_type_id,
+                    serialized_value,
+                    at_class.VALUE_CLASS,
+                    cache,
                 )
                 if warning:
                     draft_attributes.deserialization_warnings.append(warning)
@@ -1102,7 +1153,7 @@ class DraftAttributes:
                 except models.AttributeType.DoesNotExist:
                     logger.warning(
                         f"Could not replace references in attribute '{value}' for AttributeType {id} because no "
-                        "AttributeType with this ID exists. This attribute will be lost in the copy."
+                        'AttributeType with this ID exists. This attribute will be lost in the copy.'
                     )
                     continue
                 value.replace_references(clone_visitor)

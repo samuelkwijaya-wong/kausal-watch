@@ -18,23 +18,24 @@ class ActionHighlightsBlock(blocks.StaticBlock):
 class ActionListBlock(blocks.StructBlock):
     heading = blocks.CharBlock(
         required=False,
-        help_text=_("What heading should be used in the public UI for the Action list?"),
+        help_text=_('What heading should be used in the public UI for the Action list?'),
         default='',
-        label=_("Heading"),
+        label=_('Heading'),
     )
     help_text = blocks.CharBlock(
         required=False,
-        help_text=_("Help text for the Action list to be shown in the public UI"),
+        help_text=_('Help text for the Action list to be shown in the public UI'),
         default='',
-        label = _("Help text"),
+        label=_('Help text'),
     )
 
     category_filter = CategoryChooserBlock(label=_('Filter on category'))
     group_by_category_level = CategoryLevelChooserBlock(
         required=False,
-        label=_("Group by level"),
-        help_text=_("Use category level for tabbed grouping in the public UI"),
+        label=_('Group by level'),
+        help_text=_('Use category level for tabbed grouping in the public UI'),
     )
+
     class Meta:
         label = _('Action list')
 
@@ -44,4 +45,3 @@ class ActionListBlock(blocks.StructBlock):
         GraphQLString('help_text', required=False),
         GraphQLForeignKey('group_by_category_level', CategoryLevel, required=False),
     ]
-

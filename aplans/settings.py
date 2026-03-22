@@ -125,8 +125,8 @@ else:
     if dotenv_path.exists():
         environ.Env.read_env(dotenv_path)
 
-GDAL_LIBRARY_PATH=env('GDAL_LIBRARY_PATH') or None
-GEOS_LIBRARY_PATH=env('GEOS_LIBRARY_PATH') or None
+GDAL_LIBRARY_PATH = env('GDAL_LIBRARY_PATH') or None
+GEOS_LIBRARY_PATH = env('GEOS_LIBRARY_PATH') or None
 
 # Read all files in the directories given in MOUNTED_SECRET_PATHS whose names look like environment variables and use
 # the contents of the files for the corresponding variables
@@ -141,8 +141,7 @@ if DEPLOYMENT_TYPE in ('production', 'staging') and ENABLE_TEST_MODE:
     raise ImproperlyConfigured('Test mode cannot be enabled in production or staging')
 
 ALLOWED_HOSTS = cast('list[str]', env('ALLOWED_HOSTS'))
-INTERNAL_IPS = env.list('INTERNAL_IPS',
-                        default=(['127.0.0.1'] if DEBUG else []))  # pyright: ignore
+INTERNAL_IPS = env.list('INTERNAL_IPS', default=(['127.0.0.1'] if DEBUG else []))  # pyright: ignore
 DATABASES = {
     'default': env.db_url(engine='kausal_common.database'),
 }
@@ -194,10 +193,10 @@ DEPLOY_YAML_FILE_PATH = env('DEPLOY_YAML_FILE_PATH')
 
 WATCH_BACKEND_REGION_URLS = env('WATCH_BACKEND_REGION_URLS')
 
+
 def parse_redirect_hostnames(redirect_hostnames: list[str]) -> tuple[tuple[str, str], ...]:
-    return tuple(
-        cast('tuple[str, str]', tuple(item.split(':', 1))) for item in redirect_hostnames if ':' in item
-    )
+    return tuple(cast('tuple[str, str]', tuple(item.split(':', 1))) for item in redirect_hostnames if ':' in item)
+
 
 # Hostname redirect configuration for HostnameRedirectMiddleware
 # Performs HTTP 301 redirects based on incoming request hostname patterns.
@@ -233,7 +232,6 @@ INSTALLED_APPS = [
     'dal',
     'dal_select2',
     'dal_admin_filters',
-
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -246,7 +244,6 @@ INSTALLED_APPS = [
     'corsheaders',
     'channels',
     'strawberry_django',
-
     'wagtail.contrib.forms',
     'wagtail.contrib.redirects',
     'wagtail.embeds',
@@ -268,13 +265,10 @@ INSTALLED_APPS = [
     'wagtailorderable',
     'wagtailgeowidget',
     'wagtail_color_panel',
-
     'modelcluster',
     'taggit',
-
     'easy_thumbnails',
     'reversion',
-
     'rest_framework',
     'rest_framework.authtoken',
     'drf_spectacular',
@@ -305,7 +299,6 @@ WATCH_APPS = [
     'audit_logging',
     'users',
     'budget',
-
 ]
 INSTALLED_APPS += WATCH_APPS
 
@@ -442,36 +435,27 @@ SOCIAL_AUTH_ADFS_OPENIDCONNECT_API_URL = env.str('ADFS_API_URL')
 
 SOCIAL_AUTH_PIPELINE = (
     'kausal_common.auth.pipeline.log_login_attempt',
-
     # Get the information we can about the user and return it in a simple
     # format to create the user instance later. On some cases the details are
     # already part of the auth response from the provider, but sometimes this
     # could hit a provider API.
     'social_core.pipeline.social_auth.social_details',
-
     # Get the social uid from whichever service we're authing thru. The uid is
     # the unique identifier of the given user in the provider.
     'social_core.pipeline.social_auth.social_uid',
-
     # Generate username from UUID
     'kausal_common.auth.pipeline.get_username',
-
     # Checks if the current social-account is already associated in the site.
     'social_core.pipeline.social_auth.social_user',
-
     # Finds user by email address
     'kausal_common.auth.pipeline.find_user_by_email',
-
     # Get or create the user and update user data
     'kausal_common.auth.pipeline.create_or_update_user',
-
     # Create the record that associated the social account with this user.
     'social_core.pipeline.social_auth.associate_user',
-
     # Populate the extra_data field in the social record with the values
     # specified by settings (and the default ones like access_token, etc).
     'social_core.pipeline.social_auth.load_extra_data',
-
     # Update avatar photo from MS Graph
     'kausal_common.auth.pipeline.update_avatar',
 )
@@ -485,9 +469,7 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 200,
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
-    'DEFAULT_PERMISSION_CLASSES': (
-        f'{PROJECT_NAME}.permissions.AnonReadOnly',
-    ),
+    'DEFAULT_PERMISSION_CLASSES': (f'{PROJECT_NAME}.permissions.AnonReadOnly',),
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
         'rest_framework.authentication.SessionAuthentication',
@@ -518,10 +500,14 @@ if REDIS_URL and not os.getenv('FASTMCP_DOCKET_URL'):
     os.environ['FASTMCP_DOCKET_URL'] = REDIS_URL
 
 CORS_ALLOW_ALL_ORIGINS = True
-CORS_ALLOW_HEADERS = list(default_cors_headers) + get_allowed_cors_headers() + [
-    'x-cache-plan-identifier',
-    'x-cache-plan-domain',
-]
+CORS_ALLOW_HEADERS = (
+    list(default_cors_headers)
+    + get_allowed_cors_headers()
+    + [
+        'x-cache-plan-identifier',
+        'x-cache-plan-domain',
+    ]
+)
 
 #
 # GraphQL
@@ -535,8 +521,8 @@ GRAPHENE = {
 }
 
 STRAWBERRY_DJANGO = {
-    "FIELD_DESCRIPTION_FROM_HELP_TEXT": True,
-    "TYPE_DESCRIPTION_FROM_MODEL_DOCSTRING": True,
+    'FIELD_DESCRIPTION_FROM_HELP_TEXT': True,
+    'TYPE_DESCRIPTION_FROM_MODEL_DOCSTRING': True,
 }
 
 # Internationalization
@@ -572,9 +558,9 @@ LANGUAGES = (
 # If you forget to add something from LANGUAGES here, you will be reminded by an Exception when trying to access
 # /wadmin/account/
 LOCAL_LANGUAGE_NAMES = {
-    'de-CH': "Deutsch (Schweiz)",
-    'es-US': "español (Estados Unidos)",
-    'sv-FI': "svenska (Finland)",
+    'de-CH': 'Deutsch (Schweiz)',
+    'es-US': 'español (Estados Unidos)',
+    'sv-FI': 'svenska (Finland)',
 }
 MODELTRANS_AVAILABLE_LANGUAGES = [x[0].lower() for x in LANGUAGES]
 MODELTRANS_FALLBACK = {
@@ -601,7 +587,7 @@ PARLER_LANGUAGES = {
     ),
     'default': {
         'fallbacks': ['en', 'fi', 'sv', 'de', 'da'],
-        'hide_untranslated': False,   # the default; let .active_translations() return fallbacks too.
+        'hide_untranslated': False,  # the default; let .active_translations() return fallbacks too.
     },
 }
 
@@ -706,7 +692,7 @@ WAGTAILEMBEDS_FINDERS = [
     {
         'class': f'{PROJECT_NAME}.wagtail_embed_finders.GenericFinder',
         'provider': 'Sharepoint',
-        'domain_whitelist': ('sharepoint.com', ),
+        'domain_whitelist': ('sharepoint.com',),
         'title': 'Document',
     },
     {
@@ -718,31 +704,31 @@ WAGTAILEMBEDS_FINDERS = [
     {
         'class': f'{PROJECT_NAME}.wagtail_embed_finders.GenericFinder',
         # If we leave the provider out, the "default" provider will be used
-        'domain_whitelist': ('klimadashboard.de', ),
+        'domain_whitelist': ('klimadashboard.de',),
         'title': 'Chart',
     },
     {
         'class': f'{PROJECT_NAME}.wagtail_embed_finders.GenericFinder',
         # If we leave the provider out, the "default" provider will be used
-        'domain_whitelist': ('gis.fairfield-city.org', ),
+        'domain_whitelist': ('gis.fairfield-city.org',),
         'title': 'Map',
     },
     {
         'class': f'{PROJECT_NAME}.wagtail_embed_finders.GenericFinder',
         # If we leave the provider out, the "default" provider will be used
-        'domain_whitelist': ('dashboard.klimaschutz-planer.de', ),
+        'domain_whitelist': ('dashboard.klimaschutz-planer.de',),
         'title': 'Map',
     },
     {
         'class': f'{PROJECT_NAME}.wagtail_embed_finders.GenericFinder',
         # If we leave the provider out, the "default" provider will be used
-        'domain_whitelist': ('maps.duesseldorf.de', ),
+        'domain_whitelist': ('maps.duesseldorf.de',),
         'title': 'Map',
     },
     {
         'class': f'{PROJECT_NAME}.wagtail_embed_finders.GenericFinder',
         # If we leave the provider out, the "default" provider will be used
-        'domain_whitelist': ('map.geo.admin.ch', ),
+        'domain_whitelist': ('map.geo.admin.ch',),
         'title': 'Map',
     },
 ]
@@ -768,7 +754,7 @@ if ELASTICSEARCH_URL:
                     'tokenizer': 'finnish',
                     'filter': ['lowercase', 'finnish_stop', 'raudikkoFilter'],
                 },
-             },
+            },
             'filter': {
                 'raudikkoFilter': {
                     'type': 'raudikko',
@@ -847,9 +833,7 @@ if ELASTICSEARCH_URL:
                 },
             },
         }
-    WAGTAILSEARCH_BACKENDS['default'] = dict(
-        BACKEND='search.backends.WatchDefaultSearchBackend'
-    )
+    WAGTAILSEARCH_BACKENDS['default'] = dict(BACKEND='search.backends.WatchDefaultSearchBackend')
 
 
 THUMBNAIL_PROCESSORS = (
@@ -902,10 +886,11 @@ COMMON_CATEGORIES_COLLECTION = 'Common Categories'
 
 # local_settings.py can be used to override environment-specific settings
 # like database and email that differ between development and production.
-local_settings = Path(BASE_DIR) / Path("local_settings.py")
+local_settings = Path(BASE_DIR) / Path('local_settings.py')
 if local_settings.exists():
     import types
-    module_name = "%s.local_settings" % ROOT_URLCONF.split('.', maxsplit=1)[0]
+
+    module_name = '%s.local_settings' % ROOT_URLCONF.split('.', maxsplit=1)[0]
     module = types.ModuleType(module_name)
     module.__file__ = str(local_settings)
     sys.modules[module_name] = module
@@ -935,6 +920,7 @@ if DEBUG:  # noqa: SIM102
     if len(sys.argv) > 1 and 'runserver' in sys.argv[1]:
         try:
             from aplans.watchfiles_reloader import replace_reloader
+
             replace_reloader()
         except ImportError:
             pass
@@ -963,17 +949,20 @@ if env('CONFIGURE_LOGGING'):
         log_format = 'logfmt'
 
     if DEBUG:
-        runserver_logging = cast('dict[str, bool]', dict(
-            django_runserver_minimize_noise=env('LOG_DJANGO_RUNSERVER_MINIMIZE_NOISE'),
-            django_runserver_requests_media=env('LOG_DJANGO_RUNSERVER_REQUESTS_MEDIA'),
-            django_runserver_requests_static=env('LOG_DJANGO_RUNSERVER_REQUESTS_STATIC'),
-            django_runserver_requests_favicon=env('LOG_DJANGO_RUNSERVER_REQUESTS_FAVICON'),
-            django_runserver_errors_media=env('LOG_DJANGO_RUNSERVER_ERRORS_MEDIA'),
-            django_runserver_errors_static=env('LOG_DJANGO_RUNSERVER_ERRORS_STATIC'),
-            django_runserver_errors_favicon=env('LOG_DJANGO_RUNSERVER_ERRORS_FAVICON'),
-            django_runserver_requests_broken_pipe=env('LOG_DJANGO_RUNSERVER_REQUESTS_BROKEN_PIPE'),
-            people_verbose=env('LOG_PEOPLE_VERBOSE'),
-        ))
+        runserver_logging = cast(
+            'dict[str, bool]',
+            dict(
+                django_runserver_minimize_noise=env('LOG_DJANGO_RUNSERVER_MINIMIZE_NOISE'),
+                django_runserver_requests_media=env('LOG_DJANGO_RUNSERVER_REQUESTS_MEDIA'),
+                django_runserver_requests_static=env('LOG_DJANGO_RUNSERVER_REQUESTS_STATIC'),
+                django_runserver_requests_favicon=env('LOG_DJANGO_RUNSERVER_REQUESTS_FAVICON'),
+                django_runserver_errors_media=env('LOG_DJANGO_RUNSERVER_ERRORS_MEDIA'),
+                django_runserver_errors_static=env('LOG_DJANGO_RUNSERVER_ERRORS_STATIC'),
+                django_runserver_errors_favicon=env('LOG_DJANGO_RUNSERVER_ERRORS_FAVICON'),
+                django_runserver_requests_broken_pipe=env('LOG_DJANGO_RUNSERVER_REQUESTS_BROKEN_PIPE'),
+                people_verbose=env('LOG_PEOPLE_VERBOSE'),
+            ),
+        )
     else:
         runserver_logging = dict()
 
@@ -992,6 +981,7 @@ REQUEST_LOG_MAX_BODY_SIZE = 100 * 1024
 
 if True:
     from kausal_common.sentry.init import init_sentry
+
     init_sentry(SENTRY_DSN, DEPLOYMENT_TYPE)
 
 
@@ -1006,7 +996,8 @@ if DEBUG and ENABLE_DEBUG_TOOLBAR:
 
 if DEBUG:
     MIDDLEWARE.insert(
-        0, f'{PROJECT_NAME}.middleware.PrintQueryCountMiddleware',
+        0,
+        f'{PROJECT_NAME}.middleware.PrintQueryCountMiddleware',
     )
     if env.bool('ENABLE_ZEAL', default=False):
         MIDDLEWARE.insert(0, 'zeal.middleware.zeal_middleware')
@@ -1055,29 +1046,29 @@ WAGTAILEMBEDS_RESPONSIVE_HTML = True
 # Workaround until https://github.com/wagtail/wagtail/pull/11075 is merged
 WAGTAILADMIN_RICH_TEXT_EDITORS = {
     'default': {
-        "WIDGET": "admin_site.draftail_rich_text_area.DraftailRichTextAreaWithFixedTranslations",
+        'WIDGET': 'admin_site.draftail_rich_text_area.DraftailRichTextAreaWithFixedTranslations',
     },
     'limited': {
-        "WIDGET": "admin_site.draftail_rich_text_area.DraftailRichTextAreaWithFixedTranslations",
-        "OPTIONS": {
-            "features": ["bold", "italic", "ol", "ul", "link"],
+        'WIDGET': 'admin_site.draftail_rich_text_area.DraftailRichTextAreaWithFixedTranslations',
+        'OPTIONS': {
+            'features': ['bold', 'italic', 'ol', 'ul', 'link'],
         },
     },
     'very-limited-with-links': {
-        "WIDGET": "admin_site.draftail_rich_text_area.DraftailRichTextAreaWithFixedTranslations",
-        "OPTIONS": {
-            "features": ["italic", "link"],
+        'WIDGET': 'admin_site.draftail_rich_text_area.DraftailRichTextAreaWithFixedTranslations',
+        'OPTIONS': {
+            'features': ['italic', 'link'],
         },
     },
     'very-limited': {
-        "WIDGET": "admin_site.draftail_rich_text_area.DraftailRichTextAreaWithFixedTranslations",
-        "OPTIONS": {
-            "features": ["bold", "italic"],
+        'WIDGET': 'admin_site.draftail_rich_text_area.DraftailRichTextAreaWithFixedTranslations',
+        'OPTIONS': {
+            'features': ['bold', 'italic'],
         },
     },
 }
 
-HIJACK_PERMISSION_CHECK = "admin_site.permissions.superusers_only_hijack"
+HIJACK_PERMISSION_CHECK = 'admin_site.permissions.superusers_only_hijack'
 HIJACK_INSERT_BEFORE: str | None = None
 
 register_common_settings(locals())
@@ -1088,4 +1079,5 @@ DEFAULT_FROM_NAME: str
 if importlib.util.find_spec('kausal_watch_extensions') is not None:
     INSTALLED_APPS.append('kausal_watch_extensions')
     from kausal_watch_extensions import register_settings
+
     register_settings(locals())

@@ -9,6 +9,7 @@ def action_contact_person_user_maker(action_contact_factory):
         action = plan.actions.get()
         acp = action_contact_factory(action=action, role=role)
         return acp.person.user
+
     return make_action_contact_person_with_role
 
 
@@ -45,10 +46,10 @@ def test_action_moderator_has_no_publishing_rights(moderator_user_without_publis
 
 
 def test_action_editor_has_no_publishing_rights(
-        editor_user_without_publishing_rights_single,
-        editor_user_without_publishing_rights_double,
-        plan_with_single_task_moderation,
-        plan_with_double_task_moderation,
+    editor_user_without_publishing_rights_single,
+    editor_user_without_publishing_rights_double,
+    plan_with_single_task_moderation,
+    plan_with_double_task_moderation,
 ):
     assert not editor_user_without_publishing_rights_single.can_publish_action(
         plan_with_single_task_moderation.actions.first(),
@@ -59,10 +60,10 @@ def test_action_editor_has_no_publishing_rights(
 
 
 def test_action_editor_has_no_approval_rights(
-        editor_user_without_publishing_rights_single,
-        editor_user_without_publishing_rights_double,
-        plan_with_single_task_moderation,
-        plan_with_double_task_moderation,
+    editor_user_without_publishing_rights_single,
+    editor_user_without_publishing_rights_double,
+    plan_with_single_task_moderation,
+    plan_with_double_task_moderation,
 ):
     assert not editor_user_without_publishing_rights_single.can_approve_action(
         plan_with_single_task_moderation.actions.first(),
@@ -73,10 +74,10 @@ def test_action_editor_has_no_approval_rights(
 
 
 def test_action_moderator_has_approval_rights(
-        moderator_user_with_publishing_rights,
-        moderator_user_without_publishing_rights,
-        plan_with_single_task_moderation,
-        plan_with_double_task_moderation,
+    moderator_user_with_publishing_rights,
+    moderator_user_without_publishing_rights,
+    plan_with_single_task_moderation,
+    plan_with_double_task_moderation,
 ):
     assert moderator_user_with_publishing_rights.can_approve_action(
         plan_with_single_task_moderation.actions.first(),

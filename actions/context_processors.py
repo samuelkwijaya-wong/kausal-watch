@@ -13,6 +13,7 @@ class AdminContextRequest(WatchAdminRequest):
     _active_plan: Plan | None
     _active_client: Client | None
 
+
 class ActivePlan(TypedDict):
     active_plan: Plan | None
     active_client: Client | None

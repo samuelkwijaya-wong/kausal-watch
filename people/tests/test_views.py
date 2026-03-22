@@ -17,8 +17,7 @@ def test_reset_password_view_accepts_as_view_kwargs():
     from people.views import ResetPasswordView
 
     # Verify the class attribute exists
-    assert hasattr(ResetPasswordView, 'target_person_pk'), \
-        'ResetPasswordView must have target_person_pk as a class attribute'
+    assert hasattr(ResetPasswordView, 'target_person_pk'), 'ResetPasswordView must have target_person_pk as a class attribute'
 
     # Verify as_view() accepts the kwarg
     try:
@@ -42,8 +41,7 @@ def test_impersonate_user_view_accepts_as_view_kwargs():
     from people.views import ImpersonateUserView
 
     # Verify the class attribute exists
-    assert hasattr(ImpersonateUserView, 'target_person_pk'), \
-        'ImpersonateUserView must have target_person_pk as a class attribute'
+    assert hasattr(ImpersonateUserView, 'target_person_pk'), 'ImpersonateUserView must have target_person_pk as a class attribute'
 
     # Verify as_view() accepts the kwarg
     try:

@@ -49,7 +49,7 @@ class ClientChooserViewSet(ModelChooserViewSet):
 
     icon = 'globe'
     model = Client
-    page_title = _("Choose a client")
+    page_title = _('Choose a client')
     per_page = 30
     fields = ['name', 'email_domains']
     form_class = ClientForm

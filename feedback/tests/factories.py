@@ -13,5 +13,5 @@ class UserFeedbackFactory(DjangoModelFactory[UserFeedback]):
     plan = SubFactory[UserFeedback, Plan](PlanFactory)
     name = 'John Frum'
     email = 'john.frum@example.com'
-    comment = "This is great!"
+    comment = 'This is great!'
     url = 'https://example.com/feedback'

@@ -59,8 +59,8 @@ def after_edit_snippet(request, snippet):
 
 @hooks.register('register_log_actions')
 def register_plan_log_actions(actions: LogActionRegistry):
-    actions.register_action('plan.publish', _("Publish plan"), _("Plan published"))
-    actions.register_action('plan.unpublish', _("Unpublish plan"), _("Plan unpublished"))
+    actions.register_action('plan.publish', _('Publish plan'), _('Plan published'))
+    actions.register_action('plan.unpublish', _('Unpublish plan'), _('Plan unpublished'))
 
 
 class ActionsSearchArea(SearchArea):
@@ -73,12 +73,12 @@ class ActionsSearchArea(SearchArea):
         return user.can_access_admin(admin_cache.plan)
 
 
-@hooks.register("register_admin_search_area")
+@hooks.register('register_admin_search_area')
 def register_documents_search_area():
     return ActionsSearchArea(
-        _("Actions"),
-        reverse("actions_action_modeladmin_index"),
-        name="actions",
-        icon_name="kausal-action",
+        _('Actions'),
+        reverse('actions_action_modeladmin_index'),
+        name='actions',
+        icon_name='kausal-action',
         order=200,
     )

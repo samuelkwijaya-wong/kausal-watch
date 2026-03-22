@@ -102,8 +102,8 @@ def test_all_goals_get_replaced(client, plan, plan_admin_user):
         assert_goals_match(indicator, values)
 
 
-@pytest.mark.parametrize("reverse_request_order", [False, True])
-@pytest.mark.parametrize("test_goals_instead", [False, True])
+@pytest.mark.parametrize('reverse_request_order', [False, True])
+@pytest.mark.parametrize('test_goals_instead', [False, True])
 def test_values_get_normalized(client, plan, plan_admin_user, reverse_request_order, test_goals_instead):
     # Normalize emissions by population
     emissions = IndicatorFactory.create(plans=[plan])
@@ -210,19 +210,18 @@ def test_add_value_updates_due_date(client, plan, plan_admin_user):
     assert indicator.updated_values_due_at == date(2021, 3, 1)
 
 
-
 def test_update_contact_persons(api_client, plan, plan_admin_user, indicator, indicator_detail_url):
     person1 = PersonFactory.create()
     person2 = PersonFactory.create()
 
     api_client.force_login(plan_admin_user)
     data = {
-        "name": indicator.name,
-        "unit": indicator.unit.id,
-        "organization": indicator.organization.id,
-        "contact_persons": [
-            {"person": person1.id},
-            {"person": person2.id},
+        'name': indicator.name,
+        'unit': indicator.unit.id,
+        'organization': indicator.organization.id,
+        'contact_persons': [
+            {'person': person1.id},
+            {'person': person2.id},
         ],
     }
 
@@ -237,17 +236,15 @@ def test_update_contact_persons(api_client, plan, plan_admin_user, indicator, in
 def test_update_categories(api_client, plan, plan_admin_user, indicator, indicator_detail_url):
 
     category_type = CategoryTypeFactory.create(
-        plan=plan,
-        usable_for_indicators=True,
-        editable_for_indicators=True,
-        select_widget='multiple')
+        plan=plan, usable_for_indicators=True, editable_for_indicators=True, select_widget='multiple'
+    )
     category1 = CategoryFactory.create(type=category_type)
     category2 = CategoryFactory.create(type=category_type)
 
     data = {
-        "name": indicator.name,
-        "unit": indicator.unit.id,
-        "organization": indicator.organization.id,
+        'name': indicator.name,
+        'unit': indicator.unit.id,
+        'organization': indicator.organization.id,
         'categories': {
             category_type.identifier: [category1.id, category2.id],
         },
@@ -264,16 +261,14 @@ def test_update_categories(api_client, plan, plan_admin_user, indicator, indicat
 
 def test_update_single_select_category(api_client, plan, plan_admin_user, indicator, indicator_detail_url):
     category_type = CategoryTypeFactory.create(
-        plan=plan,
-        usable_for_indicators=True,
-        editable_for_indicators=True,
-        select_widget='single')
+        plan=plan, usable_for_indicators=True, editable_for_indicators=True, select_widget='single'
+    )
     category = CategoryFactory.create(type=category_type)
 
     data = {
-        "name": indicator.name,
-        "unit": indicator.unit.id,
-        "organization": indicator.organization.id,
+        'name': indicator.name,
+        'unit': indicator.unit.id,
+        'organization': indicator.organization.id,
         'categories': {
             category_type.identifier: category.id,
         },
@@ -331,12 +326,14 @@ def test_bulk_update_indicator_without_permissions(api_client, plan, indicator_l
 
     # User in contact will try to modify indicator2, which they do not have permissions for
     api_client.force_login(contact.person.user)
-    data = [{
-        'id': indicator2.id,
-        'name': f'updated {indicator2.name}',
-        'unit': indicator2.unit.pk,
-        'organization': indicator2.organization.id,
-    }]
+    data = [
+        {
+            'id': indicator2.id,
+            'name': f'updated {indicator2.name}',
+            'unit': indicator2.unit.pk,
+            'organization': indicator2.organization.id,
+        }
+    ]
 
     response = api_client.put(indicator_list_url, data)
     assert response.status_code == 403
@@ -347,7 +344,8 @@ def test_bulk_update_indicator_without_permissions(api_client, plan, indicator_l
 
 
 def test_indicator_post_creates_log_entry(
-        api_client, plan, indicator_list_url, person_factory, unit_factory, organization_factory):
+    api_client, plan, indicator_list_url, person_factory, unit_factory, organization_factory
+):
     """Test that creating an indicator creates a PlanScopedModelLogEntry with action='wagtail.create'."""
     admin_person = person_factory(general_admin_plans=[plan])
     api_client.force_login(admin_person.user)
@@ -356,34 +354,38 @@ def test_indicator_post_creates_log_entry(
     org = organization_factory()
     org.related_plans.add(plan)
 
-    response = api_client.post(indicator_list_url, data={
-        'name': 'Test Indicator',
-        'unit': unit.pk,
-        'organization': org.pk,
-    })
+    response = api_client.post(
+        indicator_list_url,
+        data={
+            'name': 'Test Indicator',
+            'unit': unit.pk,
+            'organization': org.pk,
+        },
+    )
     assert response.status_code == 201
 
     created_indicator = Indicator.objects.get(name='Test Indicator')
     assert_log_entry_created(created_indicator, 'wagtail.create', admin_person.user, plan)
 
 
-def test_indicator_put_creates_log_entry(
-        api_client, plan, plan_admin_user, indicator, indicator_detail_url):
+def test_indicator_put_creates_log_entry(api_client, plan, plan_admin_user, indicator, indicator_detail_url):
     """Test that updating an indicator creates a PlanScopedModelLogEntry with action='wagtail.edit'."""
     api_client.force_login(plan_admin_user)
 
-    response = api_client.put(indicator_detail_url, data={
-        'name': 'Updated Indicator',
-        'unit': indicator.unit.pk,
-        'organization': indicator.organization.pk,
-    })
+    response = api_client.put(
+        indicator_detail_url,
+        data={
+            'name': 'Updated Indicator',
+            'unit': indicator.unit.pk,
+            'organization': indicator.organization.pk,
+        },
+    )
     assert response.status_code == 200
 
     assert_log_entry_created(indicator, 'wagtail.edit', plan_admin_user, plan)
 
 
-def test_indicator_delete_creates_log_entry(
-        api_client, plan, plan_admin_user, indicator_factory):
+def test_indicator_delete_creates_log_entry(api_client, plan, plan_admin_user, indicator_factory):
     """Test that deleting an indicator creates a PlanScopedModelLogEntry with action='wagtail.delete'."""
     api_client.force_login(plan_admin_user)
 
@@ -400,17 +402,15 @@ def test_indicator_delete_creates_log_entry(
 
     content_type = ContentType.objects.get_for_model(Indicator, for_concrete_model=False)
     log_entry = PlanScopedModelLogEntry.objects.filter(
-        content_type=content_type,
-        object_id=str(indicator_pk),
-        action='wagtail.delete',
-        plan=plan
+        content_type=content_type, object_id=str(indicator_pk), action='wagtail.delete', plan=plan
     ).first()
-    assert log_entry is not None, f"Expected log entry for deleted indicator {indicator_pk}"
+    assert log_entry is not None, f'Expected log entry for deleted indicator {indicator_pk}'
     assert log_entry.user_id == plan_admin_user.pk
 
 
 def test_bulk_indicator_post_creates_individual_log_entries(
-        api_client, plan, indicator_list_url, person_factory, unit_factory, organization_factory):
+    api_client, plan, indicator_list_url, person_factory, unit_factory, organization_factory
+):
     """Test that bulk POST of indicators creates individual PlanScopedModelLogEntry for each indicator."""
     admin_person = person_factory(general_admin_plans=[plan])
     api_client.force_login(admin_person.user)
@@ -421,52 +421,57 @@ def test_bulk_indicator_post_creates_individual_log_entries(
 
     initial_log_count = PlanScopedModelLogEntry.objects.filter(plan=plan, action='wagtail.create').count()
 
-    response = api_client.post(indicator_list_url, data=[
-        {'name': 'Indicator 1', 'unit': unit.pk, 'organization': org.pk},
-        {'name': 'Indicator 2', 'unit': unit.pk, 'organization': org.pk},
-        {'name': 'Indicator 3', 'unit': unit.pk, 'organization': org.pk},
-    ])
+    response = api_client.post(
+        indicator_list_url,
+        data=[
+            {'name': 'Indicator 1', 'unit': unit.pk, 'organization': org.pk},
+            {'name': 'Indicator 2', 'unit': unit.pk, 'organization': org.pk},
+            {'name': 'Indicator 3', 'unit': unit.pk, 'organization': org.pk},
+        ],
+    )
     assert response.status_code == 201
 
     assert Indicator.objects.filter(name__startswith='Indicator ').count() >= 3
 
     final_log_count = PlanScopedModelLogEntry.objects.filter(plan=plan, action='wagtail.create').count()
-    assert final_log_count == initial_log_count + 3, \
-        f"Expected 3 new log entries, got {final_log_count - initial_log_count}"
+    assert final_log_count == initial_log_count + 3, f'Expected 3 new log entries, got {final_log_count - initial_log_count}'
 
 
 def test_bulk_indicator_put_creates_individual_log_entries(
-        api_client, plan, indicator_list_url, person_factory, indicator_factory):
+    api_client, plan, indicator_list_url, person_factory, indicator_factory
+):
     """Test that bulk PUT of indicators creates individual PlanScopedModelLogEntry for each indicator."""
     admin_person = person_factory(general_admin_plans=[plan])
     api_client.force_login(admin_person.user)
 
     indicators = [
-        indicator_factory(plans=[plan], organization=plan.organization, name=f'Original Indicator {i}')
-        for i in range(1, 4)
+        indicator_factory(plans=[plan], organization=plan.organization, name=f'Original Indicator {i}') for i in range(1, 4)
     ]
 
     initial_log_count = PlanScopedModelLogEntry.objects.filter(plan=plan, action='wagtail.edit').count()
 
-    data = [{
+    data = [
+        {
             'id': indicator.id,
             'uuid': indicator.uuid,
             'name': f'Updated {indicator.name}',
             'unit': indicator.unit.pk,
             'organization': indicator.organization.pk,
-           } for indicator in indicators
+        }
+        for indicator in indicators
     ]
 
     response = api_client.put(indicator_list_url, data=data)
     assert response.status_code == 200
 
     final_log_count = PlanScopedModelLogEntry.objects.filter(plan=plan, action='wagtail.edit').count()
-    assert final_log_count == initial_log_count + 3, \
-        f"Expected 3 new log entries for bulk update, got {final_log_count - initial_log_count}"
+    assert final_log_count == initial_log_count + 3, (
+        f'Expected 3 new log entries for bulk update, got {final_log_count - initial_log_count}'
+    )
 
     for indicator in indicators:
         total_logs = count_log_entries(instance=indicator, plan=plan)
-        assert total_logs >= 1, f"Expected at least 1 log entry for indicator {indicator.name}"
+        assert total_logs >= 1, f'Expected at least 1 log entry for indicator {indicator.name}'
 
 
 def test_get_indicator_returns_level_for_plan(api_client, plan, plan_admin_user, indicator_factory):
@@ -483,7 +488,8 @@ def test_get_indicator_returns_level_for_plan(api_client, plan, plan_admin_user,
 
 
 def test_get_indicator_returns_null_level_when_no_level_exists(
-        api_client, plan, plan_admin_user, indicator_factory, unit_factory, organization_factory):
+    api_client, plan, plan_admin_user, indicator_factory, unit_factory, organization_factory
+):
     indicator = indicator_factory(plans=[])
     indicator.organization.related_plans.add(plan)
     detail_url = reverse('indicator-detail', kwargs={'plan_pk': plan.pk, 'pk': indicator.pk})
@@ -495,7 +501,8 @@ def test_get_indicator_returns_null_level_when_no_level_exists(
 
 
 def test_create_indicator_sets_strategic_level(
-        api_client, plan, person_factory, unit_factory, organization_factory, indicator_list_url):
+    api_client, plan, person_factory, unit_factory, organization_factory, indicator_list_url
+):
     admin_person = person_factory(general_admin_plans=[plan])
     api_client.force_login(admin_person.user)
 
@@ -503,11 +510,14 @@ def test_create_indicator_sets_strategic_level(
     org = organization_factory()
     org.related_plans.add(plan)
 
-    response = api_client.post(indicator_list_url, data={
-        'name': 'New Indicator',
-        'unit': unit.pk,
-        'organization': org.pk,
-    })
+    response = api_client.post(
+        indicator_list_url,
+        data={
+            'name': 'New Indicator',
+            'unit': unit.pk,
+            'organization': org.pk,
+        },
+    )
     assert response.status_code == 201
 
     created_indicator = Indicator.objects.get(name='New Indicator')
@@ -519,7 +529,8 @@ def test_create_indicator_sets_strategic_level(
 
 
 def test_create_indicator_with_custom_level(
-        api_client, plan, person_factory, unit_factory, organization_factory, indicator_list_url):
+    api_client, plan, person_factory, unit_factory, organization_factory, indicator_list_url
+):
     admin_person = person_factory(general_admin_plans=[plan])
     api_client.force_login(admin_person.user)
 
@@ -527,12 +538,15 @@ def test_create_indicator_with_custom_level(
     org = organization_factory()
     org.related_plans.add(plan)
 
-    response = api_client.post(indicator_list_url, data={
-        'name': 'Tactical Indicator',
-        'unit': unit.pk,
-        'organization': org.pk,
-        'level': 'tactical',
-    })
+    response = api_client.post(
+        indicator_list_url,
+        data={
+            'name': 'Tactical Indicator',
+            'unit': unit.pk,
+            'organization': org.pk,
+            'level': 'tactical',
+        },
+    )
     assert response.status_code == 201
 
     created_indicator = Indicator.objects.get(name='Tactical Indicator')
@@ -544,7 +558,8 @@ def test_create_indicator_with_custom_level(
 
 
 def test_create_indicator_with_null_level_creates_no_level(
-        api_client, plan, person_factory, unit_factory, organization_factory, indicator_list_url):
+    api_client, plan, person_factory, unit_factory, organization_factory, indicator_list_url
+):
     admin_person = person_factory(general_admin_plans=[plan])
     api_client.force_login(admin_person.user)
 
@@ -552,12 +567,15 @@ def test_create_indicator_with_null_level_creates_no_level(
     org = organization_factory()
     org.related_plans.add(plan)
 
-    response = api_client.post(indicator_list_url, data={
-        'name': 'No Level Indicator',
-        'unit': unit.pk,
-        'organization': org.pk,
-        'level': None,
-    })
+    response = api_client.post(
+        indicator_list_url,
+        data={
+            'name': 'No Level Indicator',
+            'unit': unit.pk,
+            'organization': org.pk,
+            'level': None,
+        },
+    )
     assert response.status_code == 201
 
     created_indicator = Indicator.objects.get(name='No Level Indicator')
@@ -567,12 +585,15 @@ def test_create_indicator_with_null_level_creates_no_level(
 def test_update_indicator_level_changes_level(api_client, plan, plan_admin_user, indicator, indicator_detail_url):
     api_client.force_login(plan_admin_user)
 
-    response = api_client.put(indicator_detail_url, data={
-        'name': indicator.name,
-        'unit': indicator.unit.pk,
-        'organization': indicator.organization.pk,
-        'level': 'tactical',
-    })
+    response = api_client.put(
+        indicator_detail_url,
+        data={
+            'name': indicator.name,
+            'unit': indicator.unit.pk,
+            'organization': indicator.organization.pk,
+            'level': 'tactical',
+        },
+    )
     assert response.status_code == 200
 
     indicator.refresh_from_db()
@@ -583,12 +604,15 @@ def test_update_indicator_level_changes_level(api_client, plan, plan_admin_user,
 def test_update_indicator_level_to_null_removes_level(api_client, plan, plan_admin_user, indicator, indicator_detail_url):
     api_client.force_login(plan_admin_user)
 
-    response = api_client.put(indicator_detail_url, data={
-        'name': indicator.name,
-        'unit': indicator.unit.pk,
-        'organization': indicator.organization.pk,
-        'level': None,
-    })
+    response = api_client.put(
+        indicator_detail_url,
+        data={
+            'name': indicator.name,
+            'unit': indicator.unit.pk,
+            'organization': indicator.organization.pk,
+            'level': None,
+        },
+    )
     assert response.status_code == 200
 
     indicator.refresh_from_db()
@@ -596,7 +620,8 @@ def test_update_indicator_level_to_null_removes_level(api_client, plan, plan_adm
 
 
 def test_update_indicator_adds_level_when_none_exists(
-        api_client, plan, plan_admin_user, indicator_factory, indicator_contact_factory):
+    api_client, plan, plan_admin_user, indicator_factory, indicator_contact_factory
+):
     indicator = indicator_factory(plans=[])
     indicator.organization.related_plans.add(plan)
     indicator_contact_factory(indicator=indicator, person=plan_admin_user.person)
@@ -606,12 +631,15 @@ def test_update_indicator_adds_level_when_none_exists(
 
     assert not indicator.levels.filter(plan=plan).exists()
 
-    response = api_client.put(detail_url, data={
-        'name': indicator.name,
-        'unit': indicator.unit.pk,
-        'organization': indicator.organization.pk,
-        'level': 'operational',
-    })
+    response = api_client.put(
+        detail_url,
+        data={
+            'name': indicator.name,
+            'unit': indicator.unit.pk,
+            'organization': indicator.organization.pk,
+            'level': 'operational',
+        },
+    )
     assert response.status_code == 200
 
     indicator.refresh_from_db()
@@ -619,8 +647,7 @@ def test_update_indicator_adds_level_when_none_exists(
     assert level.level == 'operational'
 
 
-def test_update_indicator_level_does_not_affect_other_plans(
-        api_client, plan, plan_admin_user, indicator_factory, plan_factory):
+def test_update_indicator_level_does_not_affect_other_plans(api_client, plan, plan_admin_user, indicator_factory, plan_factory):
     other_plan = plan_factory()
     indicator = indicator_factory(plans=[])
     indicator.organization.related_plans.add(plan)
@@ -631,12 +658,15 @@ def test_update_indicator_level_does_not_affect_other_plans(
     detail_url = reverse('indicator-detail', kwargs={'plan_pk': plan.pk, 'pk': indicator.pk})
     api_client.force_login(plan_admin_user)
 
-    response = api_client.put(detail_url, data={
-        'name': indicator.name,
-        'unit': indicator.unit.pk,
-        'organization': indicator.organization.pk,
-        'level': 'operational',
-    })
+    response = api_client.put(
+        detail_url,
+        data={
+            'name': indicator.name,
+            'unit': indicator.unit.pk,
+            'organization': indicator.organization.pk,
+            'level': 'operational',
+        },
+    )
     assert response.status_code == 200
 
     indicator.refresh_from_db()
@@ -644,8 +674,7 @@ def test_update_indicator_level_does_not_affect_other_plans(
     assert indicator.levels.get(plan=other_plan).level == 'tactical'
 
 
-def test_remove_indicator_level_does_not_affect_other_plans(
-        api_client, plan, plan_admin_user, indicator_factory, plan_factory):
+def test_remove_indicator_level_does_not_affect_other_plans(api_client, plan, plan_admin_user, indicator_factory, plan_factory):
     other_plan = plan_factory()
     indicator = indicator_factory(plans=[])
     indicator.organization.related_plans.add(plan)
@@ -656,12 +685,15 @@ def test_remove_indicator_level_does_not_affect_other_plans(
     detail_url = reverse('indicator-detail', kwargs={'plan_pk': plan.pk, 'pk': indicator.pk})
     api_client.force_login(plan_admin_user)
 
-    response = api_client.put(detail_url, data={
-        'name': indicator.name,
-        'unit': indicator.unit.pk,
-        'organization': indicator.organization.pk,
-        'level': None,
-    })
+    response = api_client.put(
+        detail_url,
+        data={
+            'name': indicator.name,
+            'unit': indicator.unit.pk,
+            'organization': indicator.organization.pk,
+            'level': None,
+        },
+    )
     assert response.status_code == 200
 
     indicator.refresh_from_db()
@@ -669,8 +701,7 @@ def test_remove_indicator_level_does_not_affect_other_plans(
     assert indicator.levels.get(plan=other_plan).level == 'tactical'
 
 
-def test_update_indicator_with_invalid_level_returns_400(
-        api_client, plan, plan_admin_user, indicator_factory):
+def test_update_indicator_with_invalid_level_returns_400(api_client, plan, plan_admin_user, indicator_factory):
     indicator = indicator_factory(plans=[])
     indicator.levels.create(plan=plan, level='strategic')
     indicator.organization.related_plans.add(plan)
@@ -678,18 +709,20 @@ def test_update_indicator_with_invalid_level_returns_400(
 
     api_client.force_login(plan_admin_user)
 
-    response = api_client.put(detail_url, data={
-        'name': indicator.name,
-        'unit': indicator.unit.pk,
-        'organization': indicator.organization.pk,
-        'level': 'invalid_level',
-    })
+    response = api_client.put(
+        detail_url,
+        data={
+            'name': indicator.name,
+            'unit': indicator.unit.pk,
+            'organization': indicator.organization.pk,
+            'level': 'invalid_level',
+        },
+    )
     assert response.status_code == 400
     assert 'level' in response.data
 
 
-def test_update_indicator_omitting_level_leaves_level_intact(
-        api_client, plan, plan_admin_user, indicator_factory):
+def test_update_indicator_omitting_level_leaves_level_intact(api_client, plan, plan_admin_user, indicator_factory):
     indicator = indicator_factory(plans=[])
     indicator.levels.create(plan=plan, level='strategic')
     indicator.organization.related_plans.add(plan)
@@ -697,11 +730,14 @@ def test_update_indicator_omitting_level_leaves_level_intact(
 
     api_client.force_login(plan_admin_user)
 
-    response = api_client.put(detail_url, data={
-        'name': 'Updated Name',
-        'unit': indicator.unit.pk,
-        'organization': indicator.organization.pk,
-    })
+    response = api_client.put(
+        detail_url,
+        data={
+            'name': 'Updated Name',
+            'unit': indicator.unit.pk,
+            'organization': indicator.organization.pk,
+        },
+    )
     assert response.status_code == 200
 
     indicator.refresh_from_db()

@@ -16,11 +16,9 @@ if TYPE_CHECKING:
 
 def render_html_label_for_visibility(text_content: StrOrPromise, public: bool):
     class_specifier = 'primary' if public else 'secondary'
-    label = _("Public field") if public else _("Non-public field")
+    label = _('Public field') if public else _('Non-public field')
     return mark_safe(
-        f'{text_content}'
-        f'<span class="w-status w-status--{class_specifier} field-visibility-label">'
-        f'{label}</span>',
+        f'{text_content}<span class="w-status w-status--{class_specifier} field-visibility-label">{label}</span>',
     )
 
 

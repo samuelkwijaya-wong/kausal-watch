@@ -12,7 +12,6 @@ def get_thumbnail_url(provider, url):
 
 
 class GenericFinder(EmbedFinder):
-
     def __init__(self, **options):
         self.provider = options.get('provider', DEFAULT_PROVIDER_NAME)
         self.domain_whitelist = options['domain_whitelist']
@@ -37,7 +36,7 @@ class GenericFinder(EmbedFinder):
         This is the part that may make requests to external APIs.
         """
         height = max_height if max_height is not None else 800
-        width = max_width if max_width is not None else "100%"
+        width = max_width if max_width is not None else '100%'
         html = f'<iframe width="{width}" height="{height}" src="{url}"></iframe>'
         thumbnail_url = get_thumbnail_url(self.provider, url)
         result = {

@@ -25,7 +25,7 @@ if TYPE_CHECKING:
 
 
 class ResetPasswordView(WMABaseView[Person]):
-    page_title = gettext_lazy("Reset password")
+    page_title = gettext_lazy('Reset password')
     target_person_pk: str = ''
     template_name = 'aplans/confirmation.html'
 
@@ -42,10 +42,7 @@ class ResetPasswordView(WMABaseView[Person]):
         target_is_admin_of_any_plan = target_user.is_general_admin_for_plan()
         # Better safe than sorry...
         target_in_same_plan = Person.objects.qs.available_for_plan(plan).filter(pk=self.target_person_pk).exists()
-        return (
-            user_is_admin and target_in_same_plan and not target_user.is_superuser
-            and not target_is_admin_of_any_plan
-        )
+        return user_is_admin and target_in_same_plan and not target_user.is_superuser and not target_is_admin_of_any_plan
 
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
@@ -54,11 +51,11 @@ class ResetPasswordView(WMABaseView[Person]):
         return super().dispatch(request, *args, **kwargs)
 
     def get_meta_title(self):
-        msg = _("Confirm sending password reset link to %(person)s")
+        msg = _('Confirm sending password reset link to %(person)s')
         return msg % {'person': self.target_person}
 
     def confirmation_message(self):
-        msg = _("Do you really want to send a password reset link to %(person)s?")
+        msg = _('Do you really want to send a password reset link to %(person)s?')
         return msg % {'person': self.target_person}
 
     def reset_password(self):
@@ -93,23 +90,27 @@ class ResetPasswordView(WMABaseView[Person]):
         except ValueError as e:
             messages.error(request, str(e))
             return redirect(self.index_url)
-        success_msg = _("An email has been sent to %(person)s with a link to reset their password.")
-        info_msg = _("If the email does not arrive, you can send them the following link: %(url)s")
+        success_msg = _('An email has been sent to %(person)s with a link to reset their password.')
+        info_msg = _('If the email does not arrive, you can send them the following link: %(url)s')
         warning_msg = _(
-            "Please take great care that nobody except %(person)s gets access to the link. For additional security, "
-            "the link will expire in %(days_until_expiration)s days.",
+            'Please take great care that nobody except %(person)s gets access to the link. For additional security, '
+            'the link will expire in %(days_until_expiration)s days.',
         )
         messages.success(request, success_msg % {'person': self.target_person})
         messages.info(request, info_msg % {'url': self.make_reset_url()})
-        messages.warning(request, warning_msg % {
-            'person': self.target_person,
-            'days_until_expiration': int(settings.PASSWORD_RESET_TIMEOUT / (60 * 60 * 24)),
-        })
+        messages.warning(
+            request,
+            warning_msg
+            % {
+                'person': self.target_person,
+                'days_until_expiration': int(settings.PASSWORD_RESET_TIMEOUT / (60 * 60 * 24)),
+            },
+        )
         return redirect(self.index_url)
 
 
 class ImpersonateUserView(WMABaseView[Person]):
-    page_title = gettext_lazy("View as user")
+    page_title = gettext_lazy('View as user')
     target_person_pk: str = ''
     template_name = 'people/view_as_user.html'
     post_url = reverse_lazy('hijack:acquire')
@@ -127,9 +128,7 @@ class ImpersonateUserView(WMABaseView[Person]):
         impersonate_themselves = user.pk == target_user.pk
         target_is_active = target_user.is_active
 
-        return (
-            user.is_superuser and not impersonate_themselves and target_is_active
-        )
+        return user.is_superuser and not impersonate_themselves and target_is_active
 
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
@@ -138,9 +137,9 @@ class ImpersonateUserView(WMABaseView[Person]):
         return super().dispatch(request, *args, **kwargs)
 
     def get_meta_title(self):
-        msg = _("Confirm viewing the site as user %(person)s")
+        msg = _('Confirm viewing the site as user %(person)s')
         return msg % {'person': self.target_person}
 
     def confirmation_message(self):
-        msg = _("Do you really want to view the site as %(person)s?")
+        msg = _('Do you really want to view the site as %(person)s?')
         return msg % {'person': self.target_person}

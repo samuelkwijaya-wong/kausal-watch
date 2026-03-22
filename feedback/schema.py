@@ -16,11 +16,21 @@ from .models import UserFeedback
 
 class UserFeedbackForm(forms.ModelForm[UserFeedback]):
     plan = forms.ModelChoiceField(queryset=Plan.objects.all(), to_field_name='identifier')
+
     class Meta:
         model = UserFeedback
         fields = (
-            'plan', 'type', 'action', 'category', 'pledge', 'name', 'email',
-            'comment', 'url', 'additional_fields', 'page_id',
+            'plan',
+            'type',
+            'action',
+            'category',
+            'pledge',
+            'name',
+            'email',
+            'comment',
+            'url',
+            'additional_fields',
+            'page_id',
         )
 
 

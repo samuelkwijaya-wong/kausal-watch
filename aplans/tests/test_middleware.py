@@ -11,7 +11,7 @@ from aplans.middleware import HostnameRedirectMiddleware
 
 def get_response_success(request):
     """Mock get_response that returns success."""
-    return HttpResponse("OK")
+    return HttpResponse('OK')
 
 
 @pytest.fixture
@@ -42,7 +42,7 @@ def test_wildcard_does_not_match_multiple_levels(request_factory):
 
     # Should NOT redirect - passes through
     assert response.status_code == 200
-    assert response.content == b"OK"
+    assert response.content == b'OK'
 
 
 @override_settings(REDIRECT_HOSTNAMES=(('*.watch.example.com', 'watch.example.com'),))
@@ -81,10 +81,12 @@ def test_port_in_target_hostname(request_factory):
     assert response['Location'] == 'http://watch.example.com:8080/'
 
 
-@override_settings(REDIRECT_HOSTNAMES=(
-    ('*.watch.example.com', 'watch.example.com'),
-    ('*.old.example.com', 'new.example.com'),
-))
+@override_settings(
+    REDIRECT_HOSTNAMES=(
+        ('*.watch.example.com', 'watch.example.com'),
+        ('*.old.example.com', 'new.example.com'),
+    )
+)
 def test_multiple_patterns_first_match_wins(request_factory):
     """Test that first matching pattern is used."""
     middleware = HostnameRedirectMiddleware(get_response_success)
@@ -109,7 +111,7 @@ def test_no_match_passes_through(request_factory):
     response = middleware(request)
 
     assert response.status_code == 200
-    assert response.content == b"OK"
+    assert response.content == b'OK'
 
 
 @override_settings(REDIRECT_HOSTNAMES=())
@@ -140,7 +142,7 @@ def test_exact_hostname_no_match(request_factory):
     response = middleware(request)
 
     assert response.status_code == 200
-    assert response.content == b"OK"
+    assert response.content == b'OK'
 
 
 @override_settings(REDIRECT_HOSTNAMES=(('*.example.com', 'example.com'),))
@@ -153,7 +155,7 @@ def test_wildcard_matches_valid_subdomain_chars(request_factory):
     for subdomain in valid_subdomains:
         request = request_factory.get('/', HTTP_HOST=f'{subdomain}.example.com')
         response = middleware(request)
-        assert response.status_code == 301, f"Should redirect for subdomain: {subdomain}"
+        assert response.status_code == 301, f'Should redirect for subdomain: {subdomain}'
 
 
 @override_settings(REDIRECT_HOSTNAMES=(('*.example.com', 'example.com'),))
@@ -179,12 +181,12 @@ def test_wildcard_does_not_match_if_already_target(request_factory):
     # Valid subdomain parts
     request = request_factory.get('/', HTTP_HOST='admin.example.com')
     response = middleware(request)
-    assert response.status_code == 200, "Should not redirect for admin.example.com"
+    assert response.status_code == 200, 'Should not redirect for admin.example.com'
 
 
 @override_settings(
     ALLOWED_HOSTS=(('.example.com', 'admin.example.com', 'api.example.com')),
-    REDIRECT_HOSTNAMES=(('*.example.com', 'admin.example.com'),)
+    REDIRECT_HOSTNAMES=(('*.example.com', 'admin.example.com'),),
 )
 def test_wildcard_does_not_match_if_in_allowed_hosts(request_factory):
     """Test that wildcard does not match an allowed host."""
@@ -193,4 +195,4 @@ def test_wildcard_does_not_match_if_in_allowed_hosts(request_factory):
     # Valid subdomain parts
     request = request_factory.get('/', HTTP_HOST='api.example.com')
     response = middleware(request)
-    assert response.status_code == 200, "Should not redirect for api.example.com"
+    assert response.status_code == 200, 'Should not redirect for api.example.com'

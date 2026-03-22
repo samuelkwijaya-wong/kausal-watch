@@ -37,7 +37,8 @@ class ActionDependencyRole(OrderedModel):
     )
 
     public_fields: ClassVar = [
-        'id', 'name',
+        'id',
+        'name',
     ]
 
     def filter_siblings(self, qs: models.QuerySet[Self]) -> models.QuerySet[Self]:
@@ -73,6 +74,7 @@ class ActionDependencyRelationshipQuerySet(models.QuerySet['ActionDependencyRela
 
     def visible_for_user(self, user: UserOrAnon | None, plan: Plan | None = None):
         from actions.models import Action
+
         actions = Action.objects.get_queryset().visible_for_user(user, plan)
         return self.filter(Q(preceding__in=actions) | Q(dependent__in=actions)).distinct()
 
@@ -87,24 +89,31 @@ if TYPE_CHECKING:
     class ActionDependencyRelationshipManager(
         ModelManager['ActionDependencyRelationship', ActionDependencyRelationshipQuerySet]
     ): ...
+
 else:
     ActionDependencyRelationshipManager = ModelManager.from_queryset(ActionDependencyRelationshipQuerySet)
 
 
 class ActionDependencyRelationship(models.Model):
     preceding: ParentalKey[Action] = ParentalKey(
-        'actions.Action', on_delete=models.CASCADE, related_name='dependent_relationships',
-        verbose_name=_("Preceding action"),
+        'actions.Action',
+        on_delete=models.CASCADE,
+        related_name='dependent_relationships',
+        verbose_name=_('Preceding action'),
     )
     dependent: FK[Action] = ForeignKey(
-        'actions.Action', on_delete=models.CASCADE, related_name='preceding_relationships',
-        verbose_name=_("Dependent action"),
+        'actions.Action',
+        on_delete=models.CASCADE,
+        related_name='preceding_relationships',
+        verbose_name=_('Dependent action'),
     )
 
     objects: ActionDependencyRelationshipManager = ActionDependencyRelationshipManager()
 
     public_fields: ClassVar = [
-        'id', 'preceding', 'dependent',
+        'id',
+        'preceding',
+        'dependent',
     ]
 
     id: int
@@ -113,7 +122,7 @@ class ActionDependencyRelationship(models.Model):
 
     class Meta:
         constraints = [
-            models.UniqueConstraint(fields=['preceding', 'dependent'], name='unique_pairs'), # , nulls_distinct=False)
+            models.UniqueConstraint(fields=['preceding', 'dependent'], name='unique_pairs'),  # , nulls_distinct=False)
         ]
 
     def __str__(self):
@@ -188,7 +197,7 @@ class ActionDependencyRelationship(models.Model):
         # Check only the chains that are connected to `self`
         longest = nx.dag_longest_path_length(g)
         if longest + 1 >= MAX_DEPENDENCY_LEVELS:
-            raise ValidationError(_("Maximum dependency chain length exceeded."))
+            raise ValidationError(_('Maximum dependency chain length exceeded.'))
 
     def clean(self):
         super().clean()

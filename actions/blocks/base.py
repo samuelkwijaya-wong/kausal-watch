@@ -18,7 +18,6 @@ from kausal_common.blocks.fields import FieldBlockMetaInterface
 from kausal_common.blocks.registry import FieldBlockContext
 
 if TYPE_CHECKING:
-
     from collections.abc import Iterable, Sequence
 
     from kausal_common.blocks.registry import ModelFieldRegistry
@@ -33,6 +32,7 @@ if TYPE_CHECKING:
 
 def get_action_registry() -> ModelFieldRegistry[Action]:
     from actions.action_fields import action_registry
+
     return action_registry
 
 
@@ -52,7 +52,9 @@ if TYPE_CHECKING:
     class ReportBlockMeta(Protocol, BlockMeta):  # pyright: ignore
         field_name: str
         report_value_formatter_class: type[ReportFieldFormatter] | None
+
 else:
+
     class ReportBlockMeta:
         pass
 
@@ -72,6 +74,7 @@ class ActionReportContentField[M: ReportBlockMeta = ReportBlockMeta](GeneralFiel
     @property
     def report_value_formatter_class(self) -> type[ReportFieldFormatter]:
         from reports.report_formatters import ActionSimpleFieldFormatter
+
         if not hasattr(self.meta, 'report_value_formatter_class') or self.meta.report_value_formatter_class is None:
             return ActionSimpleFieldFormatter
         return self.meta.report_value_formatter_class
@@ -103,15 +106,13 @@ class ActionReportContentField[M: ReportBlockMeta = ReportBlockMeta](GeneralFiel
     def get_xlsx_cell_format(self, block_value: dict[str, Any]) -> dict[str, str | int] | None:
         return self.report_value_formatter.get_xlsx_cell_format(block_value)
 
+
 class ActionContentBlockBase(ActionListContentBlock, ActionReportContentField[Any]):  # pyright: ignore[reportUnsafeMultipleInheritance]
     MUTABLE_META_ATTRIBUTES = {
         *ActionReportContentField.MUTABLE_META_ATTRIBUTES,
         *ActionListContentBlock.MUTABLE_META_ATTRIBUTES,
     }
-    graphql_interfaces = (
-        FieldBlockMetaInterface,
-        ActionContentBlockInterface
-    )
+    graphql_interfaces = (FieldBlockMetaInterface, ActionContentBlockInterface)
     graphql_fields = ActionListContentBlock.graphql_fields
 
 
@@ -122,9 +123,7 @@ class ActionColumnBlockInterface(DashboardColumnInterface):
 
 
 class ActionColumnBlock(ColumnBlockBase):
-    graphql_interfaces = (
-        ActionColumnBlockInterface,
-    )
+    graphql_interfaces = (ActionColumnBlockInterface,)
 
 
 class ActionFilterBlockInterface(FilterBlockInterface):
@@ -134,6 +133,4 @@ class ActionFilterBlockInterface(FilterBlockInterface):
 
 
 class ActionFilterBlock(FilterBlockBase):
-    graphql_interfaces = (
-        ActionFilterBlockInterface,
-    )
+    graphql_interfaces = (ActionFilterBlockInterface,)

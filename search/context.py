@@ -9,8 +9,10 @@ if TYPE_CHECKING:
 
 index_language: ContextVar[str] = ContextVar('index_language', default='en')
 
+
 def get_index_language() -> str | None:
     return index_language.get(None)
+
 
 @contextmanager
 def set_index_language(language: str) -> Generator[None]:

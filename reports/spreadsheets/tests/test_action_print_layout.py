@@ -20,7 +20,6 @@ class ReportActionPrintLayoutCustomizationFactory(ModelFactory[ReportActionPrint
     min_split_chars: int | None = None
 
 
-
 register(ReportActionPrintLayoutCustomizationFactory)
 
 
@@ -34,15 +33,13 @@ def global_db_defaults():
 
 def test_report_action_print_layout_customization_returns_db_defaults(plan, global_db_defaults):
     for key in KEYS:
-        assert (
-            ReportActionPrintLayoutCustomization.get_plan_variable_with_fallback(plan, key) ==
-            getattr(global_db_defaults, key)
-        )
+        assert ReportActionPrintLayoutCustomization.get_plan_variable_with_fallback(plan, key) == getattr(global_db_defaults, key)
         continue
 
 
 def test_report_action_print_layout_customization_returns_plan_value_and_global_defaults(
-        plan, global_db_defaults,
+    plan,
+    global_db_defaults,
 ):
     ReportActionPrintLayoutCustomization.save_plan_variable(plan, 'approximate_chars_per_line', 1000)
     for key in KEYS:

@@ -20,6 +20,7 @@ else:
 
 type SupportedModel = AttributeType | CategoryType
 
+
 class ActionListPageBlockPresenceMixin(_Base):
     """
     Supports adding/removing blocks which represent some model instance.
@@ -55,9 +56,9 @@ class ActionListPageBlockPresenceMixin(_Base):
         block_name, sub_block_name = self._get_block_names(instance)
         try:
             i = next(
-                i for i, block in enumerate(blocks)
-                if (block.block_type == block_name and
-                    block.value[sub_block_name] == instance)
+                i
+                for i, block in enumerate(blocks)
+                if (block.block_type == block_name and block.value[sub_block_name] == instance)
             )
         except StopIteration as e:
             msg = f'Model instance {instance} is not referenced in blocks'
@@ -70,6 +71,7 @@ if typing.TYPE_CHECKING:
     _FormBase = AplansAdminModelForm
 else:
     _FormBase = forms.Form
+
 
 class ActionListPageBlockFormMixin(_FormBase):
     """
@@ -103,6 +105,7 @@ class ActionListPageBlockFormMixin(_FormBase):
         super().__init__(*args, **kwargs)
         if self.instance.pk is not None:
             from pages.models import ActionListPage
+
             action_list_page = self.plan.root_page.get_descendants().type(ActionListPage).get().specific
             assert isinstance(action_list_page, ActionListPage)
             for field_name in (f for f, _ in self.ACTION_LIST_FILTER_SECTION_CHOICES if f):
@@ -116,6 +119,7 @@ class ActionListPageBlockFormMixin(_FormBase):
 
     def save(self, commit=True):
         from pages.models import ActionListPage
+
         instance = super().save(commit)
         action_list_page = self.plan.root_page.get_descendants().type(ActionListPage).get().specific
         assert isinstance(action_list_page, ActionListPage)

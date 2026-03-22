@@ -17,7 +17,8 @@ pytestmark = pytest.mark.django_db
 
 # -- Mutation query strings --------------------------------------------------
 
-CREATE_ORGANIZATION = """
+CREATE_ORGANIZATION = (
+    """
     mutation($input: OrganizationInput!) {
         organization {
             createOrganization(input: $input) {
@@ -31,10 +32,13 @@ CREATE_ORGANIZATION = """
             }
         }
     }
-""" + OP_INFO_FRAGMENT
+"""
+    + OP_INFO_FRAGMENT
+)
 
 
 # -- Permission tests --------------------------------------------------------
+
 
 class TestOrganizationMutationPermissions:
     def test_requires_authentication(self, graphql_client_query):
@@ -55,15 +59,18 @@ class TestOrganizationMutationPermissions:
 
 # -- create_organization -----------------------------------------------------
 
+
 class TestCreateOrganization:
     def test_create_root_organization(self, graphql_client_query_data, client, superuser: User):
         client.force_login(superuser)
         data = graphql_client_query_data(
             CREATE_ORGANIZATION,
-            variables={'input': {
-                'name': 'Orbital Datacenter Authority',
-                'abbreviation': 'ODA',
-            }},
+            variables={
+                'input': {
+                    'name': 'Orbital Datacenter Authority',
+                    'abbreviation': 'ODA',
+                }
+            },
         )
         result = data['organization']['createOrganization']
         assert result['name'] == 'Orbital Datacenter Authority'
@@ -78,10 +85,12 @@ class TestCreateOrganization:
 
         data = graphql_client_query_data(
             CREATE_ORGANIZATION,
-            variables={'input': {
-                'name': 'Child Division',
-                'parentId': str(parent.pk),
-            }},
+            variables={
+                'input': {
+                    'name': 'Child Division',
+                    'parentId': str(parent.pk),
+                }
+            },
         )
         result = data['organization']['createOrganization']
         assert result['name'] == 'Child Division'
@@ -96,15 +105,20 @@ class TestCreateOrganization:
         client.force_login(superuser)
         response = graphql_client_query(
             CREATE_ORGANIZATION,
-            variables={'input': {
-                'name': 'Orphan Org',
-                'parentId': '999999',
-            }},
+            variables={
+                'input': {
+                    'name': 'Orphan Org',
+                    'parentId': '999999',
+                }
+            },
         )
         data = response['data']['organization']['createOrganization']
-        assert_operation_errors(data, [
-            OperationMessage(
-                kind='VALIDATION',
-                message='Parent organization with ID 999999 not found.',
-            )
-        ])
+        assert_operation_errors(
+            data,
+            [
+                OperationMessage(
+                    kind='VALIDATION',
+                    message='Parent organization with ID 999999 not found.',
+                )
+            ],
+        )

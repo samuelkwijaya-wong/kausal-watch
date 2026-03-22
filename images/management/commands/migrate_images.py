@@ -6,7 +6,7 @@ from images.models import AplansImage
 
 
 class Command(BaseCommand):
-    help = "Move existing images to the new directory structure"
+    help = 'Move existing images to the new directory structure'
 
     def handle(self, *args, **options):
         for image in AplansImage.objects.all():
@@ -19,11 +19,11 @@ class Command(BaseCommand):
                     with storage.open(old_path, 'rb') as source_file:
                         storage.save(new_path, source_file)
                 except FileNotFoundError as e:
-                    self.stderr.write(self.style.WARNING(f"File not found: {e}; changing path anyway"))
+                    self.stderr.write(self.style.WARNING(f'File not found: {e}; changing path anyway'))
                 else:
-                    self.stdout.write(f"Deleting {old_path}")
+                    self.stdout.write(f'Deleting {old_path}')
                     storage.delete(old_path)
                 image.file.name = new_path
                 image.save()
 
-        self.stdout.write(self.style.SUCCESS("Files moved successfully"))
+        self.stdout.write(self.style.SUCCESS('Files moved successfully'))

@@ -56,7 +56,6 @@ else:
 
 
 class OrganizationPermissionPolicy(ModelPermissionPolicy):
-
     def user_has_permission(self, user: User | AnonymousUser, action: str) -> bool:
         assert isinstance(user, User)
 
@@ -129,17 +128,14 @@ class OrganizationForm(NodeForm):
         if parent is None and not self.user.is_superuser:
             # On the other hand, allow direct metadata admins of a top level organizations to save the org when editing
             if (
-                self.instance.parent is None and
-                OrganizationMetadataAdmin.objects
-                    .filter(person=self.user.person)
-                    .filter(organization=self.instance)
-                    .exists()
+                self.instance.parent is None
+                and OrganizationMetadataAdmin.objects.filter(person=self.user.person).filter(organization=self.instance).exists()
             ):
                 return parent
             # For now, allow for general plan admins
             if self.instance.parent is None and self.user.is_general_admin_for_plan():
                 return parent
-            raise ValidationError(_("Creating organizations without a parent not allowed."), code='invalid_parent')
+            raise ValidationError(_('Creating organizations without a parent not allowed.'), code='invalid_parent')
         return parent
 
     def save(self, *args, **kwargs):
@@ -159,7 +155,6 @@ class InvisiblePlanPanel(FieldPanel):
     """
 
     class BoundPanel(FieldPanel.BoundPanel):
-
         def __init__(self, **kwargs):
             super().__init__(**kwargs)
 
@@ -172,7 +167,7 @@ class InvisiblePlanPanel(FieldPanel):
 
 class OrganizationViewSet(SnippetViewSet[Organization, OrganizationForm, OrganizationQuerySet]):
     model = Organization
-    menu_label = _("Organizations")
+    menu_label = _('Organizations')
     icon = 'kausal-organization'
     menu_order = 220
     permission_policy = OrganizationPermissionPolicy(model)
@@ -181,7 +176,7 @@ class OrganizationViewSet(SnippetViewSet[Organization, OrganizationForm, Organiz
     edit_view_class = OrganizationEditView
     delete_view_class = OrganizationDeleteView
     search_fields = ['name', 'abbreviation']
-    list_display = ['name', 'parent','abbreviation']
+    list_display = ['name', 'parent', 'abbreviation']
     add_to_admin_menu = True
     include_organization_in_active_plan_url_name = 'include_organization_in_active_plan'
     exclude_organization_from_active_plan_url_name = 'exclude_organization_from_active_plan'
@@ -191,7 +186,8 @@ class OrganizationViewSet(SnippetViewSet[Organization, OrganizationForm, Organiz
         TranslatedFieldPanel('name'),
         FieldPanel(
             # virtual field, needs to be specified in the form
-            'parent', heading=pgettext_lazy('organization', 'Parent'),
+            'parent',
+            heading=pgettext_lazy('organization', 'Parent'),
         ),
         FieldPanel('logo'),
         TranslatedFieldPanel('abbreviation'),
@@ -215,17 +211,16 @@ class OrganizationViewSet(SnippetViewSet[Organization, OrganizationForm, Organiz
                 InvisiblePlanPanel('plan'),
                 FieldPanel('person', widget=PersonChooser),
             ],
-            heading=_("Plan admins"),
-            help_text=_("People who can edit plan-specific content related to this organization"),
+            heading=_('Plan admins'),
+            help_text=_('People who can edit plan-specific content related to this organization'),
         ),
         CondensedInlinePanel(
             'organization_metadata_admins',
             panels=[
                 FieldPanel('person', widget=PersonChooser),
             ],
-            heading=_("Metadata admins"),
-            help_text=_("People who can edit data of this organization and suborganizations but no plan-specific "
-                        "content"),
+            heading=_('Metadata admins'),
+            help_text=_('People who can edit data of this organization and suborganizations but no plan-specific content'),
         ),
     ]
 
@@ -264,7 +259,7 @@ class OrganizationViewSet(SnippetViewSet[Organization, OrganizationForm, Organiz
         return menu_item
 
     def get_urlpatterns(self) -> list[URLPattern]:
-        urls =  super().get_urlpatterns()
+        urls = super().get_urlpatterns()
         add_child_url = path(
             route=f'{self.add_child_url_name}/<str:parent_pk>/',
             view=self.add_child_view,
@@ -308,53 +303,45 @@ class OrganizationViewSet(SnippetViewSet[Organization, OrganizationForm, Organiz
 
     def _get_edit_button(self, instance: Organization) -> ListingButton:
         return ListingButton(
-            _("Edit"),
-            url=reverse(self.get_url_name("edit"), args=(quote(instance.pk),)),
-            icon_name="edit",
-            attrs={
-                "aria-label": _("Edit '%(title)s'") % {"title": str(instance)}
-            },
+            _('Edit'),
+            url=reverse(self.get_url_name('edit'), args=(quote(instance.pk),)),
+            icon_name='edit',
+            attrs={'aria-label': _("Edit '%(title)s'") % {'title': str(instance)}},
             priority=10,
         )
 
     def _get_copy_button(self, instance: Organization) -> ListingButton:
         return ListingButton(
-            _("Copy"),
-            url=reverse(self.get_url_name("copy"), args=(quote(instance.pk),)),
-            icon_name="copy",
-            attrs={
-                "aria-label": _("Copy '%(title)s'") % {"title": str(instance)}
-            },
+            _('Copy'),
+            url=reverse(self.get_url_name('copy'), args=(quote(instance.pk),)),
+            icon_name='copy',
+            attrs={'aria-label': _("Copy '%(title)s'") % {'title': str(instance)}},
             priority=20,
         )
 
     def _get_delete_button(self, instance: Organization) -> ListingButton:
         return ListingButton(
-            _("Delete"),
-            url=reverse(self.get_url_name("delete"), args=(quote(instance.pk),)),
-            icon_name="bin",
-            attrs={
-                "aria-label": _("Delete '%(title)s'") % {"title": str(instance)}
-            },
+            _('Delete'),
+            url=reverse(self.get_url_name('delete'), args=(quote(instance.pk),)),
+            icon_name='bin',
+            attrs={'aria-label': _("Delete '%(title)s'") % {'title': str(instance)}},
             priority=30,
         )
 
     def _get_add_child_button(self, instance: Organization) -> ListingButton:
         return ListingButton(
             url=reverse(self.get_url_name(self.add_child_url_name), kwargs={'parent_pk': quote(instance.pk)}),
-            label=_("Add suborganization"),
+            label=_('Add suborganization'),
             icon_name='plus',
-            attrs={'aria-label': _("Add suborganization")},
+            attrs={'aria-label': _('Add suborganization')},
         )
 
     def _include_organization_in_active_plan_button(self, instance: Organization) -> ListingButton:
         return ListingButton(
-            url=reverse(
-                self.get_url_name(self.include_organization_in_active_plan_url_name), kwargs={'pk': quote(instance.pk)}
-            ),
-            label=_("Include in active plan"),
+            url=reverse(self.get_url_name(self.include_organization_in_active_plan_url_name), kwargs={'pk': quote(instance.pk)}),
+            label=_('Include in active plan'),
             icon_name='link',
-            attrs={'aria-label': _("Include this organization in the active plan")},
+            attrs={'aria-label': _('Include this organization in the active plan')},
         )
 
     def _exclude_organization_from_active_plan_button(self, instance: Organization) -> ListingButton:
@@ -362,9 +349,9 @@ class OrganizationViewSet(SnippetViewSet[Organization, OrganizationForm, Organiz
             url=reverse(
                 self.get_url_name(self.exclude_organization_from_active_plan_url_name), kwargs={'pk': quote(instance.pk)}
             ),
-            label=_("Exclude from active plan"),
+            label=_('Exclude from active plan'),
             icon_name='fontawesome-link-slash',
-            attrs={'aria-label': _("Exclude this organization from the active plan")},
+            attrs={'aria-label': _('Exclude this organization from the active plan')},
         )
 
     def get_index_view_buttons(self, user: User, instance: Organization, plan: Plan):
@@ -379,11 +366,11 @@ class OrganizationViewSet(SnippetViewSet[Organization, OrganizationForm, Organiz
         buttons = []
 
         # Basic buttons provided by Wagtail
-        if self.permission_policy.user_has_permission_for_instance(user, "change", instance):
+        if self.permission_policy.user_has_permission_for_instance(user, 'change', instance):
             buttons.append(self._get_edit_button(instance))
-        if self.permission_policy.user_has_permission(user, "add"):
+        if self.permission_policy.user_has_permission(user, 'add'):
             buttons.append(self._get_copy_button(instance))
-        if self.permission_policy.user_has_permission_for_instance(user, "delete", instance):
+        if self.permission_policy.user_has_permission_for_instance(user, 'delete', instance):
             buttons.append(self._get_delete_button(instance))
 
         # Show "add child" button
@@ -401,6 +388,7 @@ class OrganizationViewSet(SnippetViewSet[Organization, OrganizationForm, Organiz
             buttons.append(change_related_to_plan_button)
 
         return buttons
+
 
 # If kausal_watch_extensions is installed, an extended version of the view set is registered there
 if not find_spec('kausal_watch_extensions'):

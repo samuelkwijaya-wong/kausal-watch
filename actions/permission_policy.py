@@ -8,7 +8,6 @@ from django.utils import timezone
 from kausal_common.models.permission_policy import ModelPermissionPolicy
 
 if typing.TYPE_CHECKING:
-
     from kausal_common.models.permission_policy import ObjectSpecificAction
 
     from actions.models import Plan
@@ -42,9 +41,10 @@ class PlanPermissionPolicy(ModelPermissionPolicy['Plan', None, 'PlanQuerySet']):
         if action == 'view':
             # get_adminable_plans() already filters out inactive plans for non-superusers,
             # and get_viewable_plans() also excludes inactive plans.
-            viewable_plans = user.get_adminable_plans().union(user.get_viewable_plans()).values_list("id", flat=True)
+            viewable_plans = user.get_adminable_plans().union(user.get_viewable_plans()).values_list('id', flat=True)
             return Q(id__in=viewable_plans) | (
-                Q(is_active=True) & (
+                Q(is_active=True)
+                & (
                     Q(published_at__isnull=False, published_at__lte=timezone.now())
                     | Q(features__expose_unpublished_plan_only_to_authenticated_user=False)
                 )

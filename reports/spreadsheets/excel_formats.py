@@ -48,18 +48,14 @@ class ExcelFormats(dict):
 
         @classmethod
         def date(cls, f: Format) -> None:
-            f.set_num_format(
-                EXCEL_BUILTIN_NUMBER_FORMAT_FOR_DATES_WHICH_ADAPTS_TO_USER_LOCALE
-            )
+            f.set_num_format(EXCEL_BUILTIN_NUMBER_FORMAT_FOR_DATES_WHICH_ADAPTS_TO_USER_LOCALE)
             f.set_align('left')
             f.set_bg_color(cls.COLOR_WHITE)
 
         @classmethod
         def timestamp(cls, f: Format) -> None:
             cls.date(f)
-            f.set_num_format(
-                EXCEL_BUILTIN_NUMBER_FORMAT_FOR_DATETIMES_WHICH_ADAPTS_TO_USER_LOCALE
-            )
+            f.set_num_format(EXCEL_BUILTIN_NUMBER_FORMAT_FOR_DATETIMES_WHICH_ADAPTS_TO_USER_LOCALE)
 
         @classmethod
         def odd_row(cls, f: Format) -> None:
@@ -143,7 +139,6 @@ class ExcelFormats(dict):
 
     def __getattr__(self, name):
         return self[name]
-
 
     def set_for_field(self, field: BoundBlock, labels: list) -> None:
         if None not in {self._formats_for_fields.get(label) for label in labels}:

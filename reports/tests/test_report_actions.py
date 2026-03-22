@@ -37,12 +37,12 @@ def test_report_action_snapshots(plan_with_some_actions, report_type_with_multip
     """
     actions = plan_with_some_actions.actions.all()
 
-    #action_ct = ContentType.objects.get_for_model(Action)
+    # action_ct = ContentType.objects.get_for_model(Action)
 
     # Step 0: add revision+versions without any report / snapshot connection
     assert Revision.objects.count() == 0
 
-    NON_REPORT_REVISION = "Non-report revision"
+    NON_REPORT_REVISION = 'Non-report revision'
 
     with reversion.create_revision():
         reversion.set_comment(NON_REPORT_REVISION)

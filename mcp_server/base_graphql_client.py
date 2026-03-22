@@ -24,6 +24,7 @@ class DirectSchemaClient:
     @property
     def schema(self) -> Schema:
         from aplans.schema import schema
+
         return schema
 
     async def execute(

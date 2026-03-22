@@ -7,10 +7,10 @@ from graphql.error import GraphQLError
 
 class GraphQLErrorWithCode(GraphQLError):
     def __init__(
-            self,
-            *args,
-            code: ErrorCode | None = None,
-            **kwargs,
+        self,
+        *args,
+        code: ErrorCode | None = None,
+        **kwargs,
     ):
         extensions = kwargs.pop('extensions') or {}
         if code:

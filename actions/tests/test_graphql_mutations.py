@@ -32,7 +32,8 @@ pytestmark = pytest.mark.django_db
 # -- Mutation query strings --------------------------------------------------
 
 
-CREATE_PLAN = """
+CREATE_PLAN = (
+    """
     mutation($input: PlanInput!) {
         plan {
             createPlan(input: $input) {
@@ -48,9 +49,12 @@ CREATE_PLAN = """
             }
         }
     }
-""" + OP_INFO_FRAGMENT
+"""
+    + OP_INFO_FRAGMENT
+)
 
-DELETE_PLAN = """
+DELETE_PLAN = (
+    """
     mutation($id: ID!) {
         plan {
             deletePlan(id: $id) {
@@ -58,9 +62,12 @@ DELETE_PLAN = """
             }
         }
     }
-""" + OP_INFO_FRAGMENT
+"""
+    + OP_INFO_FRAGMENT
+)
 
-CREATE_ACTION = """
+CREATE_ACTION = (
+    """
     mutation($input: ActionInput!) {
         action {
             createAction(input: $input) {
@@ -74,9 +81,12 @@ CREATE_ACTION = """
             }
         }
     }
-""" + OP_INFO_FRAGMENT
+"""
+    + OP_INFO_FRAGMENT
+)
 
-CREATE_ACTION_WITH_METADATA = """
+CREATE_ACTION_WITH_METADATA = (
+    """
     mutation($input: ActionInput!) {
         action {
             createAction(input: $input) {
@@ -100,9 +110,12 @@ CREATE_ACTION_WITH_METADATA = """
             }
         }
     }
-""" + OP_INFO_FRAGMENT
+"""
+    + OP_INFO_FRAGMENT
+)
 
-CREATE_CATEGORY_TYPE = """
+CREATE_CATEGORY_TYPE = (
+    """
     mutation($input: CategoryTypeInput!) {
         plan {
             createCategoryType(input: $input) {
@@ -117,9 +130,12 @@ CREATE_CATEGORY_TYPE = """
             }
         }
     }
-""" + OP_INFO_FRAGMENT
+"""
+    + OP_INFO_FRAGMENT
+)
 
-CREATE_CATEGORY = """
+CREATE_CATEGORY = (
+    """
     mutation($input: CategoryInput!) {
         plan {
             createCategory(input: $input) {
@@ -134,9 +150,12 @@ CREATE_CATEGORY = """
             }
         }
     }
-""" + OP_INFO_FRAGMENT
+"""
+    + OP_INFO_FRAGMENT
+)
 
-CREATE_ATTRIBUTE_TYPE = """
+CREATE_ATTRIBUTE_TYPE = (
+    """
     mutation($input: AttributeTypeInput!) {
         plan {
             createAttributeType(input: $input) {
@@ -156,9 +175,12 @@ CREATE_ATTRIBUTE_TYPE = """
             }
         }
     }
-""" + OP_INFO_FRAGMENT
+"""
+    + OP_INFO_FRAGMENT
+)
 
-ADD_RELATED_ORGANIZATION = """
+ADD_RELATED_ORGANIZATION = (
+    """
     mutation($input: AddRelatedOrganizationInput!) {
         plan {
             addRelatedOrganization(input: $input) {
@@ -171,9 +193,12 @@ ADD_RELATED_ORGANIZATION = """
             }
         }
     }
-""" + OP_INFO_FRAGMENT
+"""
+    + OP_INFO_FRAGMENT
+)
 
-UPDATE_ACTIONS = """
+UPDATE_ACTIONS = (
+    """
     mutation($planId: ID!, $actions: [ActionUpdateInput!]!) {
         action {
             updateActions(planId: $planId, actions: $actions) {
@@ -185,10 +210,13 @@ UPDATE_ACTIONS = """
             }
         }
     }
-""" + OP_INFO_FRAGMENT
+"""
+    + OP_INFO_FRAGMENT
+)
 
 
 # -- Permission tests ---------------------------------------------------------
+
 
 class TestMutationPermissions:
     def test_plan_mutations_require_authentication(self, graphql_client_query):
@@ -218,18 +246,21 @@ class TestMutationPermissions:
 
 # -- create_plan ---------------------------------------------------------------
 
+
 class TestCreatePlan:
     def test_create_plan(self, graphql_client_query_data, client, superuser: User):
         client.force_login(superuser)
         org = OrganizationFactory.create()
         data = graphql_client_query_data(
             CREATE_PLAN,
-            variables={'input': {
-                'identifier': 'test-new-plan',
-                'name': 'Test New Plan',
-                'organizationId': str(org.pk),
-                'primaryLanguage': 'en',
-            }},
+            variables={
+                'input': {
+                    'identifier': 'test-new-plan',
+                    'name': 'Test New Plan',
+                    'organizationId': str(org.pk),
+                    'primaryLanguage': 'en',
+                }
+            },
         )
         result = data['plan']['createPlan']
         assert result['identifier'] == 'test-new-plan'
@@ -243,12 +274,14 @@ class TestCreatePlan:
         client.force_login(superuser)
         response = graphql_client_query(
             CREATE_PLAN,
-            variables={'input': {
-                'identifier': plan.identifier,
-                'name': 'Plan With Duplicate Identifier',
-                'primaryLanguage': 'en',
-                'organizationId': str(organization.pk),
-            }},
+            variables={
+                'input': {
+                    'identifier': plan.identifier,
+                    'name': 'Plan With Duplicate Identifier',
+                    'primaryLanguage': 'en',
+                    'organizationId': str(organization.pk),
+                }
+            },
         )
         assert 'errors' not in response
         messages = response['data']['plan']['createPlan']['messages']
@@ -266,18 +299,20 @@ class TestCreatePlan:
         org = OrganizationFactory.create()
         data = graphql_client_query_data(
             CREATE_PLAN,
-            variables={'input': {
-                'identifier': 'plan-with-features',
-                'name': 'Plan With Features',
-                'organizationId': str(org.pk),
-                'primaryLanguage': 'fi',
-                'otherLanguages': ['en'],
-                'shortName': 'PWF',
-                'features': {
-                    'hasActionIdentifiers': True,
-                    'hasActionPrimaryOrgs': True,
-                },
-            }},
+            variables={
+                'input': {
+                    'identifier': 'plan-with-features',
+                    'name': 'Plan With Features',
+                    'organizationId': str(org.pk),
+                    'primaryLanguage': 'fi',
+                    'otherLanguages': ['en'],
+                    'shortName': 'PWF',
+                    'features': {
+                        'hasActionIdentifiers': True,
+                        'hasActionPrimaryOrgs': True,
+                    },
+                }
+            },
         )
         result = data['plan']['createPlan']
         assert result['identifier'] == 'plan-with-features'
@@ -291,6 +326,7 @@ class TestCreatePlan:
 
 
 # -- delete_plan ---------------------------------------------------------------
+
 
 class TestDeletePlan:
     @staticmethod
@@ -335,17 +371,20 @@ class TestDeletePlan:
 
 # -- create_action -------------------------------------------------------------
 
+
 class TestCreateAction:
     def test_create_action(self, graphql_client_query_data, client, superuser: User, plan: Plan):
         client.force_login(superuser)
         data = graphql_client_query_data(
             CREATE_ACTION,
-            variables={'input': {
-                'planId': plan.identifier,
-                'name': 'New Climate Action',
-                'identifier': 'new-action-1',
-                'description': 'A test action',
-            }},
+            variables={
+                'input': {
+                    'planId': plan.identifier,
+                    'name': 'New Climate Action',
+                    'identifier': 'new-action-1',
+                    'description': 'A test action',
+                }
+            },
         )
         result = data['action']['createAction']
         assert result['name'] == 'New Climate Action'
@@ -354,7 +393,10 @@ class TestCreateAction:
         assert Action.objects.filter(plan=plan, identifier='new-action-1').exists()
 
     def test_create_action_generates_identifier_when_not_required(
-        self, graphql_client_query_data, client, superuser: User,
+        self,
+        graphql_client_query_data,
+        client,
+        superuser: User,
     ):
         """When hasActionIdentifiers is False, omitting identifier auto-generates one."""
         client.force_login(superuser)
@@ -364,17 +406,22 @@ class TestCreateAction:
 
         data = graphql_client_query_data(
             CREATE_ACTION,
-            variables={'input': {
-                'planId': str(plan.pk),
-                'name': 'Auto ID Action',
-                'identifier': '',
-            }},
+            variables={
+                'input': {
+                    'planId': str(plan.pk),
+                    'name': 'Auto ID Action',
+                    'identifier': '',
+                }
+            },
         )
         result = data['action']['createAction']
         assert result['identifier']  # Should be auto-generated, non-empty
 
     def test_create_action_requires_identifier_when_plan_has_them(
-        self, graphql_client_query, client, superuser: User,
+        self,
+        graphql_client_query,
+        client,
+        superuser: User,
     ):
         client.force_login(superuser)
         plan = PlanFactory.create()
@@ -383,11 +430,13 @@ class TestCreateAction:
 
         response = graphql_client_query(
             CREATE_ACTION,
-            variables={'input': {
-                'planId': str(plan.pk),
-                'name': 'Missing ID Action',
-                'identifier': '',
-            }},
+            variables={
+                'input': {
+                    'planId': str(plan.pk),
+                    'name': 'Missing ID Action',
+                    'identifier': '',
+                }
+            },
         )
         data = response['data']['action']['createAction']
         assert 'errors' not in response
@@ -402,16 +451,22 @@ class TestCreateAction:
 
         response = graphql_client_query(
             CREATE_ACTION,
-            variables={'input': {
-                'planId': str(plan.pk),
-                'name': 'Should Fail',
-                'identifier': 'nope',
-            }},
+            variables={
+                'input': {
+                    'planId': str(plan.pk),
+                    'name': 'Should Fail',
+                    'identifier': 'nope',
+                }
+            },
         )
         assert 'errors' in response
 
     def test_create_action_with_categories(
-        self, graphql_client_query_data, client, superuser: User, plan: Plan,
+        self,
+        graphql_client_query_data,
+        client,
+        superuser: User,
+        plan: Plan,
     ):
         client.force_login(superuser)
         ct = CategoryTypeFactory.create(plan=plan, editable_for_actions=True, select_widget=CategoryType.SelectWidget.MULTIPLE)
@@ -420,12 +475,14 @@ class TestCreateAction:
 
         data = graphql_client_query_data(
             CREATE_ACTION_WITH_METADATA,
-            variables={'input': {
-                'planId': str(plan.pk),
-                'name': 'Action with categories',
-                'identifier': 'cat-action',
-                'categoryIds': [str(cat1.pk), str(cat2.pk)],
-            }},
+            variables={
+                'input': {
+                    'planId': str(plan.pk),
+                    'name': 'Action with categories',
+                    'identifier': 'cat-action',
+                    'categoryIds': [str(cat1.pk), str(cat2.pk)],
+                }
+            },
         )
         result = data['action']['createAction']
         assert result['identifier'] == 'cat-action'
@@ -436,7 +493,11 @@ class TestCreateAction:
         assert set(action.categories.values_list('pk', flat=True)) == {cat1.pk, cat2.pk}
 
     def test_create_action_with_attribute_values(
-        self, graphql_client_query_data, client, superuser: User, plan: Plan,
+        self,
+        graphql_client_query_data,
+        client,
+        superuser: User,
+        plan: Plan,
     ):
         client.force_login(superuser)
         attr_type = AttributeTypeFactory.create(
@@ -445,19 +506,24 @@ class TestCreateAction:
             format=AttributeType.AttributeFormat.ORDERED_CHOICE,
         )
         opt = AttributeTypeChoiceOption.objects.create(
-            type=attr_type, identifier='high', name='High', order=0,
+            type=attr_type,
+            identifier='high',
+            name='High',
+            order=0,
         )
 
         data = graphql_client_query_data(
             CREATE_ACTION_WITH_METADATA,
-            variables={'input': {
-                'planId': str(plan.pk),
-                'name': 'Action with attributes',
-                'identifier': 'attr-action',
-                'attributeValues': [
-                    {'attributeTypeId': str(attr_type.pk), 'value': {'choice': {'choiceId': str(opt.pk)}}},
-                ],
-            }},
+            variables={
+                'input': {
+                    'planId': str(plan.pk),
+                    'name': 'Action with attributes',
+                    'identifier': 'attr-action',
+                    'attributeValues': [
+                        {'attributeTypeId': str(attr_type.pk), 'value': {'choice': {'choiceId': str(opt.pk)}}},
+                    ],
+                }
+            },
         )
         result = data['action']['createAction']
         assert result['identifier'] == 'attr-action'
@@ -473,7 +539,11 @@ class TestCreateAction:
         assert choice_attr.choice == opt
 
     def test_create_action_with_categories_and_attributes(
-        self, graphql_client_query_data, client, superuser: User, plan: Plan,
+        self,
+        graphql_client_query_data,
+        client,
+        superuser: User,
+        plan: Plan,
     ):
         client.force_login(superuser)
         ct = CategoryTypeFactory.create(plan=plan, editable_for_actions=True)
@@ -484,20 +554,25 @@ class TestCreateAction:
             format=AttributeType.AttributeFormat.ORDERED_CHOICE,
         )
         opt = AttributeTypeChoiceOption.objects.create(
-            type=attr_type, identifier='phase-1', name='Phase 1', order=0,
+            type=attr_type,
+            identifier='phase-1',
+            name='Phase 1',
+            order=0,
         )
 
         data = graphql_client_query_data(
             CREATE_ACTION_WITH_METADATA,
-            variables={'input': {
-                'planId': str(plan.pk),
-                'name': 'Full action',
-                'identifier': 'full-action',
-                'categoryIds': [str(cat.pk)],
-                'attributeValues': [
-                    {'attributeTypeId': str(attr_type.pk), 'value': {'choice': {'choiceId': str(opt.pk)}}},
-                ],
-            }},
+            variables={
+                'input': {
+                    'planId': str(plan.pk),
+                    'name': 'Full action',
+                    'identifier': 'full-action',
+                    'categoryIds': [str(cat.pk)],
+                    'attributeValues': [
+                        {'attributeTypeId': str(attr_type.pk), 'value': {'choice': {'choiceId': str(opt.pk)}}},
+                    ],
+                }
+            },
         )
         result = data['action']['createAction']
         assert len(result['categories']) == 1
@@ -506,7 +581,11 @@ class TestCreateAction:
         assert result['attributes'][0]['choice']['identifier'] == 'phase-1'
 
     def test_create_action_with_invalid_category(
-        self, graphql_client_query, client, superuser: User, plan: Plan,
+        self,
+        graphql_client_query,
+        client,
+        superuser: User,
+        plan: Plan,
     ):
         """Category from another plan should be rejected."""
         client.force_login(superuser)
@@ -516,30 +595,35 @@ class TestCreateAction:
 
         response = graphql_client_query(
             CREATE_ACTION_WITH_METADATA,
-            variables={'input': {
-                'planId': str(plan.pk),
-                'name': 'Bad category action',
-                'identifier': 'bad-cat',
-                'categoryIds': [str(cat.pk)],
-            }},
+            variables={
+                'input': {
+                    'planId': str(plan.pk),
+                    'name': 'Bad category action',
+                    'identifier': 'bad-cat',
+                    'categoryIds': [str(cat.pk)],
+                }
+            },
         )
         assert 'errors' in response
 
 
 # -- create_category_type ------------------------------------------------------
 
+
 class TestCreateCategoryType:
     def test_create_category_type(self, graphql_client_query_data, client, superuser: User, plan: Plan):
         client.force_login(superuser)
         data = graphql_client_query_data(
             CREATE_CATEGORY_TYPE,
-            variables={'input': {
-                'planId': plan.identifier,
-                'identifier': 'theme',
-                'name': 'Theme',
-                'usableForActions': True,
-                'usableForIndicators': False,
-            }},
+            variables={
+                'input': {
+                    'planId': plan.identifier,
+                    'identifier': 'theme',
+                    'name': 'Theme',
+                    'usableForActions': True,
+                    'usableForIndicators': False,
+                }
+            },
         )
         result = data['plan']['createCategoryType']
         assert result['identifier'] == 'theme'
@@ -556,6 +640,7 @@ class TestCreateCategoryType:
 
 # -- create_category -----------------------------------------------------------
 
+
 class TestCreateCategory:
     def test_create_category(self, graphql_client_query_data, client, superuser: User, plan: Plan):
         client.force_login(superuser)
@@ -563,12 +648,14 @@ class TestCreateCategory:
 
         data = graphql_client_query_data(
             CREATE_CATEGORY,
-            variables={'input': {
-                'typeId': str(ct.pk),
-                'identifier': 'transport',
-                'name': 'Transport',
-                'order': 0,
-            }},
+            variables={
+                'input': {
+                    'typeId': str(ct.pk),
+                    'identifier': 'transport',
+                    'name': 'Transport',
+                    'order': 0,
+                }
+            },
         )
         result = data['plan']['createCategory']
         assert result['identifier'] == 'transport'
@@ -583,33 +670,43 @@ class TestCreateCategory:
 
         data = graphql_client_query_data(
             CREATE_CATEGORY,
-            variables={'input': {
-                'typeId': str(ct.pk),
-                'identifier': 'solar',
-                'name': 'Solar Energy',
-                'parentId': str(parent.pk),
-                'order': 0,
-            }},
+            variables={
+                'input': {
+                    'typeId': str(ct.pk),
+                    'identifier': 'solar',
+                    'name': 'Solar Energy',
+                    'parentId': str(parent.pk),
+                    'order': 0,
+                }
+            },
         )
         result = data['plan']['createCategory']
         assert result['identifier'] == 'solar'
         assert result['parent']['id'] == str(parent.pk)
 
     def test_create_category_on_non_editable_type(
-        self, graphql_client_query, client, superuser: User, plan: Plan,
+        self,
+        graphql_client_query,
+        client,
+        superuser: User,
+        plan: Plan,
     ):
         client.force_login(superuser)
         ct = CategoryTypeFactory.create(
-            plan=plan, editable_for_actions=False, editable_for_indicators=False,
+            plan=plan,
+            editable_for_actions=False,
+            editable_for_indicators=False,
         )
 
         response = graphql_client_query(
             CREATE_CATEGORY,
-            variables={'input': {
-                'typeId': str(ct.pk),
-                'identifier': 'nope',
-                'name': 'Nope',
-            }},
+            variables={
+                'input': {
+                    'typeId': str(ct.pk),
+                    'identifier': 'nope',
+                    'name': 'Nope',
+                }
+            },
         )
         data = response['data']['plan']['createCategory']
         assert 'errors' not in response
@@ -621,18 +718,21 @@ class TestCreateCategory:
 
 # -- create_attribute_type -----------------------------------------------------
 
+
 class TestCreateAttributeType:
     def test_create_text_attribute_type(self, graphql_client_query_data, client, superuser: User, plan: Plan):
         client.force_login(superuser)
         data = graphql_client_query_data(
             CREATE_ATTRIBUTE_TYPE,
-            variables={'input': {
-                'planId': plan.identifier,
-                'identifier': 'notes',
-                'name': 'Notes',
-                'format': 'TEXT',
-                'helpText': 'Additional notes',
-            }},
+            variables={
+                'input': {
+                    'planId': plan.identifier,
+                    'identifier': 'notes',
+                    'name': 'Notes',
+                    'format': 'TEXT',
+                    'helpText': 'Additional notes',
+                }
+            },
         )
         result = data['plan']['createAttributeType']
         assert result['identifier'] == 'notes'
@@ -644,22 +744,28 @@ class TestCreateAttributeType:
         assert at.scope_id == plan.pk
 
     def test_create_ordered_choice_attribute_type(
-        self, graphql_client_query_data, client, superuser: User, plan: Plan,
+        self,
+        graphql_client_query_data,
+        client,
+        superuser: User,
+        plan: Plan,
     ):
         client.force_login(superuser)
         data = graphql_client_query_data(
             CREATE_ATTRIBUTE_TYPE,
-            variables={'input': {
-                'planId': str(plan.pk),
-                'identifier': 'priority',
-                'name': 'Priority',
-                'format': 'ORDERED_CHOICE',
-                'choiceOptions': [
-                    {'identifier': 'low', 'name': 'Low', 'order': 0},
-                    {'identifier': 'medium', 'name': 'Medium', 'order': 1},
-                    {'identifier': 'high', 'name': 'High', 'order': 2},
-                ],
-            }},
+            variables={
+                'input': {
+                    'planId': str(plan.pk),
+                    'identifier': 'priority',
+                    'name': 'Priority',
+                    'format': 'ORDERED_CHOICE',
+                    'choiceOptions': [
+                        {'identifier': 'low', 'name': 'Low', 'order': 0},
+                        {'identifier': 'medium', 'name': 'Medium', 'order': 1},
+                        {'identifier': 'high', 'name': 'High', 'order': 2},
+                    ],
+                }
+            },
         )
         result = data['plan']['createAttributeType']
         assert result['identifier'] == 'priority'
@@ -669,18 +775,24 @@ class TestCreateAttributeType:
         assert option_ids == ['low', 'medium', 'high']
 
     def test_create_choice_attribute_type_requires_options(
-        self, graphql_client_query, client, superuser: User, plan: Plan,
+        self,
+        graphql_client_query,
+        client,
+        superuser: User,
+        plan: Plan,
     ):
         client.force_login(superuser)
         response = graphql_client_query(
             CREATE_ATTRIBUTE_TYPE,
-            variables={'input': {
-                'planId': str(plan.pk),
-                'identifier': 'status',
-                'name': 'Status',
-                'format': 'ORDERED_CHOICE',
-                # Missing choiceOptions
-            }},
+            variables={
+                'input': {
+                    'planId': str(plan.pk),
+                    'identifier': 'status',
+                    'name': 'Status',
+                    'format': 'ORDERED_CHOICE',
+                    # Missing choiceOptions
+                }
+            },
         )
         data = response['data']['plan']['createAttributeType']
         assert_operation_errors(
@@ -691,26 +803,32 @@ class TestCreateAttributeType:
                     message=(
                         'Choice options are required for ordered choice, unordered choice, '
                         'and optional choice with optional text attributes.'
-                    )
+                    ),
                 )
             ],
         )
 
     def test_create_text_attribute_type_rejects_choice_options(
-        self, graphql_client_query, client, superuser: User, plan: Plan,
+        self,
+        graphql_client_query,
+        client,
+        superuser: User,
+        plan: Plan,
     ):
         client.force_login(superuser)
         response = graphql_client_query(
             CREATE_ATTRIBUTE_TYPE,
-            variables={'input': {
-                'planId': str(plan.pk),
-                'identifier': 'notes',
-                'name': 'Notes',
-                'format': 'TEXT',
-                'choiceOptions': [
-                    {'identifier': 'a', 'name': 'A', 'order': 0},
-                ],
-            }},
+            variables={
+                'input': {
+                    'planId': str(plan.pk),
+                    'identifier': 'notes',
+                    'name': 'Notes',
+                    'format': 'TEXT',
+                    'choiceOptions': [
+                        {'identifier': 'a', 'name': 'A', 'order': 0},
+                    ],
+                }
+            },
         )
         data = response['data']['plan']['createAttributeType']
         assert_operation_errors(
@@ -721,13 +839,14 @@ class TestCreateAttributeType:
                     message=(
                         'Choice options are only allowed for ordered choice, unordered choice, '
                         'and optional choice with optional text attributes.'
-                    )
+                    ),
                 )
             ],
         )
 
 
 # -- add_related_organization --------------------------------------------------
+
 
 class TestAddRelatedOrganization:
     def test_add_related_organization(self, graphql_client_query_data, client, superuser: User, plan: Plan):
@@ -736,27 +855,35 @@ class TestAddRelatedOrganization:
 
         data = graphql_client_query_data(
             ADD_RELATED_ORGANIZATION,
-            variables={'input': {
-                'planId': str(plan.pk),
-                'organizationId': str(org.pk),
-            }},
+            variables={
+                'input': {
+                    'planId': str(plan.pk),
+                    'organizationId': str(org.pk),
+                }
+            },
         )
         result = data['plan']['addRelatedOrganization']
         assert result['identifier'] == plan.identifier
         assert plan.related_organizations.filter(pk=org.pk).exists()
 
     def test_add_related_organization_by_identifier(
-        self, graphql_client_query_data, client, superuser: User, plan: Plan,
+        self,
+        graphql_client_query_data,
+        client,
+        superuser: User,
+        plan: Plan,
     ):
         client.force_login(superuser)
         org = OrganizationFactory.create()
 
         data = graphql_client_query_data(
             ADD_RELATED_ORGANIZATION,
-            variables={'input': {
-                'planId': plan.identifier,
-                'organizationId': str(org.pk),
-            }},
+            variables={
+                'input': {
+                    'planId': plan.identifier,
+                    'organizationId': str(org.pk),
+                }
+            },
         )
         result = data['plan']['addRelatedOrganization']
         assert result['identifier'] == plan.identifier
@@ -764,6 +891,7 @@ class TestAddRelatedOrganization:
 
 
 # -- update_actions ------------------------------------------------------------
+
 
 class TestUpdateActions:
     @staticmethod
@@ -782,7 +910,7 @@ class TestUpdateActions:
                 'actions': [
                     {'id': str(a1.pk), 'description': '<p>New desc 1</p>'},
                     {'id': str(a2.pk), 'description': '<p>New desc 2</p>'},
-                ]
+                ],
             },
         )
         result = data['action']['updateActions']
@@ -871,10 +999,13 @@ class TestUpdateActions:
             UPDATE_ACTIONS,
             variables={
                 'planId': str(plan.pk),
-                'actions': [{
-                    'id': str(action.pk), 'attributeValues': [
-                        {'attributeTypeId': str(attr_type.pk), 'value': {'choice': {'choiceId': str(opt_high.pk)}}},
-                    ]},
+                'actions': [
+                    {
+                        'id': str(action.pk),
+                        'attributeValues': [
+                            {'attributeTypeId': str(attr_type.pk), 'value': {'choice': {'choiceId': str(opt_high.pk)}}},
+                        ],
+                    },
                 ],
             },
         )
@@ -897,12 +1028,14 @@ class TestUpdateActions:
             UPDATE_ACTIONS,
             variables={
                 'planId': str(plan.pk),
-                'actions': [{
-                    'id': str(action.pk),
-                    'attributeValues': [
-                        {'attributeTypeId': str(attr_type.pk), 'value': {'richText':'<p>Rich text content</p>'}},
-                    ]
-                }],
+                'actions': [
+                    {
+                        'id': str(action.pk),
+                        'attributeValues': [
+                            {'attributeTypeId': str(attr_type.pk), 'value': {'richText': '<p>Rich text content</p>'}},
+                        ],
+                    }
+                ],
             },
         )
         assert data['action']['updateActions']['count'] == 1
@@ -916,11 +1049,14 @@ class TestUpdateActions:
             UPDATE_ACTIONS,
             variables={
                 'planId': str(plan.pk),
-                'actions': [{
-                    'id': str(action.pk), 'attributeValues': [
-                        {'attributeTypeId': str(attr_type.pk), 'value': {'richText':'<p>Updated content</p>'}},
-                    ]
-                }],
+                'actions': [
+                    {
+                        'id': str(action.pk),
+                        'attributeValues': [
+                            {'attributeTypeId': str(attr_type.pk), 'value': {'richText': '<p>Updated content</p>'}},
+                        ],
+                    }
+                ],
             },
         )
         rts = AttributeRichText.objects.filter(type=attr_type, content_type=action_ct, object_id=action.pk)
@@ -940,13 +1076,16 @@ class TestUpdateActions:
             UPDATE_ACTIONS,
             variables={
                 'planId': str(plan.pk),
-                'actions': [{
-                    'id': str(action.pk), 'responsibleParties': [
-                        {'organizationId': str(org1.pk), 'role': 'PRIMARY'},
-                        {'organizationId': str(org2.pk), 'role': 'COLLABORATOR'},
-                    ]
-                },
-            ]},
+                'actions': [
+                    {
+                        'id': str(action.pk),
+                        'responsibleParties': [
+                            {'organizationId': str(org1.pk), 'role': 'PRIMARY'},
+                            {'organizationId': str(org2.pk), 'role': 'COLLABORATOR'},
+                        ],
+                    },
+                ],
+            },
         )
         assert data['action']['updateActions']['count'] == 1
 
@@ -965,18 +1104,21 @@ class TestUpdateActions:
             UPDATE_ACTIONS,
             variables={
                 'planId': str(plan.pk),
-                'actions': [{
-                    'id': str(action.pk),
-                    'links': [
-                        {'url': 'https://example.com/doc1', 'title': 'Document 1'},
-                        {'url': 'https://example.com/doc2', 'title': 'Document 2'},
-                    ],
-                }],
+                'actions': [
+                    {
+                        'id': str(action.pk),
+                        'links': [
+                            {'url': 'https://example.com/doc1', 'title': 'Document 1'},
+                            {'url': 'https://example.com/doc2', 'title': 'Document 2'},
+                        ],
+                    }
+                ],
             },
         )
         assert data['action']['updateActions']['count'] == 1
 
         from actions.models.action import ActionLink
+
         links = ActionLink.objects.filter(action=action).order_by('order')
         assert links.count() == 2
         assert links[0].url == 'https://example.com/doc1'
@@ -1013,7 +1155,8 @@ class TestUpdateActions:
 
 # -- update_action (singular) --------------------------------------------------
 
-UPDATE_ACTION = """
+UPDATE_ACTION = (
+    """
     mutation($planId: ID!, $input: ActionUpdateInput!) {
         action {
             updateAction(planId: $planId, input: $input) {
@@ -1056,7 +1199,9 @@ UPDATE_ACTION = """
             }
         }
     }
-""" + OP_INFO_FRAGMENT
+"""
+    + OP_INFO_FRAGMENT
+)
 
 
 class TestUpdateAction:
@@ -1082,7 +1227,11 @@ class TestUpdateAction:
         assert action.description == '<p>Updated description</p>'
 
     def test_update_name_identifier_and_primary_org(
-        self, graphql_client_query_data, client, superuser: User, plan: Plan,
+        self,
+        graphql_client_query_data,
+        client,
+        superuser: User,
+        plan: Plan,
     ):
         client.force_login(superuser)
         action = self._create_action(plan, 'ua-editable', 'Original Name')
@@ -1306,7 +1455,11 @@ class TestUpdateAction:
         assert txt.text == 'Resolved by identifier'
 
     def test_update_optional_choice_with_text_attribute(
-        self, graphql_client_query_data, client, superuser: User, plan: Plan,
+        self,
+        graphql_client_query_data,
+        client,
+        superuser: User,
+        plan: Plan,
     ):
         client.force_login(superuser)
         action = self._create_action(plan, 'ua-cwt', 'Action CWT')

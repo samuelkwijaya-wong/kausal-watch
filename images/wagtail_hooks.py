@@ -21,4 +21,4 @@ def filter_images(qs, request):
 
 @hooks.register('register_log_actions')
 def register_image_and_file_log_actions(actions: LogActionRegistry):
-    actions.register_action('file.created_or_updated', _("Create or update file"), _("File created or updated"))
+    actions.register_action('file.created_or_updated', _('Create or update file'), _('File created or updated'))

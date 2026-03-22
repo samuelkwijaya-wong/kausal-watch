@@ -6,6 +6,7 @@ These tests verify that the usage tracking system correctly identifies:
 - Reports that would be affected by attribute deletion
 - Proper label generation for different model types
 """
+
 from __future__ import annotations
 
 from unittest.mock import patch
@@ -202,7 +203,10 @@ class TestCollectPublishedPerOption:
         assert result == {}
 
     def test_single_published_action_with_attribute_choice(
-        self, plan, action_attribute_type_ordered_choice, choice_option_a,
+        self,
+        plan,
+        action_attribute_type_ordered_choice,
+        choice_option_a,
     ):
         """Test collecting a single published action with AttributeChoice."""
         action = ActionFactory.create(plan=plan, name='Action 1')
@@ -221,7 +225,10 @@ class TestCollectPublishedPerOption:
         assert result[choice_option_a.pk][0] == str(action)
 
     def test_multiple_actions_same_option(
-        self, plan, action_attribute_type_ordered_choice, choice_option_a,
+        self,
+        plan,
+        action_attribute_type_ordered_choice,
+        choice_option_a,
     ):
         """Test collecting multiple actions using the same choice option."""
         action1 = ActionFactory.create(plan=plan, name='Action 1')
@@ -245,7 +252,11 @@ class TestCollectPublishedPerOption:
         assert str(action2) in names
 
     def test_multiple_options_different_actions(
-        self, plan, action_attribute_type_ordered_choice, choice_option_a, choice_option_b,
+        self,
+        plan,
+        action_attribute_type_ordered_choice,
+        choice_option_a,
+        choice_option_b,
     ):
         """Test collecting actions distributed across multiple choice options."""
         action1 = ActionFactory.create(plan=plan, name='Action 1')
@@ -275,7 +286,10 @@ class TestCollectPublishedPerOption:
         assert result[choice_option_b.pk][0] == str(action2)
 
     def test_attribute_choice_with_text(
-        self, plan, action_attribute_type_optional_choice_with_text, choice_option_c,
+        self,
+        plan,
+        action_attribute_type_optional_choice_with_text,
+        choice_option_c,
     ):
         """Test collecting objects with AttributeChoiceWithText."""
         action = ActionFactory.create(plan=plan, name='Action 1')
@@ -288,7 +302,8 @@ class TestCollectPublishedPerOption:
 
         option_pks = {choice_option_c.pk}
         result = _collect_published_per_option(
-            action_attribute_type_optional_choice_with_text, option_pks,
+            action_attribute_type_optional_choice_with_text,
+            option_pks,
         )
 
         assert choice_option_c.pk in result
@@ -296,7 +311,11 @@ class TestCollectPublishedPerOption:
         assert result[choice_option_c.pk][0] == str(action)
 
     def test_only_requested_options_included(
-        self, plan, action_attribute_type_ordered_choice, choice_option_a, choice_option_b,
+        self,
+        plan,
+        action_attribute_type_ordered_choice,
+        choice_option_a,
+        choice_option_b,
     ):
         """Test that only requested option PKs are included in results."""
         action1 = ActionFactory.create(plan=plan, name='Action 1')
@@ -337,7 +356,10 @@ class TestCollectPublishedForAttributeType:
         assert result == []
 
     def test_different_attribute_value_types(
-        self, plan, action_attribute_type_ordered_choice, choice_option_a,
+        self,
+        plan,
+        action_attribute_type_ordered_choice,
+        choice_option_a,
     ):
         """Test that all attribute value model types are checked."""
         action = ActionFactory.create(plan=plan, name='Action 1')
@@ -389,7 +411,9 @@ class TestCollectReportsForAttributeType:
         report_type = ReportTypeFactory.create(plan=plan)
         ReportFactory.create(type=report_type, is_complete=True, name='Complete Report')
         incomplete_report = ReportFactory.create(
-            type=report_type, is_complete=False, name='Incomplete Report',
+            type=report_type,
+            is_complete=False,
+            name='Incomplete Report',
         )
 
         result = _collect_reports_for_attribute_type(action_attribute_type_ordered_choice)
@@ -463,6 +487,7 @@ class TestPublishedLabel:
 
     def test_unexpected_model_raises_type_error(self):
         """Test that unexpected model raises TypeError."""
+
         # Use a mock class that's not in the expected list
         class UnexpectedModel:
             pass
@@ -508,14 +533,19 @@ class TestGetChoiceOptionUsage:
         assert result == {}
 
     def test_unused_options_return_empty(
-        self, action_attribute_type_ordered_choice, choice_option_a,
+        self,
+        action_attribute_type_ordered_choice,
+        choice_option_a,
     ):
         """Test that unused choice options are not included in results."""
         result = _get_choice_option_usage(action_attribute_type_ordered_choice)
         assert result == {}
 
     def test_option_with_published_usage(
-        self, plan, action_attribute_type_ordered_choice, choice_option_a,
+        self,
+        plan,
+        action_attribute_type_ordered_choice,
+        choice_option_a,
     ):
         """Test option used in published action."""
         action = ActionFactory.create(plan=plan, name='Action 1')
@@ -536,7 +566,10 @@ class TestGetChoiceOptionUsage:
         assert info.published_object_label != ''
 
     def test_option_with_report_usage(
-        self, plan, action_attribute_type_ordered_choice, choice_option_a,
+        self,
+        plan,
+        action_attribute_type_ordered_choice,
+        choice_option_a,
     ):
         """Test option used in action that's included in incomplete reports."""
         action = ActionFactory.create(plan=plan, name='Action 1')
@@ -559,7 +592,10 @@ class TestGetChoiceOptionUsage:
         assert str(report) in info.report_names
 
     def test_option_ignores_complete_reports(
-        self, plan, action_attribute_type_ordered_choice, choice_option_a,
+        self,
+        plan,
+        action_attribute_type_ordered_choice,
+        choice_option_a,
     ):
         """Test that complete reports are not included in usage."""
         action = ActionFactory.create(plan=plan, name='Action 1')
@@ -827,6 +863,7 @@ class TestCheckAttributeValueModels:
 
     def test_logs_warning_for_extra_models(self):
         """Test that extra models are logged as warnings."""
+
         # Add a fake class that's not a real Attribute subclass
         class FakeAttribute:
             pass

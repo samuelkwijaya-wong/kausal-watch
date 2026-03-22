@@ -49,7 +49,7 @@ class OrganizationChooserViewSet(ModelChooserViewSet):
 
     icon = 'kausal-organization'
     model = Organization
-    page_title = _("Choose an organization")
+    page_title = _('Choose an organization')
     per_page = 30
     fields = ['name']
     form_class = OrgForm

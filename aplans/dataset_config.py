@@ -6,6 +6,7 @@ found in kausal_common.datasets to make it adapt to different use cases in Watch
 and Paths. The configuration must be found in the module
 dataset_config under the project directory.
 """
+
 from __future__ import annotations
 
 import typing
@@ -17,9 +18,11 @@ if typing.TYPE_CHECKING:
 
     from aplans.types import WatchAdminRequest
 
+
 def schema_default_scope():
     # Only call in view contexts where the context has been initialized
     from aplans.context_vars import ctx_request
+
     request = typing.cast('WatchAdminRequest', ctx_request.get())
     return request.get_active_admin_plan()
 

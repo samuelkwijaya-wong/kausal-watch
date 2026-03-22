@@ -28,7 +28,7 @@ class AutomaticNotificationTemplateFactory(DjangoModelFactory[AutomaticNotificat
         model = 'notifications.AutomaticNotificationTemplate'
 
     base = SubFactory[AutomaticNotificationTemplate, BaseTemplate](BaseTemplateFactory)
-    subject = "Test"
+    subject = 'Test'
     # Use the first notification type by default
     type = next(iter(NotificationType)).identifier
     custom_email = 'test@example.com'
@@ -42,7 +42,7 @@ class ManuallyScheduledNotificationTemplateFactory(DjangoModelFactory[ManuallySc
         model = 'notifications.ManuallyScheduledNotificationTemplate'
 
     base = SubFactory[ManuallyScheduledNotificationTemplate, BaseTemplate](BaseTemplateFactory)
-    subject = "Test"
+    subject = 'Test'
     date = datetime.date(2021, 1, 1)
     custom_email = 'test@example.com'
     send_to_plan_admins = True

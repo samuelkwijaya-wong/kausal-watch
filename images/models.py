@@ -46,7 +46,9 @@ def insert_date_directory_to_path(path: str, target_dir: str, date: datetime.dat
 
 
 if TYPE_CHECKING:
+
     class AplansImageManager(ModelManager['AplansImage', ImageQuerySet]): ...
+
 else:
     AplansImageManager = ModelManager.from_queryset(ImageQuerySet)
 
@@ -62,8 +64,6 @@ class AplansImage(AbstractImage, PlanRelatedModelWithRevision):
         max_length=254, blank=True, verbose_name=_('Image byline or credits')
     )
     alt_text: models.CharField[str, str] = models.CharField(max_length=254, blank=True, verbose_name=_('Alt text'))
-
-
 
     class Meta:
         verbose_name = _('image')
@@ -81,11 +81,14 @@ class AplansImage(AbstractImage, PlanRelatedModelWithRevision):
         return insert_date_directory_to_path(path, 'original_images', self.created_at)
 
     if TYPE_CHECKING:
+
         def get_rendition(self, filter: Filter | str) -> AplansRendition: ...  # noqa: A002
 
 
 if TYPE_CHECKING:
+
     class AplansRenditionManager(ModelManager['AplansRendition', models.QuerySet['AplansRendition']]): ...
+
 else:
     AplansRenditionManager = ModelManager.from_queryset(models.QuerySet)
 

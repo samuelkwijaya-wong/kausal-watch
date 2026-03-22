@@ -16,17 +16,23 @@ class NotificationPreferencesForm(forms.Form):
     # Map model to list of tuples (model field name, form field label, help text)
     MODEL_FIELDS = {
         ActionContactPersonNotificationPreferences: [
-            ('receive_general_action_notifications',
-             lambda obj: _("General notifications for action '%s'") % obj.action_contact_person.action,
-             _("These are sent when there are news about this action such as reminders for deadlines.")),
-            ('receive_action_feedback_notifications',
-             lambda obj: _("Feedback notifications for action '%s'") % obj.action_contact_person.action,
-             _("These are sent when a visitor has left feedback for this action.")),
+            (
+                'receive_general_action_notifications',
+                lambda obj: _("General notifications for action '%s'") % obj.action_contact_person.action,
+                _('These are sent when there are news about this action such as reminders for deadlines.'),
+            ),
+            (
+                'receive_action_feedback_notifications',
+                lambda obj: _("Feedback notifications for action '%s'") % obj.action_contact_person.action,
+                _('These are sent when a visitor has left feedback for this action.'),
+            ),
         ],
         GeneralPlanAdminNotificationPreferences: [
-            ('receive_feedback_notifications',
-             lambda obj: _("Feeback notifications for plan '%s'") % obj.general_plan_admin.plan,
-             _("These are sent when a visitor has left feedback for this plan.")),
+            (
+                'receive_feedback_notifications',
+                lambda obj: _("Feeback notifications for plan '%s'") % obj.general_plan_admin.plan,
+                _('These are sent when a visitor has left feedback for this plan.'),
+            ),
         ],
     }
 
@@ -59,7 +65,7 @@ class NotificationPreferencesForm(forms.Form):
             return model.objects.filter(
                 pk__in=self.person.general_admin_plans_ordered.values_list('notification_preferences'),
             )
-        raise ValueError(f"Unexpected model {model}")
+        raise ValueError(f'Unexpected model {model}')
 
     def cleaned_data_by_model(self):
         """Rearrange self.cleaned_data to access it by model and PK."""

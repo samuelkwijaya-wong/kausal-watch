@@ -29,30 +29,54 @@ class CommonIndicator(ClusterableModel):
     description = RichTextField[str | None, str | None](null=True, blank=True, verbose_name=_('description'))
 
     quantity = ParentalKey(
-        'indicators.Quantity', related_name='common_indicators', on_delete=models.PROTECT,
+        'indicators.Quantity',
+        related_name='common_indicators',
+        on_delete=models.PROTECT,
         verbose_name=pgettext_lazy('physical', 'quantity'),
     )
     unit = ParentalKey(
-        'indicators.Unit', related_name='common_indicators', on_delete=models.PROTECT,
+        'indicators.Unit',
+        related_name='common_indicators',
+        on_delete=models.PROTECT,
         verbose_name=_('unit'),
     )
     plans: M2M[Plan, PlanCommonIndicator] = models.ManyToManyField(
-        'actions.Plan', blank=True, related_name='common_indicators', through='PlanCommonIndicator',
+        'actions.Plan',
+        blank=True,
+        related_name='common_indicators',
+        through='PlanCommonIndicator',
     )
     normalization_indicators: M2M[Self, CommonIndicatorNormalizator] = models.ManyToManyField(
-        'self', blank=True, related_name='normalizable_indicators', symmetrical=False,
-        through='CommonIndicatorNormalizator', through_fields=('normalizable', 'normalizer'),
+        'self',
+        blank=True,
+        related_name='normalizable_indicators',
+        symmetrical=False,
+        through='CommonIndicatorNormalizator',
+        through_fields=('normalizable', 'normalizer'),
     )
     normalize_by_label = models.CharField(
-        max_length=200, verbose_name=_('normalize by label'), null=True, blank=True,
+        max_length=200,
+        verbose_name=_('normalize by label'),
+        null=True,
+        blank=True,
     )
 
     i18n = TranslationField(fields=['name', 'description', 'normalize_by_label'])
 
     public_fields: ClassVar = [
-        'id', 'identifier', 'name', 'description', 'quantity', 'unit',
-        'indicators', 'dimensions', 'related_causes', 'related_effects',
-        'normalization_indicators', 'normalize_by_label', 'normalizations',
+        'id',
+        'identifier',
+        'name',
+        'description',
+        'quantity',
+        'unit',
+        'indicators',
+        'dimensions',
+        'related_causes',
+        'related_effects',
+        'normalization_indicators',
+        'normalize_by_label',
+        'normalizations',
     ]
 
     normalizations: RevMany[CommonIndicatorNormalizator]
@@ -92,11 +116,15 @@ class PlanCommonIndicator(models.Model):
 
 class RelatedCommonIndicator(IndicatorRelationship):
     causal_indicator = models.ForeignKey(
-        'indicators.CommonIndicator', related_name='related_effects', on_delete=models.CASCADE,
+        'indicators.CommonIndicator',
+        related_name='related_effects',
+        on_delete=models.CASCADE,
         verbose_name=_('causal indicator'),
     )
     effect_indicator = models.ForeignKey(
-        'indicators.CommonIndicator', related_name='related_causes', on_delete=models.CASCADE,
+        'indicators.CommonIndicator',
+        related_name='related_causes',
+        on_delete=models.CASCADE,
         verbose_name=_('effect indicator'),
     )
 
@@ -111,11 +139,15 @@ class RelatedCommonIndicator(IndicatorRelationship):
 class FrameworkIndicator(models.Model):
     identifier = IdentifierField[str | None](null=True, blank=True, max_length=70)
     common_indicator = ParentalKey(
-        'indicators.CommonIndicator', related_name='frameworks', on_delete=models.CASCADE,
+        'indicators.CommonIndicator',
+        related_name='frameworks',
+        on_delete=models.CASCADE,
         verbose_name=_('common indicator'),
     )
     framework = ParentalKey(
-        'indicators.Framework', related_name='common_indicators', on_delete=models.CASCADE,
+        'indicators.Framework',
+        related_name='common_indicators',
+        on_delete=models.CASCADE,
         verbose_name=_('framework'),
     )
 

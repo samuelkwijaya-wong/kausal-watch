@@ -106,6 +106,7 @@ class UserPermissionCache:
     @cached_property
     def general_admin_for_plans(self) -> set[int]:
         from actions.models import Plan
+
         person = self.corresponding_person
         if not person:
             return set()
@@ -131,9 +132,12 @@ class User(AbstractUser):
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
 
-    email: models.EmailField[str, str] = models.EmailField(_('email address'), unique=True) # type: ignore[assignment]
+    email: models.EmailField[str, str] = models.EmailField(_('email address'), unique=True)  # type: ignore[assignment]
     selected_admin_plan: FK[Plan | None] = models.ForeignKey(
-        'actions.Plan', null=True, blank=True, on_delete=models.SET_NULL,
+        'actions.Plan',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
     )
 
     objects: ClassVar[UserManager] = UserManager()  # type: ignore[assignment]
@@ -153,7 +157,6 @@ class User(AbstractUser):
     _contact_for_actions_by_role: dict[ActionContactPerson.Role, set[int]]
     _general_admin_for_plans: set[int]
 
-
     autocomplete_search_field = 'email'
 
     def save(self: User, *args, **kwargs):
@@ -165,7 +168,7 @@ class User(AbstractUser):
             defaults={
                 'theme': UserProfile.AdminColorThemes.LIGHT,
                 'preferred_language': 'en',
-            }
+            },
         )
         return result
 
@@ -278,8 +281,10 @@ class User(AbstractUser):
         return person.organization_plan_admins.filter(plan=plan).exists()
 
     def _get_editable_roles[Role: ModelWithRole.Role](
-            self, action: Action, _class: type[ModelWithRole[Role]],
-        ) -> Sequence[Role | None]:
+        self,
+        action: Action,
+        _class: type[ModelWithRole[Role]],
+    ) -> Sequence[Role | None]:
         if self.is_general_admin_for_plan(action.plan):
             return _class.get_roles()
         person = self.get_corresponding_person()
@@ -290,11 +295,13 @@ class User(AbstractUser):
     def get_editable_contact_person_roles(self, action: Action) -> Sequence[ActionContactPerson.Role | None]:
         """Return a list of roles so that this user can edit contact persons with those roles for the given action."""
         from actions.models import ActionContactPerson
+
         roles = self._get_editable_roles(action, ActionContactPerson)
         return roles
 
-    def get_editable_responsible_party_roles(self, action: Action) -> Iterable[ActionResponsibleParty.Role|None]:
+    def get_editable_responsible_party_roles(self, action: Action) -> Iterable[ActionResponsibleParty.Role | None]:
         from actions.models import ActionResponsibleParty
+
         return self._get_editable_roles(action, ActionResponsibleParty)
 
     def _get_admin_orgs(self) -> models.QuerySet[Organization]:
@@ -314,6 +321,7 @@ class User(AbstractUser):
             actions = cache._org_admin_for_actions[plan_key]
         else:
             from actions.models import Action
+
             actions = Action.objects.get_queryset()
             if plan:
                 actions = actions.filter(plan=plan)
@@ -334,6 +342,7 @@ class User(AbstractUser):
             indicators = cache._org_admin_for_indicators
         else:
             from indicators.models import Indicator
+
             indicators = Indicator.objects.qs.filter(organization__in=self.get_adminable_organizations()).distinct()
             cache._org_admin_for_indicators = indicators
         # Ensure below that the indicators queryset is evaluated to make
@@ -362,7 +371,7 @@ class User(AbstractUser):
         plans = self.get_adminable_plans()
         if len(plans) == 0:
             if required:
-                raise Exception("No active admin plan")
+                raise Exception('No active admin plan')
             return None
         if len(plans) == 1:
             cache._active_admin_plan = plans[0]
@@ -397,8 +406,14 @@ class User(AbstractUser):
         is_general_admin = self.is_general_admin_for_plan()
         is_org_admin = self.is_organization_admin_for_action()
         is_indicator_org_admin = self.is_organization_admin_for_indicator()
-        if not self.is_superuser and not is_action_contact and not is_general_admin \
-                and not is_org_admin and not is_indicator_contact and not is_indicator_org_admin:
+        if (
+            not self.is_superuser
+            and not is_action_contact
+            and not is_general_admin
+            and not is_org_admin
+            and not is_indicator_contact
+            and not is_indicator_org_admin
+        ):
             cache._adminable_plans = Plan.objects.qs.none()
             return cache._adminable_plans
 
@@ -416,6 +431,7 @@ class User(AbstractUser):
 
     def get_viewable_plans(self) -> models.QuerySet[Plan]:
         from actions.models import Plan
+
         return Plan.objects.filter(public_site_viewers__person=self.person, is_active=True)
 
     def can_access_admin(self, plan: Plan | None = None) -> bool:
@@ -452,8 +468,7 @@ class User(AbstractUser):
         if action is not None and action.is_merged():
             # Merged actions can only be edited by admins
             return False
-        return self.is_contact_person_for_action_in_plan(plan, action) \
-            or self.is_organization_admin_for_action(action, plan)
+        return self.is_contact_person_for_action_in_plan(plan, action) or self.is_organization_admin_for_action(action, plan)
 
     def can_create_action(self, plan: Plan):
         assert plan is not None
@@ -477,6 +492,7 @@ class User(AbstractUser):
 
     def _check_moderation_approve_permissions(self, action: Action, person: Person) -> bool:
         from actions.models.action import ActionContactPerson
+
         return action.contact_persons.filter(role=ActionContactPerson.Role.MODERATOR, person=person).exists()
 
     def _check_moderation_permissions(self, moderation_action: ModerationAction, action: Action) -> bool:
@@ -601,7 +617,10 @@ class User(AbstractUser):
         return True
 
     def can_edit_or_delete_person_within_plan(
-        self, person: Person, plan: Plan | None = None, orgs: dict | None = None,
+        self,
+        person: Person,
+        plan: Plan | None = None,
+        orgs: dict | None = None,
     ) -> bool:
         # orgs is a performance optimization, a pre-populated
         # dict for cases where this function is called from within a loop

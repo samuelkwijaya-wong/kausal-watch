@@ -132,9 +132,11 @@ class TestPlanFilterVisibility:
         inactive_plan = PlanFactory.create(is_active=False)
 
         # Mock get_adminable_plans to return both plans
-        user.get_adminable_plans = Mock(return_value=Plan.objects.qs.filter(  # type: ignore[method-assign]
-            id__in=[active_plan.id, inactive_plan.id]
-        ))
+        user.get_adminable_plans = Mock(  # type: ignore[method-assign]
+            return_value=Plan.objects.qs.filter(
+                id__in=[active_plan.id, inactive_plan.id]
+            )
+        )
 
         mock_request = Mock()
         mock_request.user = user
@@ -152,9 +154,7 @@ class TestPlanFilterVisibility:
         inactive_plan = PlanFactory.create(is_active=False)
 
         # Mock get_adminable_plans to return both plans
-        superuser.get_adminable_plans = Mock(return_value=Plan.objects.qs.filter(
-            id__in=[active_plan.id, inactive_plan.id]
-        ))
+        superuser.get_adminable_plans = Mock(return_value=Plan.objects.qs.filter(id__in=[active_plan.id, inactive_plan.id]))
 
         mock_request = Mock()
         mock_request.user = superuser

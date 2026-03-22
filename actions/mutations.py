@@ -58,8 +58,6 @@ class PlanInput:
     features: PlanFeaturesInput | None = None
 
 
-
-
 @sb.input
 class ChoiceOptionInput:
     identifier: str
@@ -178,9 +176,7 @@ class PlanMutations:
         if input.primary_action_classification and plan.primary_action_classification is not None:
             raise ValidationError('A plan can only have one primary action classification.')
 
-        category_type, create_args, _ = gql.prepare_create_update(
-            info=info, model_or_instance=CategoryType, data=input
-        )
+        category_type, create_args, _ = gql.prepare_create_update(info=info, model_or_instance=CategoryType, data=input)
         category_type.plan = plan
         if 'synchronize_with_pages' not in create_args:
             category_type.synchronize_with_pages = input.primary_action_classification
@@ -255,9 +251,7 @@ class PlanMutations:
             other_languages=plan.other_languages or [],
         )
 
-        attr_type, _, _ = gql.prepare_instance(
-            info=info, model_or_instance=attr_type, cleaned_data=data
-        )
+        attr_type, _, _ = gql.prepare_instance(info=info, model_or_instance=attr_type, cleaned_data=data)
 
         format = AttributeType.AttributeFormat(attr_type.format)
         needs_choices = format in (
@@ -330,4 +324,3 @@ class PlanMutations:
         plan.related_organizations.add(organization)
 
         return cast('PlanNode', plan)  # pyright: ignore[reportInvalidCast]
-

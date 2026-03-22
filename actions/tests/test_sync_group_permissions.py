@@ -61,30 +61,21 @@ def test_sync_group_permissions_creates_required_groups_for_plans(organization_f
 
     if plan1.site and plan1.site.root_page:
         root_pages = set(plan1.site.root_page.get_translations(inclusive=True))
-        assert GroupPagePermission.objects.filter(
-            group=plan1.admin_group,
-            page__in=root_pages
-        ).exists()
+        assert GroupPagePermission.objects.filter(group=plan1.admin_group, page__in=root_pages).exists()
 
     if plan2.site and plan2.site.root_page:
         root_pages = set(plan2.site.root_page.get_translations(inclusive=True))
-        assert GroupPagePermission.objects.filter(
-            group=plan2.admin_group,
-            page__in=root_pages
-        ).exists()
+        assert GroupPagePermission.objects.filter(group=plan2.admin_group, page__in=root_pages).exists()
 
     # Verify the plan admin groups have collection permissions
     from wagtail.models.media import GroupCollectionPermission
+
     wagtail_perms = get_wagtail_plan_admin_perms()
 
     assert GroupCollectionPermission.objects.filter(
-        group=plan1.admin_group,
-        collection=plan1.root_collection,
-        permission__in=wagtail_perms
+        group=plan1.admin_group, collection=plan1.root_collection, permission__in=wagtail_perms
     ).exists()
 
     assert GroupCollectionPermission.objects.filter(
-        group=plan2.admin_group,
-        collection=plan2.root_collection,
-        permission__in=wagtail_perms
+        group=plan2.admin_group, collection=plan2.root_collection, permission__in=wagtail_perms
     ).exists()

@@ -16,6 +16,7 @@ def matches_language(language: str, primary_language: str | None = None, other_l
         lang = lang.split('-', maxsplit=1)[0]
         lang = lang.split('_', maxsplit=1)[0]
         return lang
+
     languages: list[str] = []
     if primary_language:
         languages.append(strip_region(primary_language))
@@ -64,6 +65,7 @@ class SearchableModel[QS: models.QuerySet[Any] = models.QuerySet[Any]](Indexed):
     @classmethod
     def get_indexed_objects(cls) -> QS:
         from search.context import get_index_language
+
         language = get_index_language()
         qs = super().get_indexed_objects()
         if issubclass(cls, RestrictedVisibilityModel):
@@ -73,5 +75,6 @@ class SearchableModel[QS: models.QuerySet[Any] = models.QuerySet[Any]](Indexed):
 
     def get_indexed_instance(self) -> Self | None:
         from search.context import get_index_language
+
         language = get_index_language()
         return self.get_indexed_instance_for_language(language=language)

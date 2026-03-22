@@ -52,17 +52,15 @@ class CustomSiteHistoryReportFilterSet(SiteHistoryReportFilterSet):
         user_ids = set()
         for log_model in log_action_registry.get_log_entry_models():
             if log_model not in LOG_MODELS_TO_EXCLUDE:
-                user_ids.update(
-                    log_model.objects.viewable_by_user(self.request.user).get_user_ids()
-                )
+                user_ids.update(log_model.objects.viewable_by_user(self.request.user).get_user_ids())
 
         User = get_user_model()
         return User.objects.filter(pk__in=user_ids).order_by(User.USERNAME_FIELD)
 
 
 class PlanScopedLogEntriesView(LogEntriesView):
-    results_template_name = "site_history_results.html"
-    page_title = pgettext_lazy("page title for history of changes", "Change history")
+    results_template_name = 'site_history_results.html'
+    page_title = pgettext_lazy('page title for history of changes', 'Change history')
     permission_policy: ModelPermissionPolicy = ModelPermissionPolicy(PlanScopedModelLogEntry)
     filterset_class = CustomSiteHistoryReportFilterSet
     permission_required = 'view'
@@ -96,11 +94,10 @@ class PlanScopedLogEntriesView(LogEntriesView):
         # Rest is identical to parent implementation
         for log_model_index, log_model in enumerate(self.log_models):
             sub_queryset = (
-                log_model.objects.viewable_by_user(self.request.user)
-                .values("pk", "timestamp")
-                .annotate(
-                    log_model_index=Value(log_model_index, output_field=IntegerField())
-                )
+                log_model.objects
+                .viewable_by_user(self.request.user)
+                .values('pk', 'timestamp')
+                .annotate(log_model_index=Value(log_model_index, output_field=IntegerField()))
             )
             sub_queryset = self.filter_queryset(sub_queryset)
             sub_queryset = sub_queryset.order_by()
@@ -111,4 +108,4 @@ class PlanScopedLogEntriesView(LogEntriesView):
 
         if queryset is None:
             return None
-        return queryset.order_by("-timestamp")
+        return queryset.order_by('-timestamp')

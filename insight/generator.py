@@ -36,7 +36,9 @@ class ActionGraphGenerator(GraphGenerator):
                 act._indicators = []
             act._indicators.append(ai)
         indicator_levels = self.plan.indicator_levels.visible_for_public().select_related(
-            'indicator', 'indicator__latest_value', 'indicator__unit',
+            'indicator',
+            'indicator__latest_value',
+            'indicator__unit',
         )
 
         indicators = {}
@@ -130,13 +132,17 @@ class ActionGraphGenerator(GraphGenerator):
         if relation_type == 'effect':
             if hasattr(obj, '_effect_relations'):
                 return obj._effect_relations
-            return self.filter_indicators(obj.related_effects.filter(
-                effect_indicator__visibility=RestrictedVisibilityModel.VisibilityState.PUBLIC), 'effect_indicator')
+            return self.filter_indicators(
+                obj.related_effects.filter(effect_indicator__visibility=RestrictedVisibilityModel.VisibilityState.PUBLIC),
+                'effect_indicator',
+            )
         if relation_type == 'causal':
             if hasattr(obj, '_causal_relations'):
                 return obj._causal_relations
-            return self.filter_indicators(obj.related_causes.filter(
-                causal_indicator__visibility=RestrictedVisibilityModel.VisibilityState.PUBLIC), 'causal_indicator')
+            return self.filter_indicators(
+                obj.related_causes.filter(causal_indicator__visibility=RestrictedVisibilityModel.VisibilityState.PUBLIC),
+                'causal_indicator',
+            )
         return None
 
     def add_node(self, obj):
@@ -160,7 +166,10 @@ class ActionGraphGenerator(GraphGenerator):
                     else:
                         target = ri.indicator
                     self.add_edge(
-                        obj, target, ri.effect_type, RelatedIndicator.HIGH_CONFIDENCE,
+                        obj,
+                        target,
+                        ri.effect_type,
+                        RelatedIndicator.HIGH_CONFIDENCE,
                     )
                     self.add_node(target)
         elif isinstance(obj, Indicator):
@@ -182,7 +191,6 @@ class ActionGraphGenerator(GraphGenerator):
                             source = related.causal_indicator
                         self.add_edge(source, obj, related.effect_type, related.confidence_level)
                         self.add_node(source)
-
 
 
 class OrganizationGraphGenerator(GraphGenerator):

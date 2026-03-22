@@ -48,7 +48,7 @@ class IndicatorLinkElementHandler(LinkElementHandler):
 
         try:
             uuid = UUID(attrs['uuid'])
-        except (KeyError, ValueError):
+        except KeyError, ValueError:
             return {}
         id = attrs['id']
         try:
@@ -124,10 +124,7 @@ class IndicatorLinkHandler(LinkHandler):
     @classmethod
     def expand_db_attributes_many(cls, attrs_list: list[dict[str, Any]]) -> list[str]:
         indicators = cast('list[Indicator]', cls.get_many(attrs_list))
-        ret = [
-            cls.expand_one(indicator) if indicator else "<a>"
-            for indicator in indicators
-        ]
+        ret = [cls.expand_one(indicator) if indicator else '<a>' for indicator in indicators]
         return ret
 
     @classmethod

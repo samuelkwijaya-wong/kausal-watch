@@ -40,14 +40,14 @@ class UnitFactory(DjangoModelFactory[Unit]):
     class Meta:
         model = 'indicators.Unit'
 
-    name = Sequence(lambda i: f"Unit {i}")
+    name = Sequence(lambda i: f'Unit {i}')
 
 
 class QuantityFactory(DjangoModelFactory[Quantity]):
     class Meta:
         model = 'indicators.Quantity'
 
-    name = Sequence(lambda i: f"Quantity {i}")
+    name = Sequence(lambda i: f'Quantity {i}')
 
     # Workaround to avoid crashes when trying to print a quantity, as TranslatedModelMixin.get_i18n_value(), which is
     # called by Quantity.__str__(), can't deal with `i18n` being None
@@ -59,8 +59,8 @@ class CommonIndicatorFactory(DjangoModelFactory[CommonIndicator]):
         model = 'indicators.CommonIndicator'
 
     identifier = Sequence(lambda i: f'common-indicator-{i}')
-    name = Sequence(lambda i: f"Common indicator {i}")
-    description = RichText("<p>Common indicator description</p>")
+    name = Sequence(lambda i: f'Common indicator {i}')
+    description = RichText('<p>Common indicator description</p>')
     quantity = SubFactory[CommonIndicator, Quantity](QuantityFactory)
     unit = SubFactory[CommonIndicator, Unit](UnitFactory)
 
@@ -81,14 +81,14 @@ class IndicatorFactory(DjangoModelFactory[Indicator]):
         skip_postgeneration_save = True
 
     organization = SubFactory[Indicator, Organization](OrganizationFactory)
-    identifier = Sequence(lambda i: f"indicator{i}")
-    name = Sequence(lambda i: f"Indicator {i}")
+    identifier = Sequence(lambda i: f'indicator{i}')
+    name = Sequence(lambda i: f'Indicator {i}')
     unit = SubFactory[Indicator, Unit](UnitFactory)
     quantity = SubFactory[Indicator, Quantity](QuantityFactory)
     common = SubFactory[Indicator, CommonIndicator](
         CommonIndicatorFactory, unit=SelfAttribute('..unit'), quantity=SelfAttribute('..quantity')
     )
-    description = "Indicator description"
+    description = 'Indicator description'
     min_value = 0.0
     max_value = 100.0
     show_trendline = False
@@ -96,9 +96,9 @@ class IndicatorFactory(DjangoModelFactory[Indicator]):
     show_total_line = False
     time_resolution = Indicator.TIME_RESOLUTIONS[0][0]
     updated_values_due_at: datetime.datetime | None = None
-    internal_notes = "Indicator internal note"
-    reference = "Indicator reference"
-    visibility = "public"
+    internal_notes = 'Indicator internal note'
+    reference = 'Indicator reference'
+    visibility = 'public'
 
     # created_at = None  # Should be set automatically
     # updated_at = None  # Should be set automatically
@@ -110,6 +110,7 @@ class IndicatorFactory(DjangoModelFactory[Indicator]):
             for plan in extracted:
                 obj.plans.add(plan)
             obj.save()
+
 
 class IndicatorLevelFactory(DjangoModelFactory[IndicatorLevel]):
     class Meta:
@@ -135,7 +136,7 @@ class IndicatorGraphFactory(DjangoModelFactory[IndicatorGraph]):
         model = 'indicators.IndicatorGraph'
 
     indicator = SubFactory[IndicatorGraph, Indicator](IndicatorFactory)
-    data = {"foo": "bar"}
+    data = {'foo': 'bar'}
 
 
 class IndicatorBlockFactory(StructBlockFactory):
@@ -150,7 +151,7 @@ class IndicatorGroupBlockFactory(StructBlockFactory):
     class Meta:
         model = IndicatorGroupBlock
 
-    title = "Indicator group block title"
+    title = 'Indicator group block title'
     indicators = ListBlockFactory(IndicatorBlockFactory)
 
 
@@ -158,8 +159,8 @@ class IndicatorShowcaseBlockFactory(StructBlockFactory):
     class Meta:
         model = IndicatorShowcaseBlock
 
-    title = "Indicator showcase block title"
-    body = RichText("<p>Indicator showcase block body</p>")
+    title = 'Indicator showcase block title'
+    body = RichText('<p>Indicator showcase block body</p>')
     indicator = SubFactory[IndicatorShowcaseBlock, Indicator](IndicatorFactory)
     link_button = SubFactory[IndicatorShowcaseBlock, PageLinkBlock](PageLinkBlockFactory)
 
@@ -178,7 +179,7 @@ class DimensionFactory(DjangoModelFactory[Dimension]):
     class Meta:
         model = 'indicators.Dimension'
 
-    name = Sequence(lambda i: f"Dimension {i}")
+    name = Sequence(lambda i: f'Dimension {i}')
 
 
 class DimensionCategoryFactory(DjangoModelFactory[DimensionCategory]):
@@ -186,7 +187,7 @@ class DimensionCategoryFactory(DjangoModelFactory[DimensionCategory]):
         model = 'indicators.DimensionCategory'
 
     dimension = SubFactory[DimensionCategory, Dimension](DimensionFactory)
-    name = Sequence(lambda i: f"Dimension category {i}")
+    name = Sequence(lambda i: f'Dimension category {i}')
 
 
 class IndicatorDimensionFactory(DjangoModelFactory[IndicatorDimension]):

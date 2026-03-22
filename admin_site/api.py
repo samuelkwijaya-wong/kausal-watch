@@ -26,7 +26,6 @@ class LoginMethodThrottle(UserRateThrottle):
     rate = '60/m'
 
 
-
 def check_user_in_other_clusters(email, request):
     """Check if user exists in other regional clusters."""
     current_host = request.get_host()
@@ -39,10 +38,7 @@ def check_user_in_other_clusters(email, request):
     for endpoint in cluster_endpoints:
         try:
             response = requests.post(
-                f"{endpoint}/login/check/",
-                json={'email': email},
-                timeout=5,
-                headers={'Content-Type': 'application/json'}
+                f'{endpoint}/login/check/', json={'email': email}, timeout=5, headers={'Content-Type': 'application/json'}
             )
 
             if response.status_code == 200:
@@ -65,12 +61,12 @@ def check_user_in_other_clusters(email, request):
 def check_login_method(request):
     d = request.data
     if not d or not isinstance(d, dict):
-        msg = _("Invalid email address")
+        msg = _('Invalid email address')
         raise ValidationError({'detail': msg, 'code': 'invalid_email'})
 
     email = d.get('email', '').strip().lower()
     if not email:
-        msg = _("Invalid email address")
+        msg = _('Invalid email address')
         raise ValidationError({'detail': msg, 'code': 'invalid_email'})
 
     user = User.objects.filter(email__iexact=email, is_active=True).first()
@@ -82,10 +78,10 @@ def check_login_method(request):
             return Response({
                 'method': cluster_result.get('method'),
                 'cluster_redirect': True,
-                'cluster_url': cluster_result.get('cluster_url')
+                'cluster_url': cluster_result.get('cluster_url'),
             })
 
-        msg = _("No user found with this email address. Ask your administrator to create an account for you.")
+        msg = _('No user found with this email address. Ask your administrator to create an account for you.')
         raise ValidationError({'detail': msg, 'code': 'no_user'})
 
     next_url_input = d.get('next')
@@ -94,19 +90,17 @@ def check_login_method(request):
         next_url = urlparse(next_url_input)
         resolved = resolve(next_url.path)
 
-    destination_is_public_site = resolved and (
-        resolved.url_name == 'authorize' and 'oauth2_provider' in resolved.app_names
-    )
+    destination_is_public_site = resolved and (resolved.url_name == 'authorize' and 'oauth2_provider' in resolved.app_names)
     if destination_is_public_site and not user.can_access_public_site(plan=None):
         msg = _(
-            "You do not have access to the public site.",
+            'You do not have access to the public site.',
         )
         raise ValidationError({'detail': msg, 'code': 'no_site_access'})
 
     if not destination_is_public_site and not user.can_access_admin(plan=None):
         msg = _(
-            "You do not have admin access. Your administrator may need to assign you an action or indicator, or grant "
-            "you plan admin status.",
+            'You do not have admin access. Your administrator may need to assign you an action or indicator, or grant '
+            'you plan admin status.',
         )
         raise ValidationError({'detail': msg, 'code': 'no_admin_access'})
 
@@ -121,11 +115,11 @@ def check_login_method(request):
         client = None
 
     if client is None:
-        msg = _("Cannot determine authentication method. The email address domain may be unknown.")
+        msg = _('Cannot determine authentication method. The email address domain may be unknown.')
         raise ValidationError({'detail': msg, 'code': 'no_client'})
 
     if not client.auth_backend:
-        msg = _("Password authentication is required, but the user has no password.")
+        msg = _('Password authentication is required, but the user has no password.')
         raise ValidationError({'detail': msg, 'code': 'no_password'})
 
     return Response({'method': client.auth_backend})
