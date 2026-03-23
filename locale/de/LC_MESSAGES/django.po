@@ -11,9 +11,10 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-03-17 08:21+0200\n"
-"PO-Revision-Date: 2026-03-02 13:21+0000\n"
-"Last-Translator: Bernhard Bliem <bernhard.bliem@kausal.tech>\n"
-"Language-Team: German <https://weblate.kausal.tech/projects/watch/django/de/>\n"
+"PO-Revision-Date: 2026-03-23 15:13+0000\n"
+"Last-Translator: Stefan Cave <stefan.cave@kausal.tech>\n"
+"Language-Team: German <https://weblate.kausal.tech/projects/watch/django/de/>"
+"\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -3425,8 +3426,6 @@ msgid "Term to use for 'organization'"
 msgstr "Für 'Organisation' zu verwendender Begriff"
 
 #: content/models.py
-#, fuzzy
-#| msgid "Term to use for 'action'"
 msgid "Term to use for 'indicator'"
 msgstr "Für 'Maßnahme' zu verwendender Begriff"
 
@@ -4075,26 +4074,18 @@ msgid "metric"
 msgstr "Messgröße"
 
 #: indicators/models/goal_data_point.py
-#, fuzzy
-#| msgid "indicator goal"
 msgid "indicator goal data point"
 msgstr "Indikatorziel"
 
 #: indicators/models/goal_data_point.py
-#, fuzzy
-#| msgid "indicator goals"
 msgid "indicator goal data points"
 msgstr "Indikatorziele"
 
 #: indicators/models/goal_data_point.py
-#, fuzzy
-#| msgid "data point dimension category"
 msgid "indicator goal dimension category"
 msgstr "Datenpunkt-Dimensionskategorie"
 
 #: indicators/models/goal_data_point.py
-#, fuzzy
-#| msgid "data point dimension categories"
 msgid "indicator goal dimension categories"
 msgstr "Datenpunkt-Dimensionskategorien"
 
