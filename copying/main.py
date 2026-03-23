@@ -199,7 +199,7 @@ PLAN_CLONE_STRUCTURE: CloneStructure = {
     'links': EXCLUDED,  # TODO: should likely be copied (PlanLink is a cluster child)
     'planscopedmodellogentry': EXCLUDED,
     'planscopedpagelogentry': EXCLUDED,
-    'mcp_write_authorization_grants': {},
+    'mcp_write_authorization_grants': EXCLUDED,
 }
 
 ATTRIBUTE_TYPE_CLONE_STRUCTURE: CloneStructure = {
