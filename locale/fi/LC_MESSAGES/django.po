@@ -12,9 +12,10 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-03-17 08:21+0200\n"
-"PO-Revision-Date: 2026-02-25 16:13+0200\n"
-"Last-Translator: Timo Tuominen <timo.tuominen@kausal.tech>\n"
-"Language-Team: Finnish <https://weblate.kausal.tech/projects/watch/django/fi/>\n"
+"PO-Revision-Date: 2026-03-23 13:21+0000\n"
+"Last-Translator: Stefan Cave <stefan.cave@kausal.tech>\n"
+"Language-Team: Finnish <https://weblate.kausal.tech/projects/watch/django/"
+"fi/>\n"
 "Language: fi\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -34,7 +35,9 @@ msgstr "%s toistuu toimenpiteen tiedoissa"
 #: actions/action_admin.py
 #, python-format
 msgid "While editing this action you have switched to a different plan. This action was still saved with the original plan \"%s\"."
-msgstr "Muokatessasi tätä toimenpidettä vaihdoit toiseen toimenpideohjelmaan. Tämä toimenpide tallennettiin alkuperäiseen ohjelmaan \"%s\"."
+msgstr ""
+"Muokatessasi tätä toimenpidettä vaihdoit toiseen toimenpideohjelmaan. Tämä "
+"toimenpide tallennettiin alkuperäiseen ohjelmaan \"%s\"."
 
 #: actions/action_admin.py actions/models/action.py
 msgid "Unspecified"
@@ -174,7 +177,9 @@ msgstr "%(model_name)s '%(object)s' on luotu ja ajastettu julkaisua varten."
 #: actions/action_admin_mixins.py
 #, python-format
 msgid "%(model_name)s '%(object)s' is live and this version has been scheduled for publishing."
-msgstr "%(model_name)s '%(object)s' on jo julkinen ja tämä versio on ajastettu julkaistavaksi."
+msgstr ""
+"%(model_name)s '%(object)s' on jo julkinen ja tämä versio on ajastettu "
+"julkaistavaksi."
 
 #: actions/action_admin_mixins.py
 #, python-format
@@ -199,7 +204,8 @@ msgstr "%(model_name)s '%(object)s' luotu ja lähetetty moderoitavaksi."
 #: actions/action_admin_mixins.py
 #, python-format
 msgid "Workflow on %(model_name)s '%(object)s' has been restarted."
-msgstr "Työnkulku kohteelle %(model_name)s '%(object)s' on käynnistetty uudelleen."
+msgstr ""
+"Työnkulku kohteelle %(model_name)s '%(object)s' on käynnistetty uudelleen."
 
 #: actions/action_admin_mixins.py
 #, python-format
@@ -379,7 +385,9 @@ msgstr "järjestys"
 
 #: actions/attribute_type_admin.py
 msgid "This field already has values. If you want to change the format, you need to delete the existing values first."
-msgstr "Tässä kentässä on jo arvoja. Jos haluat muuttaa muotoa, sinun on ensin poistettava nykyiset arvot."
+msgstr ""
+"Tässä kentässä on jo arvoja. Jos haluat muuttaa muotoa, sinun on ensin "
+"poistettava nykyiset arvot."
 
 #: actions/attribute_type_admin.py
 msgid "Choice options"
@@ -509,7 +517,8 @@ msgstr "Valintavaihtoehdot"
 
 #: actions/blocks/action_content_blocks.py
 msgid "Choices are only allowed for 'Dropdown' or 'Checkbox' field types."
-msgstr "Vain alasvetovalikoissa ja valintaruuduissa voi olla valintavaihtoehtoja."
+msgstr ""
+"Vain alasvetovalikoissa ja valintaruuduissa voi olla valintavaihtoehtoja."
 
 #: actions/blocks/action_content_blocks.py
 msgid "Choices must be provided for 'Dropdown' or 'Checkbox' field types."
@@ -562,7 +571,9 @@ msgstr "Muita lomakekenttiä"
 
 #: actions/blocks/action_content_blocks.py
 msgid "Form fields to be shown in addition to Name, Email and Comment fields"
-msgstr "Lomakekentät jotka näytetään kenttien \"nimi\", \"sähköposti\" ja \"kommentti\" lisäksi"
+msgstr ""
+"Lomakekentät jotka näytetään kenttien \"nimi\", \"sähköposti\" ja "
+"\"kommentti\" lisäksi"
 
 #: actions/blocks/action_content_blocks.py
 msgid "Feedback can't be required if it's not visible."
@@ -635,7 +646,9 @@ msgstr "Ryhmittele tason perusteella"
 
 #: actions/blocks/action_list.py actions/blocks/category_list.py
 msgid "Use category level for tabbed grouping in the public UI"
-msgstr "Käytä kategorian tasoa ryhmittelemään kategoriat välilehtiin julkisella sivustolla"
+msgstr ""
+"Käytä kategorian tasoa ryhmittelemään kategoriat välilehtiin julkisella "
+"sivustolla"
 
 #: actions/blocks/action_list.py
 msgid "Action list"
@@ -1176,17 +1189,22 @@ msgstr "Toimenpide on jo merkitty valmiiksi raporttia %s varten."
 #: actions/models/action.py
 #, python-format
 msgid "Marked action '%(action)s' as complete for report '%(report)s'"
-msgstr "Toimenpide '%(action)s' merkitty valmiiksi raporttia '%(report)s' varten"
+msgstr ""
+"Toimenpide '%(action)s' merkitty valmiiksi raporttia '%(report)s' varten"
 
 #: actions/models/action.py
 #, python-format
 msgid "Cannot undo marking action as complete as there are %s snapshots"
-msgstr "Toimenpiteen valmiiksi merkitsemistä ei voida perua koska toimenpiteestä on %s tallennetta"
+msgstr ""
+"Toimenpiteen valmiiksi merkitsemistä ei voida perua koska toimenpiteestä on "
+"%s tallennetta"
 
 #: actions/models/action.py
 #, python-format
 msgid "Undid marking action '%(action)s' as complete for report '%(report)s'"
-msgstr "Toimenpiteen '%(action)s' merkitseminen valmiiksi raporttia '%(report)s' varten peruttiin"
+msgstr ""
+"Toimenpiteen '%(action)s' merkitseminen valmiiksi raporttia '%(report)s' "
+"varten peruttiin"
 
 #: actions/models/action.py reports/blocks/action_content.py
 #: reports/report_formatters.py
@@ -1533,7 +1551,9 @@ msgstr "Luokan tyyppi (jos muoto on luokka)"
 
 #: actions/models/attributes.py
 msgid "If the format is \"Category\", choose which category type the field values can be chosen from"
-msgstr "Jos muoto on \"luokka\", valitse minkä tyyppisiä luokkia voi valita kentän arvoiksi"
+msgstr ""
+"Jos muoto on \"luokka\", valitse minkä tyyppisiä luokkia voi valita kentän "
+"arvoiksi"
 
 #: actions/models/attributes.py
 msgid "show choice names"
@@ -1549,7 +1569,9 @@ msgstr "ensimmäinen vaihtoehto on nolla"
 
 #: actions/models/attributes.py
 msgid "If the format is \"ordered choice\", determines whether the first option is displayed with zero bullets instead of one"
-msgstr "Näytetäänkö ensimmäisen vaihtoehdon kohdalla nolla ympyrää yhden sijaan jos muoto on \"järjestetty valinta\""
+msgstr ""
+"Näytetäänkö ensimmäisen vaihtoehdon kohdalla nolla ympyrää yhden sijaan jos "
+"muoto on \"järjestetty valinta\""
 
 #: actions/models/attributes.py
 msgid "character limit for text fields"
@@ -1650,7 +1672,9 @@ msgstr "yksi- vai moniarvoinen kategoria"
 #: actions/models/category.py
 #, python-brace-format
 msgid "Choose \"{choice_multiple}\" only if more than one category can be selected at a time, otherwise choose \"{choice_single}\" which is the default."
-msgstr "Valitse \"{choice_multiple}\" jos useampi kuin yksi kategoria voidaan valita kerralla, muuten valitse oletusarvo \"{choice_single}\"."
+msgstr ""
+"Valitse \"{choice_multiple}\" jos useampi kuin yksi kategoria voidaan valita "
+"kerralla, muuten valitse oletusarvo \"{choice_single}\"."
 
 #: actions/models/category.py
 msgid "has a collection"
@@ -1740,7 +1764,9 @@ msgstr "yläluokka"
 
 #: actions/models/category.py
 msgid "Parent forms a loop. Leave empty if top-level category."
-msgstr "Riippuvuuksista muodostuu silmukka. Jätä tyhjäksi jos kyseessä on ylätason luokka."
+msgstr ""
+"Riippuvuuksista muodostuu silmukka. Jätä tyhjäksi jos kyseessä on ylätason "
+"luokka."
 
 #: actions/models/category.py
 msgid "Parent must be of same type"
@@ -1882,7 +1908,8 @@ msgstr "Näytä toimenpiteiden tunnisteet"
 
 #: actions/models/features.py
 msgid "Set if action identifiers should be visible in the public UI"
-msgstr "Aseta jos julkisessa sivustossa halutaan näyttää toimenpiteiden tunnisteet"
+msgstr ""
+"Aseta jos julkisessa sivustossa halutaan näyttää toimenpiteiden tunnisteet"
 
 #: actions/models/features.py
 #, fuzzy
@@ -1891,7 +1918,9 @@ msgstr "toimenpiteen yhteyshenkilöt"
 
 #: actions/models/features.py
 msgid "Set if there are separate contact persons with publishing rights and others who can only suggest changes"
-msgstr "Aseta jos käytössä on yhteyshenkilöroolit, eli toisilla yhteyshenkilöillä on julkaisuoikeudet mutta toiset voivat vain ehdottaa muutoksia"
+msgstr ""
+"Aseta jos käytössä on yhteyshenkilöroolit, eli toisilla yhteyshenkilöillä on "
+"julkaisuoikeudet mutta toiset voivat vain ehdottaa muutoksia"
 
 #: actions/models/features.py
 msgid "Minimal statuses"
@@ -1899,7 +1928,10 @@ msgstr "Rajoitetut toimenpiteiden tilat"
 
 #: actions/models/features.py
 msgid "Set to prevent showing status-specific graphs and other elements if statuses aren't systematically used in this action plan"
-msgstr "Aseta piilottaaksesi sivustolta toimenpiteiden tilaan perustuvat kuvaajat ja muut komponentit, jos tässä toimenpideohjelmassa ei ole kattavasti käytetty toimenpiteiden tilatietoa"
+msgstr ""
+"Aseta piilottaaksesi sivustolta toimenpiteiden tilaan perustuvat kuvaajat ja "
+"muut komponentit, jos tässä toimenpideohjelmassa ei ole kattavasti käytetty "
+"toimenpiteiden tilatietoa"
 
 #: actions/models/features.py
 msgid "Has action official name field"
@@ -1994,7 +2026,9 @@ msgstr "Ota muutoskuvaukset käyttöön"
 
 #: actions/models/features.py
 msgid "Prompt users to add a public change history message after editing actions, indicators, or categories."
-msgstr "Pyydä käyttäjiä lisäämään julkinen muutoskuvaus toimenpiteiden, indikaattorien, kategorioiden tai sivujen muokkauksen jälkeen."
+msgstr ""
+"Pyydä käyttäjiä lisäämään julkinen muutoskuvaus toimenpiteiden, "
+"indikaattorien, kategorioiden tai sivujen muokkauksen jälkeen."
 
 #: actions/models/features.py
 msgid "Enable community engagement"
@@ -2137,7 +2171,9 @@ msgstr "Linkki ulkopuoliseen palautelomakkeeseen"
 
 #: actions/models/plan.py
 msgid "If not empty, the system's built-in user feedback feature will be replaced by a link to an external feedback form available at this web address."
-msgstr "Jos asetettu, järjestelmään sisäänrakennettu käyttäjäpalautetoiminto korvataan linkillä ulkopuoliseen palautelomakkeeseen tässä osoitteessa."
+msgstr ""
+"Jos asetettu, järjestelmään sisäänrakennettu käyttäjäpalautetoiminto "
+"korvataan linkillä ulkopuoliseen palautelomakkeeseen tässä osoitteessa."
 
 #: actions/models/plan.py
 msgid "Theme identifier"
@@ -2155,7 +2191,9 @@ msgstr "Toimenpiteiden pääluokittelu"
 
 #: actions/models/plan.py
 msgid "Used for primary navigation and grouping of actions"
-msgstr "Käytetään toimenpiteiden ensisijaiseen luokitteluun esimerkiksi sivuston navigaatiossa"
+msgstr ""
+"Käytetään toimenpiteiden ensisijaiseen luokitteluun esimerkiksi sivuston "
+"navigaatiossa"
 
 #: actions/models/plan.py
 #, fuzzy
@@ -2164,7 +2202,9 @@ msgstr "Toimenpiteiden toissijainen luokittelu"
 
 #: actions/models/plan.py
 msgid "Leave empty unless specifically required. Action filters based on this category are displayed more prominently than filters of other categories."
-msgstr "Jätä tyhjäksi ellei erikseen toivottu. Sivustolla korostetaan toimenpiteiden luokittelua tällä kategorialla."
+msgstr ""
+"Jätä tyhjäksi ellei erikseen toivottu. Sivustolla korostetaan toimenpiteiden "
+"luokittelua tällä kategorialla."
 
 #: actions/models/plan.py
 msgid "Days until actions considered stale"
@@ -2172,7 +2212,9 @@ msgstr "Toimenpiteen vanhentuminen päivissä"
 
 #: actions/models/plan.py
 msgid "Actions not updated since this many days are considered stale."
-msgstr "Toimenpiteitä, jotka ovat olleet päivittämättä näin monta päivää, pidetään vanhentuneina."
+msgstr ""
+"Toimenpiteitä, jotka ovat olleet päivittämättä näin monta päivää, pidetään "
+"vanhentuneina."
 
 #: actions/models/plan.py
 msgid "Target interval in days to update actions"
@@ -2180,7 +2222,9 @@ msgstr "Tavoiteaika päivissä toimenpiteiden päivittämiselle"
 
 #: actions/models/plan.py
 msgid "A desirable time interval in days within which actions should be updated in the optimal case."
-msgstr "Tavoiteltu aikaväli päivissä, jonka välein toimenpiteitä haluttaisiin päivitettävän."
+msgstr ""
+"Tavoiteltu aikaväli päivissä, jonka välein toimenpiteitä haluttaisiin "
+"päivitettävän."
 
 #: actions/models/plan.py
 msgid "Acceptable interval in days to update actions"
@@ -2359,7 +2403,9 @@ msgstr "domain-osoite"
 
 #: actions/models/plan.py
 msgid "The fully qualified domain name, eg. climate.cityname.gov. Leave blank if not yet known."
-msgstr "Toimenpideohjelman julkinen ja kokonainen domain-nimi, esimerkiksi climate.cityname.gov. Jätä tyhjäksi, jos ei vielä tiedossa."
+msgstr ""
+"Toimenpideohjelman julkinen ja kokonainen domain-nimi, esimerkiksi "
+"climate.cityname.gov. Jätä tyhjäksi, jos ei vielä tiedossa."
 
 #: actions/models/plan.py
 #, fuzzy
@@ -2377,7 +2423,9 @@ msgstr "peruspolku"
 
 #: actions/models/plan.py
 msgid "Fill this for a multi-plan site when the plan does not live in the root of the domain."
-msgstr "Täytä tämä usean toimenpideohjelman sivustolle, jos tämä toimenpideohjelma ei sijaitse juuriosoitteessa."
+msgstr ""
+"Täytä tämä usean toimenpideohjelman sivustolle, jos tämä toimenpideohjelma "
+"ei sijaitse juuriosoitteessa."
 
 #: actions/models/plan.py
 msgid "Base path must begin with a '/' and not end with '/'"
@@ -2389,7 +2437,9 @@ msgstr ""
 
 #: actions/models/plan.py
 msgid "Domain names that will be used to redirect to the main hostname. Multiple domains are separated by commas."
-msgstr "Verkkotunnukset, joista uudelleenohjataan pääasialliseen hostnameen. Useat verkkotunnukset erotetaan toisistaan pilkuilla."
+msgstr ""
+"Verkkotunnukset, joista uudelleenohjataan pääasialliseen hostnameen. Useat "
+"verkkotunnukset erotetaan toisistaan pilkuilla."
 
 #: actions/models/plan.py
 msgid "Immediate override of publishing status"
@@ -2397,7 +2447,10 @@ msgstr "Välitön sivuston julkaisun määritys"
 
 #: actions/models/plan.py
 msgid "Only set this if you are sure you want to override the publication time set in the plan. Be aware that this will immediately change the publication status of the plan at this domain!"
-msgstr "Aseta ainoastaan jos haluat varmasti ohittaa toimenpideohjelmaan asetetun julkaisuajan. Huomaa, että tämä muuttaa heti toimenpideohjelman julkaistuksi tai ei-julkaistuksi tässä osoitteessa!"
+msgstr ""
+"Aseta ainoastaan jos haluat varmasti ohittaa toimenpideohjelmaan asetetun "
+"julkaisuajan. Huomaa, että tämä muuttaa heti toimenpideohjelman julkaistuksi "
+"tai ei-julkaistuksi tässä osoitteessa!"
 
 #: actions/models/plan.py
 msgid "plan domain"
@@ -2641,7 +2694,9 @@ msgstr ""
 #: actions/templates/wagtailadmin/notifications/task_state_cancelled.txt
 #, python-format
 msgid "The %(model_name)s \"%(title)s\" has been withdrawn from the moderation stage \"%(task)s\". It does not require approval until it has been resubmitted for moderation again."
-msgstr "%(model_name)s \"%(title)s\" on poistettu moderointivaiheesta \"%(task)s\". Se ei vaadi hyväksyntää ennen kuin se on toimitettu uudelleen moderoitavaksi."
+msgstr ""
+"%(model_name)s \"%(title)s\" on poistettu moderointivaiheesta \"%(task)s\". "
+"Se ei vaadi hyväksyntää ennen kuin se on toimitettu uudelleen moderoitavaksi."
 
 #: actions/templates/wagtailadmin/notifications/task_state_cancelled.txt
 #, python-format
@@ -2688,7 +2743,9 @@ msgstr "Sivu ”%(title)s” on hyväksytty  kommentilla työnkulussa ”%(workf
 #: actions/templates/wagtailadmin/notifications/workflow_state_approved_comment_subject.txt
 #, python-format
 msgid "The %(model_name)s \"%(title)s\" has been approved in \"%(workflow)s\" with a comment."
-msgstr "%(model_name)s ”%(title)s” on hyväksytty kommentilla työnkulussa ”%(workflow)s”."
+msgstr ""
+"%(model_name)s ”%(title)s” on hyväksytty kommentilla työnkulussa ”%(workflow)"
+"s”."
 
 #: actions/wagtail_admin.py
 msgid "Identifier already in use"
@@ -2921,7 +2978,9 @@ msgstr "Virheellinen sähköpostiosoite"
 
 #: admin_site/api.py
 msgid "No user found with this email address. Ask your administrator to create an account for you."
-msgstr "Tällä sähköpostiosoitteella ei löytynyt käyttäjää. Pyydä ylläpitäjää luomaan sinulle käyttäjätili."
+msgstr ""
+"Tällä sähköpostiosoitteella ei löytynyt käyttäjää. Pyydä ylläpitäjää luomaan "
+"sinulle käyttäjätili."
 
 #: admin_site/api.py
 #, fuzzy
@@ -2930,11 +2989,16 @@ msgstr "Tällä käyttäjällä ei ole pääsyä ylläpitoon."
 
 #: admin_site/api.py
 msgid "You do not have admin access. Your administrator may need to assign you an action or indicator, or grant you plan admin status."
-msgstr "Sinulla ei ole pääsyä ylläpitoon. Järjestelmänvalvojan on ehkä tehtävä sinusta yhteyshenkilö tai myönnettävä sinulle toimenpideohjelman ylläpitäjän asema."
+msgstr ""
+"Sinulla ei ole pääsyä ylläpitoon. Järjestelmänvalvojan on ehkä tehtävä "
+"sinusta yhteyshenkilö tai myönnettävä sinulle toimenpideohjelman ylläpitäjän "
+"asema."
 
 #: admin_site/api.py
 msgid "Cannot determine authentication method. The email address domain may be unknown."
-msgstr "Kirjautumistapaa ei saatu selville. Sähköpostiosoitteen loppuosa saattaa olla tuntematon."
+msgstr ""
+"Kirjautumistapaa ei saatu selville. Sähköpostiosoitteen loppuosa saattaa "
+"olla tuntematon."
 
 #: admin_site/api.py
 msgid "Password authentication is required, but the user has no password."
@@ -2946,7 +3010,9 @@ msgstr ""
 
 #: admin_site/chooser.py
 msgid "What is the part after @ in the staff email address of the organization mainly responsible for the plan?"
-msgstr "Mikä on sähköpostiosoitteen @-merkkiä seuraava osa sen organisaation henkilöstön sähköpostiosoitteissa, joka on päävastuussa toimenpideohjelmasta?"
+msgstr ""
+"Mikä on sähköpostiosoitteen @-merkkiä seuraava osa sen organisaation "
+"henkilöstön sähköpostiosoitteissa, joka on päävastuussa toimenpideohjelmasta?"
 
 #: admin_site/chooser.py
 #, fuzzy
@@ -3066,7 +3132,9 @@ msgstr "Kenttä '%(field)s' mallissa '%(model)s' suunnitelmassa '%(plan)s'"
 
 #: admin_site/models.py
 msgid "Please summarize the change you made. This message will be displayed publicly."
-msgstr "Kirjoita tiivistelmä tekemistäsi muutoksista. Tämä kuvaus näytetään julkisesti."
+msgstr ""
+"Kirjoita tiivistelmä tekemistäsi muutoksista. Tämä kuvaus näytetään "
+"julkisesti."
 
 #: admin_site/models.py
 #, python-format
@@ -3187,7 +3255,9 @@ msgstr "Julkaistu"
 #: admin_site/viewsets.py admin_site/wagtail.py
 #, python-format
 msgid "Error deleting items. Try first deleting any %(name)s that are in use."
-msgstr "Kohteiden poistaminen ei onnistunut. Poista ensin sellaiset %(name)s jotka ovat vielä käytössä."
+msgstr ""
+"Kohteiden poistaminen ei onnistunut. Poista ensin sellaiset %(name)s jotka "
+"ovat vielä käytössä."
 
 #: admin_site/viewsets.py admin_site/wagtail.py
 #, python-format
@@ -3388,7 +3458,9 @@ msgstr "Näkyvyys"
 #: aplans/utils.py
 #, python-format
 msgid "%(color)s is not a CSS color (e.g., \"#112233\", \"red\" or \"rgb(0, 255, 127)\")"
-msgstr "%(color)s ei ole oikeassa muodossa (esim. \"#112233\", \"red\" or \"rgb(0, 255, 127)\")"
+msgstr ""
+"%(color)s ei ole oikeassa muodossa (esim. \"#112233\", \"red\" or \"rgb(0, "
+"255, 127)\")"
 
 #: aplans/utils.py
 msgid "Invalid JSON value"
@@ -3566,7 +3638,8 @@ msgstr "Creative Commons -lisenssi"
 
 #: content/models.py
 msgid "If the site is under a Creative Commons license, which CC license it is"
-msgstr "Jos sivusto on Creative Commons -lisenssillä, mikä CC-lisenssi on kyseessä"
+msgstr ""
+"Jos sivusto on Creative Commons -lisenssillä, mikä CC-lisenssi on kyseessä"
 
 #: content/models.py
 msgid "Link to GitHub repository for API"
@@ -3793,12 +3866,16 @@ msgstr "Vahvista että %(user_feedback)s merkitään käsittelemättömäksi"
 #: feedback/views.py
 #, python-format
 msgid "Do you really want to mark the user feedback '%(user_feedback)s' as processed?"
-msgstr "Haluatko todella merkitä käyttäjän palautteen '%(user_feedback)s' käsitellyksi?"
+msgstr ""
+"Haluatko todella merkitä käyttäjän palautteen '%(user_feedback)s' "
+"käsitellyksi?"
 
 #: feedback/views.py
 #, python-format
 msgid "Do you really want to mark the user feedback '%(user_feedback)s' as unprocessed?"
-msgstr "Haluatko todella merkitä käyttäjän palautteen '%(user_feedback)s' käsittelemättömäksi?"
+msgstr ""
+"Haluatko todella merkitä käyttäjän palautteen '%(user_feedback)s' "
+"käsittelemättömäksi?"
 
 #: feedback/views.py
 msgid "The user feedback is already processed"
@@ -3941,7 +4018,9 @@ msgstr "Valitse mittarin dimensio jota käytetään visualisaatiossa kategorioin
 #: indicators/blocks/__init__.py
 #, python-format
 msgid "Dimension '%(dimension)s' is not valid for indicator '%(indicator)s'. Please choose a dimension that belongs to the indicator."
-msgstr "Dimensio '%(dimension)s' ei sovellu mittarille '%(indicator)s'. Valitse mittarille määritetty dimensio."
+msgstr ""
+"Dimensio '%(dimension)s' ei sovellu mittarille '%(indicator)s'. Valitse "
+"mittarille määritetty dimensio."
 
 #: indicators/blocks/__init__.py
 msgid "Stacked bars"
@@ -3994,7 +4073,9 @@ msgstr "Mittarin visualisaatio piirakkakaaviona"
 #: indicators/blocks/__init__.py
 #, python-format
 msgid "The selected year (%(selected_year)s) has no data for this indicator. Available years are: %(available_years)s"
-msgstr "Valitulle vuodelle (%(selected_year)s) ei ole arvoja tässä mittarissa. Saatavilla on seuraavat vuodet: %(available_years)s"
+msgstr ""
+"Valitulle vuodelle (%(selected_year)s) ei ole arvoja tässä mittarissa. "
+"Saatavilla on seuraavat vuodet: %(available_years)s"
 
 #: indicators/blocks/__init__.py
 msgid "Indicator: Summary"
@@ -4210,7 +4291,9 @@ msgstr "mittarin dimensiot"
 #: indicators/models/dimensions.py
 #, python-format
 msgid "Cannot delete dimension \"%(dimension)s\" because it is linked to multiple plans: %(plans)s"
-msgstr "Dimensiota \"%(dimension)s\" ei voida poistaa koska se on kytketty useisiin toimenpideohjelmiin: %(plans)s"
+msgstr ""
+"Dimensiota \"%(dimension)s\" ei voida poistaa koska se on kytketty useisiin "
+"toimenpideohjelmiin: %(plans)s"
 
 #: indicators/models/dimensions.py
 msgid "default color"
@@ -4352,7 +4435,9 @@ msgstr "järjestämisperuste"
 
 #: indicators/models/indicator.py
 msgid "If set, this will be used as the primary criterion for sorting indicators."
-msgstr "Jos asetettu, tätä käytetään pääasiallisena järjestämisperusteena toimenpiteille."
+msgstr ""
+"Jos asetettu, tätä käytetään pääasiallisena järjestämisperusteena "
+"toimenpiteille."
 
 #: indicators/models/indicator.py
 msgid "time resolution"
@@ -4423,7 +4508,9 @@ msgstr "näytä yhteensä-viiva"
 
 #: indicators/models/indicator.py
 msgid "Data categories can be summed to form total for the indicator (draw stacked chart as default)"
-msgstr "Datan kategoriat voidaan laskea yhteen ja muodostaa mittarille summa (oletuksena piirretään pinottu kaavio)"
+msgstr ""
+"Datan kategoriat voidaan laskea yhteen ja muodostaa mittarille summa "
+"(oletuksena piirretään pinottu kaavio)"
 
 #: indicators/models/indicator.py
 msgid "Number of steps on the y-axis"
@@ -4439,7 +4526,9 @@ msgstr "Merkitsevien numeroiden määrä, kun mittarin arvoja näytetään"
 
 #: indicators/models/indicator.py
 msgid "Data categories can be summed to form a total for the indicator (draw a stacked chart as default)"
-msgstr "Datan kategoriat voidaan laskea yhteen ja muodostaa mittarille summa (oletuksena piirretään pinottu kaavio)"
+msgstr ""
+"Datan kategoriat voidaan laskea yhteen ja muodostaa mittarille summa "
+"(oletuksena piirretään pinottu kaavio)"
 
 #: indicators/models/indicator.py
 msgid "non-quantified goal"
@@ -4493,7 +4582,9 @@ msgstr "On dataa"
 
 #: indicators/models/indicator.py
 msgid "Deadlines for value updates are currently only possible for yearly indicators"
-msgstr "Ainoastaan vuosittaisille mittareille voi antaa takarajan arvojen päivittämiselle"
+msgstr ""
+"Ainoastaan vuosittaisille mittareille voi antaa takarajan arvojen "
+"päivittämiselle"
 
 #: indicators/models/indicator.py
 msgid "There is already an indicator value for the year preceding the deadline"
@@ -4684,7 +4775,9 @@ msgstr "Muokkaa tätä suuretta"
 #: indicators/wagtail_admin.py
 #, python-format
 msgid "Cannot delete dimension \"%(dimension)s\" at this time, please contact support."
-msgstr "Dimensiota \"%(dimension)s\" ei voida tällä hetkellä poistaa. Ota yhteyttä tukeen."
+msgstr ""
+"Dimensiota \"%(dimension)s\" ei voida tällä hetkellä poistaa. Ota yhteyttä "
+"tukeen."
 
 #: indicators/wagtail_admin.py
 msgid "Indicator dimensions"
@@ -4704,7 +4797,9 @@ msgstr "[ei mukana toimenpideohjelmassa]"
 
 #: indicators/wagtail_admin.py
 msgid "Changing the organization to one with a different primary language is currently not supported"
-msgstr "Organisaation vaihtaminen toisenkieliseen (ensisijainen kieli) ei ole tällä hetkellä tuettu"
+msgstr ""
+"Organisaation vaihtaminen toisenkieliseen (ensisijainen kieli) ei ole tällä "
+"hetkellä tuettu"
 
 #: indicators/wagtail_admin.py
 msgid "Dimensions must be the same as in common indicator"
@@ -4722,7 +4817,9 @@ msgstr "tyhjä"
 #: indicators/wagtail_admin.py
 #, python-format
 msgid "This indicator is linked to a common indicator, so quantity, unit and dimensions cannot be edited. Current quantity: %(quantity)s; unit: %(unit)s; dimensions: %(dimensions)s"
-msgstr "Mittari on kytketty yleiseen mittariin, joten sen suuretta (%(quantity)s), yksikköä (%(unit)s) tai dimensioita (%(dimensions)s) ei voi muokata."
+msgstr ""
+"Mittari on kytketty yleiseen mittariin, joten sen suuretta (%(quantity)s), "
+"yksikköä (%(unit)s) tai dimensioita (%(dimensions)s) ei voi muokata."
 
 #: indicators/wagtail_admin.py
 msgid "Indicator settings"
@@ -4752,8 +4849,12 @@ msgstr "mittarin dimensiot"
 #, python-format
 msgid "If you change the dimensions of this indicator (currently %(dimensions)s), its single value will be deleted."
 msgid_plural "If you change the dimensions of this indicator (currently %(dimensions)s), all its %(num)d values will be deleted."
-msgstr[0] "Jos muutat tämän mittarin dimensioita (nyt %(dimensions)s), sen arvo poistetaan."
-msgstr[1] "Jos muutat tämän mittarin dimensioita (nyt %(dimensions)s), kaikki sen %(num)d arvoa poistetaan."
+msgstr[0] ""
+"Jos muutat tämän mittarin dimensioita (nyt %(dimensions)s), sen arvo "
+"poistetaan."
+msgstr[1] ""
+"Jos muutat tämän mittarin dimensioita (nyt %(dimensions)s), kaikki sen %(num)"
+"d arvoa poistetaan."
 
 #: indicators/wagtail_admin.py
 #, fuzzy
@@ -4787,7 +4888,9 @@ msgstr "Yksikkö"
 
 #: indicators/wagtail_admin.py
 msgid "Dimensions must be the same as in all indicators linked to this one"
-msgstr "Dimensioiden täytyy olla samat kuin kaikissa tähän mittariin linkitetyissä mittareissa"
+msgstr ""
+"Dimensioiden täytyy olla samat kuin kaikissa tähän mittariin linkitetyissä "
+"mittareissa"
 
 #: indicators/wagtail_admin.py
 msgid "Common indicators"
@@ -4796,7 +4899,9 @@ msgstr "Yleiset mittarit"
 #: indicators/wagtail_admin.py
 #, python-format
 msgid "This common indicator has indicators linked to it, so quantity, unit and dimensions cannot be edited. Current quantity: %(quantity)s; unit: %(unit)s; dimensions: %(dimensions)s"
-msgstr "Mittari on linkitetty muihin mittareihin, joten sen suuretta (%(quantity)s), yksikköä (%(unit)s) tai dimensioita (%(dimensions)s) ei voi muokata."
+msgstr ""
+"Mittari on linkitetty muihin mittareihin, joten sen suuretta (%(quantity)s), "
+"yksikköä (%(unit)s) tai dimensioita (%(dimensions)s) ei voi muokata."
 
 #: indicators/wagtail_hooks.py
 msgid "Update values"
@@ -4825,7 +4930,9 @@ msgstr "Toimenpiteen '%s' yleiset herätteet"
 
 #: notifications/forms.py
 msgid "These are sent when there are news about this action such as reminders for deadlines."
-msgstr "Näitä herätteitä lähetetään kun toimenpiteestä on jotain muistutettavaa, esimerkiksi lähestyvä deadline"
+msgstr ""
+"Näitä herätteitä lähetetään kun toimenpiteestä on jotain muistutettavaa, "
+"esimerkiksi lähestyvä deadline"
 
 #: notifications/forms.py
 #, python-format
@@ -4834,7 +4941,9 @@ msgstr "Herätteet toimenpiteen '%s' palautteista"
 
 #: notifications/forms.py
 msgid "These are sent when a visitor has left feedback for this action."
-msgstr "Näitä herätteitä lähetetään kun sivuston vierailija on antanut palautetta tästä toimenpiteestä."
+msgstr ""
+"Näitä herätteitä lähetetään kun sivuston vierailija on antanut palautetta "
+"tästä toimenpiteestä."
 
 #: notifications/forms.py
 #, python-format
@@ -4843,7 +4952,9 @@ msgstr "Herätteet toimenpideohjelman '%s' palautteista"
 
 #: notifications/forms.py
 msgid "These are sent when a visitor has left feedback for this plan."
-msgstr "Näitä lähetetään kun sivuston vierailija on jättänyt palautetta toimenpideohjelmasta."
+msgstr ""
+"Näitä lähetetään kun sivuston vierailija on jättänyt palautetta "
+"toimenpideohjelmasta."
 
 #: notifications/management/commands/initialize_notifications.py
 msgctxt "motivation"
@@ -4954,7 +5065,9 @@ msgstr "erillinen sähköpostiosoite"
 
 #: notifications/models.py
 msgid "Email address used when \"send to custom email address\" is checked"
-msgstr "Sähköpostiosoite jota käytetään jos \"lähetä erilliseen sähköpostiosoitteeseen\" on valittu"
+msgstr ""
+"Sähköpostiosoite jota käytetään jos \"lähetä erilliseen "
+"sähköpostiosoitteeseen\" on valittu"
 
 #: notifications/models.py
 msgid "send to plan admins"
@@ -4970,7 +5083,8 @@ msgstr "Tämän voi valita vain jos erillinen sähköpostiosoite on määritetty
 
 #: notifications/models.py
 msgid "If a custom email address is defined, this must be set"
-msgstr "Jos erillinen sähköpostiosoite on määritetty, tämä valinta on pakollinen"
+msgstr ""
+"Jos erillinen sähköpostiosoite on määritetty, tämä valinta on pakollinen"
 
 #: notifications/models.py
 msgid "Do not send to contact persons"
@@ -4986,7 +5100,9 @@ msgstr "Lähetä yhteyshenkilöille; varavaihtoehtona organisaatioylläpitäjill
 
 #: notifications/models.py
 msgid "Send to contact persons; fallback: organization admins, plan admins"
-msgstr "Lähetä yhteyshenkilöille; varavaihtoehtona organisaatioylläpitäjille, pääkäyttäjille"
+msgstr ""
+"Lähetä yhteyshenkilöille; varavaihtoehtona organisaatioylläpitäjille, "
+"pääkäyttäjille"
 
 #: notifications/models.py
 msgid "send to contact persons"
@@ -5281,12 +5397,16 @@ msgstr "Varmista, että %(org)s poistetaan toimenpideohjelmasta %(plan)s"
 #: orgs/views.py
 #, python-format
 msgid "Do you really want to include the organization '%(org)s' in the plan '%(plan)s'?"
-msgstr "Haluatko varmasti lisätä organisaation '%(org)s' toimenpideohjelmaan '%(plan)s'?"
+msgstr ""
+"Haluatko varmasti lisätä organisaation '%(org)s' toimenpideohjelmaan '%(plan)"
+"s'?"
 
 #: orgs/views.py
 #, python-format
 msgid "Do you really want to exclude the organization '%(org)s' from the plan '%(plan)s'?"
-msgstr "Haluatko varmasti poistaa organisaation '%(org)s' toimenpideohjelmasta '%(plan)s'?"
+msgstr ""
+"Haluatko varmasti poistaa organisaation '%(org)s' toimenpideohjelmasta '%"
+"(plan)s'?"
 
 #: orgs/views.py
 msgid "The organization is already included in the plan"
@@ -5318,7 +5438,9 @@ msgstr "Yläorganisaatio"
 
 #: orgs/wagtail_admin.py
 msgid "People who can edit plan-specific content related to this organization"
-msgstr "Käyttäjät jotka voivat muokata tälle organisaatiolle kuuluvaa sisältöä toimenpideohjelmassa"
+msgstr ""
+"Käyttäjät jotka voivat muokata tälle organisaatiolle kuuluvaa sisältöä "
+"toimenpideohjelmassa"
 
 #: orgs/wagtail_admin.py
 msgid "Metadata admins"
@@ -5326,7 +5448,9 @@ msgstr "Perustietojen ylläpitäjät"
 
 #: orgs/wagtail_admin.py
 msgid "People who can edit data of this organization and suborganizations but no plan-specific content"
-msgstr "Käyttäjät jotka voivat muokata tämän organisaation ja sen aliorganisaatioiden perustietoja"
+msgstr ""
+"Käyttäjät jotka voivat muokata tämän organisaation ja sen "
+"aliorganisaatioiden perustietoja"
 
 #: orgs/wagtail_admin.py
 msgid "Permissions"
@@ -5459,7 +5583,9 @@ msgstr "Ylläpitovastuun kuvauskappale"
 
 #: pages/blocks.py
 msgid "If this is set, it will be displayed instead of \"This service is published by [publisher]\"."
-msgstr "Jos kuvauskappale on täytetty, se näytetään tekstin \"Tämän palvelun on julkaissut [julkaisija]\" sijaan."
+msgstr ""
+"Jos kuvauskappale on täytetty, se näytetään tekstin \"Tämän palvelun on "
+"julkaissut [julkaisija]\" sijaan."
 
 #: pages/blocks.py
 msgid "Email address"
@@ -5652,7 +5778,9 @@ msgstr "Alaotsikoissa näytettävä hierarkiataso"
 
 #: pages/models.py
 msgid "Depth of category hierarchy to present as subheadings starting from the root."
-msgstr "Kategoriahierarkian syvyys joka esitetään alaotsikkoina, hierarkian juuresta laskien"
+msgstr ""
+"Kategoriahierarkian syvyys joka esitetään alaotsikkoina, hierarkian juuresta "
+"laskien"
 
 #: pages/models.py
 #, fuzzy
@@ -5679,7 +5807,9 @@ msgstr "Näytä liitetyt toimenpideohjelmat"
 
 #: pages/models.py
 msgid "Enable to make this page include actions from related plans."
-msgstr "Ota käyttöön jos haluat että sivulla näytetään toimenpiteitä tähän toimenpideohjelmaan kytketyistä muista toimenpideohjelmista"
+msgstr ""
+"Ota käyttöön jos haluat että sivulla näytetään toimenpiteitä tähän "
+"toimenpideohjelmaan kytketyistä muista toimenpideohjelmista"
 
 #: pages/models.py
 msgid "Primary filters"
@@ -5879,7 +6009,9 @@ msgstr "Varmista kohteen %(model_name)s poistaminen"
 #: people/templates/people/delete.html
 #, python-format
 msgid "'%(instance_name)s' is currently connected to the following items. Please verify deletion:"
-msgstr "'%(instance_name)s' on yhteydessä seuraaviin kohteisiin. Ole hyvä ja varmista poistaminen:"
+msgstr ""
+"'%(instance_name)s' on yhteydessä seuraaviin kohteisiin. Ole hyvä ja "
+"varmista poistaminen:"
 
 #: people/templates/people/delete.html
 #: templates/aplans/attribute_type_delete.html
@@ -5921,17 +6053,24 @@ msgstr "Haluatko varmasti lisätä organisaation '%(org)s' toimenpideohjelmaan '
 #: people/views.py
 #, python-format
 msgid "An email has been sent to %(person)s with a link to reset their password."
-msgstr "Osoitteeseen %(person)s on lähetetty sähköpostiviesti, jossa on linkki salasanan palauttamiseen."
+msgstr ""
+"Osoitteeseen %(person)s on lähetetty sähköpostiviesti, jossa on linkki "
+"salasanan palauttamiseen."
 
 #: people/views.py
 #, python-format
 msgid "If the email does not arrive, you can send them the following link: %(url)s"
-msgstr "Jos sähköposti ei saavu perille, voit lähettää hänelle seuraavan linkin: %(url)s"
+msgstr ""
+"Jos sähköposti ei saavu perille, voit lähettää hänelle seuraavan linkin: %"
+"(url)s"
 
 #: people/views.py
 #, python-format
 msgid "Please take great care that nobody except %(person)s gets access to the link. For additional security, the link will expire in %(days_until_expiration)s days."
-msgstr "Varmistathan, ettei kukaan muu kuin %(person)s pääse käsiksi linkkiin. Lisäturvallisuuden vuoksi linkki vanhenee %(days_until_expiration)s päivän kuluttua."
+msgstr ""
+"Varmistathan, ettei kukaan muu kuin %(person)s pääse käsiksi linkkiin. "
+"Lisäturvallisuuden vuoksi linkki vanhenee %(days_until_expiration)s päivän "
+"kuluttua."
 
 #: people/views.py people/wagtail_admin.py
 #, fuzzy
@@ -6012,7 +6151,9 @@ msgstr "Haluatko varmasti poistaa käytöstä tämän henkilön?"
 
 #: people/wagtail_admin.py
 msgid "This person has no access to the admin interface. This is commonly because no actions or indicators are assigned to them."
-msgstr "Tällä henkilöllä ei ole pääsyä ylläpitoon. Tämä johtuu yleensä siitä, ettei hänelle ole määritetty yhtäkään toimenpidettä tai indikaattoria."
+msgstr ""
+"Tällä henkilöllä ei ole pääsyä ylläpitoon. Tämä johtuu yleensä siitä, ettei "
+"hänelle ole määritetty yhtäkään toimenpidettä tai indikaattoria."
 
 #: people/wagtail_admin.py
 msgid "first name"
@@ -6044,7 +6185,11 @@ msgstr "Organisaatiohierarkian taso"
 
 #: reports/blocks/action_content.py
 msgid "In addition to the organization itself, an organizational unit containing the organization is included in the report. Counting from the top-level root organisation at level 1, which level in the organizational hierarchy should be used to find this containing organization? If left empty, don't add the containing organization to the report."
-msgstr "Raporttiin tulostetaan organisaation itsensä lisäksi sen yläorganisaatio. Laskien ylimmästä organisaatiosta (1), miltä tasolta organisaatiohierarkiaa tämä yläorganisaatio pitäisi poimia? Jos tyhjä, yläorganisaatiota ei lisätä raporttiin."
+msgstr ""
+"Raporttiin tulostetaan organisaation itsensä lisäksi sen yläorganisaatio. "
+"Laskien ylimmästä organisaatiosta (1), miltä tasolta organisaatiohierarkiaa "
+"tämä yläorganisaatio pitäisi poimia? Jos tyhjä, yläorganisaatiota ei lisätä "
+"raporttiin."
 
 #: reports/blocks/choosers.py reports/wagtail_admin.py
 msgid "Report type"
@@ -6195,7 +6340,8 @@ msgstr "Haluatko todella merkitä raportin <i>%(report)s</i> valmiiksi?"
 #: reports/templates/reports/mark_report_as_complete_confirmation.html
 #, python-format
 msgid "Do you really want to undo marking the report <i>%(report)s</i> as complete?"
-msgstr "Haluatko todella perua raportin <i>%(report)s</i> merkitsemisen valmiiksi?"
+msgstr ""
+"Haluatko todella perua raportin <i>%(report)s</i> merkitsemisen valmiiksi?"
 
 #: reports/templates/reports/mark_report_as_complete_confirmation.html
 msgid "This will mark the following actions as complete:"
@@ -6203,7 +6349,8 @@ msgstr "Seuraavat toimenpiteet merkitään valmiiksi raporttia varten:"
 
 #: reports/templates/reports/mark_report_as_complete_confirmation.html
 msgid "This will undo marking the following actions as complete:"
-msgstr "Seuraavien toimenpiteiden merkitseminen valmiiksi raporttia varten perutaan:"
+msgstr ""
+"Seuraavien toimenpiteiden merkitseminen valmiiksi raporttia varten perutaan:"
 
 #: reports/views.py
 msgid "Mark action as complete"
@@ -6216,32 +6363,43 @@ msgstr "Peru toimenpiteen merkitseminen valmiiksi"
 #: reports/views.py
 #, python-format
 msgid "Confirm marking action %(action)s as complete for report %(report)s"
-msgstr "Varmista toimenpiteen %(action)s merkitseminen valmiiksi raporttia %(report)s varten"
+msgstr ""
+"Varmista toimenpiteen %(action)s merkitseminen valmiiksi raporttia %(report)"
+"s varten"
 
 #: reports/views.py
 #, python-format
 msgid "Confirm undoing marking action %(action)s as complete for report %(report)s"
-msgstr "Varmista että toimenpiteen %(action)s merkitseminen valmiiksi raporttia %(report)s varten perutaan"
+msgstr ""
+"Varmista että toimenpiteen %(action)s merkitseminen valmiiksi raporttia %"
+"(report)s varten perutaan"
 
 #: reports/views.py
 #, python-format
 msgid "Do you really want to mark the action '%(action)s' as complete for the report '%(report)s'?"
-msgstr "Haluatko todella merkitä toimenpiteen '%(action)s' valmiiksi raporttia '%(report)s' varten?"
+msgstr ""
+"Haluatko todella merkitä toimenpiteen '%(action)s' valmiiksi raporttia '%"
+"(report)s' varten?"
 
 #: reports/views.py
 #, python-format
 msgid "Do you really want to undo marking the action '%(action)s' as complete for the report '%(report)s'?"
-msgstr "Haluatko todella perua toimenpiteen '%(action)s' merkitsemisen valmiiksi raporttia '%(report)s' varten?"
+msgstr ""
+"Haluatko todella perua toimenpiteen '%(action)s' merkitsemisen valmiiksi "
+"raporttia '%(report)s' varten?"
 
 #: reports/views.py
 #, python-format
 msgid "Action '%(action)s' has been marked as complete for report '%(report)s'."
-msgstr "Toimenpide '%(action)s' on merkitty valmiiksi raporttia '%(report)s' varten."
+msgstr ""
+"Toimenpide '%(action)s' on merkitty valmiiksi raporttia '%(report)s' varten."
 
 #: reports/views.py
 #, python-format
 msgid "Action '%(action)s' is no longer marked as complete for report '%(report)s'."
-msgstr "Toimenpide '%(action)s' ei ole enää merkitty valmiiksi raporttia '%(report)s' varten."
+msgstr ""
+"Toimenpide '%(action)s' ei ole enää merkitty valmiiksi raporttia '%(report)"
+"s' varten."
 
 #: reports/views.py
 msgid "Mark report as complete"
@@ -6410,7 +6568,9 @@ msgstr "Käyttäjät"
 
 #: users/models.py
 msgid "No permission to remove the user belonging to plans you are not managing."
-msgstr "Ei oikeuksia poistaa käyttäjä joka kuuluu toimenpideohjelmiin, joita et hallinnoi."
+msgstr ""
+"Ei oikeuksia poistaa käyttäjä joka kuuluu toimenpideohjelmiin, joita et "
+"hallinnoi."
 
 #~ msgid "Page"
 #~ msgstr "Sivu"
