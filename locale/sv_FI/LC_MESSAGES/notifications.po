@@ -8,13 +8,16 @@ msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2023-04-19 18:06+0200\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: Automatically generated\n"
-"Language-Team: none\n"
+"PO-Revision-Date: 2026-03-23 16:22+0000\n"
+"Last-Translator: Stefan Cave <stefan.cave@kausal.tech>\n"
+"Language-Team: Swedish <https://weblate.kausal.tech/projects/watch/"
+"notifications/sv_FI/>\n"
 "Language: sv_FI\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 5.15.1\n"
 "Generated-By: Babel 2.12.1\n"
 
 #: notifications/mjml-templates/action_not_updated.mjml
@@ -46,7 +49,7 @@ msgstr ""
 #: notifications/mjml-templates/task_due_soon.mjml
 #: notifications/mjml-templates/task_late.mjml
 msgid "Tasks"
-msgstr ""
+msgstr "Uppgifter"
 
 #: notifications/mjml-templates/task_due_soon.mjml
 #: notifications/mjml-templates/updated_indicator_values_due_soon.mjml
