@@ -12,23 +12,23 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-03-17 08:21+0200\n"
-"PO-Revision-Date: 2026-03-23 16:21+0000\n"
-"Last-Translator: Stefan Cave <stefan.cave@kausal.tech>\n"
-"Language-Team: Danish <https://weblate.kausal.tech/projects/watch/django/da/>"
-"\n"
+"PO-Revision-Date: 2025-04-02 07:20+0000\n"
+"Last-Translator: Matias Wargelin <matias.wargelin@kausal.tech>\n"
+"Language-Team: Danish <https://weblate.kausal.tech/projects/watch/django/da/>\n"
 "Language: da\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.15.1\n"
+"X-Generator: Weblate 5.4.2\n"
 
 #: actions/action_admin.py
 msgid "There is already an action with this identifier."
 msgstr "Der er allerede en handling med denne identifikator."
 
 #: actions/action_admin.py
-#, python-format
+#, fuzzy, python-format
+#| msgid "Organization occurs multiple times as responsible party"
 msgid "%s is listed multiple times in the action."
 msgstr "Organisation optræder flere gange som ansvarlig part"
 
@@ -36,8 +36,6 @@ msgstr "Organisation optræder flere gange som ansvarlig part"
 #, python-format
 msgid "While editing this action you have switched to a different plan. This action was still saved with the original plan \"%s\"."
 msgstr ""
-"När du redigerade denna åtgärd bytte du till en annan plan. Åtgärden "
-"sparades ändå med den ursprungliga planen ”%s”."
 
 #: actions/action_admin.py actions/models/action.py
 msgid "Unspecified"
@@ -74,13 +72,16 @@ msgid "Undo marking this action as complete for the report %s"
 msgstr "Fortryd markering af denne handling som fuldført for rapporten %s"
 
 #: actions/action_admin.py
-#, python-format
+#, fuzzy, python-format
+#| msgid "%(attribute_type)s (text)"
 msgid "Field \"%(attribute_type)s\": %(message)s"
 msgstr "%(attribute_type)s (text)"
 
 #: actions/action_admin.py actions/apps.py actions/models/plan.py
 #: content/models.py indicators/wagtail_admin.py
 #: reports/spreadsheets/excel_report.py reports/tests/test_excel_roundtrip.py
+#, fuzzy
+#| msgid "Actions"
 msgctxt "Action model"
 msgid "Actions"
 msgstr "Handlinger"
@@ -117,10 +118,14 @@ msgid "Progress"
 msgstr "Fremskridt"
 
 #: actions/action_admin.py
+#, fuzzy
+#| msgid "internal notes"
 msgid "Internal notes"
 msgstr "interne noter"
 
 #: actions/action_admin.py
+#, fuzzy
+#| msgid "internal notes for plan administrators"
 msgid "Internal notes for plan administrators"
 msgstr "interne notater til planadministratorer"
 
@@ -129,18 +134,25 @@ msgid "Reporting"
 msgstr "Rapportering"
 
 #: actions/action_admin.py
+#, fuzzy
+#| msgid "Recent actions"
 msgid "Dependent actions"
 msgstr "Afhængige handlinger"
 
 #: actions/action_admin.py
+#, fuzzy
 msgid "Dependencies"
 msgstr "Afhængigheder"
 
 #: actions/action_admin.py
+#, fuzzy
+#| msgid "editable for actions"
 msgid "Resubmit for moderation"
 msgstr "redigerbar til handlinger"
 
 #: actions/action_admin.py
+#, fuzzy
+#| msgid "Cancelled or postponed"
 msgid "Cancel moderation"
 msgstr "Aflyst eller udskudt"
 
@@ -176,9 +188,7 @@ msgstr "%(model_name)s '%(object)s' oprettet og planlagt til udgivelse."
 #: actions/action_admin_mixins.py
 #, python-format
 msgid "%(model_name)s '%(object)s' is live and this version has been scheduled for publishing."
-msgstr ""
-"%(model_name)s '%(object)s' er live, og denne version er planlagt til "
-"udgivelse."
+msgstr "%(model_name)s '%(object)s' er live, og denne version er planlagt til udgivelse."
 
 #: actions/action_admin_mixins.py
 #, python-format
@@ -211,15 +221,20 @@ msgid "Workflow on %(model_name)s '%(object)s' has been cancelled."
 msgstr "Workflow på %(model_name)s '%(object)s' er blevet annulleret."
 
 #: actions/action_admin_mixins.py
-#, python-format
+#, fuzzy, python-format
+#| msgid "%(model_name)s '%(object)s' updated and published."
 msgid "%(model_name)s '%(object)s' approved and published."
 msgstr "%(model_name)s '%(object)s' godkendt og offentliggjort."
 
 #: actions/action_admin_mixins.py
+#, fuzzy
+#| msgid "Blocks"
 msgid "Unlock"
 msgstr "Blokke"
 
 #: actions/action_admin_mixins.py
+#, fuzzy
+#| msgid "action schedules"
 msgid "Cancel scheduled publish"
 msgstr "handlingsplaner"
 
@@ -230,6 +245,8 @@ msgid "Edit"
 msgstr "Redigere"
 
 #: actions/action_fields.py actions/tests/fixtures_stream_block.py
+#, fuzzy
+#| msgid "Action schedules"
 msgid "Action dependencies"
 msgstr "Afhængighed af handling"
 
@@ -246,6 +263,8 @@ msgid "On time"
 msgstr "En gang"
 
 #: actions/action_status_summary.py
+#, fuzzy
+#| msgid "in progress"
 msgid "In progress"
 msgstr "i gang"
 
@@ -258,6 +277,8 @@ msgid "Late"
 msgstr "Sent"
 
 #: actions/action_status_summary.py
+#, fuzzy
+#| msgid "cancelled"
 msgid "Cancelled"
 msgstr "annulleret"
 
@@ -266,6 +287,8 @@ msgid "Out of scope"
 msgstr "Uden for anvendelsesområdet"
 
 #: actions/action_status_summary.py
+#, fuzzy
+#| msgid "Merged actions"
 msgid "Merged"
 msgstr "Sammenkoblede handlinger"
 
@@ -275,6 +298,8 @@ msgstr "Udskudt"
 
 #: actions/action_status_summary.py reports/report_formatters.py
 #: reports/spreadsheets/excel_report.py
+#, fuzzy
+#| msgid "Unknown content"
 msgid "Unknown"
 msgstr "Ukendt indhold"
 
@@ -293,6 +318,8 @@ msgid "Organization occurs multiple times as responsible party"
 msgstr "Organisation optræder flere gange som ansvarlig part"
 
 #: actions/api.py indicators/api.py
+#, fuzzy
+#| msgid "Organization occurs multiple times as responsible party"
 msgid "Person occurs multiple times as contact person"
 msgstr "Organisation optræder flere gange som ansvarlig part"
 
@@ -308,32 +335,30 @@ msgstr "Identifikator findes allerede"
 #, python-format
 msgid "You do not have permission to change contact persons with role \"%(role)s\" on action \"%(action)s\"."
 msgstr ""
-"Du har ikke tilladelse til at ændre kontaktpersoner med rollen \"%(role)s\" "
-"på handlingen \"%(action)s\"."
 
 #: actions/api.py
 #, python-format
 msgid "You do not have permission to change responsible parties with role \"%(role)s\" on action \"%(action)s\"."
 msgstr ""
-"Du har ikke tilladelse til at ændre ansvarlige parter med rollen \"%(role)"
-"s\" på handlingen \"%(action)s\"."
 
 #: actions/attribute_type_admin.py
 #, python-format
 msgid "%(count)d report"
 msgid_plural "%(count)d reports"
-msgstr[0] "%(count)d rapport"
-msgstr[1] "%(count)d rapporter"
+msgstr[0] ""
+msgstr[1] ""
 
 #: actions/attribute_type_admin.py
-#, python-format
+#, fuzzy, python-format
+#| msgid "published at"
 msgid "%(count)d published action"
 msgid_plural "%(count)d published actions"
 msgstr[0] "udgivet kl"
 msgstr[1] "udgivet kl"
 
 #: actions/attribute_type_admin.py
-#, python-format
+#, fuzzy, python-format
+#| msgid "common category"
 msgid "%(count)d category"
 msgid_plural "%(count)d categories"
 msgstr[0] "fælles kategori"
@@ -343,26 +368,29 @@ msgstr[1] "fælles kategori"
 #, python-format
 msgid "%(count)d pledge"
 msgid_plural "%(count)d pledges"
-msgstr[0] "%(count)d åtagande"
-msgstr[1] "%(count)d åtaganden"
+msgstr[0] ""
+msgstr[1] ""
 
 #: actions/attribute_type_admin.py
 #, python-format
 msgid "%(count)d action draft"
 msgid_plural "%(count)d action drafts"
-msgstr[0] "%(count)d åtgärdsutkast"
-msgstr[1] "%(count)d åtgärdsutkast"
+msgstr[0] ""
+msgstr[1] ""
 
 #: actions/attribute_type_admin.py
 msgid "Object type"
 msgstr "Objekttype"
 
 #: actions/attribute_type_admin.py
+#, fuzzy
+#| msgid "fields"
 msgid "Fields"
 msgstr "felter"
 
 #: actions/attribute_type_admin.py
-#, python-format
+#, fuzzy, python-format
+#| msgid "Attribute for %s"
 msgid "Field for %s"
 msgstr "Attribut for %s"
 
@@ -372,26 +400,28 @@ msgid "Fields (%(model)s)"
 msgstr "Felter (%(model)s)"
 
 #: actions/attribute_type_admin.py
+#, fuzzy
+#| msgid "If the format is \"Category\", choose which category type the attribute values can be chosen from"
 msgid "If format is 'Category', a category type must be set"
-msgstr ""
-"Hvis formatet er \"Kategori\", skal du vælge hvilken kategoritype "
-"attributværdierne kan vælges fra"
+msgstr "Hvis formatet er \"Kategori\", skal du vælge hvilken kategoritype attributværdierne kan vælges fra"
 
 #: actions/attribute_type_admin.py
 msgid "If format is 'Numeric', a unit must be set"
 msgstr "Hvis formatet er 'Numerisk', skal der angives en enhed"
 
 #: actions/attribute_type_admin.py actions/category_admin.py
+#, fuzzy
+#| msgid "order"
 msgid "Order"
 msgstr "Bestil"
 
 #: actions/attribute_type_admin.py
 msgid "This field already has values. If you want to change the format, you need to delete the existing values first."
 msgstr ""
-"Detta fält har redan värden. Om du vill ändra formatet måste du först ta "
-"bort de befintliga värdena."
 
 #: actions/attribute_type_admin.py
+#, fuzzy
+#| msgid "attribute choice options"
 msgid "Choice options"
 msgstr "valgmuligheder for attributter"
 
@@ -408,8 +438,6 @@ msgstr "Generel"
 #: actions/attributes.py
 msgid "A choice option used in this draft no longer exists. The selection has been cleared."
 msgstr ""
-"Ett valternativ som används i detta utkast finns inte längre. Valet har "
-"rensats."
 
 #: actions/attributes.py
 #, python-format
@@ -422,15 +450,14 @@ msgid "%(attribute_type)s (text)"
 msgstr "%(attribute_type)s (text)"
 
 #: actions/attributes.py
-#, python-format
+#, fuzzy, python-format
+#| msgid "attribute types"
 msgid "%(attribute_type)s"
 msgstr "attributtyper"
 
 #: actions/attributes.py
 msgid "A field used in this draft no longer exists. The field and its value have been removed from the draft."
 msgstr ""
-"Ett fält som används i detta utkast finns inte längre. Fältet och dess värde "
-"har tagits bort från utkastet."
 
 #: actions/blocks/__init__.py
 msgid "Related plans"
@@ -467,6 +494,8 @@ msgstr "Afsnit"
 #: actions/blocks/action_content_blocks.py actions/blocks/action_dashboard.py
 #: actions/blocks/category_page_layout.py actions/blocks/choosers.py
 #: actions/blocks/filters.py
+#, fuzzy
+#| msgid "fields"
 msgid "Field"
 msgstr "felter"
 
@@ -478,21 +507,27 @@ msgstr "Kategori"
 
 #: actions/blocks/action_content_blocks.py
 msgid "Heading to show instead of the default"
-msgstr "Rubrik som ska visas istället för standardrubriken"
+msgstr ""
 
 #: actions/blocks/action_content_blocks.py
 msgid "Label"
-msgstr "Etikett"
+msgstr ""
 
 #: actions/blocks/action_content_blocks.py
+#, fuzzy
+#| msgid "value"
 msgid "Value"
 msgstr "værdi"
 
 #: actions/blocks/action_content_blocks.py actions/models/attributes.py
+#, fuzzy
+#| msgid "attribute choice options"
 msgid "Choice"
 msgstr "valgmuligheder for attributter"
 
 #: actions/blocks/action_content_blocks.py
+#, fuzzy
+#| msgid "fields"
 msgid "Field Label"
 msgstr "felter"
 
@@ -503,87 +538,101 @@ msgstr "Tekst"
 
 #: actions/blocks/action_content_blocks.py
 msgid "Checkbox"
-msgstr "Kryssruta"
+msgstr ""
 
 #: actions/blocks/action_content_blocks.py actions/blocks/filters.py
 msgid "Dropdown"
 msgstr "Dropdown"
 
 #: actions/blocks/action_content_blocks.py
+#, fuzzy
+#| msgid "fields"
 msgid "Field Type"
 msgstr "felter"
 
 #: actions/blocks/action_content_blocks.py
 msgid "Required"
-msgstr "Obligatorisk"
+msgstr ""
 
 #: actions/blocks/action_content_blocks.py
+#, fuzzy
+#| msgid "attribute choice options"
 msgid "Choices"
 msgstr "valgmuligheder for attributter"
 
 #: actions/blocks/action_content_blocks.py
+#, fuzzy
+#| msgid "Unit must only be used for numeric attribute types"
 msgid "Choices are only allowed for 'Dropdown' or 'Checkbox' field types."
 msgstr "Enhed må kun bruges til numeriske attributtyper"
 
 #: actions/blocks/action_content_blocks.py
 msgid "Choices must be provided for 'Dropdown' or 'Checkbox' field types."
-msgstr "Val måste anges för fälttyperna 'Rullgardinsmeny' eller 'Kryssruta'."
+msgstr ""
 
 #: actions/blocks/action_content_blocks.py
+#, fuzzy
+#| msgid "fields"
 msgid "Form Field"
 msgstr "felter"
 
 #: actions/blocks/action_content_blocks.py indicators/wagtail_admin.py
+#, fuzzy
+#| msgid "description"
 msgid "Description"
 msgstr "beskrivelse"
 
 #: actions/blocks/action_content_blocks.py
 msgid "Feedback field visible"
-msgstr "Feedbackfält synligt"
+msgstr ""
 
 #: actions/blocks/action_content_blocks.py
 msgid "Toggle visibility of the feedback field."
-msgstr "Växla synligheten för feedbackfältet."
+msgstr ""
 
 #: actions/blocks/action_content_blocks.py
+#, fuzzy
+#| msgid "User feedback received"
 msgid "Feedback required"
 msgstr "Brugerfeedback modtaget"
 
 #: actions/blocks/action_content_blocks.py
 msgid "Make the feedback field required when visible."
-msgstr "Gör feedbackfältet obligatoriskt när det är synligt."
+msgstr ""
 
 #: actions/blocks/action_content_blocks.py
 msgid "Email field visible"
-msgstr "E-postfält synligt"
+msgstr ""
 
 #: actions/blocks/action_content_blocks.py
 msgid "Toggle visibility of the email field."
-msgstr "Växla synligheten för e-postfältet."
+msgstr ""
 
 #: actions/blocks/action_content_blocks.py
 msgid "Email required"
-msgstr "E-post obligatorisk"
+msgstr ""
 
 #: actions/blocks/action_content_blocks.py
 msgid "Make the email field required when visible."
-msgstr "Gör e-postfältet obligatoriskt när det är synligt."
+msgstr ""
 
 #: actions/blocks/action_content_blocks.py
+#, fuzzy
+#| msgid "Action list"
 msgid "Additional form fields"
 msgstr "Handlingsliste"
 
 #: actions/blocks/action_content_blocks.py
 msgid "Form fields to be shown in addition to Name, Email and Comment fields"
-msgstr "Formulärfält som ska visas utöver fälten Namn, E-post och Kommentar"
+msgstr ""
 
 #: actions/blocks/action_content_blocks.py
 msgid "Feedback can't be required if it's not visible."
-msgstr "Feedback kan inte vara obligatorisk om den inte är synlig."
+msgstr ""
 
 #: actions/blocks/action_content_blocks.py
 msgid "Email can't be required if it's not visible."
-msgstr "E-post kan inte vara obligatorisk om den inte är synlig."
+msgstr ""
 
 #: actions/blocks/action_content_blocks.py
 #: actions/blocks/category_page_layout.py
@@ -591,32 +640,38 @@ msgid "Contact form"
 msgstr "Kontaktformular"
 
 #: actions/blocks/action_content_blocks.py
+#, fuzzy
+#| msgid "Indicator action"
 msgid "Indicator Causal Chain"
 msgstr "Indikator Kausalkæde"
 
 #: actions/blocks/action_content_blocks.py
+#, fuzzy
+#| msgid "What label should be used in the public UI for the official name"
 msgid "What heading should be used in the public UI for the dataset?"
-msgstr ""
-"Hvilken etiket skal bruges i den offentlige brugergrænseflade til det "
-"officielle navn"
+msgstr "Hvilken etiket skal bruges i den offentlige brugergrænseflade til det officielle navn"
 
 #: actions/blocks/action_content_blocks.py
+#, fuzzy
+#| msgid "Set if action identifiers should be visible in the public UI"
 msgid "Help text for the Dataset to be shown in the public UI"
-msgstr ""
-"Indstil, om handlingsidentifikatorer skal være synlige i den offentlige "
-"brugergrænseflade"
+msgstr "Indstil, om handlingsidentifikatorer skal være synlige i den offentlige brugergrænseflade"
 
 #: actions/blocks/action_content_blocks.py
+#, fuzzy
+#| msgid "datasets"
 msgid "Datasets"
 msgstr "datasæt"
 
 #: actions/blocks/action_content_blocks.py
+#, fuzzy
+#| msgid "What label should be used in the public UI for the official name"
 msgid "What label should be used in the public UI for the official name?"
-msgstr ""
-"Hvilken etiket skal bruges i den offentlige brugergrænseflade til det "
-"officielle navn"
+msgstr "Hvilken etiket skal bruges i den offentlige brugergrænseflade til det officielle navn"
 
 #: actions/blocks/action_content_blocks.py
+#, fuzzy
+#| msgid "fields"
 msgid "Field label"
 msgstr "felter"
 
@@ -625,10 +680,14 @@ msgid "Description to show after the field content"
 msgstr "Beskrivelse, der skal vises efter feltets indhold"
 
 #: actions/blocks/action_content_blocks.py
+#, fuzzy
+#| msgid "action"
 msgid "Caption"
 msgstr "handling"
 
 #: actions/blocks/action_content_blocks.py
+#, fuzzy
+#| msgid "official name"
 msgid "Official name"
 msgstr "officielt navn"
 
@@ -637,16 +696,16 @@ msgid "Action highlights"
 msgstr "Handlingshøjdepunkter"
 
 #: actions/blocks/action_list.py
+#, fuzzy
+#| msgid "What label should be used in the public UI for the official name"
 msgid "What heading should be used in the public UI for the Action list?"
-msgstr ""
-"Hvilken etiket skal bruges i den offentlige brugergrænseflade til det "
-"officielle navn"
+msgstr "Hvilken etiket skal bruges i den offentlige brugergrænseflade til det officielle navn"
 
 #: actions/blocks/action_list.py
+#, fuzzy
+#| msgid "Set if action identifiers should be visible in the public UI"
 msgid "Help text for the Action list to be shown in the public UI"
-msgstr ""
-"Indstil, om handlingsidentifikatorer skal være synlige i den offentlige "
-"brugergrænseflade"
+msgstr "Indstil, om handlingsidentifikatorer skal være synlige i den offentlige brugergrænseflade"
 
 #: actions/blocks/action_list.py
 msgid "Filter on category"
@@ -654,13 +713,13 @@ msgstr "Filtrer på kategori"
 
 #: actions/blocks/action_list.py actions/blocks/category_list.py
 msgid "Group by level"
-msgstr "Gruppera efter nivå"
+msgstr ""
 
 #: actions/blocks/action_list.py actions/blocks/category_list.py
+#, fuzzy
+#| msgid "Set if action identifiers should be visible in the public UI"
 msgid "Use category level for tabbed grouping in the public UI"
-msgstr ""
-"Indstil, om handlingsidentifikatorer skal være synlige i den offentlige "
-"brugergrænseflade"
+msgstr "Indstil, om handlingsidentifikatorer skal være synlige i den offentlige brugergrænseflade"
 
 #: actions/blocks/action_list.py
 msgid "Action list"
@@ -688,6 +747,8 @@ msgid "Category list"
 msgstr "Kategoriliste"
 
 #: actions/blocks/category_list.py
+#, fuzzy
+#| msgid "fields"
 msgid "Value field"
 msgstr "felter"
 
@@ -696,45 +757,49 @@ msgid "Category tree map"
 msgstr "Kategori trækort"
 
 #: actions/blocks/category_list.py
+#, fuzzy
+#| msgid "What label should be used in the public UI for the official name"
 msgid "What heading should be used in the public UI for the Category level list?"
-msgstr ""
-"Hvilken etiket skal bruges i den offentlige brugergrænseflade til det "
-"officielle navn"
+msgstr "Hvilken etiket skal bruges i den offentlige brugergrænseflade til det officielle navn"
 
 #: actions/blocks/category_list.py
+#, fuzzy
+#| msgid "Set if action identifiers should be visible in the public UI"
 msgid "Help text for the Category level list to be shown in the public UI"
-msgstr ""
-"Indstil, om handlingsidentifikatorer skal være synlige i den offentlige "
-"brugergrænseflade"
+msgstr "Indstil, om handlingsidentifikatorer skal være synlige i den offentlige brugergrænseflade"
 
 #: actions/blocks/category_list.py
+#, fuzzy
+#| msgid "category level"
 msgid "Filter by level"
 msgstr "kategoriniveau"
 
 #: actions/blocks/category_list.py
 msgid "Kausal Paths target node ID"
-msgstr "Kausal Paths målnods-ID"
+msgstr ""
 
 #: actions/blocks/category_list.py
 msgid "Kausal Paths target node ID used to calculate action impacts. If not set, the default outcome node will be used."
 msgstr ""
-"Kausal Paths målnods-ID som används för att beräkna åtgärdseffekter. Om inte "
-"inställt används standardresultatnoden."
 
 #: actions/blocks/category_list.py
+#, fuzzy
+#| msgid "category levels"
 msgid "Category level list"
 msgstr "kategoriniveauer"
 
 #: actions/blocks/category_page_layout.py
 msgid "Body"
-msgstr "Kropp"
+msgstr ""
 
 #: actions/blocks/category_page_layout.py
 msgid "Basis"
-msgstr "Grund"
+msgstr ""
 
 #: actions/blocks/category_page_layout.py actions/blocks/filters.py
 #: reports/blocks/action_content.py reports/spreadsheets/excel_report.py
+#, fuzzy
+#| msgid "implementation phase"
 msgid "Implementation phase"
 msgstr "implementeringsfasen"
 
@@ -744,6 +809,8 @@ msgid "Status"
 msgstr "Status"
 
 #: actions/blocks/choosers.py
+#, fuzzy
+#| msgid "dataset license"
 msgid "Dataset Schema"
 msgstr "datasætlicens"
 
@@ -761,13 +828,17 @@ msgstr "Hvor mange niveauer af kategorihierarki der skal vises"
 
 #: actions/blocks/filters.py
 msgid "Depth"
-msgstr "Djup"
+msgstr ""
 
 #: actions/blocks/filters.py
+#, fuzzy
+#| msgid "responsible party"
 msgid "Responsible party"
 msgstr "ansvarlig part"
 
 #: actions/blocks/filters.py
+#, fuzzy
+#| msgid "primary organization"
 msgid "Primary organization"
 msgstr "primær organisation"
 
@@ -778,10 +849,14 @@ msgid "Plan"
 msgstr "Plan"
 
 #: actions/blocks/filters.py
+#, fuzzy
+#| msgid "Scheduled"
 msgid "Schedule"
 msgstr "Planlagt"
 
 #: actions/blocks/filters.py reports/report_formatters.py
+#, fuzzy
+#| msgid "continuous action"
 msgid "Continuous Action"
 msgstr "Kontinuerlig handling"
 
@@ -814,28 +889,28 @@ msgid "in side column"
 msgstr "i sidesøjle"
 
 #: actions/blocks/paths_content.py
+#, fuzzy
+#| msgid "What label should be used in the public UI for the official name"
 msgid "What heading should be used in the public UI for the Outcome?"
-msgstr ""
-"Hvilken etiket skal bruges i den offentlige brugergrænseflade til det "
-"officielle navn"
+msgstr "Hvilken etiket skal bruges i den offentlige brugergrænseflade til det officielle navn"
 
 #: actions/blocks/paths_content.py
+#, fuzzy
+#| msgid "Set if action identifiers should be visible in the public UI"
 msgid "Help text for the Outcome to be shown in the public UI"
-msgstr ""
-"Indstil, om handlingsidentifikatorer skal være synlige i den offentlige "
-"brugergrænseflade"
+msgstr "Indstil, om handlingsidentifikatorer skal være synlige i den offentlige brugergrænseflade"
 
 #: actions/blocks/paths_content.py
 msgid "Kausal Paths outcome node ID"
-msgstr "Kausal Paths resultatnods-ID"
+msgstr ""
 
 #: actions/blocks/paths_content.py
 msgid "Kausal Paths outcome node to be used"
-msgstr "Kausal Paths resultatnod att använda"
+msgstr ""
 
 #: actions/blocks/paths_content.py
 msgid "Paths outcome"
-msgstr "Paths-resultat"
+msgstr ""
 
 #: actions/category_admin.py
 msgid "Common category type"
@@ -850,6 +925,8 @@ msgid "Action and indicator categorization"
 msgstr "Handlings- og indikatorkategorisering"
 
 #: actions/category_admin.py
+#, fuzzy
+#| msgid "category levels"
 msgid "Category levels"
 msgstr "kategoriniveauer"
 
@@ -861,8 +938,6 @@ msgstr "Der er allerede en kategori med denne identifikator."
 #, python-format
 msgid "While editing this category type you have switched to a different plan. This category type was still saved with the original plan \"%s\"."
 msgstr ""
-"Mens du redigerede denne kategoritype, skiftede du til en anden plan. "
-"Kategoritypen blev alligevel gemt med den oprindelige plan \"%s\"."
 
 #: actions/category_admin.py
 msgid "Icons"
@@ -876,7 +951,7 @@ msgstr "Indikatorer"
 
 #: actions/category_admin.py
 msgid "Type"
-msgstr "Typ"
+msgstr ""
 
 #: actions/category_admin.py
 msgid "Common category types"
@@ -903,6 +978,8 @@ msgid "Choose another category type"
 msgstr "Vælg en anden kategoritype"
 
 #: actions/chooser.py
+#, fuzzy
+#| msgid "Choose a category"
 msgid "Choose a category level"
 msgstr "Vælg en kategori"
 
@@ -923,18 +1000,26 @@ msgid "Choose another plan"
 msgstr "Vælg en anden plan"
 
 #: actions/chooser.py
+#, fuzzy
+#| msgid "Choose a plan"
 msgid "Choose a field"
 msgstr "Vælg en plan"
 
 #: actions/chooser.py
+#, fuzzy
+#| msgid "Choose another plan"
 msgid "Choose another field"
 msgstr "Vælg en anden plan"
 
 #: actions/chooser.py
+#, fuzzy
+#| msgid "Choose a category type"
 msgid "Choose a dataset schema"
 msgstr "Vælg en kategoritype"
 
 #: actions/chooser.py
+#, fuzzy
+#| msgid "Choose another attribute"
 msgid "Choose another dataset schema"
 msgstr "Vælg en anden attribut"
 
@@ -1041,6 +1126,8 @@ msgid "specifier for status"
 msgstr "specifikation for status"
 
 #: actions/models/action.py
+#, fuzzy
+#| msgid "Describe the reason why this action has has this status"
 msgid "Describe the reason why this action has this status"
 msgstr "Beskriv årsagen til, at denne handling har denne status"
 
@@ -1119,15 +1206,14 @@ msgid "The date when implementation of this action ends"
 msgstr "Den dato, hvor implementeringen af denne handling slutter"
 
 #: actions/models/action.py
+#, fuzzy
+#| msgid "Contact form"
 msgid "Date format"
 msgstr "Kontaktformular"
 
 #: actions/models/action.py
 msgid "Format of action start and end dates shown in the public UI.             The default for all actions can be specified on the actions page."
 msgstr ""
-"Format för åtgärdens start- och slutdatum som visas i det publika "
-"användargränssnittet.             Standardinställningen för alla åtgärder "
-"kan anges på sidan för åtgärder."
 
 #: actions/models/action.py
 msgctxt "action"
@@ -1141,21 +1227,24 @@ msgstr "Indstil hvis denne handling er afløst af en anden handling"
 #: actions/models/action.py
 msgctxt "action"
 msgid "copy of"
-msgstr "kopia av"
+msgstr ""
 
 #: actions/models/action.py
+#, fuzzy
+#| msgid "Set if this action is superseded by another action"
 msgid "Set if this action has been created by copying another action"
 msgstr "Indstil hvis denne handling er afløst af en anden handling"
 
 #: actions/models/action.py
+#, fuzzy
 msgid "Role in dependencies"
 msgstr "Rolle i afhængigheder"
 
 #: actions/models/action.py
+#, fuzzy
+#| msgid "Set if this action is merged with another action"
 msgid "Set if this action has the same role in all its dependency relationships with other actions"
-msgstr ""
-"Indstilles, hvis denne handling har samme rolle i alle sine "
-"afhængighedsforhold med andre handlinger"
+msgstr "Indstilles, hvis denne handling har samme rolle i alle sine afhængighedsforhold med andre handlinger"
 
 #: actions/models/action.py
 msgctxt "partitive"
@@ -1163,11 +1252,15 @@ msgid "action"
 msgstr "handling"
 
 #: actions/models/action.py
+#, fuzzy
+#| msgid "action"
 msgctxt "Action model"
 msgid "action"
 msgstr "handling"
 
 #: actions/models/action.py
+#, fuzzy
+#| msgid "actions"
 msgctxt "Action model"
 msgid "actions"
 msgstr "handlinger"
@@ -1182,7 +1275,7 @@ msgstr "Anden handling er sammenkoblet med denne"
 
 #: actions/models/action.py
 msgid "Lead paragraph is not allowed for actions in this plan"
-msgstr "Ingress är inte tillåten för åtgärder i denna plan"
+msgstr ""
 
 #: actions/models/action.py
 msgid "Has contact persons"
@@ -1205,15 +1298,12 @@ msgstr "Markerede handling '%(action)s' som fuldført for rapport '%(report)s'"
 #: actions/models/action.py
 #, python-format
 msgid "Cannot undo marking action as complete as there are %s snapshots"
-msgstr ""
-"Kan ikke fortryde markering af handling som fuldført, da der er %s snapshots"
+msgstr "Kan ikke fortryde markering af handling som fuldført, da der er %s snapshots"
 
 #: actions/models/action.py
 #, python-format
 msgid "Undid marking action '%(action)s' as complete for report '%(report)s'"
-msgstr ""
-"Fortryder markering af handling '%(action)s' som fuldført for rapport '%"
-"(report)s'"
+msgstr "Fortryder markering af handling '%(action)s' som fuldført for rapport '%(report)s'"
 
 #: actions/models/action.py reports/blocks/action_content.py
 #: reports/report_formatters.py
@@ -1250,10 +1340,14 @@ msgid "action responsible parties"
 msgstr "handlingsansvarlige parter"
 
 #: actions/models/action.py
+#, fuzzy
+#| msgid "Edit"
 msgid "Editor"
 msgstr "Redigere"
 
 #: actions/models/action.py
+#, fuzzy
+#| msgid "operational"
 msgid "Moderator"
 msgstr "operationelle"
 
@@ -1332,7 +1426,7 @@ msgstr "stat"
 
 #: actions/models/action.py
 msgid "details"
-msgstr "detaljer"
+msgstr ""
 
 #: actions/models/action.py
 msgid "due date"
@@ -1343,15 +1437,14 @@ msgid "The date by which the task should be completed (deadline)"
 msgstr "Den dato, hvor opgaven skal være afsluttet (deadline)"
 
 #: actions/models/action.py
+#, fuzzy
+#| msgid "updated at"
 msgid "Due date format"
 msgstr "opdateret kl"
 
 #: actions/models/action.py
 msgid "Format of action task due dates shown in the public UI.             The default for all actions can be specified on the actions page."
 msgstr ""
-"Format för åtgärdens förfallodatum som visas i det offentliga "
-"användargränssnittet.             Standardinställningen för alla åtgärder "
-"kan anges på sidan för åtgärder."
 
 #: actions/models/action.py
 msgid "completion date"
@@ -1404,6 +1497,8 @@ msgid "action impact classes"
 msgstr "handlingsindvirkningsklasser"
 
 #: actions/models/action.py
+#, fuzzy
+#| msgid "action"
 msgctxt "action model"
 msgid "action"
 msgstr "handling"
@@ -1426,19 +1521,27 @@ msgid "action links"
 msgstr "handlingslinks"
 
 #: actions/models/action.py pages/models.py
+#, fuzzy
+#| msgid "dimensions"
 msgid "revision"
 msgstr "dimensioner"
 
 #: actions/models/action.py pages/models.py
+#, fuzzy
+#| msgid "Changes were saved"
 msgid "The revision this change history message is associated with"
 msgstr "Ændringer blev gemt"
 
 #: actions/models/action.py
+#, fuzzy
+#| msgid "Action schedules"
 msgctxt "verbose name of model"
 msgid "action change history message"
 msgstr "Handlingsplaner"
 
 #: actions/models/action.py
+#, fuzzy
+#| msgid "Action schedules"
 msgctxt "verbose name plural of model"
 msgid "action change history messages"
 msgstr "Handlingsplaner"
@@ -1450,10 +1553,14 @@ msgid "indicator"
 msgstr "indikator"
 
 #: actions/models/action.py
+#, fuzzy
+#| msgid "Indicator list page"
 msgid "indicator change history message"
 msgstr "Indikatorer tildelt mig"
 
 #: actions/models/action.py
+#, fuzzy
+#| msgid "Indicator list page"
 msgid "indicator change history messages"
 msgstr "Indikatorer tildelt mig"
 
@@ -1462,10 +1569,14 @@ msgid "category"
 msgstr "kategori"
 
 #: actions/models/action.py
+#, fuzzy
+#| msgid "Category type pages"
 msgid "category change history message"
 msgstr "Kategoritype sider"
 
 #: actions/models/action.py
+#, fuzzy
+#| msgid "Category type pages"
 msgid "category change history messages"
 msgstr "Kategoritype sider"
 
@@ -1506,18 +1617,25 @@ msgid "Approve"
 msgstr "Godkend"
 
 #: actions/models/action.py
+#, fuzzy
+#| msgid "Save changes"
 msgid "Request changes"
 msgstr "Gem ændringer"
 
 #: actions/models/action_deps.py
+#, fuzzy
+#| msgid "Recent actions"
 msgid "Preceding action"
 msgstr "Forudgående handling"
 
 #: actions/models/action_deps.py
+#, fuzzy
+#| msgid "Recent actions"
 msgid "Dependent action"
 msgstr "Afhængig handling"
 
 #: actions/models/action_deps.py
+#, fuzzy
 msgid "Maximum dependency chain length exceeded."
 msgstr "Maksimal afhængighedskædelængde overskredet."
 
@@ -1547,7 +1665,7 @@ msgstr "Format"
 
 #: actions/models/attributes.py
 msgid "The format of the fields with this type"
-msgstr "Formatet för fälten med denna typ"
+msgstr ""
 
 #: actions/models/attributes.py
 msgid "Unit (only if format is numeric)"
@@ -1558,10 +1676,10 @@ msgid "Category type (if format is category)"
 msgstr "Kategoritype (hvis format er kategori)"
 
 #: actions/models/attributes.py
+#, fuzzy
+#| msgid "If the format is \"Category\", choose which category type the attribute values can be chosen from"
 msgid "If the format is \"Category\", choose which category type the field values can be chosen from"
-msgstr ""
-"Hvis formatet er \"Kategori\", skal du vælge hvilken kategoritype "
-"attributværdierne kan vælges fra"
+msgstr "Hvis formatet er \"Kategori\", skal du vælge hvilken kategoritype attributværdierne kan vælges fra"
 
 #: actions/models/attributes.py
 msgid "show choice names"
@@ -1577,9 +1695,7 @@ msgstr "har nul mulighed"
 
 #: actions/models/attributes.py
 msgid "If the format is \"ordered choice\", determines whether the first option is displayed with zero bullets instead of one"
-msgstr ""
-"Hvis formatet er \"ordret valg\", afgør, om den første mulighed vises med "
-"nul punkttegn i stedet for én"
+msgstr "Hvis formatet er \"ordret valg\", afgør, om den første mulighed vises med nul punkttegn i stedet for én"
 
 #: actions/models/attributes.py
 msgid "character limit for text fields"
@@ -1590,10 +1706,14 @@ msgid "show in reporting tab"
 msgstr "vis i rapporteringsfanen"
 
 #: actions/models/attributes.py
+#, fuzzy
+#| msgid "Icons"
 msgid "Icon"
 msgstr "Ikoner"
 
 #: actions/models/attributes.py admin_site/models.py
+#, fuzzy
+#| msgid "fields"
 msgid "field"
 msgstr "felter"
 
@@ -1602,20 +1722,26 @@ msgid "fields"
 msgstr "felter"
 
 #: actions/models/attributes.py
+#, fuzzy
+#| msgid "Unit must only be used for numeric attribute types"
 msgid "A unit may only be set for numeric fields."
 msgstr "Enhed må kun bruges til numeriske attributtyper"
 
 #: actions/models/attributes.py
+#, fuzzy
+#| msgid "If no primary language is set, there must not be other languages"
 msgid "If no primary language is set, there may not be other languages."
 msgstr "Hvis der ikke er angivet et primært sprog, må der ikke være andre sprog"
 
 #: actions/models/attributes.py
+#, fuzzy
+#| msgid "Unit must only be used for numeric attribute types"
 msgid "This value is only allowed for action fields."
 msgstr "Enhed må kun bruges til numeriske attributtyper"
 
 #: actions/models/attributes.py
 msgid "The icon must be an SVG file."
-msgstr "Ikonen måste vara en SVG-fil."
+msgstr ""
 
 #: actions/models/attributes.py
 msgid "attribute choice option"
@@ -1626,6 +1752,8 @@ msgid "attribute choice options"
 msgstr "valgmuligheder for attributter"
 
 #: actions/models/attributes.py
+#, fuzzy
+#| msgid "minimum value"
 msgid "Missing value"
 msgstr "minimumsværdi"
 
@@ -1672,9 +1800,7 @@ msgstr "enkelt eller flere valg"
 #: actions/models/category.py
 #, python-brace-format
 msgid "Choose \"{choice_multiple}\" only if more than one category can be selected at a time, otherwise choose \"{choice_single}\" which is the default."
-msgstr ""
-"Vælg kun \"{choice_multiple}\", hvis mere end en kategori kan vælges ad "
-"gangen, ellers vælg \"{choice_single}\", som er standarden."
+msgstr "Vælg kun \"{choice_multiple}\", hvis mere end en kategori kan vælges ad gangen, ellers vælg \"{choice_single}\", som er standarden."
 
 #: actions/models/category.py
 msgid "has a collection"
@@ -1685,6 +1811,8 @@ msgid "Set if this category type should have its own collection for images"
 msgstr "Indstil om denne kategoritype skal have sin egen samling til billeder"
 
 #: actions/models/category.py
+#, fuzzy
+#| msgid "Primary language"
 msgid "primary language"
 msgstr "Primære sprog"
 
@@ -1713,6 +1841,8 @@ msgid "category types"
 msgstr "kategorityper"
 
 #: actions/models/category.py
+#, fuzzy
+#| msgid "Choose another category type"
 msgid "This value is not allowed for category types"
 msgstr "Vælg en anden kategoritype"
 
@@ -1742,17 +1872,19 @@ msgstr "Indstil hvis kategorien har en temafarve"
 
 #: actions/models/category.py
 msgid "Kausal Paths node UUID"
-msgstr "Kausal Paths nod-UUID"
+msgstr ""
 
 #: actions/models/category.py
 msgid "Kausal Paths node to link this category to"
-msgstr "Kausal Paths-nod att länka denna kategori till"
+msgstr ""
 
 #: actions/models/category.py
 msgid "common category"
 msgstr "fælles kategori"
 
 #: actions/models/category.py
+#, fuzzy
+#| msgid "Common categories"
 msgid "common categories"
 msgstr "Fælles kategorier"
 
@@ -1762,8 +1894,7 @@ msgstr "forældrekategori"
 
 #: actions/models/category.py
 msgid "Parent forms a loop. Leave empty if top-level category."
-msgstr ""
-"Forælder danner en løkke. Lad være tom, hvis kategorien er på øverste niveau."
+msgstr "Forælder danner en løkke. Lad være tom, hvis kategorien er på øverste niveau."
 
 #: actions/models/category.py
 msgid "Parent must be of same type"
@@ -1774,42 +1905,61 @@ msgid "Subcategories"
 msgstr "Underkategorier"
 
 #: actions/models/category.py
+#, fuzzy
+#| msgid "Has goals"
 msgid "Main goal"
 msgstr "Har mål"
 
 #: actions/models/category.py
+#, fuzzy
+#| msgid "indicator goal"
 msgid "Secondary goal"
 msgstr "indikator mål"
 
 #: actions/models/category.py
+#, fuzzy
+#| msgid "Indicator for actions"
 msgid "indicator category relationship"
 msgstr "Indikator for handlinger"
 
 #: actions/models/category.py
+#, fuzzy
+#| msgid "Indicator for actions"
 msgid "indicator category relationships"
 msgstr "Indikator for handlinger"
 
 #: actions/models/features.py
+#, fuzzy
+#| msgid "No filtering"
 msgid "No ordering"
 msgstr "Ingen filtrering"
 
 #: actions/models/features.py
+#, fuzzy
+#| msgid "verbose name"
 msgid "Order by name"
 msgstr "udførligt navn"
 
 #: actions/models/features.py
+#, fuzzy
+#| msgid "indicator contact persons"
 msgid "Do not show contact persons publicly"
 msgstr "indikator kontaktpersoner"
 
 #: actions/models/features.py
+#, fuzzy
+#| msgid "Show only un-merged actions"
 msgid "Show only name, role and affiliation"
 msgstr "Vis kun ikke-sammenkoblede handlinger"
 
 #: actions/models/features.py
+#, fuzzy
+#| msgid "Show all actions"
 msgid "Show all information"
 msgstr "Vis alle handlinger"
 
 #: actions/models/features.py
+#, fuzzy
 msgid "Show all information but only for authenticated users"
 msgstr "Vis alle oplysninger, men kun for godkendte brugere"
 
@@ -1831,63 +1981,67 @@ msgstr "Skal den offentlige hjemmeside indeholde et link til admin-login?"
 
 #: actions/models/features.py
 msgid "Allow logging in to the public website"
-msgstr "Tillåt inloggning på den offentliga webbplatsen"
+msgstr ""
 
 #: actions/models/features.py
 msgid "Should users be able to have authenticated sessions in the public UI?"
 msgstr ""
-"Ska användare kunna ha autentiserade sessioner i det publika "
-"användargränssnittet?"
 
 #: actions/models/features.py
+#, fuzzy
 msgid "Expose unpublished plan only to authenticated users"
 msgstr "Vis alle oplysninger, men kun for godkendte brugere"
 
 #: actions/models/features.py
 msgid "Should the plan be exposed only to authenticated users if not published?"
 msgstr ""
-"Ska användare kunna ha autentiserade sessioner i det publika "
-"användargränssnittet?"
 
 #: actions/models/features.py
+#, fuzzy
+#| msgid "indicator contact persons"
 msgid "Publicly visible data about contact persons"
 msgstr "indikator kontaktpersoner"
 
 #: actions/models/features.py
+#, fuzzy
+#| msgid "Set if the contact persons should be visible in the public UI"
 msgid "Choose which information about contact persons is visible in the public UI"
-msgstr ""
-"Indstil om kontaktpersonerne skal være synlige i den offentlige "
-"brugergrænseflade"
+msgstr "Indstil om kontaktpersonerne skal være synlige i den offentlige brugergrænseflade"
 
 #: actions/models/features.py
+#, fuzzy
+#| msgid "indicator contact persons"
 msgid "Show profile pictures for contact persons"
 msgstr "indikator kontaktpersoner"
 
 #: actions/models/features.py
+#, fuzzy
+#| msgid "Set if the contact persons should be visible in the public UI"
 msgid "Should profile pictures be shown for contact persons in the public UI?"
-msgstr ""
-"Indstil om kontaktpersonerne skal være synlige i den offentlige "
-"brugergrænseflade"
+msgstr "Indstil om kontaktpersonerne skal være synlige i den offentlige brugergrænseflade"
 
 #: actions/models/features.py
+#, fuzzy
+#| msgid "Show only actions with me as a contact person"
 msgid "Show organization ancestors in contact details of contact persons"
 msgstr "Vis organisationsforfædre i kontaktoplysninger på kontaktpersoner"
 
 #: actions/models/features.py
+#, fuzzy
 msgid "When displaying a contact person's contact details, should the contact person's organization be displayed along with all its ancestors?"
-msgstr ""
-"Når man viser en kontaktpersons kontaktoplysninger, skal kontaktpersonens "
-"organisation så vises sammen med alle dens forfædre?"
+msgstr "Når man viser en kontaktpersons kontaktoplysninger, skal kontaktpersonens organisation så vises sammen med alle dens forfædre?"
 
 #: actions/models/features.py
+#, fuzzy
+#| msgid "indicator contact persons"
 msgid "Hide moderators from the contact persons"
 msgstr "indikator kontaktpersoner"
 
 #: actions/models/features.py
+#, fuzzy
+#| msgid "Set if the contact persons should be visible in the public UI"
 msgid "Should moderators be hidden from the visible contact persons in the public UI?"
-msgstr ""
-"Indstil om kontaktpersonerne skal være synlige i den offentlige "
-"brugergrænseflade"
+msgstr "Indstil om kontaktpersonerne skal være synlige i den offentlige brugergrænseflade"
 
 #: actions/models/features.py
 msgid "Has action identifiers"
@@ -1903,29 +2057,27 @@ msgstr "Vis handlingsidentifikatorer"
 
 #: actions/models/features.py
 msgid "Set if action identifiers should be visible in the public UI"
-msgstr ""
-"Indstil, om handlingsidentifikatorer skal være synlige i den offentlige "
-"brugergrænseflade"
+msgstr "Indstil, om handlingsidentifikatorer skal være synlige i den offentlige brugergrænseflade"
 
 #: actions/models/features.py
+#, fuzzy
+#| msgid "action contact persons"
 msgid "Action contact persons have different roles"
 msgstr "handling kontaktpersoner"
 
 #: actions/models/features.py
 msgid "Set if there are separate contact persons with publishing rights and others who can only suggest changes"
-msgstr ""
-"Indstil, om der er separate kontaktpersoner med udgivelsesrettigheder og "
-"andre, der kun kan foreslå ændringer"
+msgstr "Indstil, om der er separate kontaktpersoner med udgivelsesrettigheder og andre, der kun kan foreslå ændringer"
 
 #: actions/models/features.py
+#, fuzzy
+#| msgid "action statuses"
 msgid "Minimal statuses"
 msgstr "handlingsstatusser"
 
 #: actions/models/features.py
 msgid "Set to prevent showing status-specific graphs and other elements if statuses aren't systematically used in this action plan"
-msgstr ""
-"Indstillet til at forhindre visning af statusspecifikke grafer og andre "
-"elementer, hvis statusser ikke bruges systematisk i denne handlingsplan"
+msgstr "Indstillet til at forhindre visning af statusspecifikke grafer og andre elementer, hvis statusser ikke bruges systematisk i denne handlingsplan"
 
 #: actions/models/features.py
 msgid "Has action official name field"
@@ -1944,14 +2096,16 @@ msgid "Set if the plan uses the lead paragraph field"
 msgstr "Indstil, hvis planen bruger feltet for hovedafsnit"
 
 #: actions/models/features.py
+#, fuzzy
+#| msgid "Has primary organisations for actions"
 msgid "Has primary organizations for actions"
 msgstr "Har primære organisationer for handlinger"
 
 #: actions/models/features.py
+#, fuzzy
+#| msgid "Set if actions have a clear primary organisation (such as multi-city plans)"
 msgid "Set if actions have a clear primary organization (such as multi-city plans)"
-msgstr ""
-"Indstil, hvis handlinger har en klar primær organisation (såsom planer for "
-"flere byer)"
+msgstr "Indstil, hvis handlinger har en klar primær organisation (såsom planer for flere byer)"
 
 #: actions/models/features.py
 msgid "Enable site search"
@@ -1967,76 +2121,83 @@ msgstr "Aktiver indikatorsammenligning"
 
 #: actions/models/features.py
 msgid "Set to enable comparing indicators between organizations"
-msgstr ""
-"Indstil til at muliggøre sammenligning af indikatorer mellem organisationer"
+msgstr "Indstil til at muliggøre sammenligning af indikatorer mellem organisationer"
 
 #: actions/models/features.py
+#, fuzzy
+#| msgid "Indicator data"
 msgid "Indicator order"
 msgstr "Indikatordata"
 
 #: actions/models/features.py
+#, fuzzy
+#| msgid "indicator contact persons"
 msgid "Choose how to order indicators in the action pages"
 msgstr "send til indikatorens kontaktpersoner"
 
 #: actions/models/features.py
+#, fuzzy
+#| msgid "Set to enable drafting and reviewing functionality"
 msgid "Set to enable drafting and reviewing functionality and choose the desired workflow for reviewing"
 msgstr "Indstillet til at aktivere kladde- og gennemgangsfunktionalitet"
 
 #: actions/models/features.py
 msgid "Display field visibility as a label in edit views"
-msgstr "Visa fältets synlighet som en etikett i redigeringsvyer"
+msgstr ""
 
 #: actions/models/features.py
 msgid "For plans which have field-specific visibility restrictions, show to users which fields are public and which are restricted."
 msgstr ""
-"För planer som har fältspecifika synlighetsbegränsningar, visa användarna "
-"vilka fält som är offentliga och vilka som är begränsade."
 
 #: actions/models/features.py
+#, fuzzy
 msgid "Include action print layout in reports"
 msgstr "Inkluder handlingsprintlayout i rapporter"
 
 #: actions/models/features.py
+#, fuzzy
 msgid "In the report spreadsheet output, include a sheet with all actions in a layout optimized for printing."
-msgstr ""
-"I rapportens regnearksoutput skal du inkludere et ark med alle handlinger i "
-"et layout, der er optimeret til udskrivning."
+msgstr "I rapportens regnearksoutput skal du inkludere et ark med alle handlinger i et layout, der er optimeret til udskrivning."
 
 #: actions/models/features.py
+#, fuzzy
 msgid "Password protected"
 msgstr "Beskyttet med adgangskode"
 
 #: actions/models/features.py
+#, fuzzy
 msgid "Is this plan password protected?"
 msgstr "Er denne plan beskyttet med adgangskode?"
 
 #: actions/models/features.py
+#, fuzzy
+#| msgid "Indicator dimensions"
 msgid "Indicators open in modal"
 msgstr "Indikator dimensioner"
 
 #: actions/models/features.py
+#, fuzzy
+#| msgid "Set if the contact persons should be visible in the public UI"
 msgid "Should indicators open only in a modal dialog in the public UI?"
-msgstr ""
-"Indstil om kontaktpersonerne skal være synlige i den offentlige "
-"brugergrænseflade"
+msgstr "Indstil om kontaktpersonerne skal være synlige i den offentlige brugergrænseflade"
 
 #: actions/models/features.py
+#, fuzzy
+#| msgid "category levels"
 msgid "Enable change history messages"
 msgstr "kategoriniveauer"
 
 #: actions/models/features.py
 msgid "Prompt users to add a public change history message after editing actions, indicators, or categories."
 msgstr ""
-"Uppmana användare att lägga till ett offentligt ändringshistorikmeddelande "
-"efter redigering av åtgärder, indikatorer eller kategorier."
 
 #: actions/models/features.py
 msgid "Enable community engagement"
-msgstr "Aktivera medborgarengagemang"
+msgstr ""
 
 #: actions/models/features.py
 msgid "Enable community engagement features such as pledges for this plan."
-msgstr "Aktivera medborgarengagemangsfunktioner som åtaganden för denna plan."
+msgstr ""
 
 #: actions/models/features.py
 msgid "plan feature"
@@ -2055,22 +2216,28 @@ msgid "Customer use"
 msgstr "Kundebrug"
 
 #: actions/models/plan.py
+#, fuzzy
 msgid "Sales and demos"
 msgstr "Salg og demoer"
 
 #: actions/models/plan.py
+#, fuzzy
 msgid "Internal testing, training, development or other non-public use"
 msgstr "Intern testning, træning, udvikling eller anden ikke-offentlig brug"
 
 #: actions/models/plan.py
+#, fuzzy
+#| msgid "in progress"
 msgid "Offboarding in progress"
 msgstr "Offboarding i gang"
 
 #: actions/models/plan.py
+#, fuzzy
 msgid "Inactive, not in use currently"
 msgstr "Inaktiv, ikke i brug i øjeblikket"
 
 #: actions/models/plan.py
+#, fuzzy
 msgid "Deprecated, should be deleted"
 msgstr "Forældet, bør slettes"
 
@@ -2079,11 +2246,10 @@ msgid "The official plan name in full form"
 msgstr "Det officielle plannavn i fuld form"
 
 #: actions/models/plan.py
+#, fuzzy
+#| msgid "An unique identifier for the plan used internally to distinguish between plans. This becomes part of the test site URL: https://&lt;plan-identifier&gt;.test.kausal.tech. Use lowercase letters and dashes."
 msgid "A unique identifier for the plan used internally to distinguish between plans. This becomes part of the test site URL: https://[identifier].watch-test.kausal.tech. Use lowercase letters and dashes."
-msgstr ""
-"En unik identifikator for planen, der bruges internt til at skelne mellem "
-"planer. Dette bliver en del af testwebstedets URL: https://&lt;plan-"
-"identifier&gt;.test.kausal.tech. Brug små bogstaver og bindestreger."
+msgstr "En unik identifikator for planen, der bruges internt til at skelne mellem planer. Dette bliver en del af testwebstedets URL: https://&lt;plan-identifier&gt;.test.kausal.tech. Brug små bogstaver og bindestreger."
 
 #: actions/models/plan.py indicators/models/metadata.py
 msgid "short name"
@@ -2094,14 +2260,14 @@ msgid "A shorter version of the plan name"
 msgstr "En kortere version af planens navn"
 
 #: actions/models/plan.py
+#, fuzzy
+#| msgid "identifier"
 msgid "short identifier"
 msgstr "identifikator"
 
 #: actions/models/plan.py
 msgid "A unique short identifier for the plan to be shown in the UI. Could be, e.g., a number or an abbreviation."
 msgstr ""
-"En unik kort identifierare för planen som ska visas i gränssnittet. Kan "
-"t.ex. vara ett nummer eller en förkortning."
 
 #: actions/models/plan.py
 msgid "version name"
@@ -2120,24 +2286,25 @@ msgid "archived at"
 msgstr "arkiveret kl"
 
 #: actions/models/plan.py
+#, fuzzy
+#| msgid "status"
 msgid "Usage status"
 msgstr "Status for brug"
 
 #: actions/models/plan.py
+#, fuzzy
 msgid "If unsure, use the default value representing customer use. For statistical purposes specify what the plan will be used for in order to differentiate between plans actually in use by customers and those created for some other reason."
-msgstr ""
-"Hvis du er usikker, skal du bruge standardværdien, der repræsenterer "
-"kundebrug. Til statistiske formål skal du angive, hvad planen skal bruges "
-"til for at kunne skelne mellem planer, der faktisk bruges af kunder, og dem, "
-"der er oprettet af andre årsager."
+msgstr "Hvis du er usikker, skal du bruge standardværdien, der repræsenterer kundebrug. Til statistiske formål skal du angive, hvad planen skal bruges til for at kunne skelne mellem planer, der faktisk bruges af kunder, og dem, der er oprettet af andre årsager."
 
 #: actions/models/plan.py
+#, fuzzy
+#| msgid "Exclude from plan"
 msgid "exclude from search"
 msgstr "Udeluk fra planen"
 
 #: actions/models/plan.py
 msgid "Should information related to the plan be excluded from search results?"
-msgstr "Ska information relaterad till planen uteslutas från sökresultat?"
+msgstr ""
 
 #: actions/models/plan.py
 msgid "site URL"
@@ -2152,6 +2319,8 @@ msgid "Can actions be added and the official metadata edited?"
 msgstr "Kan handlinger tilføjes og de officielle metadata redigeres?"
 
 #: actions/models/plan.py
+#, fuzzy
+#| msgid "main organization for the plan"
 msgid "The main organization for the plan"
 msgstr "hovedorganisation for planen"
 
@@ -2164,6 +2333,8 @@ msgid "Persons that can modify everything related to the action plan"
 msgstr "Personer, der kan ændre alt relateret til handlingsplanen"
 
 #: actions/models/plan.py
+#, fuzzy
+#| msgid "URL to accessibility statement"
 msgid "Link to accessibility statement"
 msgstr "URL til tilgængelighedserklæring"
 
@@ -2173,10 +2344,7 @@ msgstr "Link til ekstern feedbackformular"
 
 #: actions/models/plan.py
 msgid "If not empty, the system's built-in user feedback feature will be replaced by a link to an external feedback form available at this web address."
-msgstr ""
-"Hvis den ikke er tom, vil systemets indbyggede brugerfeedbackfunktion blive "
-"erstattet af et link til en ekstern feedbackformular, der findes på denne "
-"webadresse."
+msgstr "Hvis den ikke er tom, vil systemets indbyggede brugerfeedbackfunktion blive erstattet af et link til en ekstern feedbackformular, der findes på denne webadresse."
 
 #: actions/models/plan.py
 msgid "Theme identifier"
@@ -2188,6 +2356,8 @@ msgid "parent"
 msgstr "forælder"
 
 #: actions/models/plan.py
+#, fuzzy
+#| msgid "The primary action classification"
 msgid "Primary action classification"
 msgstr "Klassificering af primær handling"
 
@@ -2196,14 +2366,14 @@ msgid "Used for primary navigation and grouping of actions"
 msgstr "Bruges til primær navigation og gruppering af handlinger"
 
 #: actions/models/plan.py
+#, fuzzy
+#| msgid "A secondary action classification"
 msgid "Secondary action classification"
 msgstr "Klassificering af sekundær handling"
 
 #: actions/models/plan.py
 msgid "Leave empty unless specifically required. Action filters based on this category are displayed more prominently than filters of other categories."
-msgstr ""
-"Lad være tom, medmindre det specifikt kræves. Handlingsfiltre baseret på "
-"denne kategori vises mere fremtrædende end filtre fra andre kategorier."
+msgstr "Lad være tom, medmindre det specifikt kræves. Handlingsfiltre baseret på denne kategori vises mere fremtrædende end filtre fra andre kategorier."
 
 #: actions/models/plan.py
 msgid "Days until actions considered stale"
@@ -2211,8 +2381,7 @@ msgstr "Dage indtil handlinger betragtes som forældede"
 
 #: actions/models/plan.py
 msgid "Actions not updated since this many days are considered stale."
-msgstr ""
-"Handlinger, der ikke er opdateret, da så mange dage betragtes som forældede."
+msgstr "Handlinger, der ikke er opdateret, da så mange dage betragtes som forældede."
 
 #: actions/models/plan.py
 msgid "Target interval in days to update actions"
@@ -2220,9 +2389,7 @@ msgstr "Målinterval i dage for at opdatere handlinger"
 
 #: actions/models/plan.py
 msgid "A desirable time interval in days within which actions should be updated in the optimal case."
-msgstr ""
-"Et ønskeligt tidsinterval i dage, inden for hvilket handlinger skal "
-"opdateres i det optimale tilfælde."
+msgstr "Et ønskeligt tidsinterval i dage, inden for hvilket handlinger skal opdateres i det optimale tilfælde."
 
 #: actions/models/plan.py
 msgid "Acceptable interval in days to update actions"
@@ -2230,9 +2397,7 @@ msgstr "Acceptabelt interval i dage til opdatering af handlinger"
 
 #: actions/models/plan.py
 msgid "A maximum time interval in days within which actions should always be updated."
-msgstr ""
-"Et maksimalt tidsinterval i dage, inden for hvilket handlinger altid skal "
-"opdateres."
+msgstr "Et maksimalt tidsinterval i dage, inden for hvilket handlinger altid skal opdateres."
 
 #: actions/models/plan.py
 msgctxt "plan"
@@ -2246,27 +2411,31 @@ msgstr "Indstil, hvis denne plan er afløst af en anden plan"
 #: actions/models/plan.py
 msgctxt "plan"
 msgid "copy of"
-msgstr "kopia av"
+msgstr ""
 
 #: actions/models/plan.py
+#, fuzzy
+#| msgid "Set if this plan is superseded by another plan"
 msgid "Set if this plan has been created by copying another plan"
 msgstr "Indstil, hvis denne plan er afløst af en anden plan"
 
 #: actions/models/plan.py
 msgid "Kausal Paths instance UUID"
-msgstr "Kausal Paths instans-UUID"
+msgstr ""
 
 #: actions/models/plan.py
 msgid "UUID of the corresponding Kausal Paths instance for Kausal Paths integration"
-msgstr "UUID för motsvarande Kausal Paths-instans för Kausal Paths-integration"
+msgstr ""
 
 #: actions/models/plan.py
+#, fuzzy
+#| msgid "in active plan"
 msgid "is active"
 msgstr "i aktiv plan"
 
 #: actions/models/plan.py
 msgid "Inactive plans are only visible to superusers."
-msgstr "Inaktiva planer är endast synliga för superanvändare."
+msgstr ""
 
 #: actions/models/plan.py indicators/models/indicator.py
 msgid "plans"
@@ -2282,23 +2451,21 @@ msgstr "Kategoritype skal tilhøre planen"
 
 #: actions/models/plan.py
 msgid "You must create and choose a primary category type for classifying actions"
-msgstr ""
-"Du skal oprette og vælge en primær kategoritype til klassificering af "
-"handlinger"
+msgstr "Du skal oprette og vælge en primær kategoritype til klassificering af handlinger"
 
 #: actions/models/plan.py
 msgid "Primary and secondary classification cannot be the same"
 msgstr "Primær og sekundær klassifikation kan ikke være den samme"
 
 #: actions/models/plan.py
+#, fuzzy
+#| msgid "main organization for the plan"
 msgid "This short identifier is already in use within the parent plan."
 msgstr "hovedorganisation for planen"
 
 #: actions/models/plan.py
 msgid "This short identifier is already in use for a top-level plan within this organization."
 msgstr ""
-"Denna korta identifierare används redan för en toppnivåplan inom denna "
-"organisation."
 
 #: actions/models/plan.py
 msgid "Privacy"
@@ -2309,10 +2476,14 @@ msgid "Accessibility"
 msgstr "Tilgængelighed"
 
 #: actions/models/plan.py aplans/utils.py
+#, fuzzy
+#| msgid "internal notes"
 msgid "Internal"
 msgstr "interne noter"
 
 #: actions/models/plan.py aplans/utils.py
+#, fuzzy
+#| msgid "Published"
 msgid "Public"
 msgstr "Publiceret"
 
@@ -2323,37 +2494,37 @@ msgstr "Planlagt"
 #: actions/models/plan.py
 #, python-format
 msgid "in %(days)d days %(hours)d hours"
-msgstr "om %(days)d dagar %(hours)d timmar"
+msgstr ""
 
 #: actions/models/plan.py
 #, python-format
 msgid "in %(hours)d hours %(minutes)d minutes"
-msgstr "om %(hours)d timmar %(minutes)d minuter"
+msgstr ""
 
 #: actions/models/plan.py
 #, python-format
 msgid "in %(minutes)d minutes"
-msgstr "om %(minutes)d minuter"
+msgstr ""
 
 #: actions/models/plan.py
 #, python-format
 msgid "Scheduled at: %(date)s (%(remaining)s)"
-msgstr "Schemalagd: %(date)s (%(remaining)s)"
+msgstr ""
 
 #: actions/models/plan.py actions/tests/test_models.py
 #, python-format
 msgid "%(plan)s (copy from %(date)s)"
-msgstr "%(plan)s (kopia från %(date)s)"
+msgstr ""
 
 #: actions/models/plan.py actions/tests/test_models.py
 #, python-format
 msgid "%(plan)s (copy %(n)s from %(date)s)"
-msgstr "%(plan)s (kopia %(n)s från %(date)s)"
+msgstr ""
 
 #: actions/models/plan.py
 #, python-format
 msgid "Copy from %(date)s"
-msgstr "Kopia från %(date)s"
+msgstr ""
 
 #: actions/models/plan.py actions/wagtail_admin.py
 msgid "Clients"
@@ -2377,21 +2548,26 @@ msgstr "generelle plan administratorer"
 
 #: actions/models/plan.py
 msgid "public site viewer"
-msgstr "visning av offentliga webbplatser"
+msgstr ""
 
 #: actions/models/plan.py
+#, fuzzy
 msgid "public site viewers"
 msgstr "seere på offentlige steder"
 
 #: actions/models/plan.py
+#, fuzzy
+#| msgid "Location"
 msgid "Production"
 msgstr "Beliggenhed"
 
 #: actions/models/plan.py
 msgid "Preview"
-msgstr "Förhandsvisning"
+msgstr ""
 
 #: actions/models/plan.py
+#, fuzzy
+#| msgid "document"
 msgid "Development"
 msgstr "dokument"
 
@@ -2401,17 +2577,17 @@ msgstr "værtsnavn"
 
 #: actions/models/plan.py
 msgid "The fully qualified domain name, eg. climate.cityname.gov. Leave blank if not yet known."
-msgstr ""
-"Det fuldt kvalificerede domænenavn, for eksempel. climate.cityname.gov. Lad "
-"det være tomt, hvis det endnu ikke er kendt."
+msgstr "Det fuldt kvalificerede domænenavn, for eksempel. climate.cityname.gov. Lad det være tomt, hvis det endnu ikke er kendt."
 
 #: actions/models/plan.py
+#, fuzzy
+#| msgid "Admin hostnames"
 msgid "redirect to host name"
 msgstr "Administrator værtsnavne"
 
 #: actions/models/plan.py
 msgid "The UI will redirect to this hostname if set."
-msgstr "Gränssnittet omdirigerar till detta värdnamn om det är inställt."
+msgstr ""
 
 #: actions/models/plan.py
 msgid "base path"
@@ -2419,9 +2595,7 @@ msgstr "basissti"
 
 #: actions/models/plan.py
 msgid "Fill this for a multi-plan site when the plan does not live in the root of the domain."
-msgstr ""
-"Udfyld dette for et websted med flere planer, når planen ikke findes i roden "
-"af domænet."
+msgstr "Udfyld dette for et websted med flere planer, når planen ikke findes i roden af domænet."
 
 #: actions/models/plan.py
 msgid "Base path must begin with a '/' and not end with '/'"
@@ -2429,13 +2603,11 @@ msgstr "Basisstien skal begynde med et '/' og ikke slutte med '/'"
 
 #: actions/models/plan.py
 msgid "deployment environment"
-msgstr "driftsättningsmiljö"
+msgstr ""
 
 #: actions/models/plan.py
 msgid "Domain names that will be used to redirect to the main hostname. Multiple domains are separated by commas."
 msgstr ""
-"Domännamn som används för att omdirigera till huvudvärdnamnet. Flera domäner "
-"separeras med kommatecken."
 
 #: actions/models/plan.py
 msgid "Immediate override of publishing status"
@@ -2443,10 +2615,7 @@ msgstr "Øjeblikkelig tilsidesættelse af publiceringsstatus"
 
 #: actions/models/plan.py
 msgid "Only set this if you are sure you want to override the publication time set in the plan. Be aware that this will immediately change the publication status of the plan at this domain!"
-msgstr ""
-"Indstil kun dette, hvis du er sikker på, at du vil tilsidesætte den "
-"publiceringstid, der er angivet i planen. Vær opmærksom på, at dette "
-"øjeblikkeligt vil ændre udgivelsesstatus for planen på dette domæne!"
+msgstr "Indstil kun dette, hvis du er sikker på, at du vil tilsidesætte den publiceringstid, der er angivet i planen. Vær opmærksom på, at dette øjeblikkeligt vil ændre udgivelsesstatus for planen på dette domæne!"
 
 #: actions/models/plan.py
 msgid "plan domain"
@@ -2462,8 +2631,7 @@ msgstr "Siden er ikke offentlig på nuværende tidspunkt."
 
 #: actions/models/plan.py
 msgid "Hostname must be a fully qualified domain name in lower-case only"
-msgstr ""
-"Værtsnavn skal kun være et fuldt kvalificeret domænenavn med små bogstaver"
+msgstr "Værtsnavn skal kun være et fuldt kvalificeret domænenavn med små bogstaver"
 
 #: actions/models/plan.py
 msgid "scenario"
@@ -2508,139 +2676,166 @@ msgstr "overvågning af kvalitetspunkter"
 
 #: actions/models/pledge.py
 msgid "slug"
-msgstr "URL-slug"
+msgstr ""
 
 #: actions/models/pledge.py
 msgid "The unique part of the page's URL, usually based on the title. Use lowercase letters, numbers, and hyphens only (e.g., turn-off-electronics)."
 msgstr ""
-"Den unika delen av sidans URL, vanligtvis baserad på titeln. Använd endast "
-"gemener, siffror och bindestreck (t.ex. stäng-av-elektronik)."
 
 #: actions/models/pledge.py
 msgid "Brief description shown on pledge cards and at the top of the pledge page. Keep it under 2-3 sentences. Use the body content below for additional details."
 msgstr ""
-"Kortfattad beskrivning som visas på åtagandekort och längst upp på "
-"åtagandesidan. Håll det under 2–3 meningar. Använd brödtexten nedan för "
-"ytterligare detaljer."
 
 #: actions/models/pledge.py images/models.py
 msgid "image"
 msgstr "billede"
 
 #: actions/models/pledge.py
+#, fuzzy
+#| msgid "lead content"
 msgid "body content"
 msgstr "hovedindhold"
 
 #: actions/models/pledge.py
 msgid "Detailed content about the pledge"
-msgstr "Detaljerat innehåll om åtagandet"
+msgstr ""
 
 #: actions/models/pledge.py
 msgid "number of residents committed"
-msgstr "antal engagerade invånare"
+msgstr ""
 
 #: actions/models/pledge.py
 msgid "Choose a round number that makes the math easy but feels achievable (e.g., 50, 100, 200). This is used in the \"If [X] residents commit...\" messaging."
 msgstr ""
-"Vælg et rundt tal, der gør regnestykket nemt men føles opnåeligt (f.eks. 50, "
-"100, 200). Dette bruges i \"Hvis [X] borgere forpligter sig...\"-beskeder."
 
 #: actions/models/pledge.py
 msgid "environmental impact at scale"
-msgstr "miljöpåverkan i stor skala"
+msgstr ""
 
 #: actions/models/pledge.py
 msgid "Describe the total environmental benefit if this many residents commit. Include specific numbers and units. Start with \"We save\" or \"We reduce\" for consistency. Example: \"We save 9,200kg CO₂e each year.\""
 msgstr ""
-"Beskriv den samlede miljøfordel, hvis så mange borgere forpligter sig. "
-"Inkluder specifikke tal og enheder. Start med \"Vi sparer\" eller \"Vi "
-"reducerer\" for konsistens."
 
 #: actions/models/pledge.py
+#, fuzzy
+#| msgid "Enable indicator comparison"
 msgid "local equivalency comparison"
 msgstr "Aktiver indikatorsammenligning"
 
 #: actions/models/pledge.py
 msgid "Translate the environmental impact into something relatable and specific to your community. Use local landmarks, familiar distances, or everyday activities. Start with \"That's equivalent to\" or \"That's like\" for consistency. Example: \"That's equivalent to avoiding 575 round trips between City Hall and the waterfront.\""
 msgstr ""
-"Oversæt miljøpåvirkningen til noget relaterbart og specifikt for dit "
-"lokalsamfund. Brug lokale vartegn, kendte afstande eller dagligdags "
-"aktiviteter."
 
 #: actions/models/pledge.py
+#, fuzzy
+#| msgid "actions"
 msgid "actions"
 msgstr "handlinger"
 
 #: actions/models/pledge.py
+#, fuzzy
+#| msgid "Action list pages"
 msgid "Actions this pledge supports"
 msgstr "Sider med handlingsliste"
 
 #: actions/models/pledge.py feedback/models.py
 msgid "pledge"
-msgstr "åtagande"
+msgstr ""
 
 #: actions/models/pledge.py
 msgid "pledges"
-msgstr "åtaganden"
+msgstr ""
 
 #: actions/models/pledge.py
+#, fuzzy
+#| msgid "Has data"
 msgid "user data"
 msgstr "Har data"
 
 #: actions/models/pledge.py
 msgid "Freeform key-value data about the user (e.g., zip_code)"
-msgstr "Friformat nyckel-värde-data om användaren (t.ex. postnummer)"
+msgstr ""
 
 #: actions/models/pledge.py
+#, fuzzy
+#| msgid "updated by"
 msgid "pledge user"
 msgstr "opdateret af"
 
 #: actions/models/pledge.py
+#, fuzzy
+#| msgid "updated by"
 msgid "pledge users"
 msgstr "opdateret af"
 
 #: actions/models/pledge.py
+#, fuzzy
+#| msgid "comment"
 msgid "pledge commitment"
 msgstr "kommentar"
 
 #: actions/models/pledge.py
+#, fuzzy
+#| msgid "comment"
 msgid "pledge commitments"
 msgstr "kommentar"
 
 #: actions/models/pledge.py
+#, fuzzy
+#| msgid "Recent actions"
 msgid "pledge action"
 msgstr "Afhængig handling"
 
 #: actions/models/pledge.py
+#, fuzzy
+#| msgid "Merged actions"
 msgid "pledge actions"
 msgstr "Sammenkoblede handlinger"
 
 #: actions/pledge_admin.py
+#, fuzzy
+#| msgid "There is already a category with this identifier."
 msgid "There is already a pledge with this slug."
 msgstr "Der er allerede en kategori med denne identifikator."
 
 #: actions/pledge_admin.py
+#, fuzzy
+#| msgid "Name of client"
 msgid "Number of commitments"
 msgstr "Navn på klient"
 
 #: actions/pledge_admin.py pages/models.py
 msgid "Pledges"
-msgstr "Åtaganden"
+msgstr ""
 
 #: actions/pledge_admin.py
+#, fuzzy
+#| msgid "comment"
 msgid "Commitments"
 msgstr "kommentar"
 
 #: actions/pledge_admin.py
+#, fuzzy
+#| msgid "updated at"
 msgid "Updated at"
 msgstr "opdateret kl"
 
 #: actions/pledge_admin.py
+#, fuzzy
+#| msgid "Indicator actions"
 msgid "Community Impact Visualization"
 msgstr "Indikator handlinger"
 
 #: actions/templates/site_summary/actions.html
-#, python-format
+#, fuzzy, python-format
+#| msgid ""
+#| "\n"
+#| "        <span>%(total)s</span> action <span class=\"visuallyhidden\">monitored in %(plan.name)s</span>\n"
+#| "    "
+#| msgid_plural ""
+#| "\n"
+#| "        <span>%(total)s</span> actions <span class=\"visuallyhidden\">monitored in %(plan.name)s</span>\n"
+#| "    "
 msgid ""
 "\n"
 "        <span>%(n)s</span> active action <span class=\"w-sr-only\">monitored in %(plan)s</span>\n"
@@ -2651,80 +2846,82 @@ msgid_plural ""
 "    "
 msgstr[0] ""
 "\n"
-"         <span> %(total)s </span> handling <span class=\"visuallyhidden\"> "
-"overvåget i %(plan.name)s </span>\n"
+"         <span> %(total)s </span> handling <span class=\"visuallyhidden\"> overvåget i %(plan.name)s </span>\n"
 "    "
 msgstr[1] ""
 "\n"
-"         <span> %(total)s </span> handlinger <span class=\"visuallyhidden\"> "
-"overvåget i %(plan.name)s </span>\n"
+"         <span> %(total)s </span> handlinger <span class=\"visuallyhidden\"> overvåget i %(plan.name)s </span>\n"
 "    "
 
 #: actions/templates/wagtailadmin/notifications/task_state_cancelled.txt
-#, python-format
+#, fuzzy, python-format
+#| msgid "%(model_name)s '%(object)s' has been submitted for moderation."
 msgid "The page \"%(title)s\" has been submitted for approval to moderation stage \"%(task)s\"."
 msgstr "%(model_name)s '%(object)s' er blevet sendt til moderation."
 
 #: actions/templates/wagtailadmin/notifications/task_state_cancelled.txt
 msgid "You can preview the page here:"
-msgstr "Du kan förhandsgranska sidan här:"
+msgstr ""
 
 #: actions/templates/wagtailadmin/notifications/task_state_cancelled.txt
 msgid "You can edit the page here:"
-msgstr "Du kan redigera sidan här:"
+msgstr ""
 
 #: actions/templates/wagtailadmin/notifications/task_state_cancelled.txt
 #, python-format
 msgid "The %(model_name)s \"%(title)s\" has been withdrawn from the moderation stage \"%(task)s\". It does not require approval until it has been resubmitted for moderation again."
 msgstr ""
-"%(model_name)s \"%(title)s\" har dragits tillbaka från modereringsstadiet \"%"
-"(task)s\". Den behöver inte godkännas förrän den har skickats in för "
-"moderering igen."
 
 #: actions/templates/wagtailadmin/notifications/task_state_cancelled.txt
 #, python-format
 msgid "You can preview the %(model_name)s here:"
-msgstr "Du kan förhandsgranska %(model_name)s här:"
+msgstr ""
 
 #: actions/templates/wagtailadmin/notifications/task_state_cancelled.txt
 #, python-format
 msgid "You can edit the %(model_name)s here:"
-msgstr "Du kan redigera %(model_name)s här:"
+msgstr ""
 
 #: actions/templates/wagtailadmin/notifications/task_state_cancelled_subject.txt
-#, python-format
+#, fuzzy, python-format
+#| msgid "%(model_name)s '%(object)s' has been submitted for moderation."
 msgid "The page \"%(title)s\" has been submitted for approval in moderation stage \"%(task)s\"."
 msgstr "%(model_name)s '%(object)s' er blevet sendt til moderation."
 
 #: actions/templates/wagtailadmin/notifications/task_state_cancelled_subject.txt
-#, python-format
+#, fuzzy, python-format
+#| msgid "%(model_name)s '%(object)s' has been submitted for moderation."
 msgid "The %(model_name)s \"%(title)s\" has been withdrawn from moderation."
 msgstr "%(model_name)s '%(object)s' er blevet sendt til moderation."
 
 #: actions/templates/wagtailadmin/notifications/workflow_state_approved_comment.html
 #: actions/templates/wagtailadmin/notifications/workflow_state_approved_comment.txt
-#, python-format
+#, fuzzy, python-format
+#| msgid "%(model_name)s '%(object)s' has been submitted for moderation."
 msgid "The page \"%(title)s\" has been approved in workflow \"%(workflow)s\" with a comment."
 msgstr "%(model_name)s '%(object)s' er blevet sendt til moderation."
 
 #: actions/templates/wagtailadmin/notifications/workflow_state_approved_comment.html
 #: actions/templates/wagtailadmin/notifications/workflow_state_approved_comment.txt
 msgid "You can view the page here:"
-msgstr "Du kan förhandsgranska sidan här:"
+msgstr ""
 
 #: actions/templates/wagtailadmin/notifications/workflow_state_approved_comment.html
 #: actions/templates/wagtailadmin/notifications/workflow_state_approved_comment.txt
-#, python-format
+#, fuzzy, python-format
+#| msgid "%(model_name)s '%(object)s' has been submitted for moderation."
 msgid "The %(model_name)s \"%(title)s\" has been approved in workflow \"%(workflow)s\" with a comment."
 msgstr "%(model_name)s '%(object)s' er blevet sendt til moderation."
 
 #: actions/templates/wagtailadmin/notifications/workflow_state_approved_comment_subject.txt
-#, python-format
+#, fuzzy, python-format
+#| msgid "%(model_name)s '%(object)s' has been submitted for moderation."
 msgid "The page \"%(title)s\" has been approved in \"%(workflow)s with a comment."
 msgstr "%(model_name)s '%(object)s' er blevet sendt til moderation."
 
 #: actions/templates/wagtailadmin/notifications/workflow_state_approved_comment_subject.txt
-#, python-format
+#, fuzzy, python-format
+#| msgid "%(model_name)s '%(object)s' has been submitted for moderation."
 msgid "The %(model_name)s \"%(title)s\" has been approved in \"%(workflow)s\" with a comment."
 msgstr "%(model_name)s '%(object)s' er blevet sendt til moderation."
 
@@ -2733,10 +2930,10 @@ msgid "Identifier already in use"
 msgstr "Identifikator er allerede i brug"
 
 #: actions/wagtail_admin.py
+#, fuzzy
+#| msgid "For identifiers, use only lowercase letters from the English alphabet with dashes separating words"
 msgid "For identifiers, use only lowercase letters from the English alphabet with dashes separating words. Numbers are allowed only in the end."
-msgstr ""
-"For identifikatorer, brug kun små bogstaver fra det engelske alfabet med "
-"bindestreger, der adskiller ord"
+msgstr "For identifikatorer, brug kun små bogstaver fra det engelske alfabet med bindestreger, der adskiller ord"
 
 #: actions/wagtail_admin.py
 msgid "Plan name already in use"
@@ -2747,20 +2944,20 @@ msgid "A plan's other language cannot be the same as its primary language"
 msgstr "En plans andet sprog kan ikke være det samme som dets primære sprog"
 
 #: actions/wagtail_admin.py admin_site/wagtail.py
+#, fuzzy
+#| msgid "Could not remove common category type '{removed_cct}' from the plan because categories with the corresponding category type exist."
 msgid "Could not remove common category type \"%(removed_cct)\" from the plan because categories with the corresponding category type exist."
-msgstr ""
-"Den fælles kategoritype '{removed_cct}' kunne ikke fjernes fra planen, fordi "
-"der findes kategorier med den tilsvarende kategoritype."
+msgstr "Den fælles kategoritype '{removed_cct}' kunne ikke fjernes fra planen, fordi der findes kategorier med den tilsvarende kategoritype."
 
 #: actions/wagtail_admin.py
+#, fuzzy
+#| msgid "general administrators"
 msgid "General administrators"
 msgstr "generelle administratorer"
 
 #: actions/wagtail_admin.py
 msgid "Only set if explicitly required by the customer. Use a color key from the UI theme's graphColors, for example red070 or grey030."
 msgstr ""
-"Ställs endast in om kunden uttryckligen kräver det. Använd en färgnyckel "
-"från UI-temaets graphColors, till exempel red070 eller grey030."
 
 #: actions/wagtail_admin.py
 msgid "Domains"
@@ -2783,6 +2980,8 @@ msgid "Action schedules"
 msgstr "Handlingsplaner"
 
 #: actions/wagtail_admin.py
+#, fuzzy
+#| msgid "Action schedules"
 msgid "Action dependency roles"
 msgstr "Handlingsafhængige roller"
 
@@ -2796,71 +2995,95 @@ msgstr "Planfunktioner"
 
 #: actions/wagtail_admin.py
 msgid "Plan features that plan admins are allowed to change"
-msgstr "Planfunktioner som planadministratörer får ändra"
+msgstr ""
 
 #: actions/wagtail_admin.py
 msgid "Plan features that only superusers are allowed to change"
-msgstr "Planfunktioner som endast superanvändare får ändra"
+msgstr ""
 
 #: actions/wagtail_admin.py
+#, fuzzy
+#| msgid "notification settings"
 msgid "Plan notification settings"
 msgstr "meddelelsesindstillinger"
 
 #: actions/wagtail_admin.py
+#, fuzzy
+#| msgid "action status"
 msgid "Publication status"
 msgstr "handlingsstatus"
 
 #: actions/wagtail_admin.py
 msgid "This plan is inactive and only visible to superusers."
-msgstr "Denna plan är inaktiv och endast synlig för superanvändare."
+msgstr ""
 
 #: actions/wagtail_admin.py
+#, fuzzy
+#| msgid "Published"
 msgid "Publish"
 msgstr "Publiceret"
 
 #: actions/wagtail_admin.py
 msgid "Publish this plan"
-msgstr "Publicera denna plan"
+msgstr ""
 
 #: actions/wagtail_admin.py
+#, fuzzy
+#| msgid "Unpublished"
 msgid "Unpublish"
 msgstr "Upubliceret"
 
 #: actions/wagtail_admin.py
+#, fuzzy
+#| msgid "Unpublished"
 msgid "Unpublish this plan"
 msgstr "Upubliceret"
 
 #: actions/wagtail_admin.py
+#, fuzzy
+#| msgid "Active tasks"
 msgid "Active"
 msgstr "Aktive projekter"
 
 #: actions/wagtail_admin.py
+#, fuzzy
+#| msgid "Deactivate"
 msgid "Inactive"
 msgstr "Deaktiver"
 
 #: actions/wagtail_admin.py
+#, fuzzy
+#| msgid "all"
 msgid "All"
 msgstr "alle"
 
 #: actions/wagtail_admin.py
+#, fuzzy
+#| msgid "Active tasks"
 msgid "Active status"
 msgstr "Aktive projekter"
 
 #: actions/wagtail_admin.py actions/wagtail_hooks.py
+#, fuzzy
+#| msgid "Publisher name"
 msgid "Publish plan"
 msgstr "Udgiverens navn"
 
 #: actions/wagtail_admin.py actions/wagtail_hooks.py
+#, fuzzy
+#| msgid "Unpublished"
 msgid "Unpublish plan"
 msgstr "Upubliceret"
 
 #: actions/wagtail_admin.py
-#, python-format
+#, fuzzy, python-format
+#| msgid "Confirm including %(org)s in plan %(plan)s"
 msgid "Confirm publishing %(plan)s"
 msgstr "Bekræft, at %(org)s er med i planen %(plan)s"
 
 #: actions/wagtail_admin.py
-#, python-format
+#, fuzzy, python-format
+#| msgid "Confirm including %(org)s in plan %(plan)s"
 msgid "Confirm unpublishing %(plan)s"
 msgstr "Bekræft, at %(org)s er med i planen %(plan)s"
 
@@ -2868,152 +3091,173 @@ msgstr "Bekræft, at %(org)s er med i planen %(plan)s"
 #, python-format
 msgid "Do you want to publish the plan '%(plan)s'? This will make it publicly accessible."
 msgstr ""
-"Vill du publicera planen '%(plan)s'? Detta gör den offentligt tillgänglig."
 
 #: actions/wagtail_admin.py
 #, python-format
 msgid "Do you want to unpublish the plan '%(plan)s'? This will make it inaccessible to the public."
 msgstr ""
-"Vill du avpublicera planen '%(plan)s'? Detta gör den otillgänglig för "
-"allmänheten."
 
 #: actions/wagtail_admin.py
+#, fuzzy
+#| msgid "The user feedback is already processed"
 msgid "The plan is already published."
 msgstr "Brugerfeedbacken er allerede behandlet"
 
 #: actions/wagtail_admin.py
+#, fuzzy
+#| msgid "The user feedback is already unprocessed"
 msgid "The plan is already unpublished."
 msgstr "Brugerfeedbacken er allerede ubehandlet"
 
 #: actions/wagtail_admin.py
 #, python-format
 msgid "Plan '%(plan)s' has been published."
-msgstr "Planen '%(plan)s' har publicerats."
+msgstr ""
 
 #: actions/wagtail_admin.py
 #, python-format
 msgid "Plan '%(plan)s' has been unpublished."
-msgstr "Planen '%(plan)s' har avpublicerats."
+msgstr ""
 
 #: actions/wagtail_admin.py admin_site/wagtail_hooks.py
 msgid "Plans"
 msgstr "Planer"
 
 #: actions/wagtail_admin.py
+#, fuzzy
+#| msgid "Action schedules"
 msgctxt "menu label"
 msgid "Action change history messages"
 msgstr "Handlingsplaner"
 
 #: actions/wagtail_admin.py
+#, fuzzy
+#| msgid "Indicator list page"
 msgctxt "menu label"
 msgid "Indicator change history messages"
 msgstr "Indikatorer tildelt mig"
 
 #: actions/wagtail_admin.py
+#, fuzzy
+#| msgid "Category type pages"
 msgctxt "menu label"
 msgid "Category change history messages"
 msgstr "Kategoritype sider"
 
 #: actions/wagtail_hooks.py
+#, fuzzy
+#| msgid "Unpublished"
 msgid "Plan published"
 msgstr "Upubliceret"
 
 #: actions/wagtail_hooks.py
+#, fuzzy
+#| msgid "Unpublished"
 msgid "Plan unpublished"
 msgstr "Upubliceret"
 
 #: actions/wagtail_hooks.py templates/modeladmin/create.html
+#, fuzzy
+#| msgid "Actions"
 msgid "Actions"
 msgstr "Handlinger"
 
 #: admin_site/api.py
+#, fuzzy
+#| msgid "email address"
 msgid "Invalid email address"
 msgstr "email adresse"
 
 #: admin_site/api.py
 msgid "No user found with this email address. Ask your administrator to create an account for you."
-msgstr ""
-"Ingen bruger fundet med denne e-mailadresse. Bed din administrator om at "
-"oprette en konto til dig."
+msgstr "Ingen bruger fundet med denne e-mailadresse. Bed din administrator om at oprette en konto til dig."
 
 #: admin_site/api.py
+#, fuzzy
+#| msgid "This user does not have access to admin."
 msgid "You do not have access to the public site."
 msgstr "Du har ikke adgang til den offentlige side."
 
 #: admin_site/api.py
 msgid "You do not have admin access. Your administrator may need to assign you an action or indicator, or grant you plan admin status."
 msgstr ""
-"Du har inte administratörsåtkomst. Din administratör kan behöva tilldela dig "
-"en åtgärd eller indikator, eller ge dig status som planadministratör."
 
 #: admin_site/api.py
 msgid "Cannot determine authentication method. The email address domain may be unknown."
 msgstr ""
-"Kan inte fastställa autentiseringsmetod. Domänen för e-postadressen kan vara "
-"okänd."
 
 #: admin_site/api.py
 msgid "Password authentication is required, but the user has no password."
-msgstr "Lösenordsautentisering krävs, men användaren har inget lösenord."
+msgstr ""
 
 #: admin_site/apps.py
 msgid "History"
-msgstr "Historia"
+msgstr ""
 
 #: admin_site/chooser.py
 msgid "What is the part after @ in the staff email address of the organization mainly responsible for the plan?"
-msgstr ""
-"Hvad står der efter @ i medarbejdernes e-mailadresse i den organisation, der "
-"er hovedansvarlig for planen?"
+msgstr "Hvad står der efter @ i medarbejdernes e-mailadresse i den organisation, der er hovedansvarlig for planen?"
 
 #: admin_site/chooser.py
+#, fuzzy
+#| msgid "Choose a plan"
 msgid "Choose a client"
 msgstr "Vælg en plan"
 
 #: admin_site/chooser.py
+#, fuzzy
+#| msgid "Choose another action"
 msgid "Choose another client"
 msgstr "Vælg en anden handling"
 
 #: admin_site/draftail_rich_text_area.py
+#, fuzzy
+#| msgid "Links"
 msgid "Link"
 msgstr "Links"
 
 #: admin_site/draftail_rich_text_area.py
+#, fuzzy
+#| msgid "document"
 msgid "Document"
 msgstr "dokument"
 
 #: admin_site/draftail_rich_text_area.py pages/blocks.py
 msgid "Embed"
-msgstr "Inbäddning"
+msgstr ""
 
 #: admin_site/draftail_rich_text_area.py
 msgid "Bold"
-msgstr "Fet stil"
+msgstr ""
 
 #: admin_site/draftail_rich_text_area.py
 msgid "Italic"
-msgstr "Kursiv"
+msgstr ""
 
 #: admin_site/draftail_rich_text_area.py
+#, fuzzy
+#| msgid "description"
 msgid "Superscript"
 msgstr "beskrivelse"
 
 #: admin_site/draftail_rich_text_area.py
+#, fuzzy
+#| msgid "description"
 msgid "Subscript"
 msgstr "beskrivelse"
 
 #: admin_site/draftail_rich_text_area.py
 #, python-format
 msgid "Heading %(level)d"
-msgstr "Rubrik %(level)d"
+msgstr ""
 
 #: admin_site/draftail_rich_text_area.py
 msgid "Numbered list"
-msgstr "Numrerad lista"
+msgstr ""
 
 #: admin_site/draftail_rich_text_area.py
 msgid "Bulleted list"
-msgstr "Lista med punktuppställning"
+msgstr ""
 
 #: admin_site/forms.py
 msgid "Enter password"
@@ -3042,13 +3286,15 @@ msgstr "Google"
 
 #: admin_site/models.py
 msgid "OKTA"
-msgstr "OKTA"
+msgstr ""
 
 #: admin_site/models.py
 msgid "ADFS OpenID Connect"
-msgstr "ADFS OpenID Connect"
+msgstr ""
 
 #: admin_site/models.py
+#, fuzzy
+#| msgid "Name of the customer administering the plan"
 msgid "Name of the customer organization administering the plan"
 msgstr "Navn på den kunde, der administrerer planen"
 
@@ -3061,53 +3307,55 @@ msgid "Login method that will be used for users that don't have a password set"
 msgstr "Login-metode, der bruges til brugere, som ikke har en adgangskode"
 
 #: admin_site/models.py
+#, fuzzy
+#| msgid "fields"
 msgid "label"
 msgstr "felter"
 
 #: admin_site/models.py
 #, python-format
 msgid "%(field)s is not a valid field in the model '%(model)s'"
-msgstr "%(field)s är inte ett giltigt fält i modellen '%(model)s'"
+msgstr ""
 
 #: admin_site/models.py
 #, python-format
 msgid "Field '%(field)s' in model '%(model)s' of plan '%(plan)s'"
-msgstr "Fält '%(field)s' i modell '%(model)s' av plan '%(plan)s'"
+msgstr ""
 
 #: admin_site/models.py
 msgid "Please summarize the change you made. This message will be displayed publicly."
 msgstr ""
-"Sammanfatta den ändring du gjort. Detta meddelande kommer att visas "
-"offentligt."
 
 #: admin_site/models.py
 #, python-format
 msgctxt "change log message"
 msgid "%(verbose_name)s: \"%(instance)s\" (%(date)s)."
-msgstr "%(verbose_name)s: \"%(instance)s\" (%(date)s)."
+msgstr ""
 
 #: admin_site/models.py
+#, fuzzy
+#| msgid "Changes were saved"
 msgid "change history message"
 msgstr "Ændringer blev gemt"
 
 #: admin_site/signals.py
-#, python-format
+#, fuzzy, python-format
+#| msgid "Do you really want to include the organization '%(org)s' in the plan '%(plan)s'?"
 msgid "You are now viewing the site as %(user)s."
-msgstr ""
-"Ønsker du virkelig at inkludere organisationen '%(org)s' i planen '%(plan)s'?"
+msgstr "Ønsker du virkelig at inkludere organisationen '%(org)s' i planen '%(plan)s'?"
 
 #: admin_site/signals.py
 #, python-format
 msgid "You have stopped viewing the site as %(user)s and have returned to your original account."
 msgstr ""
-"Du har slutat visa webbplatsen som %(user)s och har återvänt till ditt "
-"ursprungliga konto."
 
 #: admin_site/templates/admin_site/chooser_results_empty.html
 msgid "There are no objects to choose from."
-msgstr "Det finns inga objekt att välja från."
+msgstr ""
 
 #: admin_site/templates/admin_site/own_indicators_panel.html
+#, fuzzy
+#| msgid "Indicator list page"
 msgid "Indicators assigned to me"
 msgstr "Indikatorer tildelt mig"
 
@@ -3133,12 +3381,14 @@ msgid "%(time_period)s ago"
 msgstr "%(time_period)s siden"
 
 #: admin_site/templates/admin_site/release_impersonation.html
+#, fuzzy
+#| msgid "View %s live"
 msgid "Viewing site as another user"
 msgstr "Se %s live"
 
 #: admin_site/templates/admin_site/release_impersonation.html
 msgid "Back to own user"
-msgstr "Tillbaka till eget konto"
+msgstr ""
 
 #: admin_site/templates/dal_admin_filters/autocomplete-filter.html
 #, python-format
@@ -3146,56 +3396,66 @@ msgid " By %(filter_title)s "
 msgstr " Af %(filter_title)s"
 
 #: admin_site/templates/wagtailadmin/base.html
+#, fuzzy
+#| msgid "Can administrate all actions"
 msgid "Administration"
 msgstr "Administration"
 
 #: admin_site/templates/wagtailadmin/base.html
+#, fuzzy
+#| msgid "Related plans"
 msgid "locked plan"
 msgstr "Relaterede planer"
 
 #: admin_site/templates/wagtailadmin/login.html
+#, fuzzy
+#| msgid "Sign in to Kausal Watch"
 msgid "Sign in to Kausal Watch admin"
 msgstr "Log ind på Kausal Watch"
 
 #: admin_site/templates/wagtailadmin/login.html
 msgid "Your Kausal Watch admin portal has moved."
-msgstr "Din Kausal Watch-administratörsportal har flyttat."
+msgstr ""
 
 #: admin_site/templates/wagtailadmin/login.html
 #, python-brace-format
 msgid "Redirecting to {url} in {count}&nbsp;seconds..."
-msgstr "Omdirigerar till {url} om {count}&nbsp;sekunder..."
+msgstr ""
 
 #: admin_site/templates/wagtailadmin/login.html
 msgid "Go Now"
-msgstr "Gå nu"
+msgstr ""
 
 #: admin_site/templates/wagtailadmin/login.html
+#, fuzzy
+#| msgid "You have been successfully logged out."
 msgid "You were successfully redirected"
 msgstr "Du er blevet logget ud."
 
 #: admin_site/templates/wagtailadmin/login.html
 msgid "Please bookmark this page for future use."
-msgstr "Bokmärk gärna denna sida för framtida bruk."
+msgstr ""
 
 #: admin_site/templates/wagtailadmin/login.html
 msgid "Our apologies, the server is temporarily experiencing difficulties."
 msgstr "Vi beklager, men serveren har midlertidigt problemer."
 
 #: admin_site/utils.py
+#, fuzzy
+#| msgid "Published"
 msgid "Public field"
 msgstr "Publiceret"
 
 #: admin_site/utils.py
+#, fuzzy
+#| msgid "Published"
 msgid "Non-public field"
 msgstr "Publiceret"
 
 #: admin_site/viewsets.py admin_site/wagtail.py
 #, python-format
 msgid "Error deleting items. Try first deleting any %(name)s that are in use."
-msgstr ""
-"Fejl ved sletning af elementer. Prøv først at slette enhver %(name)s, der er "
-"i brug."
+msgstr "Fejl ved sletning af elementer. Prøv først at slette enhver %(name)s, der er i brug."
 
 #: admin_site/viewsets.py admin_site/wagtail.py
 #, python-format
@@ -3208,17 +3468,22 @@ msgid "%s could not be created due to errors."
 msgstr "%s kunne ikke oprettes på grund af fejl."
 
 #: admin_site/viewsets.py
-#, python-format
+#, fuzzy, python-format
+#| msgid "Changes were saved"
 msgctxt "page subtitle"
 msgid "Change history message: %(obj)s"
 msgstr "Ændringer blev gemt"
 
 #: admin_site/viewsets.py
+#, fuzzy
+#| msgid "Changes were saved"
 msgctxt "page subtitle"
 msgid "Change history message"
 msgstr "Ændringer blev gemt"
 
 #: admin_site/viewsets.py
+#, fuzzy
+#| msgid "Changes were saved"
 msgctxt "page title"
 msgid "Add change history message"
 msgstr "Ændringer blev gemt"
@@ -3226,10 +3491,11 @@ msgstr "Ændringer blev gemt"
 #: admin_site/wagtail.py
 #, python-format
 msgid "Edit %(schema_name)s"
-msgstr "Redigera %(schema_name)s"
+msgstr ""
 
 #: admin_site/wagtail.py
-#, python-format
+#, fuzzy, python-format
+#| msgid "Add %(related_verbose_name)s"
 msgid "Add %(schema_name)s"
 msgstr "Tilføj %(related_verbose_name)s"
 
@@ -3267,6 +3533,8 @@ msgid "Fully qualified hostname (FQDN)"
 msgstr "Fuldt kvalificeret værtsnavn (FQDN)"
 
 #: aplans/graphql_types.py
+#, fuzzy
+#| msgid "Approve"
 msgid "Approved"
 msgstr "Godkendt"
 
@@ -3292,7 +3560,7 @@ msgstr "Tysk (Schweiz)"
 
 #: aplans/settings.py
 msgid "Greek"
-msgstr "Grekiska"
+msgstr ""
 
 #: aplans/settings.py
 msgid "English (United States)"
@@ -3307,10 +3575,14 @@ msgid "English (United Kingdom)"
 msgstr "Engelsk (Storbritannien)"
 
 #: aplans/settings.py
+#, fuzzy
+#| msgid "Danish"
 msgid "Spanish"
 msgstr "Dansk"
 
 #: aplans/settings.py
+#, fuzzy
+#| msgid "English (United States)"
 msgid "Spanish (United States)"
 msgstr "Engelsk (Forenede Stater)"
 
@@ -3324,31 +3596,32 @@ msgstr "Lettisk"
 
 #: aplans/settings.py
 msgid "Portuguese"
-msgstr "Portugisiska"
+msgstr ""
 
 #: aplans/settings.py
 msgid "Portuguese (Brazil)"
-msgstr "Portugisiska (Brasilien)"
+msgstr ""
 
 #: aplans/settings.py
 msgid "Swedish"
 msgstr "svensk"
 
 #: aplans/settings.py
+#, fuzzy
 msgid "Swedish (Finland)"
 msgstr "Svensk (Finland)"
 
 #: aplans/utils.py
 msgid "Day, month and year (31.12.2020)"
-msgstr "Dag, månad och år (31.12.2020)"
+msgstr ""
 
 #: aplans/utils.py
 msgid "Month and year (12.2020)"
-msgstr "Månad och år (12.2020)"
+msgstr ""
 
 #: aplans/utils.py
 msgid "Year (2020)"
-msgstr "År (2020)"
+msgstr ""
 
 #: aplans/utils.py notifications/models.py
 msgid "identifier"
@@ -3359,6 +3632,8 @@ msgid "order"
 msgstr "bestille"
 
 #: aplans/utils.py
+#, fuzzy
+#| msgid "Accessibility"
 msgid "visibility"
 msgstr "Tilgængelighed"
 
@@ -3368,7 +3643,7 @@ msgstr "Autentificerede brugere"
 
 #: aplans/utils.py
 msgid "Contact persons with moderator permissions"
-msgstr "Kontaktpersoner med moderatorbehörighet"
+msgstr ""
 
 #: aplans/utils.py orgs/wagtail_admin.py
 msgid "Plan admins"
@@ -3383,79 +3658,97 @@ msgid "Edit rights"
 msgstr "Rediger rettigheder"
 
 #: aplans/utils.py
+#, fuzzy
+#| msgid "action contact persons"
 msgid "Contact persons with \"moderator\" role"
 msgstr "handling kontaktpersoner"
 
 #: aplans/utils.py
+#, fuzzy
+#| msgid "Accessibility"
 msgid "Visibility"
 msgstr "Tilgængelighed"
 
 #: aplans/utils.py
 #, python-format
 msgid "%(color)s is not a CSS color (e.g., \"#112233\", \"red\" or \"rgb(0, 255, 127)\")"
-msgstr ""
-"%(color)s er ikke en CSS-farve (f.eks. \"#112233\", \"rød\" eller \"rgb(0, "
-"255, 127)\")"
+msgstr "%(color)s er ikke en CSS-farve (f.eks. \"#112233\", \"rød\" eller \"rgb(0, 255, 127)\")"
 
 #: aplans/utils.py
 msgid "Invalid JSON value"
-msgstr "Ogiltigt JSON-värde"
+msgstr ""
 
 #: aplans/utils.py
 msgid "updated by"
 msgstr "opdateret af"
 
 #: audit_logging/blocks.py
+#, fuzzy
+#| msgid "Category type pages"
 msgid "Latest change history message"
 msgstr "Kategoritype sider"
 
 #: audit_logging/models.py
 msgid "plan-scoped model log entry"
-msgstr "planomfattande modellloggpost"
+msgstr ""
 
 #: audit_logging/models.py
 msgid "plan-scoped model log entries"
-msgstr "planomfattande modellloggposter"
+msgstr ""
 
 #: audit_logging/models.py
 msgid "plan-scoped page log entry"
-msgstr "planomfattande sidloggpost"
+msgstr ""
 
 #: audit_logging/models.py
 msgid "plan-scoped page log entries"
-msgstr "planomfattande sidloggposter"
+msgstr ""
 
 #: audit_logging/models.py
+#, fuzzy
+#| msgid "Draft"
 msgid "Draft saved"
 msgstr "Udkast"
 
 #: audit_logging/templates/site_history_results.html audit_logging/views.py
+#, fuzzy
+#| msgid "Category type"
 msgid "Item type"
 msgstr "Kategoritype"
 
 #: audit_logging/templates/site_history_results.html audit_logging/views.py
+#, fuzzy
+#| msgid "created by"
 msgctxt "type of change (e.g., \"create\", \"edit\" or \"delete\")"
 msgid "Change"
 msgstr "lavet af"
 
 #: audit_logging/templates/site_history_results.html audit_logging/views.py
+#, fuzzy
+#| msgid "created by"
 msgid "Changed by"
 msgstr "lavet af"
 
 #: audit_logging/templates/site_history_results.html
 msgid "Date / Time"
-msgstr "Datum / Tid"
+msgstr ""
 
 #: audit_logging/templates/site_history_results.html
+#, fuzzy
+#| msgid "Edit this quantity"
 msgid "Edit this item"
 msgstr "Rediger denne mængde"
 
 #: audit_logging/views.py
+#, fuzzy
+#| msgid "Changes were saved"
 msgctxt "page title for history of changes"
 msgid "Change history"
 msgstr "Ændringer blev gemt"
 
 #: audit_logging/wagtail_hooks.py
+#, fuzzy
+#| msgid "Changes were saved"
 msgctxt "menu item for accessing history of changes"
 msgid "Change history"
 msgstr "Ændringer blev gemt"
@@ -3469,6 +3762,8 @@ msgid "Content"
 msgstr "Indhold"
 
 #: content/models.py feedback/models.py reports/spreadsheets/excel_report.py
+#, fuzzy
+#| msgid "Action"
 msgctxt "Action model"
 msgid "Action"
 msgstr "Handling"
@@ -3495,7 +3790,7 @@ msgstr "Projekt"
 
 #: content/models.py
 msgid "Milestone"
-msgstr "Milstolpe"
+msgstr ""
 
 #: content/models.py
 msgid "Tasks"
@@ -3503,13 +3798,15 @@ msgstr "Projekter"
 
 #: content/models.py
 msgid "Milestones"
-msgstr "Milstolpar"
+msgstr ""
 
 #: content/models.py indicators/wagtail_admin.py
 msgid "Organization"
 msgstr "Organisation"
 
 #: content/models.py
+#, fuzzy
+#| msgid "dimensions"
 msgid "Division"
 msgstr "dimensioner"
 
@@ -3518,6 +3815,8 @@ msgid "Organizations"
 msgstr "Organisationer"
 
 #: content/models.py
+#, fuzzy
+#| msgid "dimensions"
 msgid "Divisions"
 msgstr "dimensioner"
 
@@ -3528,11 +3827,11 @@ msgstr "Indikator"
 
 #: content/models.py
 msgid "Measure"
-msgstr "Åtgärd"
+msgstr ""
 
 #: content/models.py
 msgid "Measures"
-msgstr "Åtgärder"
+msgstr ""
 
 #: content/models.py
 msgid "site title"
@@ -3568,8 +3867,7 @@ msgstr "creative commons licens"
 
 #: content/models.py
 msgid "If the site is under a Creative Commons license, which CC license it is"
-msgstr ""
-"Hvis webstedet er under en Creative Commons-licens, hvilken CC-licens er det"
+msgstr "Hvis webstedet er under en Creative Commons-licens, hvilken CC-licens er det"
 
 #: content/models.py
 msgid "Link to GitHub repository for API"
@@ -3584,26 +3882,30 @@ msgid "Term to use for 'action'"
 msgstr "Udtryk, der skal bruges for \"handling\""
 
 #: content/models.py
+#, fuzzy
+#| msgid "Term to use for 'action'"
 msgid "Term to use for 'task'"
 msgstr "Udtryk, der skal bruges for \"handling\""
 
 #: content/models.py
+#, fuzzy
+#| msgid "Term to use for 'action'"
 msgid "Term to use for 'organization'"
 msgstr "Udtryk, der skal bruges for \"handling\""
 
 #: content/models.py
+#, fuzzy
+#| msgid "Term to use for 'action'"
 msgid "Term to use for 'indicator'"
 msgstr "Udtryk, der skal bruges for \"handling\""
 
 #: content/models.py
 msgid "Sitewide announcement"
-msgstr "Platsomfattande tillkännagivande"
+msgstr ""
 
 #: content/models.py
 msgid "A message prominently displayed in a banner at the top of every page on the public website"
 msgstr ""
-"Ett meddelande som visas tydligt i en banner högst upp på varje sida på den "
-"offentliga webbplatsen"
 
 #: content/models.py
 msgid "site general content"
@@ -3624,85 +3926,102 @@ msgstr "Identifikator"
 #: copying/views.py
 msgid "A unique value that identifies the copy internally and appears in URLs of testing or preview environments"
 msgstr ""
-"Ett unikt värde som identifierar kopian internt och visas i URL:er i test- "
-"eller förhandsvissingsmiljöer"
 
 #: copying/views.py
+#, fuzzy
+#| msgid "Term to use for 'action'"
 msgid "Name to use for the copy"
 msgstr "Udtryk, der skal bruges for \"handling\""
 
 #: copying/views.py
+#, fuzzy
+#| msgid "version name"
 msgid "Version name"
 msgstr "versionsnavn"
 
 #: copying/views.py
 msgid "Version name to be set for the copied plan in order to distinguish it from other versions"
 msgstr ""
-"Versionsnamn som ska anges för den kopierade planen för att skilja den från "
-"andra versioner"
 
 #: copying/views.py
 msgid "Supersede original plan"
-msgstr "Ersätt originalplan"
+msgstr ""
 
 #: copying/views.py
+#, fuzzy
+#| msgid "Set if this plan is superseded by another plan"
 msgid "Set if the copy should supersede the original plan"
 msgstr "Indstil, hvis denne plan er afløst af en anden plan"
 
 #: copying/views.py
+#, fuzzy
+#| msgid "editable for actions"
 msgid "Supersede original actions"
 msgstr "redigerbar til handlinger"
 
 #: copying/views.py
+#, fuzzy
+#| msgid "Set if this action is superseded by another action"
 msgid "Set if copies of actions should supersede their original"
 msgstr "Indstil hvis denne handling er afløst af en anden handling"
 
 #: copying/views.py
+#, fuzzy
+#| msgid "Common indicators"
 msgid "Copy indicators"
 msgstr "Fælles indikatorer"
 
 #: copying/views.py
 msgid "Set if indicators should be copied instead of being shared with the original plan. Indicators can only be copied if no indicator is shared with another plan or is an instance of a common indicator."
 msgstr ""
-"Ange om indikatorer ska kopieras istället för att delas med originalplanen. "
-"Indikatorer kan bara kopieras om ingen indikator delas med en annan plan "
-"eller är en instans av en gemensam indikator."
 
 #: copying/views.py
+#, fuzzy
+#| msgid "Person with this email already exists"
 msgid "A plan with this identifier already exists"
 msgstr "En person med denne e-mailadresse findes allerede"
 
 #: copying/views.py
+#, fuzzy
+#| msgid "Person with this email already exists"
 msgid "A plan with this name already exists"
 msgstr "En person med denne e-mailadresse findes allerede"
 
 #: copying/views.py
+#, fuzzy
+#| msgid "Choose plan"
 msgid "Copy plan"
 msgstr "Vælg plan"
 
 #: copying/views.py
 msgid "The copy will be created in the background. This may take a few minutes. The copy will appear in the list of plans as soon as copying is finished."
 msgstr ""
-"Kopian skapas i bakgrunden. Det kan ta några minuter. Kopian visas i "
-"planlistan så snart kopieringen är klar."
 
 #: copying/views.py
+#, fuzzy
+#| msgid "Create plan"
 msgid "Create copy"
 msgstr "Lav en plan"
 
 #: documentation/models.py
+#, fuzzy
+#| msgid "Style"
 msgid "CSS style"
 msgstr "Stil"
 
 #: documentation/models.py
 msgid "CSS style to be applied to the container of the body"
-msgstr "CSS-stil som ska tillämpas på behållaren i kroppen"
+msgstr ""
 
 #: documentation/models.py
+#, fuzzy
+#| msgid "implementation phase"
 msgid "Documentation page"
 msgstr "implementeringsfasen"
 
 #: documentation/models.py
+#, fuzzy
+#| msgid "implementation phase"
 msgid "Documentation pages"
 msgstr "implementeringsfasen"
 
@@ -3715,6 +4034,8 @@ msgid "Report this error to your webmaster with the following information:"
 msgstr "Rapporter denne fejl til din webmaster med følgende oplysninger:"
 
 #: documents/models.py
+#, fuzzy
+#| msgid "updated by"
 msgid "uploaded by user"
 msgstr "opdateret af"
 
@@ -3728,7 +4049,7 @@ msgstr "dokumenter"
 
 #: feedback/models.py
 msgid "Pledge"
-msgstr "Åtagande"
+msgstr ""
 
 #: feedback/models.py indicators/models/action_links.py
 msgid "action"
@@ -3743,12 +4064,14 @@ msgid "comment"
 msgstr "kommentar"
 
 #: feedback/models.py
+#, fuzzy
+#| msgid "action link"
 msgid "page id"
 msgstr "handlingslink"
 
 #: feedback/models.py
 msgid "latest revision"
-msgstr "senaste revisionen"
+msgstr ""
 
 #: feedback/models.py
 msgid "is processed"
@@ -3764,7 +4087,7 @@ msgstr "brugerfeedback"
 
 #: feedback/models.py
 msgid "At least one field must be filled."
-msgstr "Minst ett fält måste fyllas i."
+msgstr ""
 
 #: feedback/views.py
 msgid "Mark user feedback as processed"
@@ -3787,14 +4110,12 @@ msgstr "Bekræft markering af %(user_feedback)s som ubehandlet"
 #: feedback/views.py
 #, python-format
 msgid "Do you really want to mark the user feedback '%(user_feedback)s' as processed?"
-msgstr ""
-"Vil du virkelig markere brugerfeedbacken '%(user_feedback)s' som behandlet?"
+msgstr "Vil du virkelig markere brugerfeedbacken '%(user_feedback)s' som behandlet?"
 
 #: feedback/views.py
 #, python-format
 msgid "Do you really want to mark the user feedback '%(user_feedback)s' as unprocessed?"
-msgstr ""
-"Vil du virkelig markere brugerfeedbacken '%(user_feedback)s' som ubehandlet?"
+msgstr "Vil du virkelig markere brugerfeedbacken '%(user_feedback)s' som ubehandlet?"
 
 #: feedback/views.py
 msgid "The user feedback is already processed"
@@ -3816,7 +4137,7 @@ msgstr "Brugerfeedback '%(user_feedback)s' er blevet markeret som ubehandlet."
 
 #: feedback/wagtail_admin.py
 msgid "N/A"
-msgstr "–"
+msgstr ""
 
 #: feedback/wagtail_admin.py
 msgid "Mark as processed"
@@ -3835,30 +4156,44 @@ msgid "Mark this user feedback as unprocessed"
 msgstr "Markere denne brugerfeedback som ubehandlet"
 
 #: feedback/wagtail_admin.py
+#, fuzzy
+#| msgid "User feedbacks"
 msgid "User feedback"
 msgstr "Brugerfeedback"
 
 #: feedback/wagtail_hooks.py
+#, fuzzy
+#| msgid "user feedback"
 msgid "Receive feedback"
 msgstr "brugerfeedback"
 
 #: feedback/wagtail_hooks.py
+#, fuzzy
+#| msgid "User feedback received"
 msgid "Feedback received"
 msgstr "Brugerfeedback modtaget"
 
 #: feedback/wagtail_hooks.py
+#, fuzzy
+#| msgid "Mark user feedback as processed"
 msgid "Mark feedback as processed"
 msgstr "Markere brugerfeedback som behandlet"
 
 #: feedback/wagtail_hooks.py
+#, fuzzy
+#| msgid "Mark as processed"
 msgid "Feedback marked as processed"
 msgstr "Markere som behandlet"
 
 #: feedback/wagtail_hooks.py
+#, fuzzy
+#| msgid "Mark user feedback as processed"
 msgid "Unmark feedback as processed"
 msgstr "Markere brugerfeedback som behandlet"
 
 #: feedback/wagtail_hooks.py
+#, fuzzy
+#| msgid "Mark as processed"
 msgid "Feedback unmarked as processed"
 msgstr "Markere som behandlet"
 
@@ -3880,21 +4215,27 @@ msgstr "billeder"
 
 #: images/wagtail_hooks.py
 msgid "Create or update file"
-msgstr "Skapa eller uppdatera fil"
+msgstr ""
 
 #: images/wagtail_hooks.py
+#, fuzzy
+#| msgid "created at"
 msgid "File created or updated"
 msgstr "oprettet kl"
 
 #: indicators/api.py indicators/blocks/layout.py
 msgid "Latest value"
-msgstr "Senaste värde"
+msgstr ""
 
 #: indicators/api.py
+#, fuzzy
+#| msgid "level"
 msgid "Level"
 msgstr "niveau"
 
 #: indicators/blocks/__init__.py
+#, fuzzy
+#| msgid "dimensions"
 msgid "Dimension"
 msgstr "dimensioner"
 
@@ -3912,92 +4253,105 @@ msgstr "Animeret"
 
 #: indicators/blocks/__init__.py
 msgid "How many significants digits to use for the values displayed"
-msgstr "Hur många signifikanta siffror som ska användas för de visade värdena"
+msgstr ""
 
 #: indicators/blocks/__init__.py
+#, fuzzy
+#| msgid "indicator goals"
 msgid "Indicator showcase"
 msgstr "indikator mål"
 
 #: indicators/blocks/__init__.py
 msgid "Help text for the field to be shown in the UI"
-msgstr "Hjälptext för fältet som ska visas i användargränssnittet"
+msgstr ""
 
 #: indicators/blocks/__init__.py
+#, fuzzy
+#| msgid "Choose another action"
 msgid "Choose the indicator for data visualization"
 msgstr "Vælg en anden handling"
 
 #: indicators/blocks/__init__.py
 msgid "Choose the indicator dimension that will be used for categories in the visualization"
 msgstr ""
-"Välj indikatorns dimension som ska användas för kategorier i visualiseringen"
 
 #: indicators/blocks/__init__.py
 #, python-format
 msgid "Dimension '%(dimension)s' is not valid for indicator '%(indicator)s'. Please choose a dimension that belongs to the indicator."
 msgstr ""
-"Dimension '%(dimension)s' är inte giltig för indikator '%(indicator)s'. Välj "
-"en dimension som tillhör indikatorn."
 
 #: indicators/blocks/__init__.py
 msgid "Stacked bars"
-msgstr "Staplade staplar"
+msgstr ""
 
 #: indicators/blocks/__init__.py
 msgid "Grouped bars"
-msgstr "Grupperade staplar"
+msgstr ""
 
 #: indicators/blocks/__init__.py
+#, fuzzy
+#| msgid "Indicator action"
 msgid "Indicator: Bar Chart"
 msgstr "Indikator Kausalkæde"
 
 #: indicators/blocks/__init__.py
 msgid "Indicator visualization as a bar chart"
-msgstr "Indikatorvisualisering som stapeldiagram"
+msgstr ""
 
 #: indicators/blocks/__init__.py
+#, fuzzy
+#| msgid "show total line"
 msgid "Show total line"
 msgstr "Vis total linje"
 
 #: indicators/blocks/__init__.py
+#, fuzzy
+#| msgid "Indicator data"
 msgid "Indicator: Line Chart"
 msgstr "Indikatordata"
 
 #: indicators/blocks/__init__.py
 msgid "Indicator visualization as a line chart"
-msgstr "Indikatorvisualisering som linjediagram"
+msgstr ""
 
 #: indicators/blocks/__init__.py
+#, fuzzy
+#| msgid "Indicator data"
 msgid "Indicator: Area Chart"
 msgstr "Indikatordata"
 
 #: indicators/blocks/__init__.py
 msgid "Indicator visualization as an area chart"
-msgstr "Indikatorvisualisering som ytdiagram"
+msgstr ""
 
 #: indicators/blocks/__init__.py
 msgid "Enter the year you want to visualize"
-msgstr "Ange det år du vill visualisera"
+msgstr ""
 
 #: indicators/blocks/__init__.py
+#, fuzzy
+#| msgid "Indicator data"
 msgid "Indicator: Pie Chart"
 msgstr "Indikatordata"
 
 #: indicators/blocks/__init__.py
 msgid "Indicator visualization as a pie chart"
-msgstr "Indikatorvisualisering som cirkeldiagram"
+msgstr ""
 
 #: indicators/blocks/__init__.py
 #, python-format
 msgid "The selected year (%(selected_year)s) has no data for this indicator. Available years are: %(available_years)s"
 msgstr ""
-"Det valda året (%(selected_year)s) har ingen data för denna indikator. "
-"Tillgängliga år är: %(available_years)s"
 
 #: indicators/blocks/__init__.py
+#, fuzzy
+#| msgid "Indicator data"
 msgid "Indicator: Summary"
 msgstr "Indikatordata"
 
 #: indicators/blocks/__init__.py
+#, fuzzy
+#| msgid "Indicator list pages"
 msgid "Indicator key figures"
 msgstr "Indikatorlistesider"
 
@@ -4006,88 +4360,112 @@ msgid "Paragraph"
 msgstr "Afsnit"
 
 #: indicators/blocks/__init__.py
+#, fuzzy
+#| msgid "Dashboard"
 msgid "Dashboard Row"
 msgstr "Dashboard"
 
 #: indicators/blocks/__init__.py
 msgid "Dashboard row with 1-3 content blocks"
-msgstr "Instrumentpanelsrad med 1–3 innehållsblock"
+msgstr ""
 
 #: indicators/blocks/layout.py
+#, fuzzy
 msgid "Value summary"
 msgstr "Sammenfatning"
 
 #: indicators/blocks/layout.py
+#, fuzzy
+#| msgid "causal indicator"
 msgid "Causality navigation"
 msgstr "kausal indikator"
 
 #: indicators/blocks/layout.py
+#, fuzzy
+#| msgid "Indicator actions"
 msgid "Indicator visualization"
 msgstr "Indikator handlinger"
 
 #: indicators/blocks/layout.py
+#, fuzzy
+#| msgid "related actions"
 msgid "Connected actions"
 msgstr "relaterede handlinger"
 
 #: indicators/blocks/layout.py
+#, fuzzy
+#| msgid "category levels"
 msgid "Category level"
 msgstr "kategoriniveauer"
 
 #: indicators/blocks/layout.py
+#, fuzzy
+#| msgid "category level"
 msgid "Invalid category level"
 msgstr "kategoriniveau"
 
 #: indicators/blocks/layout.py
 msgid "Earliest value"
-msgstr "Tidigaste värde"
+msgstr ""
 
 #: indicators/blocks/layout.py
+#, fuzzy
 msgid "Reference value"
 msgstr "reference"
 
 #: indicators/blocks/layout.py
+#, fuzzy
+#| msgid "value"
 msgid "Goal value"
 msgstr "værdi"
 
 #: indicators/blocks/layout.py
+#, fuzzy
+#| msgid "default view"
 msgid "Default year"
 msgstr "standardvisning"
 
 #: indicators/blocks/layout.py
 msgid "Default value year to pick for this column"
-msgstr "Standardvärdeår att välja för denna kolumn"
+msgstr ""
 
 #: indicators/blocks/layout.py
+#, fuzzy
 msgid "Show reference value"
 msgstr "reference"
 
 #: indicators/blocks/layout.py
 msgid "This shows the value from the reference year."
-msgstr "Detta visar värdet från referensåret."
+msgstr ""
 
 #: indicators/blocks/layout.py
 msgid "This can be set to override the default reference year."
-msgstr "Detta kan ställas in för att åsidosätta standardreferensåret."
+msgstr ""
 
 #: indicators/blocks/layout.py
+#, fuzzy
 msgid "Show current value"
 msgstr "reference"
 
 #: indicators/blocks/layout.py
+#, fuzzy
+#| msgid "show total line"
 msgid "Show goal value"
 msgstr "Vis total linje"
 
 #: indicators/blocks/layout.py
 msgid "Default year to pick for the goal value."
-msgstr "Standardår att välja för målvärdet."
+msgstr ""
 
 #: indicators/blocks/layout.py
+#, fuzzy
+#| msgid "Show all"
 msgid "Show goal gap"
 msgstr "Vis alt"
 
 #: indicators/blocks/layout.py
 msgid "This shows the difference between the goal and the current value."
-msgstr "Detta visar skillnaden mellan målet och det aktuella värdet."
+msgstr ""
 
 #: indicators/chooser.py
 msgid "Choose an indicator"
@@ -4098,18 +4476,26 @@ msgid "Choose another indicator"
 msgstr "Vælg en anden indikator"
 
 #: indicators/chooser.py
+#, fuzzy
+#| msgid "Choose a person"
 msgid "Choose a dimension"
 msgstr "Vælg en person"
 
 #: indicators/chooser.py
+#, fuzzy
+#| msgid "Choose another person"
 msgid "Choose another dimension"
 msgstr "Vælg en anden person"
 
 #: indicators/chooser.py
+#, fuzzy
+#| msgid "Choose a plan"
 msgid "Choose a value"
 msgstr "Vælg en plan"
 
 #: indicators/chooser.py
+#, fuzzy
+#| msgid "Choose another action"
 msgid "Choose another value"
 msgstr "Vælg en anden handling"
 
@@ -4127,8 +4513,7 @@ msgstr "angiver handlingsfremskridt"
 
 #: indicators/models/action_links.py
 msgid "Set if the indicator should be used to determine action progress"
-msgstr ""
-"Indstil om indikatoren skal bruges til at bestemme handlingens fremskridt"
+msgstr "Indstil om indikatoren skal bruges til at bestemme handlingens fremskridt"
 
 #: indicators/models/action_links.py
 msgid "action indicator"
@@ -4209,16 +4594,16 @@ msgstr "dimensioner"
 #, python-format
 msgid "Cannot delete dimension \"%(dimension)s\" because it is linked to multiple plans: %(plans)s"
 msgstr ""
-"Kan ikke slette dimensionen \"%(dimension)s\", fordi den er knyttet til "
-"flere planer: %(plans)s"
 
 #: indicators/models/dimensions.py
+#, fuzzy
+#| msgid "default view"
 msgid "default color"
 msgstr "standardvisning"
 
 #: indicators/models/dimensions.py
 msgid "Default color for this dimension category in charts"
-msgstr "Standardfärg för denna dimensionskategori i diagram"
+msgstr ""
 
 #: indicators/models/dimensions.py
 msgid "dimension category"
@@ -4229,10 +4614,14 @@ msgid "dimension categories"
 msgstr "dimensionskategorier"
 
 #: indicators/models/dimensions.py
+#, fuzzy
+#| msgid "dimension"
 msgid "plan dimension"
 msgstr "dimension"
 
 #: indicators/models/dimensions.py
+#, fuzzy
+#| msgid "dimensions"
 msgid "plan dimensions"
 msgstr "dimensioner"
 
@@ -4257,42 +4646,60 @@ msgid "dataset"
 msgstr "datasæt"
 
 #: indicators/models/goal_data_point.py
+#, fuzzy
+#| msgid "Metrics"
 msgid "metric"
 msgstr "Metrikker"
 
 #: indicators/models/goal_data_point.py
+#, fuzzy
+#| msgid "indicator goal"
 msgid "indicator goal data point"
 msgstr "indikator mål"
 
 #: indicators/models/goal_data_point.py
+#, fuzzy
+#| msgid "indicator goals"
 msgid "indicator goal data points"
 msgstr "indikator mål"
 
 #: indicators/models/goal_data_point.py
+#, fuzzy
+#| msgid "dimension category"
 msgid "indicator goal dimension category"
 msgstr "dimensionskategori"
 
 #: indicators/models/goal_data_point.py
+#, fuzzy
+#| msgid "dimension categories"
 msgid "indicator goal dimension categories"
 msgstr "dimensionskategorier"
 
 #: indicators/models/import_log.py
 msgid "Kausal Paths"
-msgstr "Kausal Paths"
+msgstr ""
 
 #: indicators/models/import_log.py
+#, fuzzy
+#| msgid "indicator values"
 msgid "Indicator values import log"
 msgstr "indikatorværdier"
 
 #: indicators/models/import_log.py
+#, fuzzy
+#| msgid "indicator values"
 msgid "Indicator values import logs"
 msgstr "indikatorværdier"
 
 #: indicators/models/indicator.py
+#, fuzzy
+#| msgid "increases"
 msgid "Increase"
 msgstr "stiger"
 
 #: indicators/models/indicator.py
+#, fuzzy
+#| msgid "decreases"
 msgid "Decrease"
 msgstr "falder"
 
@@ -4326,7 +4733,7 @@ msgstr "minimumsværdi"
 
 #: indicators/models/indicator.py
 msgid "Used in visualizations as the Y axis minimum"
-msgstr "Används i visualiseringar som Y-axelns minimum"
+msgstr ""
 
 #: indicators/models/indicator.py
 msgid "maximum value"
@@ -4334,16 +4741,17 @@ msgstr "maksimal værdi"
 
 #: indicators/models/indicator.py
 msgid "Used in visualizations as the Y axis maximum"
-msgstr "Används i visualiseringar som Y-axelns maximum"
+msgstr ""
 
 #: indicators/models/indicator.py
+#, fuzzy
+#| msgid "short name"
 msgid "sort key"
 msgstr "kort navn"
 
 #: indicators/models/indicator.py
 msgid "If set, this will be used as the primary criterion for sorting indicators."
 msgstr ""
-"Om inställt används detta som primärt kriterium för sortering av indikatorer."
 
 #: indicators/models/indicator.py
 msgid "time resolution"
@@ -4354,6 +4762,7 @@ msgid "updated values due at"
 msgstr "opdaterede værdier forfalder kl"
 
 #: indicators/models/indicator.py
+#, fuzzy
 msgid "reference value"
 msgstr "reference"
 
@@ -4362,52 +4771,58 @@ msgid "datasets"
 msgstr "datasæt"
 
 #: indicators/models/indicator.py
+#, fuzzy
+#| msgid "dataset license"
 msgid "dataset schema"
 msgstr "datasætlicens"
 
 #: indicators/models/indicator.py
 msgid "If set, this indicator uses the dataset system instead of legacy indicator values"
 msgstr ""
-"Om inställt använder denna indikator datasetsystemet istället för äldre "
-"indikatorvärden"
 
 #: indicators/models/indicator.py
+#, fuzzy
 msgid "reference"
 msgstr "reference"
 
 #: indicators/models/indicator.py
+#, fuzzy
 msgid "What is the reference or source for this indicator?"
 msgstr "Hvad er referencen eller kilden til denne indikator?"
 
 #: indicators/models/indicator.py
+#, fuzzy
+#| msgid "show trendline"
 msgid "show trend line"
 msgstr "Vis trendlinje"
 
 #: indicators/models/indicator.py
 msgid "Automatically create a trend line for the indicator's total value"
-msgstr "Skapa automatiskt en trendlinje för indikatorns totala värde"
+msgstr ""
 
 #: indicators/models/indicator.py
 msgid "desired trend"
-msgstr "önskad trend"
+msgstr ""
 
 #: indicators/models/indicator.py
+#, fuzzy
+#| msgid "increases"
 msgid "increasing"
 msgstr "stiger"
 
 #: indicators/models/indicator.py
+#, fuzzy
+#| msgid "decreases"
 msgid "decreasing"
 msgstr "falder"
 
 #: indicators/models/indicator.py
 msgid "attempt to detect automatically"
-msgstr "försök att detektera automatiskt"
+msgstr ""
 
 #: indicators/models/indicator.py
 msgid "Which trend in the numerical values of this indicator's goals indicates improvement: when the values are increasing or decreasing?"
 msgstr ""
-"Vilken trend i de numeriska värdena för denna indikators mål indikerar "
-"förbättring: när värdena ökar eller minskar?"
 
 #: indicators/models/indicator.py
 msgid "show total line"
@@ -4416,62 +4831,68 @@ msgstr "Vis total linje"
 #: indicators/models/indicator.py
 msgid "Data categories can be summed to form total for the indicator (draw stacked chart as default)"
 msgstr ""
-"Datakategorier kan summeras för att bilda totalt för indikatorn (rita "
-"staplat diagram som standard)"
 
 #: indicators/models/indicator.py
+#, fuzzy
+#| msgid "Name of the owner of the site"
 msgid "Number of steps on the y-axis"
 msgstr "Navn på ejeren af webstedet"
 
 #: indicators/models/indicator.py
 msgid "Number of significant digits on y-axis ticks"
-msgstr "Antal signifikanta siffror på y-axelns markeringar"
+msgstr ""
 
 #: indicators/models/indicator.py
 msgid "Number of significant digits when displaying indicator values"
-msgstr "Antal signifikanta siffror vid visning av indikatorvärden"
+msgstr ""
 
 #: indicators/models/indicator.py
 msgid "Data categories can be summed to form a total for the indicator (draw a stacked chart as default)"
 msgstr ""
-"Datakategorier kan summeras för att bilda en total för indikatorn (rita ett "
-"staplat diagram som standard)"
 
 #: indicators/models/indicator.py
 msgid "non-quantified goal"
-msgstr "icke-kvantifierat mål"
+msgstr ""
 
 #: indicators/models/indicator.py
 msgid "non-quantified goal date"
-msgstr "datum för icke-kvantifierat mål"
+msgstr ""
 
 #: indicators/models/indicator.py
+#, fuzzy
+#| msgid "description"
 msgid "goal description"
 msgstr "beskrivelse"
 
 #: indicators/models/indicator.py
+#, fuzzy
+#| msgid "identifier"
 msgid "Node identifier"
 msgstr "identifikator"
 
 #: indicators/models/indicator.py
 msgid "The node identifier of the node in Paths where this indicator's data is imported from."
 msgstr ""
-"Nodidentifieraren för noden i Paths varifrån denna indikators data "
-"importeras."
 
 #: indicators/models/indicator.py
+#, fuzzy
+#| msgid "Has a graph"
 msgid "Hide graph"
 msgstr "Har en graf"
 
 #: indicators/models/indicator.py
+#, fuzzy
+#| msgid "indicator contact persons"
 msgid "Do not show the graph for this indicator on the indicator page."
 msgstr "send til indikatorens kontaktpersoner"
 
 #: indicators/models/indicator.py
 msgid "Hide table"
-msgstr "Dölj tabell"
+msgstr ""
 
 #: indicators/models/indicator.py
+#, fuzzy
+#| msgid "indicator contact persons"
 msgid "Do not show this indicator's values in a table on the indicator page."
 msgstr "send til indikatorens kontaktpersoner"
 
@@ -4485,9 +4906,7 @@ msgstr "Har data"
 
 #: indicators/models/indicator.py
 msgid "Deadlines for value updates are currently only possible for yearly indicators"
-msgstr ""
-"Deadlines for værdiopdateringer er i øjeblikket kun mulige for årlige "
-"indikatorer"
+msgstr "Deadlines for værdiopdateringer er i øjeblikket kun mulige for årlige indikatorer"
 
 #: indicators/models/indicator.py
 msgid "There is already an indicator value for the year preceding the deadline"
@@ -4597,10 +5016,14 @@ msgid "How confident we are that the causal effect is present"
 msgstr "Hvor sikre er vi på, at årsagsvirkningen er til stede"
 
 #: indicators/models/values.py
+#, fuzzy
+#| msgid "indicator value"
 msgid "indicator value category"
 msgstr "indikatorværdi"
 
 #: indicators/models/values.py
+#, fuzzy
+#| msgid "indicator values"
 msgid "indicator value categories"
 msgstr "indikatorværdier"
 
@@ -4625,7 +5048,15 @@ msgid "indicator goals"
 msgstr "indikator mål"
 
 #: indicators/templates/site_summary/indicators.html
-#, python-format
+#, fuzzy, python-format
+#| msgid ""
+#| "\n"
+#| "        <span>%(total)s</span> action <span class=\"visuallyhidden\">monitored in %(plan.name)s</span>\n"
+#| "    "
+#| msgid_plural ""
+#| "\n"
+#| "        <span>%(total)s</span> actions <span class=\"visuallyhidden\">monitored in %(plan.name)s</span>\n"
+#| "    "
 msgid ""
 "\n"
 "        <span>%(total)s</span> indicator <span class=\"w-sr-only\">monitored in %(plan)s</span>\n"
@@ -4636,13 +5067,11 @@ msgid_plural ""
 "    "
 msgstr[0] ""
 "\n"
-"         <span> %(total)s </span> handling <span class=\"visuallyhidden\"> "
-"overvåget i %(plan.name)s </span>\n"
+"         <span> %(total)s </span> handling <span class=\"visuallyhidden\"> overvåget i %(plan.name)s </span>\n"
 "    "
 msgstr[1] ""
 "\n"
-"         <span> %(total)s </span> handlinger <span class=\"visuallyhidden\"> "
-"overvåget i %(plan.name)s </span>\n"
+"         <span> %(total)s </span> handlinger <span class=\"visuallyhidden\"> overvåget i %(plan.name)s </span>\n"
 "    "
 
 #: indicators/wagtail_admin.py
@@ -4677,10 +5106,10 @@ msgstr "Rediger denne mængde"
 #, python-format
 msgid "Cannot delete dimension \"%(dimension)s\" at this time, please contact support."
 msgstr ""
-"Kan ikke slette dimensionen \"%(dimension)s\" på nuværende tidspunkt. "
-"Kontakt venligst support."
 
 #: indicators/wagtail_admin.py
+#, fuzzy
+#| msgid "Indicator dimensions"
 msgid "Indicator dimensions"
 msgstr "Indikator dimensioner"
 
@@ -4699,8 +5128,6 @@ msgstr "[ikke i aktiv plan]"
 #: indicators/wagtail_admin.py
 msgid "Changing the organization to one with a different primary language is currently not supported"
 msgstr ""
-"Att ändra organisationen till en med ett annat huvudspråk stöds för "
-"närvarande inte"
 
 #: indicators/wagtail_admin.py
 msgid "Dimensions must be the same as in common indicator"
@@ -4710,8 +5137,6 @@ msgstr "Dimensioner skal være de samme som i fælles indikator"
 #, python-format
 msgid "While editing this indicator you have switched to a different plan. This indicator was still saved with the original plan \"%s\"."
 msgstr ""
-"Mens du redigerede denne indikator, skiftede du til en anden plan. "
-"Indikatoren blev alligevel gemt med den oprindelige plan \"%s\"."
 
 #: indicators/wagtail_admin.py
 msgid "none"
@@ -4720,12 +5145,11 @@ msgstr "ingen"
 #: indicators/wagtail_admin.py
 #, python-format
 msgid "This indicator is linked to a common indicator, so quantity, unit and dimensions cannot be edited. Current quantity: %(quantity)s; unit: %(unit)s; dimensions: %(dimensions)s"
-msgstr ""
-"Denne indikator er knyttet til en fælles indikator, så mængde, enhed og "
-"dimensioner kan ikke redigeres. Aktuel mængde: %(quantity)s; enhed: %(unit)"
-"s; dimensioner: %(dimensions)s"
+msgstr "Denne indikator er knyttet til en fælles indikator, så mængde, enhed og dimensioner kan ikke redigeres. Aktuel mængde: %(quantity)s; enhed: %(unit)s; dimensioner: %(dimensions)s"
 
 #: indicators/wagtail_admin.py
+#, fuzzy
+#| msgid "Indicator actions"
 msgid "Indicator settings"
 msgstr "Indikator handlinger"
 
@@ -4734,14 +5158,20 @@ msgid "Classification"
 msgstr "Klassifikation"
 
 #: indicators/wagtail_admin.py
+#, fuzzy
+#| msgid "Indicator actions"
 msgid "Indicator page settings"
 msgstr "Indikator handlinger"
 
 #: indicators/wagtail_admin.py
+#, fuzzy
+#| msgid "notification settings"
 msgid "Visualization settings"
 msgstr "meddelelsesindstillinger"
 
 #: indicators/wagtail_admin.py
+#, fuzzy
+#| msgid "dimensions"
 msgid "Dimensions"
 msgstr "dimensioner"
 
@@ -4749,14 +5179,12 @@ msgstr "dimensioner"
 #, python-format
 msgid "If you change the dimensions of this indicator (currently %(dimensions)s), its single value will be deleted."
 msgid_plural "If you change the dimensions of this indicator (currently %(dimensions)s), all its %(num)d values will be deleted."
-msgstr[0] ""
-"Hvis du ændrer dimensionerne af denne indikator (i øjeblikket %(dimensions)s)"
-", vil dens enkelte værdi blive slettet."
-msgstr[1] ""
-"Hvis du ændrer dimensionerne af denne indikator (i øjeblikket %(dimensions)s)"
-", vil alle dens %(num)d værdier blive slettet."
+msgstr[0] "Hvis du ændrer dimensionerne af denne indikator (i øjeblikket %(dimensions)s), vil dens enkelte værdi blive slettet."
+msgstr[1] "Hvis du ændrer dimensionerne af denne indikator (i øjeblikket %(dimensions)s), vil alle dens %(num)d værdier blive slettet."
 
 #: indicators/wagtail_admin.py
+#, fuzzy
+#| msgid "Advanced options"
 msgid "Advanced settings"
 msgstr "Avancerede indstillinger"
 
@@ -4773,10 +5201,14 @@ msgid "Causes"
 msgstr "Årsager"
 
 #: indicators/wagtail_admin.py
+#, fuzzy
+#| msgid "other indicators"
 msgid "Other indicators"
 msgstr "andre indikatorer"
 
 #: indicators/wagtail_admin.py
+#, fuzzy
+#| msgid "related actions"
 msgid "Relationships"
 msgstr "relaterede handlinger"
 
@@ -4795,24 +5227,29 @@ msgstr "Fælles indikatorer"
 #: indicators/wagtail_admin.py
 #, python-format
 msgid "This common indicator has indicators linked to it, so quantity, unit and dimensions cannot be edited. Current quantity: %(quantity)s; unit: %(unit)s; dimensions: %(dimensions)s"
-msgstr ""
-"Denne fælles indikator har indikatorer knyttet til sig, så mængde, enhed og "
-"dimensioner kan ikke redigeres. Aktuel mængde: %(quantity)s; enhed: %(unit)"
-"s; dimensioner: %(dimensions)s"
+msgstr "Denne fælles indikator har indikatorer knyttet til sig, så mængde, enhed og dimensioner kan ikke redigeres. Aktuel mængde: %(quantity)s; enhed: %(unit)s; dimensioner: %(dimensions)s"
 
 #: indicators/wagtail_hooks.py
+#, fuzzy
+#| msgid "updated values due at"
 msgid "Update values"
 msgstr "opdaterede værdier forfalder kl"
 
 #: indicators/wagtail_hooks.py
+#, fuzzy
+#| msgid "Last updated"
 msgid "Values updated"
 msgstr "Sidst opdateret"
 
 #: indicators/wagtail_hooks.py
+#, fuzzy
+#| msgid "updated at"
 msgid "Update goals"
 msgstr "opdateret kl"
 
 #: indicators/wagtail_hooks.py
+#, fuzzy
+#| msgid "Last updated"
 msgid "Goals updated"
 msgstr "Sidst opdateret"
 
@@ -4827,9 +5264,7 @@ msgstr "Generelle meddelelser om handling '%s'"
 
 #: notifications/forms.py
 msgid "These are sent when there are news about this action such as reminders for deadlines."
-msgstr ""
-"Disse sendes, når der er nyt om denne handling, såsom påmindelser om "
-"deadlines."
+msgstr "Disse sendes, når der er nyt om denne handling, såsom påmindelser om deadlines."
 
 #: notifications/forms.py
 #, python-format
@@ -4852,11 +5287,17 @@ msgstr "Disse sendes, når en besøgende har givet feedback til denne plan."
 #: notifications/management/commands/initialize_notifications.py
 msgctxt "motivation"
 msgid "Thank you for keeping the action plan updated. Up-to-date information about the actions is essential for us to achieve our goals."
-msgstr ""
-"Tak for at holde handlingsplanen opdateret. Opdateret information om "
-"handlingerne er afgørende for, at vi kan nå vores mål."
+msgstr "Tak for at holde handlingsplanen opdateret. Opdateret information om handlingerne er afgørende for, at vi kan nå vores mål."
 
 #: notifications/management/commands/initialize_notifications.py
+#, fuzzy
+#| msgctxt "outro"
+#| msgid ""
+#| "If you are having difficulties using the action plan watch platform, please send an email to the administrators of the action plan.\n"
+#| "\n"
+#| "Thank you for taking part in implementing the action plan!\n"
+#| "\n"
+#| "Kind regards, the action plan administrators."
 msgctxt "outro"
 msgid ""
 "If you are having difficulties using the action plan watch platform, please send an email to the administrators of the action plan.\n"
@@ -4866,22 +5307,27 @@ msgid ""
 "Kind regards,\n"
 "the action plan administrators"
 msgstr ""
-"Hvis du har problemer med at bruge handlingsplanens overvågningsplatform, "
-"bedes du sende en e-mail til administratorerne af handlingsplanen.\n"
+"Hvis du har problemer med at bruge handlingsplanens overvågningsplatform, bedes du sende en e-mail til administratorerne af handlingsplanen.\n"
 "\n"
 "Tak fordi du har været med til at implementere handlingsplanen!\n"
 "\n"
 "Med venlig hilsen, handlingsplanens administratorer."
 
 #: notifications/models.py
+#, fuzzy
+#| msgid "notification template"
 msgid "notifications enabled"
 msgstr "meddelelsesskabelon"
 
 #: notifications/models.py
+#, fuzzy
+#| msgid "notification settings"
 msgid "Should notifications be sent?"
 msgstr "meddelelsesindstillinger"
 
 #: notifications/models.py
+#, fuzzy
+#| msgid "notification settings"
 msgid "notification sending time"
 msgstr "meddelelsesindstillinger"
 
@@ -4900,9 +5346,7 @@ msgstr "meddelelsesindstillinger"
 
 #: notifications/models.py
 msgid "Set if the notification was sent to an email address instead of a person"
-msgstr ""
-"Indstilles, hvis meddelelsen blev sendt til en e-mailadresse i stedet for en "
-"person"
+msgstr "Indstilles, hvis meddelelsen blev sendt til en e-mailadresse i stedet for en person"
 
 #: notifications/models.py
 msgid "Email From name"
@@ -4933,15 +5377,21 @@ msgid "Font CSS style URL"
 msgstr "Skrifttype CSS-stil URL"
 
 #: notifications/models.py
+#, fuzzy
+#| msgid "template"
 msgctxt "partitive"
 msgid "base templates"
 msgstr "skabelon"
 
 #: notifications/models.py
+#, fuzzy
+#| msgid "template"
 msgid "base template"
 msgstr "skabelon"
 
 #: notifications/models.py
+#, fuzzy
+#| msgid "template"
 msgid "base templates"
 msgstr "skabelon"
 
@@ -4954,39 +5404,44 @@ msgid "Subject for email notifications"
 msgstr "Emne for e-mail notifikationer"
 
 #: notifications/models.py
+#, fuzzy
+#| msgid "email address"
 msgid "custom email address"
 msgstr "email adresse"
 
 #: notifications/models.py
 msgid "Email address used when \"send to custom email address\" is checked"
-msgstr ""
-"E-mailadresse, der bruges, når \"send til brugerdefineret e-mailadresse\" er "
-"markeret"
+msgstr "E-mailadresse, der bruges, når \"send til brugerdefineret e-mailadresse\" er markeret"
 
 #: notifications/models.py
+#, fuzzy
+#| msgid "is plan admin"
 msgid "send to plan admins"
 msgstr "er planadministrator"
 
 #: notifications/models.py
+#, fuzzy
+#| msgid "Enter your email address"
 msgid "send to custom email address"
 msgstr "Indtast din e-mailadresse"
 
 #: notifications/models.py
 msgid "This can only be set if a custom email address is defined"
-msgstr ""
-"Dette kan kun indstilles, hvis der er defineret en brugerdefineret e-"
-"mailadresse"
+msgstr "Dette kan kun indstilles, hvis der er defineret en brugerdefineret e-mailadresse"
 
 #: notifications/models.py
 msgid "If a custom email address is defined, this must be set"
-msgstr ""
-"Hvis der er defineret en brugerdefineret e-mailadresse, skal denne angives"
+msgstr "Hvis der er defineret en brugerdefineret e-mailadresse, skal denne angives"
 
 #: notifications/models.py
+#, fuzzy
+#| msgid "indicator contact persons"
 msgid "Do not send to contact persons"
 msgstr "indikator kontaktpersoner"
 
 #: notifications/models.py
+#, fuzzy
+#| msgid "indicator contact persons"
 msgid "Send to contact persons"
 msgstr "indikator kontaktpersoner"
 
@@ -4999,6 +5454,8 @@ msgid "Send to contact persons; fallback: organization admins, plan admins"
 msgstr "Send til kontaktpersoner; fallback: organisationsadministratorer"
 
 #: notifications/models.py
+#, fuzzy
+#| msgid "indicator contact persons"
 msgid "send to contact persons"
 msgstr "indikator kontaktpersoner"
 
@@ -5015,6 +5472,8 @@ msgid "notification templates"
 msgstr "meddelelsesskabeloner"
 
 #: notifications/models.py
+#, fuzzy
+#| msgid "The local time of day when notifications are sent"
 msgid "The content of the notification"
 msgstr "Indholdet af meddelelsen"
 
@@ -5023,10 +5482,14 @@ msgid "send to action contact persons"
 msgstr "send til handlingskontaktpersoner"
 
 #: notifications/models.py
+#, fuzzy
+#| msgid "indicator contact persons"
 msgid "send to indicator contact persons"
 msgstr "send til indikatorens kontaktpersoner"
 
 #: notifications/models.py
+#, fuzzy
+#| msgid "is plan admin"
 msgid "send to organization admins"
 msgstr "send til organisationsadministratorer"
 
@@ -5035,11 +5498,13 @@ msgid "scheduled notification"
 msgstr "planlagt meddelelse"
 
 #: notifications/models.py
+#, fuzzy
+#| msgid "notification settings"
 msgid "scheduled notifications"
 msgstr "meddelelsesindstillinger"
 
 #: notifications/models.py
-#, python-format
+#, fuzzy, python-format
 msgid "The type must be \"%(t)s\"."
 msgstr "Typen skal være \"%(t)s\"."
 
@@ -5090,11 +5555,7 @@ msgstr "modtage meddelelser om handlingsfeedback"
 #: notifications/notifications.py
 msgctxt "task_late"
 msgid "This is an automatic reminder about updating the task information of your action in the action plan. There is an action whose deadline has passed. The action is shown to be late until you mark it as done and fill in some details."
-msgstr ""
-"Dette er en automatisk påmindelse om opdatering af opgaveoplysningerne for "
-"din handling i handlingsplanen. Der er en handling, hvis frist er "
-"overskredet. Handlingen er vist at være forsinket, indtil du markerer den "
-"som udført og udfylder nogle detaljer."
+msgstr "Dette er en automatisk påmindelse om opdatering af opgaveoplysningerne for din handling i handlingsplanen. Der er en handling, hvis frist er overskredet. Handlingen er vist at være forsinket, indtil du markerer den som udført og udfylder nogle detaljer."
 
 #: notifications/notifications.py
 msgid "Task is late"
@@ -5107,10 +5568,7 @@ msgstr "Opdaterede indikatorværdier er forsinkede"
 #: notifications/notifications.py
 msgctxt "updated_indicator_values_late"
 msgid "This is an automatic reminder about updating indicator details in the action plan.  The deadline for updating the indicator values has passed. Please go and update the indicator with the latest values."
-msgstr ""
-"Dette er en automatisk påmindelse om opdatering af indikatordetaljer i "
-"handlingsplanen. Fristen for opdatering af indikatorværdierne er udløbet. Gå "
-"og opdater indikatoren med de seneste værdier."
+msgstr "Dette er en automatisk påmindelse om opdatering af indikatordetaljer i handlingsplanen. Fristen for opdatering af indikatorværdierne er udløbet. Gå og opdater indikatoren med de seneste værdier."
 
 #: notifications/notifications.py
 msgid "Task is due soon"
@@ -5119,12 +5577,7 @@ msgstr "Opgaven afleveres snart"
 #: notifications/notifications.py
 msgctxt "task_due_soon"
 msgid "This is an automatic reminder about updating the task information of your action in the action plan.  There is an action in the action plan with a deadline approaching. Please remember to mark the task as done as soon as it has been completed. After the deadline has gone, the action will be marked as late. You can edit the task details from the link below."
-msgstr ""
-"Dette er en automatisk påmindelse om opdatering af opgaveoplysningerne for "
-"din handling i handlingsplanen. Der er en handling i handleplanen med en "
-"deadline nærmer sig. Husk at markere opgaven som udført, så snart den er "
-"afsluttet. Efter fristens udløb vil handlingen blive markeret som forsinket. "
-"Du kan redigere opgavedetaljerne fra linket nedenfor."
+msgstr "Dette er en automatisk påmindelse om opdatering af opgaveoplysningerne for din handling i handlingsplanen. Der er en handling i handleplanen med en deadline nærmer sig. Husk at markere opgaven som udført, så snart den er afsluttet. Efter fristens udløb vil handlingen blive markeret som forsinket. Du kan redigere opgavedetaljerne fra linket nedenfor."
 
 #: notifications/notifications.py
 msgid "Updated indicator values are due soon"
@@ -5133,10 +5586,7 @@ msgstr "Opdaterede indikatorværdier forfalder snart"
 #: notifications/notifications.py
 msgctxt "updated_indicator_values_due_soon"
 msgid "This is an automatic reminder about updating indicator details in the action plan.  The deadline for updating the indicator values is approaching. Please go and update the indicator with the latest values."
-msgstr ""
-"Dette er en automatisk påmindelse om opdatering af indikatordetaljer i "
-"handlingsplanen. Deadline for opdatering af indikatorværdierne nærmer sig. "
-"Gå og opdater indikatoren med de seneste værdier."
+msgstr "Dette er en automatisk påmindelse om opdatering af indikatordetaljer i handlingsplanen. Deadline for opdatering af indikatorværdierne nærmer sig. Gå og opdater indikatoren med de seneste værdier."
 
 #: notifications/notifications.py
 msgid "Action doesn't have enough in-progress tasks"
@@ -5145,13 +5595,7 @@ msgstr "Handling har ikke nok igangværende projekter"
 #: notifications/notifications.py
 msgctxt "not_enough_tasks"
 msgid "This is an automatic reminder about updating the action details in the action plan.  You can see on the action plan watch site what has already been done to further the actions and what has been planned for the future.  This means that it would be preferrable for each action to have at least one upcoming task within the next year. Please go and add tasks for the action which show what the next planned steps for the action are."
-msgstr ""
-"Dette er en automatisk påmindelse om opdatering af handlingsdetaljerne i "
-"handlingsplanen. Du kan se på handlingsplanens vagtside, hvad der allerede "
-"er blevet gjort for at fremme handlingerne, og hvad der er planlagt for "
-"fremtiden. Det betyder, at det ville være at foretrække for hver aktion at "
-"have mindst en kommende projekt inden for det næste år. Gå og tilføj projekt "
-"til handlingen, som viser, hvad de næste planlagte trin for handlingen er."
+msgstr "Dette er en automatisk påmindelse om opdatering af handlingsdetaljerne i handlingsplanen. Du kan se på handlingsplanens vagtside, hvad der allerede er blevet gjort for at fremme handlingerne, og hvad der er planlagt for fremtiden. Det betyder, at det ville være at foretrække for hver aktion at have mindst en kommende projekt inden for det næste år. Gå og tilføj projekt til handlingen, som viser, hvad de næste planlagte trin for handlingen er."
 
 #: notifications/notifications.py
 msgid "Action metadata has not been updated recently"
@@ -5160,13 +5604,7 @@ msgstr "Handlingsmetadata er ikke blevet opdateret for nylig"
 #: notifications/notifications.py
 msgctxt "action_not_updated"
 msgid "This is an automatic reminder about updating the action details in the action plan.  You can see on the action plan watch site what has already been done to further the actions and what has been planned for the future.  It's already six months since you last updated an action. Please go and update the action with the latest information. You can add an upcoming task to the action at the same time."
-msgstr ""
-"Dette er en automatisk påmindelse om opdatering af handlingsdetaljerne i "
-"handlingsplanen. Du kan se på handlingsplanens vagtside, hvad der allerede "
-"er blevet gjort for at fremme handlingerne, og hvad der er planlagt for "
-"fremtiden. Det er allerede seks måneder siden, du sidst opdaterede en "
-"handling. Gå og opdater handlingen med de seneste oplysninger. Du kan "
-"tilføje en kommende opgave til handlingen på samme tid."
+msgstr "Dette er en automatisk påmindelse om opdatering af handlingsdetaljerne i handlingsplanen. Du kan se på handlingsplanens vagtside, hvad der allerede er blevet gjort for at fremme handlingerne, og hvad der er planlagt for fremtiden. Det er allerede seks måneder siden, du sidst opdaterede en handling. Gå og opdater handlingen med de seneste oplysninger. Du kan tilføje en kommende opgave til handlingen på samme tid."
 
 #: notifications/notifications.py
 msgid "User feedback received"
@@ -5178,27 +5616,37 @@ msgid "A user has submitted feedback."
 msgstr "En bruger har sendt feedback."
 
 #: notifications/notifications.py
+#, fuzzy
 msgid "Manually scheduled notification"
 msgstr "Manuelt planlagt notifikation"
 
 #: notifications/wagtail_admin.py
+#, fuzzy
+#| msgid "notification settings"
 msgid "Cannot schedule a notification for the past"
 msgstr "meddelelsesindstillinger"
 
 #: notifications/wagtail_admin.py
+#, fuzzy
+#| msgid "notification settings"
 msgid "Cannot reschedule a notification for the past"
 msgstr "meddelelsesindstillinger"
 
 #: notifications/wagtail_admin.py
+#, fuzzy
+#| msgid "%s could not be created due to errors."
 msgid "Notifications could not be modified due to errors."
 msgstr "%s kunne ikke oprettes på grund af fejl."
 
 #: notifications/wagtail_admin.py
+#, fuzzy
+#| msgid "%s could not be created due to errors."
 msgid "Notifications could not be set up due to errors."
 msgstr "%s kunne ikke oprettes på grund af fejl."
 
 #: notifications/wagtail_admin.py
-#, python-brace-format
+#, fuzzy, python-brace-format
+#| msgid "The email message will be sent on the specified day at"
 msgid "The email message will be sent on the specified day at {time}."
 msgstr "E-mailen bliver sendt på den angivne dag på"
 
@@ -5223,10 +5671,14 @@ msgid "Notification preferences"
 msgstr "Notifikationspræferencer"
 
 #: orgs/chooser.py
+#, fuzzy
+#| msgid "Choose an action"
 msgid "Choose an organization"
 msgstr "Vælg en handling"
 
 #: orgs/chooser.py
+#, fuzzy
+#| msgid "Choose another action"
 msgid "Choose another organization"
 msgstr "Vælg en anden handling"
 
@@ -5255,10 +5707,14 @@ msgid "metadata admins"
 msgstr "metadata administratorer"
 
 #: orgs/views.py
+#, fuzzy
+#| msgid "main organization for the plan"
 msgid "Add organization to active plan"
 msgstr "hovedorganisation for planen"
 
 #: orgs/views.py
+#, fuzzy
+#| msgid "main organization for the plan"
 msgid "Exclude organization from active plan"
 msgstr "hovedorganisation for planen"
 
@@ -5275,21 +5731,22 @@ msgstr "Bekræft, at %(org)s er med i planen %(plan)s"
 #: orgs/views.py
 #, python-format
 msgid "Do you really want to include the organization '%(org)s' in the plan '%(plan)s'?"
-msgstr ""
-"Ønsker du virkelig at inkludere organisationen '%(org)s' i planen '%(plan)s'?"
+msgstr "Ønsker du virkelig at inkludere organisationen '%(org)s' i planen '%(plan)s'?"
 
 #: orgs/views.py
 #, python-format
 msgid "Do you really want to exclude the organization '%(org)s' from the plan '%(plan)s'?"
-msgstr ""
-"Ønsker du virkelig at udelukke organisationen '%(org)s' fra planen '%(plan)"
-"s'?"
+msgstr "Ønsker du virkelig at udelukke organisationen '%(org)s' fra planen '%(plan)s'?"
 
 #: orgs/views.py
+#, fuzzy
+#| msgid "main organization for the plan"
 msgid "The organization is already included in the plan"
 msgstr "hovedorganisation for planen"
 
 #: orgs/views.py
+#, fuzzy
+#| msgid "main organization for the plan"
 msgid "The organization is not included in the plan"
 msgstr "hovedorganisation for planen"
 
@@ -5304,71 +5761,88 @@ msgid "Organization '%(org)s' has been excluded from plan '%(plan)s'."
 msgstr "Organisationen '%(org)s' er blevet udelukket fra planen '%(plan)s'."
 
 #: orgs/wagtail_admin.py
+#, fuzzy
+#| msgid "Creating new indicators is not allowed"
 msgid "Creating organizations without a parent not allowed."
 msgstr "Det er ikke tilladt at oprette nye indikatorer"
 
 #: orgs/wagtail_admin.py reports/report_formatters.py
 #: reports/spreadsheets/excel_report.py
+#, fuzzy
+#| msgid "Parent"
 msgctxt "organization"
 msgid "Parent"
 msgstr "Forælder"
 
 #: orgs/wagtail_admin.py
 msgid "People who can edit plan-specific content related to this organization"
-msgstr ""
-"Personer, der kan redigere planspecifikt indhold relateret til denne "
-"organisation"
+msgstr "Personer, der kan redigere planspecifikt indhold relateret til denne organisation"
 
 #: orgs/wagtail_admin.py
+#, fuzzy
+#| msgid "metadata admins"
 msgid "Metadata admins"
 msgstr "metadata administratorer"
 
 #: orgs/wagtail_admin.py
 msgid "People who can edit data of this organization and suborganizations but no plan-specific content"
-msgstr ""
-"Personer, der kan redigere data for denne organisation og "
-"underorganisationer, men ikke plan-specifikt indhold"
+msgstr "Personer, der kan redigere data for denne organisation og underorganisationer, men ikke plan-specifikt indhold"
 
 #: orgs/wagtail_admin.py
+#, fuzzy
+#| msgid "Permission denied"
 msgid "Permissions"
 msgstr "Adgang nægtet"
 
 #: orgs/wagtail_admin.py
-#, python-format
+#, fuzzy, python-format
+#| msgid "site title"
 msgid "Edit '%(title)s'"
 msgstr "webstedets titel"
 
 #: orgs/wagtail_admin.py
+#, fuzzy
+#| msgid "Choose plan"
 msgid "Copy"
 msgstr "Vælg plan"
 
 #: orgs/wagtail_admin.py
 #, python-format
 msgid "Copy '%(title)s'"
-msgstr "Kopiera '%(title)s'"
+msgstr ""
 
 #: orgs/wagtail_admin.py
 #, python-format
 msgid "Delete '%(title)s'"
-msgstr "Radera '%(title)s'"
+msgstr ""
 
 #: orgs/wagtail_admin.py
+#, fuzzy
+#| msgid "organization"
 msgid "Add suborganization"
 msgstr "organisation"
 
 #: orgs/wagtail_admin.py
+#, fuzzy
+#| msgid "Select action plan"
 msgid "Include in active plan"
 msgstr "Vælg handlingsplan"
 
 #: orgs/wagtail_admin.py
+#, fuzzy
+#| msgid "main organization for the plan"
 msgid "Include this organization in the active plan"
 msgstr "hovedorganisation for planen"
 
 #: orgs/wagtail_admin.py
+#, fuzzy
+#| msgid "Exclude from plan"
 msgid "Exclude from active plan"
 msgstr "Udeluk fra planen"
 
 #: orgs/wagtail_admin.py
+#, fuzzy
+#| msgid "main organization for the plan"
 msgid "Exclude this organization from the active plan"
 msgstr "hovedorganisation for planen"
 
@@ -5390,11 +5864,11 @@ msgstr "stor"
 
 #: pages/blocks.py
 msgid "Size"
-msgstr "Storlek"
+msgstr ""
 
 #: pages/blocks.py
 msgid "The source URL of the embed is invalid or not supported."
-msgstr "Inbäddningens käll-URL är ogiltig eller stöds inte."
+msgstr ""
 
 #: pages/blocks.py
 msgid "Title"
@@ -5417,14 +5891,20 @@ msgid "Front page hero block"
 msgstr "Forside helteblok"
 
 #: pages/blocks.py
+#, fuzzy
+#| msgid "action link"
 msgid "Page link"
 msgstr "handlingslink"
 
 #: pages/blocks.py
+#, fuzzy
+#| msgid "Cards"
 msgid "Card"
 msgstr "Kort"
 
 #: pages/blocks.py
+#, fuzzy
+#| msgid "common category"
 msgid "Action category filter card"
 msgstr "fælles kategori"
 
@@ -5433,14 +5913,20 @@ msgid "Links"
 msgstr "Links"
 
 #: pages/blocks.py
+#, fuzzy
+#| msgid "common category"
 msgid "Action category filter cards"
 msgstr "fælles kategori"
 
 #: pages/blocks.py
+#, fuzzy
+#| msgid "Accessibility statement pages"
 msgid "Accessibility statement compliance status"
 msgstr "Tilgængelighedserklæringssider"
 
 #: pages/blocks.py
+#, fuzzy
+#| msgid "Accessibility statement page"
 msgid "Accessibility statement preparation information"
 msgstr "Side med erklæring om tilgængelighed"
 
@@ -5453,40 +5939,52 @@ msgid "Maintenance responsibility paragraph"
 msgstr "Vedligeholdelsesansvar stk"
 
 #: pages/blocks.py
+#, fuzzy
+#| msgid "If this is set, it will be displayed instead of \"This service is published by [publisher].\""
 msgid "If this is set, it will be displayed instead of \"This service is published by [publisher]\"."
-msgstr ""
-"Hvis dette er indstillet, vil det blive vist i stedet for \"Denne tjeneste "
-"er udgivet af [udgiver].\""
+msgstr "Hvis dette er indstillet, vil det blive vist i stedet for \"Denne tjeneste er udgivet af [udgiver].\""
 
 #: pages/blocks.py
 msgid "Email address"
 msgstr "Email adresse"
 
 #: pages/blocks.py
+#, fuzzy
+#| msgid "Accessibility statement page"
 msgid "Accessibility statement contact information"
 msgstr "Side med erklæring om tilgængelighed"
 
 #: pages/blocks.py
+#, fuzzy
+#| msgid "Accessibility statement page"
 msgid "Accessibility statement contact form"
 msgstr "Side med erklæring om tilgængelighed"
 
 #: pages/blocks.py
+#, fuzzy
+#| msgid "Action statuses"
 msgid "Action status pie charts"
 msgstr "Handlingsstatusser"
 
 #: pages/blocks.py
 msgid "Width"
-msgstr "Bredd"
+msgstr ""
 
 #: pages/blocks.py
+#, fuzzy
+#| msgid "maximum value"
 msgid "Maximum"
 msgstr "maksimal værdi"
 
 #: pages/blocks.py
+#, fuzzy
+#| msgid "in side column"
 msgid "Fit to column"
 msgstr "i sidesøjle"
 
 #: pages/blocks.py
+#, fuzzy
+#| msgid "Big image"
 msgid "Large image"
 msgstr "Stort billede"
 
@@ -5511,6 +6009,7 @@ msgid "show link in child plans"
 msgstr "vis link i børneplaner"
 
 #: pages/models.py
+#, fuzzy
 msgid "Should this additional link be displayed in child plans?"
 msgstr "Skal dette ekstra link vises i børneplaner?"
 
@@ -5568,7 +6067,7 @@ msgstr "Indholdssider"
 
 #: pages/models.py
 msgid "Level layouts"
-msgstr "Layouter för nivåer"
+msgstr ""
 
 #: pages/models.py
 msgid "Category type page"
@@ -5579,32 +6078,38 @@ msgid "Category type pages"
 msgstr "Kategoritype sider"
 
 #: pages/models.py
+#, fuzzy
+#| msgid "small"
 msgid "Small"
 msgstr "lille"
 
 #: pages/models.py
+#, fuzzy
+#| msgid "medium"
 msgid "Medium"
 msgstr "medium"
 
 #: pages/models.py
+#, fuzzy
+#| msgid "large"
 msgid "Large"
 msgstr "stor"
 
 #: pages/models.py
 msgid "layout main top"
-msgstr "layout huvud topp"
+msgstr ""
 
 #: pages/models.py
 msgid "layout main bottom"
-msgstr "layout huvud botten"
+msgstr ""
 
 #: pages/models.py
 msgid "layout aside"
-msgstr "layout åt sidan"
+msgstr ""
 
 #: pages/models.py
 msgid "icon size"
-msgstr "ikonstorlek"
+msgstr ""
 
 #: pages/models.py
 msgid "Category page"
@@ -5640,39 +6145,39 @@ msgstr "Underoverskriftshierarki dybde"
 
 #: pages/models.py
 msgid "Depth of category hierarchy to present as subheadings starting from the root."
-msgstr ""
-"Dybde af kategorihierarki til at præsentere som underoverskrifter startende "
-"fra roden."
+msgstr "Dybde af kategorihierarki til at præsentere som underoverskrifter startende fra roden."
 
 #: pages/models.py
+#, fuzzy
+#| msgid "common category"
 msgid "Action date format"
 msgstr "fælles kategori"
 
 #: pages/models.py
+#, fuzzy
+#| msgid "Set if action identifiers should be visible in the public UI"
 msgid "Default format of action start and end dates shown in the public UI."
-msgstr ""
-"Indstil, om handlingsidentifikatorer skal være synlige i den offentlige "
-"brugergrænseflade"
+msgstr "Indstil, om handlingsidentifikatorer skal være synlige i den offentlige brugergrænseflade"
 
 #: pages/models.py
 msgid "Task due date format"
-msgstr "Format för uppgiftsdatum"
-
-#: pages/models.py
-msgid "Default format of action task due dates shown in the public UI."
 msgstr ""
-"Indstil, om handlingsidentifikatorer skal være synlige i den offentlige "
-"brugergrænseflade"
 
 #: pages/models.py
+#, fuzzy
+#| msgid "Set if action identifiers should be visible in the public UI"
+msgid "Default format of action task due dates shown in the public UI."
+msgstr "Indstil, om handlingsidentifikatorer skal være synlige i den offentlige brugergrænseflade"
+
+#: pages/models.py
+#, fuzzy
+#| msgid "Related plans"
 msgid "Include related plans"
 msgstr "Relaterede planer"
 
 #: pages/models.py
 msgid "Enable to make this page include actions from related plans."
-msgstr ""
-"Aktiver for at få denne side til at inkludere handlinger fra relaterede "
-"planer."
+msgstr "Aktiver for at få denne side til at inkludere handlinger fra relaterede planer."
 
 #: pages/models.py
 msgid "Primary filters"
@@ -5707,6 +6212,8 @@ msgid "Action details page"
 msgstr "Side med handlingsdetaljer"
 
 #: pages/models.py
+#, fuzzy
+#| msgid "in side column"
 msgid "Action dashboard columns"
 msgstr "i sidesøjle"
 
@@ -5719,37 +6226,46 @@ msgid "Action list pages"
 msgstr "Sider med handlingsliste"
 
 #: pages/models.py
+#, fuzzy
+#| msgid "Should the page be shown in the footer?"
 msgid "Should insight network be shown for indicators?"
 msgstr "Skal siden vises i sidefoden?"
 
 #: pages/models.py
 msgid "Display insights"
-msgstr "Visa insikter"
+msgstr ""
 
 #: pages/models.py
 msgid "Should the indicator level be shown for indicators? (Displayed in the column \"Type\")"
 msgstr ""
-"Skal indikatorniveauet vises for indikatorer? (Vises i kolonnen \"Type\")"
 
 #: pages/models.py
+#, fuzzy
+#| msgid "category level"
 msgid "Display level"
 msgstr "kategoriniveau"
 
 #: pages/models.py
+#, fuzzy
+#| msgid "Enable to make this page include actions from related plans."
 msgid "Enable to make this page include indicators from related plans."
-msgstr ""
-"Aktiver for at få denne side til at inkludere handlinger fra relaterede "
-"planer."
+msgstr "Aktiver for at få denne side til at inkludere handlinger fra relaterede planer."
 
 #: pages/models.py
+#, fuzzy
+#| msgid "Indicator list pages"
 msgid "Indicator list filters"
 msgstr "Indikatorlistesider"
 
 #: pages/models.py
+#, fuzzy
+#| msgid "Indicator list pages"
 msgid "Indicator list columns"
 msgstr "Indikatorlistesider"
 
 #: pages/models.py
+#, fuzzy
+#| msgid "Indicator list page"
 msgid "Indicator details view"
 msgstr "Indikatorlisteside"
 
@@ -5762,14 +6278,20 @@ msgid "Indicator list pages"
 msgstr "Indikatorlistesider"
 
 #: pages/models.py
+#, fuzzy
+#| msgid "Big image"
 msgid "Background image"
 msgstr "Stort billede"
 
 #: pages/models.py
+#, fuzzy
+#| msgid "Indicator list page"
 msgid "Pledge list page"
 msgstr "Indikatorlisteside"
 
 #: pages/models.py
+#, fuzzy
+#| msgid "Indicator list pages"
 msgid "Pledge list pages"
 msgstr "Indikatorlistesider"
 
@@ -5806,14 +6328,20 @@ msgid "external plan links"
 msgstr "eksterne plan links"
 
 #: pages/models.py
+#, fuzzy
+#| msgid "action link"
 msgid "page"
 msgstr "handlingslink"
 
 #: pages/models.py
+#, fuzzy
+#| msgid "Category type pages"
 msgid "page change history message"
 msgstr "Kategoritype sider"
 
 #: pages/models.py
+#, fuzzy
+#| msgid "category levels"
 msgid "page change history messages"
 msgstr "kategoriniveauer"
 
@@ -5822,6 +6350,8 @@ msgid "More"
 msgstr "Mere"
 
 #: pages/wagtail_admin.py
+#, fuzzy
+#| msgid "category levels"
 msgctxt "menu label"
 msgid "Page change history messages"
 msgstr "kategoriniveauer"
@@ -5829,11 +6359,11 @@ msgstr "kategoriniveauer"
 #: paths_integration/indicators.py
 #, python-format
 msgid "Node %(node)s not found in Paths instance %(instance)s"
-msgstr "Nod %(node)s hittades inte i Paths-instansen %(instance)s"
+msgstr ""
 
 #: paths_integration/indicators.py
 msgid "No values received for node %(node)s in Paths instance %(instance)"
-msgstr "Inga värden mottagna för nod %(node)s i Paths-instansen %(instance)"
+msgstr ""
 
 #: people/apps.py people/wagtail_admin.py
 msgid "People"
@@ -5864,9 +6394,7 @@ msgstr "Bekræft sletning af %(model_name)s"
 #: people/templates/people/delete.html
 #, python-format
 msgid "'%(instance_name)s' is currently connected to the following items. Please verify deletion:"
-msgstr ""
-"'%(instance_name)s' er i øjeblikket forbundet med følgende emner. Bekræft "
-"venligst sletning:"
+msgstr "'%(instance_name)s' er i øjeblikket forbundet med følgende emner. Bekræft venligst sletning:"
 
 #: people/templates/people/delete.html
 #: templates/aplans/attribute_type_delete.html
@@ -5891,56 +6419,55 @@ msgid "No"
 msgstr "Nej"
 
 #: people/views.py people/wagtail_admin.py
+#, fuzzy
+#| msgid "Reset your password"
 msgid "Reset password"
 msgstr "Nulstil din adgangskode"
 
 #: people/views.py
-#, python-format
+#, fuzzy, python-format
+#| msgid "Confirm including %(org)s in plan %(plan)s"
 msgid "Confirm sending password reset link to %(person)s"
 msgstr "Bekræft, at %(org)s er med i planen %(plan)s"
 
 #: people/views.py
-#, python-format
+#, fuzzy, python-format
+#| msgid "Do you really want to include the organization '%(org)s' in the plan '%(plan)s'?"
 msgid "Do you really want to send a password reset link to %(person)s?"
-msgstr ""
-"Ønsker du virkelig at inkludere organisationen '%(org)s' i planen '%(plan)s'?"
+msgstr "Ønsker du virkelig at inkludere organisationen '%(org)s' i planen '%(plan)s'?"
 
 #: people/views.py
 #, python-format
 msgid "An email has been sent to %(person)s with a link to reset their password."
 msgstr ""
-"Ett e-postmeddelande har skickats till %(person)s med en länk för att "
-"återställa deras lösenord."
 
 #: people/views.py
 #, python-format
 msgid "If the email does not arrive, you can send them the following link: %(url)s"
 msgstr ""
-"Om e-postmeddelandet inte kommer fram kan du skicka följande länk till dem: %"
-"(url)s"
 
 #: people/views.py
 #, python-format
 msgid "Please take great care that nobody except %(person)s gets access to the link. For additional security, the link will expire in %(days_until_expiration)s days."
 msgstr ""
-"Vänligen se till att ingen annan än %(person)s får tillgång till länken. För "
-"ytterligare säkerhet kommer länken att upphöra att gälla om %"
-"(days_until_expiration)s dagar."
 
 #: people/views.py people/wagtail_admin.py
+#, fuzzy
+#| msgid "View %s live"
 msgid "View as user"
 msgstr "Se %s live"
 
 #: people/views.py
-#, python-format
+#, fuzzy, python-format
+#| msgid "Confirm including %(org)s in plan %(plan)s"
 msgid "Confirm viewing the site as user %(person)s"
 msgstr "Bekræft, at %(org)s er med i planen %(plan)s"
 
 #: people/views.py
-#, python-format
+#, fuzzy, python-format
+#| msgid "Do you really want to include the organization '%(org)s' in the plan '%(plan)s'?"
 msgid "Do you really want to view the site as %(person)s?"
-msgstr ""
-"Ønsker du virkelig at inkludere organisationen '%(org)s' i planen '%(plan)s'?"
+msgstr "Ønsker du virkelig at inkludere organisationen '%(org)s' i planen '%(plan)s'?"
 
 #: people/wagtail_admin.py
 msgid "Is contact person"
@@ -5956,6 +6483,8 @@ msgid "For an action"
 msgstr "For en handling"
 
 #: people/wagtail_admin.py
+#, fuzzy
+#| msgid "action indicators"
 msgid "For same actions or indicators as me"
 msgstr "handlingsindikatorer"
 
@@ -5968,22 +6497,29 @@ msgid "Not a contact person"
 msgstr "Ikke en kontaktperson"
 
 #: people/wagtail_admin.py
+#, fuzzy
 msgid "Access to public site only"
 msgstr "Kun adgang til offentligt område"
 
 #: people/wagtail_admin.py
+#, fuzzy
 msgid "Access to admin site and public site"
 msgstr "Adgang til admin-site og offentligt site"
 
 #: people/wagtail_admin.py
+#, fuzzy
+#| msgid "is plan admin"
 msgid "Is plan admin"
 msgstr "er planadministrator"
 
 #: people/wagtail_admin.py
+#, fuzzy
 msgid "Site access"
 msgstr "Adgang til stedet"
 
 #: people/wagtail_admin.py
+#, fuzzy
+#| msgid "plan admin organizations"
 msgid "Plan admin organizations"
 msgstr "planlægge administratororganisationer"
 
@@ -5993,11 +6529,11 @@ msgstr "Deaktiver"
 
 #: people/wagtail_admin.py
 msgid "Create a password reset link"
-msgstr "Skapa en länk för återställning av lösenord"
+msgstr ""
 
 #: people/wagtail_admin.py
 msgid "View site as it looks for this user"
-msgstr "Visa webbplatsen som den ser ut för denna användare"
+msgstr ""
 
 #: people/wagtail_admin.py
 msgid "Are you sure you want to deactivate this person?"
@@ -6006,8 +6542,6 @@ msgstr "Er du sikker på, at du vil deaktivere denne person?"
 #: people/wagtail_admin.py
 msgid "This person has no access to the admin interface. This is commonly because no actions or indicators are assigned to them."
 msgstr ""
-"Den här personen har ingen åtkomst till administratörsgränssnittet. Detta "
-"beror vanligtvis på att inga åtgärder eller indikatorer har tilldelats dem."
 
 #: people/wagtail_admin.py
 msgid "first name"
@@ -6026,32 +6560,34 @@ msgid "contact for indicators"
 msgstr "kontakt for indikatorer"
 
 #: reports/blocks/action_content.py
+#, fuzzy
+#| msgid "Action list"
 msgid "Action field"
 msgstr "Handlingsliste"
 
 #: reports/blocks/action_content.py
+#, fuzzy
+#| msgid "common category"
 msgid "Action category"
 msgstr "fælles kategori"
 
 #: reports/blocks/action_content.py
+#, fuzzy
+#| msgid "Main organization"
 msgid "Level of containing organization"
 msgstr "Hovedorganisation"
 
 #: reports/blocks/action_content.py
 msgid "In addition to the organization itself, an organizational unit containing the organization is included in the report. Counting from the top-level root organisation at level 1, which level in the organizational hierarchy should be used to find this containing organization? If left empty, don't add the containing organization to the report."
-msgstr ""
-"Ud over selve organisationen er en organisatorisk enhed, der indeholder "
-"organisationen, inkluderet i rapporten. Hvilket niveau i "
-"organisationshierarkiet skal bruges til at finde denne indeholdende "
-"organisation, når man tæller fra den øverste rodorganisation på niveau 1? "
-"Hvis det er tomt, skal du ikke tilføje den indeholdende organisation til "
-"rapporten."
+msgstr "Ud over selve organisationen er en organisatorisk enhed, der indeholder organisationen, inkluderet i rapporten. Hvilket niveau i organisationshierarkiet skal bruges til at finde denne indeholdende organisation, når man tæller fra den øverste rodorganisation på niveau 1? Hvis det er tomt, skal du ikke tilføje den indeholdende organisation til rapporten."
 
 #: reports/blocks/choosers.py reports/wagtail_admin.py
 msgid "Report type"
 msgstr "Rapporttype"
 
 #: reports/blocks/choosers.py
+#, fuzzy
+#| msgid "Report type"
 msgid "Report type field"
 msgstr "Rapporttype"
 
@@ -6060,21 +6596,28 @@ msgid "UUID of report field"
 msgstr "UUID for rapportfelt"
 
 #: reports/blocks/report_comparison_block.py
+#, fuzzy
+#| msgid "Enable indicator comparison"
 msgid "Report comparison"
 msgstr "Aktiver indikatorsammenligning"
 
 #: reports/chooser.py
+#, fuzzy
+#| msgid "Choose a category type"
 msgid "Choose a report type"
 msgstr "Vælg en kategoritype"
 
 #: reports/chooser.py
+#, fuzzy
+#| msgid "Choose another category type"
 msgid "Choose another report type"
 msgstr "Vælg en anden kategoritype"
 
 #: reports/models.py
+#, fuzzy
+#| msgid "Confirm undoing marking action %(action)s as complete for report %(report)s"
 msgid "Only plan admins can mark actions as complete for reports of this type"
-msgstr ""
-"Bekræft markering af handling %(action)s som afsluttet til rapport %(report)s"
+msgstr "Bekræft markering af handling %(action)s som afsluttet til rapport %(report)s"
 
 #: reports/models.py
 msgid "report type"
@@ -6088,8 +6631,6 @@ msgstr "rapporttyper"
 #, python-format
 msgid "Duplicate fields detected: %(duplicates)s. Each field type (attribute type, category type) can only be added once."
 msgstr ""
-"Duplicerade fält detekterade: %(duplicates)s. Varje fälttyp (attributtyp, "
-"kategorityp) kan bara läggas till en gång."
 
 #: reports/models.py reports/spreadsheets/excel_report.py
 msgid "complete"
@@ -6100,6 +6641,8 @@ msgid "Set if report cannot be changed anymore"
 msgstr "Indstil hvis rapporten ikke længere kan ændres"
 
 #: reports/models.py
+#, fuzzy
+#| msgid "is public"
 msgid "public"
 msgstr "er offentlig"
 
@@ -6108,15 +6651,14 @@ msgid "Set if report can be shown to the public"
 msgstr "Indstil om rapporten kan vises til offentligheden"
 
 #: reports/models.py
+#, fuzzy
+#| msgid "show in reporting tab"
 msgid "Show in reporting tab"
 msgstr "vis i rapporteringsfanen"
 
 #: reports/models.py
 msgid "Set if the values from this report should be shown in the reporting tab when editing the action. The values are shown only if this report has been marked as complete."
 msgstr ""
-"Ange om värdena från denna rapport ska visas i rapporteringsfliken vid "
-"redigering av åtgärden. Värdena visas bara om denna rapport har markerats "
-"som slutförd."
 
 #: reports/models.py
 msgid "report"
@@ -6136,6 +6678,8 @@ msgid "Marked report '%s' as complete"
 msgstr "Markerede rapporten '%s' som færdig"
 
 #: reports/models.py
+#, fuzzy
+#| msgid "The date when the task was completed"
 msgid "The report is not marked as complete."
 msgstr "Datoen for, hvornår opgaven blev udført"
 
@@ -6145,10 +6689,14 @@ msgid "Undid marking report '%s' as complete"
 msgstr "Fortryd markering af rapport '%s' som færdig"
 
 #: reports/models.py
+#, fuzzy
+#| msgid "action status"
 msgid "action snapshot"
 msgstr "handlingsstatus"
 
 #: reports/models.py
+#, fuzzy
+#| msgid "action status"
 msgid "action snapshots"
 msgstr "handlingsstatus"
 
@@ -6158,17 +6706,19 @@ msgstr "Har mål"
 
 #: reports/report_formatters.py
 msgid "empty"
-msgstr "tom"
+msgstr ""
 
 #: reports/report_formatters.py
 msgid "Other responsible parties"
 msgstr "Andre ansvarlige"
 
 #: reports/spreadsheets/action_print_layout.py
+#, fuzzy
 msgid "Profiles"
 msgstr "Profiler"
 
 #: reports/spreadsheets/action_print_layout.py
+#, fuzzy
 msgid "Prepare for printing"
 msgstr "Gør klar til udskrivning"
 
@@ -6177,28 +6727,33 @@ msgid "Exported from Kausal Watch"
 msgstr "Eksporteret fra Kausal Watch"
 
 #: reports/spreadsheets/excel_report.py reports/tests/test_excel_roundtrip.py
+#, fuzzy
+#| msgid "completed by"
 msgid "Marked as complete by"
 msgstr "færdiggjort af"
 
 #: reports/spreadsheets/excel_report.py reports/tests/test_excel_roundtrip.py
+#, fuzzy
+#| msgid "is completed"
 msgid "Marked as complete at"
 msgstr "er afsluttet"
 
 #: reports/spreadsheets/excel_report.py
+#, fuzzy
 msgid "Summary"
 msgstr "Sammenfatning"
 
 #: reports/templates/reports/mark_report_as_complete_confirmation.html
-#, python-format
+#, fuzzy, python-format
+#| msgid "Do you really want to mark the user feedback '%(user_feedback)s' as processed?"
 msgid "Do you really want to mark the report <i>%(report)s</i> as complete?"
-msgstr ""
-"Vil du virkelig markere brugerfeedbacken '%(user_feedback)s' som behandlet?"
+msgstr "Vil du virkelig markere brugerfeedbacken '%(user_feedback)s' som behandlet?"
 
 #: reports/templates/reports/mark_report_as_complete_confirmation.html
-#, python-format
+#, fuzzy, python-format
+#| msgid "Do you really want to mark the user feedback '%(user_feedback)s' as processed?"
 msgid "Do you really want to undo marking the report <i>%(report)s</i> as complete?"
-msgstr ""
-"Vil du virkelig markere brugerfeedbacken '%(user_feedback)s' som behandlet?"
+msgstr "Vil du virkelig markere brugerfeedbacken '%(user_feedback)s' som behandlet?"
 
 #: reports/templates/reports/mark_report_as_complete_confirmation.html
 msgid "This will mark the following actions as complete:"
@@ -6209,6 +6764,8 @@ msgid "This will undo marking the following actions as complete:"
 msgstr "Dette vil markere følgende handlinger som fuldførte:"
 
 #: reports/views.py
+#, fuzzy
+#| msgid "is completed"
 msgid "Mark action as complete"
 msgstr "er afsluttet"
 
@@ -6219,41 +6776,33 @@ msgstr "Fortryd markering af handling som fuldført"
 #: reports/views.py
 #, python-format
 msgid "Confirm marking action %(action)s as complete for report %(report)s"
-msgstr ""
-"Bekræft markering af handling %(action)s som afsluttet til rapport %(report)s"
+msgstr "Bekræft markering af handling %(action)s som afsluttet til rapport %(report)s"
 
 #: reports/views.py
 #, python-format
 msgid "Confirm undoing marking action %(action)s as complete for report %(report)s"
-msgstr ""
-"Bekræft markering af handling %(action)s som afsluttet til rapport %(report)s"
+msgstr "Bekræft markering af handling %(action)s som afsluttet til rapport %(report)s"
 
 #: reports/views.py
-#, python-format
+#, fuzzy, python-format
+#| msgid "Do you really want to mark the user feedback '%(user_feedback)s' as processed?"
 msgid "Do you really want to mark the action '%(action)s' as complete for the report '%(report)s'?"
-msgstr ""
-"Vil du virkelig markere brugerfeedbacken '%(user_feedback)s' som behandlet?"
+msgstr "Vil du virkelig markere brugerfeedbacken '%(user_feedback)s' som behandlet?"
 
 #: reports/views.py
 #, python-format
 msgid "Do you really want to undo marking the action '%(action)s' as complete for the report '%(report)s'?"
-msgstr ""
-"Ønsker du virkelig at fortryde markeringen af handlingen '%(action)s' som "
-"fuldført for rapporten '%(report)s'?"
+msgstr "Ønsker du virkelig at fortryde markeringen af handlingen '%(action)s' som fuldført for rapporten '%(report)s'?"
 
 #: reports/views.py
 #, python-format
 msgid "Action '%(action)s' has been marked as complete for report '%(report)s'."
-msgstr ""
-"Handling '%(action)s' er blevet markeret som fuldført for rapport '%(report)"
-"s'."
+msgstr "Handling '%(action)s' er blevet markeret som fuldført for rapport '%(report)s'."
 
 #: reports/views.py
 #, python-format
 msgid "Action '%(action)s' is no longer marked as complete for report '%(report)s'."
-msgstr ""
-"Handling '%(action)s' er ikke længere markeret som fuldført for rapport '%"
-"(report)s'."
+msgstr "Handling '%(action)s' er ikke længere markeret som fuldført for rapport '%(report)s'."
 
 #: reports/views.py
 msgid "Mark report as complete"
@@ -6264,7 +6813,8 @@ msgid "Undo marking report as complete"
 msgstr "Fortryd markering af rapport '%s' som færdig"
 
 #: reports/views.py
-#, python-format
+#, fuzzy, python-format
+#| msgid "Confirm marking %(user_feedback)s as processed"
 msgid "Confirm marking report %(report)s as complete"
 msgstr "Bekræft markering af %(user_feedback)s som behandlet"
 
@@ -6274,7 +6824,8 @@ msgid "Confirm undoing marking report %(report)s as complete"
 msgstr "Bekræft fortrydelse af markeringsrapport %(report)s som fuldført"
 
 #: reports/views.py
-#, python-format
+#, fuzzy, python-format
+#| msgid "User feedback '%(user_feedback)s' has been marked as processed."
 msgid "Report '%(report)s' has been marked as complete."
 msgstr "Brugerfeedback '%(user_feedback)s' er blevet markeret som behandlet."
 
@@ -6292,6 +6843,8 @@ msgid "Download report as spreadsheet file"
 msgstr "Hent rapport som regnearksfil"
 
 #: reports/wagtail_admin.py
+#, fuzzy
+#| msgid "is completed"
 msgid "Mark as complete"
 msgstr "er afsluttet"
 
@@ -6300,6 +6853,8 @@ msgid "Mark this report as complete"
 msgstr "Markér denne rapport som fuldført"
 
 #: reports/wagtail_admin.py
+#, fuzzy
+#| msgid "is completed"
 msgid "Undo marking as complete"
 msgstr "er afsluttet"
 
@@ -6315,76 +6870,71 @@ msgstr "Rapporttyper"
 #, python-format
 msgctxt "X more objects"
 msgid "... %(remaining)s more"
-msgstr "... %(remaining)s till"
+msgstr ""
 
 #: templates/aplans/attribute_type_delete.html
 msgid "This field is currently in use. Deleting it will remove field values from the following objects:"
 msgstr ""
-"Detta fält används för närvarande. Om du tar bort det tas fältvärden bort "
-"från följande objekt:"
 
 #: templates/aplans/attribute_type_delete.html
 msgid "If you would like to keep the current value in reports even after deleting this field, please mark the reports as complete."
 msgstr ""
-"Om du vill behålla det aktuella värdet i rapporter även efter att du tagit "
-"bort detta fält, markera rapporterna som slutförda."
 
 #: templates/aplans/change_log_message_create.html
+#, fuzzy
+#| msgid "Changes were saved"
 msgid "Current change history message"
 msgstr "Ændringer blev gemt"
 
 #: templates/aplans/change_log_message_create.html
 msgid "Skip"
-msgstr "Hoppa över"
+msgstr ""
 
 #: templates/aplans/panels/choice_option_usage_panel.html
 msgid "This choice option is currently in use. Changing or deleting it will affect the following objects:"
 msgstr ""
-"Detta valternativ används för närvarande. Att ändra eller ta bort det "
-"påverkar följande objekt:"
 
 #: templates/aplans/panels/choice_option_usage_panel.html
 msgid "Changing (or deleting) this choice option will change (or delete) the choice in all these objects."
 msgstr ""
-"Att ändra (eller ta bort) detta valternativ ändrar (eller tar bort) valet i "
-"alla dessa objekt."
 
 #: templates/aplans/panels/choice_option_usage_panel.html
 msgid "If you would like to keep the current value in reports even after changing or deleting this choice option, please mark the reports using this choice option as complete."
 msgstr ""
-"Om du vill behålla det aktuella värdet i rapporter även efter att du ändrat "
-"eller tagit bort detta valternativ, markera rapporterna som använder detta "
-"valternativ som slutförda."
 
 #: templates/aplans/paths_sync_confirmation.html
+#, fuzzy
 msgid "Please verify the correct node is connected to the indicator."
 msgstr "Hvad er referencen eller kilden til denne indikator?"
 
 #: templates/aplans/paths_sync_confirmation.html
+#, fuzzy
+#| msgid "Edit this indicator"
 msgid "Edit indicator"
 msgstr "Rediger denne indikator"
 
 #: templates/aplans/paths_sync_confirmation.html
+#, fuzzy
+#| msgid "Last updated"
 msgid "Last imported"
 msgstr "Sidst opdateret"
 
 #: templates/aplans/paths_sync_confirmation.html
 msgid "Node"
-msgstr "Nod"
+msgstr ""
 
 #: templates/aplans/paths_sync_confirmation.html
 msgid "Kausal Paths instance"
-msgstr "Kausal Paths-instans"
+msgstr ""
 
 #: templates/aplans/plan_publish_confirmation.html
 #, python-format
 msgid "This plan is already scheduled for publication: %(bold_open)s%(info)s%(bold_close)s. Publishing now will override the scheduled date and make the plan public immediately."
 msgstr ""
-"Denna plan är redan schemalagd för publicering: %(bold_open)s%(info)s%"
-"(bold_close)s. Att publicera nu åsidosätter det schemalagda datumet och gör "
-"planen offentlig omedelbart."
 
 #: templates/aplans/plan_publish_confirmation.html
+#, fuzzy
+#| msgid "The user feedback is already processed"
 msgctxt "URLs"
 msgid "The plan will be published at:"
 msgstr "Brugerfeedbacken er allerede behandlet"
@@ -6393,27 +6943,30 @@ msgstr "Brugerfeedbacken er allerede behandlet"
 #, python-format
 msgid "This plan will only be published at %(preview_link_open)s%(preview_url)s%(preview_link_close)s because no production domains have been configured."
 msgstr ""
-"Denna plan kommer bara att publiceras på %(preview_link_open)s%(preview_url)"
-"s%(preview_link_close)s eftersom inga produktionsdomäner har konfigurerats."
 
 #: templates/aplans/plan_publish_confirmation.html
 msgid "No production domains have been configured for this plan."
-msgstr "Inga produktionsdomäner har konfigurerats för denna plan."
+msgstr ""
 
 #: templates/aplans/plan_publish_confirmation.html
 msgid "Unpublishing this plan will make it inaccessible to the public immediately."
 msgstr ""
-"Att avpublicera denna plan gör den omedelbart otillgänglig för allmänheten."
 
 #: templates/aplans/plan_publish_confirmation.html
+#, fuzzy
+#| msgid "Unpublished"
 msgid "Yes, publish"
 msgstr "Upubliceret"
 
 #: templates/aplans/plan_publish_confirmation.html
+#, fuzzy
+#| msgid "Unpublished"
 msgid "Yes, unpublish"
 msgstr "Upubliceret"
 
 #: templates/aplans/plan_publish_confirmation.html
+#, fuzzy
+#| msgid "cancelled"
 msgid "Cancel"
 msgstr "annulleret"
 
@@ -6431,9 +6984,7 @@ msgstr "Brugere"
 
 #: users/models.py
 msgid "No permission to remove the user belonging to plans you are not managing."
-msgstr ""
-"Ingen tilladelse til at fjerne den bruger, der tilhører planer, du ikke "
-"administrerer."
+msgstr "Ingen tilladelse til at fjerne den bruger, der tilhører planer, du ikke administrerer."
 
 #, fuzzy
 #~| msgid "action link"
