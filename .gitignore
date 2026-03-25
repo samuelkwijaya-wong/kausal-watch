@@ -3,7 +3,7 @@
 *.pyc
 *.key
 /.django_secret
-**/__pycache__
+__pycache__/*
 **/node_modules
 *.sqlite3
 *_cache/**
@@ -50,3 +50,6 @@ mise.local.toml
 /.mise
 __generated__/
 /.devstate
+/e2e-tests/playwright-report/
+/e2e-tests/playwright-state/
+/e2e-tests/test-results/
