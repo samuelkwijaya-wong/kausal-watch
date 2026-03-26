@@ -25,5 +25,6 @@ class DocumentsConfig(AppConfig):
 
         viewset.permission_policy = permission_policy
 
-        from wagtail.documents import wagtail_hooks  # noqa
+        import wagtail.documents.wagtail_hooks  # noqa: F401
+
         from .rich_text import DocumentLinkHandler  # noqa

@@ -3,7 +3,7 @@ from __future__ import annotations
 import datetime
 import logging
 import typing
-from typing import TYPE_CHECKING, TypeVar, cast
+from typing import TYPE_CHECKING, Any, cast
 
 import reversion
 from django.conf import settings
@@ -131,7 +131,7 @@ class SentNotification(models.Model):
         help_text=_('Set if the notification was sent to an email address instead of a person'),
     )
 
-    objects = SentNotificationManager()  # pyright: ignore
+    objects = SentNotificationManager()
 
     class Meta:
         default_manager_name = 'objects'
@@ -151,15 +151,12 @@ class BaseTemplateManager(models.Manager['BaseTemplate']):
         return self.get(plan__identifier=plan_identifier)
 
 
-_QS = TypeVar('_QS', bound=models.QuerySet)
-
-
 class IndirectPlanRelatedModel(PlanRelatedModel):
     class Meta:
         abstract = True
 
     @classmethod
-    def filter_by_plan(cls, plan: Plan, qs: _QS) -> _QS:
+    def filter_by_plan[QS: QuerySet[Any] = QuerySet[Any]](cls, plan: Plan, qs: QS) -> QS:
         return qs.filter(base__plan=plan)
 
 
@@ -197,7 +194,7 @@ class BaseTemplate(ClusterableModel, PlanRelatedModelWithRevision):
         help_text=_('Leave empty unless custom font required by customer'),
     )
 
-    objects = BaseTemplateManager()  # pyright: ignore
+    objects = BaseTemplateManager()
 
     verbose_name_partitive = pgettext_lazy('partitive', 'base templates')
 
@@ -239,8 +236,8 @@ class BaseTemplate(ClusterableModel, PlanRelatedModelWithRevision):
         return f'{from_name} <{from_address}>'
 
 
-class NotificationTemplateManager(models.Manager):
-    def get_by_natural_key(self, base, type_):
+class NotificationTemplateManager[M: NotificationTemplate](ModelManager[M, QuerySet['NotificationTemplate']]):
+    def get_by_natural_key(self, base: tuple[str, ...], type_: str):
         return self.get(base__plan__identifier=base[0], type=type_)
 
 
@@ -279,7 +276,7 @@ class NotificationTemplate(IndirectPlanRelatedModel, RevisionMixin):
     def natural_key(self):
         return (self.base.natural_key(), self.type)
 
-    natural_key.dependencies = ['notifications.BaseTemplate']  # type: ignore
+    setattr(natural_key, 'dependencies', ['notifications.BaseTemplate'])  # noqa: B010
 
     def clean(self):
         if not self.custom_email and self.send_to_custom_email:
@@ -317,7 +314,7 @@ class NotificationTemplate(IndirectPlanRelatedModel, RevisionMixin):
             return None
         plan = self.base.plan
         client_plan = plan.clients.first()
-        client: Client | None
+        client: Client | None = None
         if client_plan:
             client = client_plan.client
         else:
@@ -517,7 +514,7 @@ class ManuallyScheduledNotificationTemplate(NotificationTemplate):
         return recipients
 
 
-class ContentBlockManager(models.Manager):
+class ContentBlockManager[M: ContentBlock](ModelManager[M, QuerySet['ContentBlock']]):
     def get_by_natural_key(self, base, template, identifier):
         return self.get(
             base=base,
@@ -558,25 +555,22 @@ class ContentBlock(models.Model):
         verbose_name_plural = _('content blocks')
         unique_together = (('base', 'template', 'identifier'),)
 
-    def natural_key(self):
-        return (self.base, self.template, self.identifier)
-
-    natural_key.dependencies = [
-        'notifications.BaseTemplate',
-        'notifications.AutomaticNotificationTemplate',
-    ]
-
-    def save(self, *args, **kwargs):
-        if self.template is not None and self.template.base != self.base:
-            raise Exception('Mismatch between template base and content block base')
-        return super().save(*args, **kwargs)
-
     def __str__(self):
         parts = []
         if self.template is not None:
             parts.append(self.template.get_type_display())
         parts.append(self.get_identifier_display())
         return ': '.join(parts)
+
+    def save(self, *args, **kwargs):
+        if self.template is not None and self.template.base != self.base:
+            raise Exception('Mismatch between template base and content block base')
+        return super().save(*args, **kwargs)
+
+    def natural_key(self):
+        return (self.base, self.template, self.identifier)
+
+    setattr(natural_key, 'dependencies', ['notifications.BaseTemplate', 'notifications.AutomaticNotificationTemplate'])  # noqa: B010
 
 
 class GeneralPlanAdminNotificationPreferences(models.Model):

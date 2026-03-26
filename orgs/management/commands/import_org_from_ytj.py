@@ -10,6 +10,7 @@ from orgs.models import Namespace, Organization, OrganizationClass, Organization
 
 class Command(BaseCommand):
     help = 'Import an organisation from YTJ'
+    plan: Plan | None = None
 
     def import_organisation(self, name_or_id):
         namespace = Namespace.objects.get(identifier='ytj')

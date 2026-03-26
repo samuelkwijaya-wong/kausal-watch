@@ -120,6 +120,7 @@ dev = [
   "ariadne-codegen>=0.16",
   "basedpyright>=1.32.1",
   "daphne",
+  "debugpy>=1.8.20",
   "django-debug-toolbar",
   "django-zeal>=2.0.4",
   "ipdb",
@@ -141,7 +142,6 @@ lint = [
   "graphene-stubs",
   "isort",
   "mypy[faster-cache]",
-  "mypy-baseline",
   "ondivi",
   "ruff",
   "types-factory-boy>=0.4.1",
@@ -328,8 +328,3 @@ norecursedirs = [
 filterwarnings = [ "ignore::DeprecationWarning:easy_thumbnails" ]
 testpaths = [ "**/tests" ]
 env = [ "ENV_FILE=.env.test" ]
-
-[tool.mypy-baseline]
-baseline_path = ".mypy-baseline.txt"
-preserve_position = false
-sort_baseline = true

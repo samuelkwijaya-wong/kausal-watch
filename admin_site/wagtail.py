@@ -523,7 +523,7 @@ class AplansTabbedInterface[M: Model, F: ModelForm[Any] = ModelForm[Any]](Tabbed
 
 if TYPE_CHECKING:
 
-    class PersistFiltersBase[M: Model](ModelFormView[M]):
+    class PersistFiltersBase[M: Model, FormT: ModelForm[Any] = WagtailAdminModelForm[M]](ModelFormView[M, FormT]):
         continue_editing_active: Callable[[], bool]
         model_name: str
 
@@ -532,7 +532,7 @@ if TYPE_CHECKING:
 
 else:
 
-    class PersistFiltersBase[M: Model]: ...
+    class PersistFiltersBase[M: Model, FormT: ModelForm[Any] = WagtailAdminModelForm[M]]: ...
 
     class InstanceSpecificViewBase[M: Model]: ...
 
@@ -540,7 +540,9 @@ else:
 # TODO: Reimplemented in admin_site/mixins.py to make this work without
 # ModelAdmin. Use that when implementing new classes or migrating away from
 # ModelAdmin. Remove this class when ModelAdmin migration is finished.
-class PersistFiltersEditingModelAdminMixin[M: Model](PersistFiltersBase[M]):
+class PersistFiltersEditingModelAdminMixin[M: Model, FormT: ModelForm[Any] = WagtailAdminModelForm[M]](
+    PersistFiltersBase[M, FormT]
+):
     def get_success_url(self):
         if hasattr(super(), 'continue_editing_active') and super().continue_editing_active():  # type: ignore[misc]
             return super().get_success_url()  # type: ignore[misc]
@@ -561,7 +563,9 @@ class PersistFiltersEditingModelAdminMixin[M: Model](PersistFiltersBase[M]):
 # TODO: Reimplemented in admin_site/mixins.py to make this work without
 # ModelAdmin. Use that when implementing new classes or migrating away from
 # ModelAdmin. Remove this class when ModelAdmin migration is finished.
-class ContinueEditingModelAdminMixin[M: Model](PersistFiltersBase[M], InstanceSpecificViewBase[M]):
+class ContinueEditingModelAdminMixin[M: Model, FormT: ModelForm[Any] = WagtailAdminModelForm[M]](
+    PersistFiltersBase[M, FormT], InstanceSpecificViewBase[M]
+):
     instance: M
     url_helper: AdminURLHelper
 
@@ -596,7 +600,7 @@ class ContinueEditingModelAdminMixin[M: Model](PersistFiltersBase[M], InstanceSp
 # TODO: Reimplemented in admin_site/mixins.py to make this work without
 # ModelAdmin. Use that when implementing new classes or migrating away from
 # ModelAdmin. Remove this class when ModelAdmin migration is finished.
-class PlanRelatedViewModelAdminMixin[M: Model](PersistFiltersBase[M]):
+class PlanRelatedViewModelAdminMixin[M: Model, FormT: ModelForm[Any] = WagtailAdminModelForm[M]](PersistFiltersBase[M, FormT]):
     request: HttpRequest
 
     def form_valid(self, form, *args, **kwargs):
@@ -690,13 +694,13 @@ def execute_admin_post_save_tasks(instance: Model, user: User):
 # TODO: Partly reimplemented in admin_site/viewsets.py. Use that when
 # implementing new classes or migrating away from ModelAdmin. Remove this class
 # when ModelAdmin migration is finished.
-class AplansEditView[M: Model](
-    PersistFiltersEditingModelAdminMixin[M],
-    ContinueEditingModelAdminMixin[M],
-    PlanRelatedViewModelAdminMixin[M],
+class AplansEditView[M: Model, FormT: ModelForm[Any] = WagtailAdminModelForm[M]](
+    PersistFiltersEditingModelAdminMixin[M, FormT],
+    ContinueEditingModelAdminMixin[M, FormT],
+    PlanRelatedViewModelAdminMixin[M, FormT],
     ActivatePermissionHelperPlanContextModelAdminMixin[M],
     SetInstanceModelAdminMixin[M],
-    EditView[M],
+    EditView[M, FormT],
 ):
     def form_valid(self, form, *args, **kwargs):
         try:
@@ -732,12 +736,12 @@ class SuccessUrlEditPageModelAdminMixin[M: Model](InstanceSpecificViewBase[M]):
         return self.url_helper.get_action_url('edit', self.instance.pk)
 
 
-class AplansCreateView[M: Model](
-    PersistFiltersEditingModelAdminMixin[M],
+class AplansCreateView[M: Model, FormT: ModelForm[Any] = WagtailAdminModelForm[M]](
+    PersistFiltersEditingModelAdminMixin[M, FormT],
     ContinueEditingModelAdminMixin[M],
     PlanRelatedViewModelAdminMixin[M],
     SetInstanceModelAdminMixin[M],
-    CreateView[M],
+    CreateView[M, FormT],
 ):
     request: HttpRequest
 
@@ -796,12 +800,12 @@ class CondensedInlinePanel[M: Model, RelatedM: Model](InlinePanel[M, RelatedM]):
 
 if TYPE_CHECKING:
 
-    class ModelFormViewMixin[M: Model](ModelFormView[M]):
+    class ModelFormViewMixin[M: Model, FormT: ModelForm[Any] = WagtailAdminModelForm[M]](ModelFormView[M, FormT]):
         pass
 
 else:
 
-    class ModelFormViewMixin[M: Model]: ...
+    class ModelFormViewMixin[M: Model, FormT: ModelForm[Any] = WagtailAdminModelForm[M]]: ...
 
 
 class InitializeFormWithPlanMixin[M: Model](ModelFormViewMixin[M]):
@@ -812,7 +816,9 @@ class InitializeFormWithPlanMixin[M: Model](ModelFormViewMixin[M]):
         return kwargs
 
 
-class InitializeFormWithInitialPlanMixin[M: Model](ModelFormViewMixin[M]):
+class InitializeFormWithInitialPlanMixin[M: Model, FormT: ModelForm[Any] = WagtailAdminModelForm[M]](
+    ModelFormViewMixin[M, FormT]
+):
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()  # type: ignore
         kwargs.update({'initial_plan_id': self.request.session.get('initial_plan_id')})  # type: ignore

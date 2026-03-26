@@ -748,7 +748,7 @@ class ModelWithAttributesSerializerMixin[M: ModelWithAttributes](
         plan = self.context.get('plan')
         if plan is None:
             return
-        Model = self.Meta.model
+        Model = cast('type[ModelWithAttributes]', self.Meta.model)
         assert issubclass(Model, ModelWithAttributes)
         attribute_types = Model.get_attribute_types_for_plan(plan)
         attribute_types_by_identifier = {at.instance.identifier: at for at in attribute_types}
@@ -799,7 +799,7 @@ class ModelWithAttributesSerializerMixin[M: ModelWithAttributes](
     def _update_attribute_fields(self, instance: ModelWithAttributes, popped_fields) -> None:
         for field_name, data in popped_fields.items():
             if data is not None:
-                ops = self.fields[field_name].update(instance, data)
+                ops = cast('Any', self.fields[field_name]).update(instance, data)
                 self.add_deferred_operations(ops)
 
 
@@ -1173,11 +1173,11 @@ class ActionSerializer(  # type: ignore[misc]
         contact_persons = validated_data.pop('contact_persons', None)
         instance = super().create(validated_data)
         if categories is not None:
-            self.fields['categories'].update(instance, categories)
+            cast('Any', self.fields['categories']).update(instance, categories)
         if responsible_parties is not None:
-            self.fields['responsible_parties'].update(instance, responsible_parties)
+            cast('Any', self.fields['responsible_parties']).update(instance, responsible_parties)
         if contact_persons is not None:
-            self.fields['contact_persons'].update(instance, contact_persons)
+            cast('Any', self.fields['contact_persons']).update(instance, contact_persons)
         instance._prefetched_objects_cache = {}
         if self.parent is None:
             self.initialize_cache_context()
@@ -1191,11 +1191,11 @@ class ActionSerializer(  # type: ignore[misc]
         instance.updated_at = timezone.now()
         instance = super().update(instance, validated_data)
         if categories is not None:
-            self.fields['categories'].update(instance, categories)
+            cast('Any', self.fields['categories']).update(instance, categories)
         if responsible_parties is not None:
-            self.fields['responsible_parties'].update(instance, responsible_parties)
+            cast('Any', self.fields['responsible_parties']).update(instance, responsible_parties)
         if contact_persons is not None:
-            self.fields['contact_persons'].update(instance, contact_persons)
+            cast('Any', self.fields['contact_persons']).update(instance, contact_persons)
         instance._prefetched_objects_cache = {}
         if self.parent is None:
             self.initialize_cache_context()

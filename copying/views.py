@@ -100,6 +100,7 @@ class PlanCopyView(WagtailAdminTemplateMixin, FormView):
     _show_breadcrumbs = True  # using a not yet released Wagtail feature is not our biggest sin
 
     def get_page_subtitle(self) -> StrOrPromise:
+        assert self.plan_id is not None
         plan = Plan.objects.get(id=self.plan_id)
         return plan.name
 

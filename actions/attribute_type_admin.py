@@ -57,7 +57,19 @@ from .models.attributes import (
 )
 
 if TYPE_CHECKING:
+    from django.db.models import Model
     from django.http.request import HttpRequest
+
+    from wagtail_modeladmin.views import InstanceSpecificView
+
+    class ModelAdminMixinBase[M: Model](InstanceSpecificView[M]):
+        pass
+
+else:
+
+    class ModelAdminMixinBase[M: Any]:
+        pass
+
 
 logger = logger.bind(name='actions.attribute_type_admin')
 
@@ -516,7 +528,7 @@ class AttributeTypeFilter(SimpleListFilter):
         return queryset
 
 
-class ContentTypeQueryParameterMixin:
+class ContentTypeQueryParameterMixin[M: Any](ModelAdminMixinBase[M]):
     request: HttpRequest
 
     @property
@@ -579,7 +591,7 @@ class AttributeTypeCreateView(
         # PlanRelatedModel instances. AttributeType cannot be a PlanRelatedModel because not all attribute types are
         # plan-related.
         if instance.scope_content_type.model == 'plan' and not instance.pk:
-            instance.scope_id = self.request.user.get_active_admin_plan().pk
+            instance.scope_id = user_or_bust(self.request.user).get_active_admin_plan().pk
 
         return instance
 

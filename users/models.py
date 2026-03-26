@@ -21,9 +21,10 @@ if TYPE_CHECKING:
     from collections.abc import Iterable, Sequence
     from datetime import datetime
 
+    from django.contrib.auth.models import Group
     from rest_framework.authtoken.models import Token
 
-    from kausal_common.models.types import FK, RevOne
+    from kausal_common.models.types import FK, QS, RevOne
 
     from aplans.utils import InstancesEditableByMixin, InstancesVisibleForMixin
 
@@ -643,6 +644,10 @@ class User(AbstractUser):
         self.deactivated_by = admin_user
         self.deactivated_at = timezone.now()
         self.save()
+
+    @cached_property
+    def cgroups(self) -> QS[Group]:
+        return self.groups.all()
 
     def __getstate__(self) -> dict[str, Any]:
         statedict = super().__getstate__()

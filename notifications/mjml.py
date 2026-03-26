@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import logging
 import os
 import subprocess
@@ -38,7 +40,7 @@ def make_jinja_environment():
     )
     # In order to use gettext and related functions, we need to install them ourselves
     trans = DjangoTranslation(get_language(), 'notifications')
-    env.install_gettext_callables(gettext=trans.gettext, ngettext=trans.ngettext, newstyle=True)
+    env.install_gettext_callables(gettext=trans.gettext, ngettext=trans.ngettext, newstyle=True)  # type: ignore[attr-defined]
     env.filters['format_date'] = date_format  # automatically takes active language into account
     return env
 

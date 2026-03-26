@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from datetime import date
+from typing import cast
 
 from django.contrib.contenttypes.models import ContentType
 from django.urls import reverse
@@ -133,7 +134,9 @@ def test_values_get_normalized(client, plan, plan_admin_user, reverse_request_or
         del population_value['categories']
     for indicator, values in request_data:
         post(client, plan, plan_admin_user, path, indicator, values)
-    expected_value = emissions_value['value'] / population_value['value'] * normalizator.unit_multiplier
+    emissions_numeric_value = cast('int | float', emissions_value['value'])
+    population_numeric_value = cast('int | float', population_value['value'])
+    expected_value = emissions_numeric_value / population_numeric_value * normalizator.unit_multiplier
     assert population.common is not None
     expected = [{str(population.common.id): expected_value}]
     if test_goals_instead:

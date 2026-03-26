@@ -58,8 +58,8 @@ def test_organization_queryset_available_for_plan(plan: Plan):
     result = list(Organization.objects.qs.available_for_plan(plan))
     assert result == [plan.organization, sub_org1]
     plan.related_organizations.add(org)
-    result = set(Organization.objects.qs.available_for_plan(plan))
-    assert result == {plan_org, sub_org1, org, sub_org2}
+    result_set = set(Organization.objects.qs.available_for_plan(plan))
+    assert result_set == {plan_org, sub_org1, org, sub_org2}
 
 
 def test_organization_queryset_editable_by_user_related_plan_general_plan_admin_false(person):

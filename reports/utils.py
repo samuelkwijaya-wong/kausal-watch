@@ -36,6 +36,8 @@ def get_related_model_instances_for_action(
     match_value = None
     if match_criterion is not None:
         match_key, match_value = match_criterion
+    if desired_model in (None, 'self') or not isinstance(desired_model, type):
+        return []
     model_full_path = f'{desired_model.__module__}.{desired_model.__name__}'
     objects = related_objects.get(model_full_path)
     if objects is None:

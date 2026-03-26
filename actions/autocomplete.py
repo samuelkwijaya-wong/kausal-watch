@@ -10,6 +10,8 @@ from actions.models import Action, Category, CommonCategoryType, Plan
 from actions.models.action import ActionQuerySet
 
 if typing.TYPE_CHECKING:
+    from collections.abc import Iterable
+
     from aplans.types import WatchAdminRequest
 
 
@@ -35,6 +37,7 @@ class ActionAutocomplete(autocomplete.Select2QuerySetView):
         else:
             plan = Plan.objects.get(id=plan_id)
         related_plans = self.forwarded.get('related_plans', False)
+        plans: Iterable[Plan]
         if related_plans:
             plans = plan.get_all_related_plans(inclusive=True)
         else:

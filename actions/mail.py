@@ -23,6 +23,8 @@ logger = logging.getLogger(__name__)
 class BaseActionModeratorApprovalTaskStateEmailNotifier(EmailNotificationMixin, Notifier):
     """A base notifier to send updates for UserApprovalTask events."""
 
+    notification: str
+
     class AllowAllUsersAdminURLFinder(ModelAdminURLFinder):
         """
         Only to be used in contexts where permissions checks are impossible and not needed,

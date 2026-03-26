@@ -79,7 +79,7 @@ class LogRender:
         if self.show_level:
             row.append(level)
 
-        if len(renderables) == 1 and '\n' not in renderables[0].plain:
+        if len(renderables) == 1 and isinstance(renderables[0], Text) and '\n' not in renderables[0].plain:
             row.append(Renderables(renderables))
             renderables = []
         else:

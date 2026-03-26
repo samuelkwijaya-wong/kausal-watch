@@ -114,7 +114,10 @@ def get_latest_revision(page_id):
         if isinstance(page.specific, ActionListPage):
             latest_revision = page.get_latest_revision()
         elif isinstance(page.specific, CategoryPage):
-            latest_revision = page.get_parent().get_latest_revision()
+            parent = page.get_parent()
+            if parent is None:
+                raise ValidationError('Wrong page.')
+            latest_revision = parent.get_latest_revision()
         else:
             raise ValidationError('Wrong page.')
         if latest_revision:

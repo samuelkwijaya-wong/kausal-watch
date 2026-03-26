@@ -1,4 +1,5 @@
 from datetime import UTC, date, datetime, timedelta
+from typing import Any
 from unittest.mock import patch
 
 from django.conf import settings
@@ -547,7 +548,7 @@ def test_action_on_form_save_no_commit(
     action_attribute_type__numeric,
 ):
     action = actions_having_attributes[0]
-    attribute_types = [
+    attribute_types: list[AttributeTypeModel] = [
         action_attribute_type__text,
         action_attribute_type__rich_text,
         action_attribute_type__ordered_choice,
@@ -561,7 +562,7 @@ def test_action_on_form_save_no_commit(
 
     def save_form(cleaned_data):
         for attribute_type in attribute_types:
-            wrapper = AttributeType.from_model_instance(attribute_type)
+            wrapper: AttributeType[Any] = AttributeType.from_model_instance(attribute_type)
             wrapper.on_form_save(action, cleaned_data, commit=False)
 
     # Clear all attributes first

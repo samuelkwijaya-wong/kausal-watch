@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 import pytest
 
 from actions.models import AttributeType
@@ -29,6 +31,11 @@ from indicators.tests.factories import (
 from people.tests.factories import (
     PersonFactory,
 )
+
+if TYPE_CHECKING:
+    from actions.models import Action
+
+    pass
 
 
 @pytest.fixture
@@ -89,11 +96,11 @@ def category_level(category_type):
 def actions_with_relations_factory():
     def actions_with_relations(visibility_lhs, visibility_rhs):
         plan = PlanFactory()
-        public_actions = list()
-        draft_actions = list()
+        public_actions: list[Action] = []
+        draft_actions: list[Action] = []
 
         def get_action(visibility):
-            action = ActionFactory(plan=plan, visibility=visibility)
+            action = ActionFactory.create(plan=plan, visibility=visibility)
             target = public_actions if visibility == 'public' else draft_actions
             target.append(action)
             return action
@@ -119,7 +126,7 @@ def actions_with_relations_factory():
         action = get_lhs_action()
         action.related_actions.add(get_rhs_action())
 
-        get_lhs_action().monitoring_quality_points.add(MonitoringQualityPointFactory())
+        get_lhs_action().monitoring_quality_points.add(MonitoringQualityPointFactory.create())
 
         for factory in [
             ActionIndicatorFactory,
@@ -131,9 +138,9 @@ def actions_with_relations_factory():
         ]:
             factory(action=get_lhs_action())
 
-        category = CategoryFactory()
-        person = PersonFactory()
-        indicator = IndicatorFactory()
+        category = CategoryFactory.create()
+        person = PersonFactory.create()
+        indicator = IndicatorFactory.create()
         indicator.actions.set(draft_actions + public_actions)
         for action in draft_actions + public_actions:
             ActionContactFactory(action=action, person=person)

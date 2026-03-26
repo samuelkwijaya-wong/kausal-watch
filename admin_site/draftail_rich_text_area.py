@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from copy import deepcopy
+from typing import Any
 
 from django.utils.translation import gettext
 from wagtail.admin.rich_text import DraftailRichTextArea
@@ -40,8 +41,10 @@ def _hack_rich_text_editor_options(options: dict) -> None:
 
 
 class DraftailRichTextAreaWithFixedTranslations(DraftailRichTextArea):
+    options: dict[str, Any]
+
     def get_context(self, name, value, attrs):
-        old_options = self.options
+        old_options: dict[str, Any] = self.options
         self.options = deepcopy(old_options)
         _hack_rich_text_editor_options(self.options)
         context = super().get_context(name, value, attrs)

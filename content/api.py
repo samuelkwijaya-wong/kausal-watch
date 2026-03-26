@@ -1,14 +1,27 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
+from django.apps import apps
 from rest_framework import renderers, viewsets
 
 from kausal_common.api.utils import register_view_helper
 from kausal_common.model_images import ModelWithImageViewMixin
 
-from .models import (
-    BlogPost,
-    StaticPage,
-)
+from pages.models import StaticPage
 
-all_views: list = []
+if TYPE_CHECKING:
+    from django.db.models import Model
+
+    from kausal_common.api.utils import RegisteredAPIView
+
+BlogPost: type[Model] | None
+try:
+    BlogPost = apps.get_model('content', 'BlogPost')
+except LookupError:
+    BlogPost = None
+
+all_views: list[RegisteredAPIView] = []
 
 
 def register_view(klass, *args, **kwargs):
@@ -21,7 +34,9 @@ class StaticPageViewSet(ModelWithImageViewMixin, viewsets.GenericViewSet):
     renderer_classes = [renderers.JSONRenderer]
 
 
-@register_view
-class BlogPostViewSet(ModelWithImageViewMixin, viewsets.GenericViewSet):
-    queryset = BlogPost.objects.all()
-    renderer_classes = [renderers.JSONRenderer]
+if BlogPost is not None:
+
+    @register_view
+    class BlogPostViewSet(ModelWithImageViewMixin, viewsets.GenericViewSet):
+        queryset = BlogPost.objects.all()  # type: ignore[union-attr]
+        renderer_classes = [renderers.JSONRenderer]

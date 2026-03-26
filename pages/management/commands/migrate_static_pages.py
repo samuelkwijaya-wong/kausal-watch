@@ -1,10 +1,10 @@
 import json
 
+from django.apps import apps
 from django.core.management.base import BaseCommand
 from django.db import transaction
 from wagtail.models import PageLogEntry
 
-from content.models import StaticPage as OldStaticPage
 from pages.models import PlanRootPage, StaticPage as NewStaticPage
 
 
@@ -69,6 +69,8 @@ class Command(BaseCommand):
 
     @transaction.atomic
     def handle(self, *args, **options):
+        OldStaticPage = apps.get_model('content', 'StaticPage')
+
         # Fix plan root page url_paths
         for node in PlanRootPage.objects.all():
             set_subtree(node)

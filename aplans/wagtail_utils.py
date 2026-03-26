@@ -49,7 +49,7 @@ def _get_category_fields[M: Model](plan: Plan, model: type[M], obj: M | None, wi
             initial = obj.categories.filter(type=cat_type)
         else:
             initial = None
-        field_class = forms.ModelMultipleChoiceField
+        field_class: type[forms.Field] = forms.ModelMultipleChoiceField
         if cat_type.select_widget == CategoryType.SelectWidget.SINGLE:
             field_class = ModelChoiceFieldWithValueInList
 
@@ -70,6 +70,6 @@ def _get_category_fields[M: Model](plan: Plan, model: type[M], obj: M | None, wi
             required=False,
             widget=widget,
         )
-        field.category_type = cat_type
+        field.category_type = cat_type  # type: ignore[attr-defined, union-attr]
         fields['categories_%s' % cat_type.identifier] = field
     return fields

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import datetime
 from enum import Enum
-from typing import TYPE_CHECKING, NotRequired, TypedDict
+from typing import TYPE_CHECKING, NotRequired, TypedDict, cast
 
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
@@ -259,9 +259,11 @@ class ActionTimelinessIdentifier(MetadataEnum):
     def for_action(cls, action: Action) -> ActionTimelinessIdentifier:
         plan = action.plan
         age = timezone.now() - action.updated_at
-        if age <= datetime.timedelta(days=cls.OPTIMAL.value.boundary(plan)):
+        optimal = cast('ActionTimeliness', cls.OPTIMAL.value)
+        acceptable = cast('ActionTimeliness', cls.ACCEPTABLE.value)
+        if age <= datetime.timedelta(days=optimal.boundary(plan)):
             return cls.OPTIMAL
-        if age <= datetime.timedelta(days=cls.ACCEPTABLE.value.boundary(plan)):
+        if age <= datetime.timedelta(days=acceptable.boundary(plan)):
             return cls.ACCEPTABLE
         # We do not distinguish between late and stale for now
         return cls.LATE

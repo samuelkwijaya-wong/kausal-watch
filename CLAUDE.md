@@ -50,7 +50,7 @@ eval "$(mise activate bash)"
 
 ### Linting and Type Checking
 - `ruff check` - Run code linting (configuration extends kausal_common/configs/ruff.toml)
-- `mypy . | mypy-baseline filter` - Run type checking with Django plugin and baseline support
+- `mypy .` - Run type checking with Django plugin
 - `ruff check --fix <file>` – Autofix import sorts etc. No need to fix these manually.
 - `ruff format <file>` – Prettify after edits
 
@@ -234,7 +234,6 @@ def process_request(request):
 
 ### Type Checking
 - MyPy configuration with Django plugin
-- Baseline file `.mypy-baseline.txt` for gradual typing adoption
 - Type stubs for some 3rd party packages in `kausal_common/typings/`
 
 ## API Architecture

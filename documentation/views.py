@@ -7,7 +7,10 @@ from .models import DocumentationPage
 
 def index(request, page_id):
     page = get_object_or_404(DocumentationPage, id=page_id)
-    page_plan = page.get_parent().specific.plan
+    parent = page.get_parent()
+    if parent is None:
+        raise PermissionDenied()
+    page_plan = parent.specific.plan
     active_plan = request.user.get_active_admin_plan()
     if active_plan != page_plan:
         raise PermissionDenied()

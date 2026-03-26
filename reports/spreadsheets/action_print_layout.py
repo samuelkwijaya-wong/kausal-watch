@@ -133,7 +133,7 @@ def write_action_summaries(excel_report: ExcelReport, action_df: pl.DataFrame) -
     plan: Plan = excel_report.report.type.plan
     custom_variables = ReportActionPrintLayoutCustomization.get_plan_variables_with_fallback(plan)
     MAX_COLUMNS = custom_variables.max_columns
-    WIDTH_NEEDED: list[list[int | None]] = custom_variables.width_needed
+    WIDTH_NEEDED = cast('list[list[int | None]]', custom_variables.width_needed)
     APPROXIMATE_CHARS_PER_LINE = custom_variables.approximate_chars_per_line
     APPROXIMATE_LINES_PER_PAGE = custom_variables.approximate_lines_per_page
     MIN_SPLIT_CHARS = custom_variables.min_split_chars

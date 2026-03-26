@@ -62,6 +62,7 @@ if TYPE_CHECKING:
 
     from relations_iterator import TreeNode  # type: ignore
 
+
 class Excluded:
     """Sentinel: marks a relation as deliberately excluded from copying."""
 

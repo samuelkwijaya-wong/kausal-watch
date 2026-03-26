@@ -50,9 +50,8 @@ def _check_coverage(model_class: type[Model], structure: CloneStructure, visited
 
     if missing:
         raise AssertionError(
-            f"{model_class.__name__} has relations not accounted for in its clone structure.\n"
-            "Add them as sub-structures to copy, or mark as EXCLUDED:\n"
-            + "\n".join(missing)
+            f'{model_class.__name__} has relations not accounted for in its clone structure.\n'
+            'Add them as sub-structures to copy, or mark as EXCLUDED:\n' + '\n'.join(missing)
         )
 
 

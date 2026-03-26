@@ -1,19 +1,19 @@
 from __future__ import annotations
 
 import contextlib
-import typing
+from typing import TYPE_CHECKING, cast
 
 from django import forms
 from django.utils.translation import gettext as _
 
-if typing.TYPE_CHECKING:
+if TYPE_CHECKING:
     from wagtail.blocks import BaseStreamBlock
     from wagtail.blocks.stream_block import StreamValue
 
     from actions.models import AttributeType, CategoryType
     from admin_site.wagtail import AplansAdminModelForm
 
-if typing.TYPE_CHECKING:
+if TYPE_CHECKING:
     _Base = BaseStreamBlock
 else:
     _Base = object
@@ -39,8 +39,9 @@ class ActionListPageBlockPresenceMixin(_Base):
     def _get_block_names(self, instance: SupportedModel) -> tuple[str, str]:
         model_class = type(instance)
         block_name = self.model_instance_container_blocks[model_class]
-        child_block = self.child_blocks[block_name]
-        sub_block_name = child_block.model_instance_container_blocks[instance._meta.model]
+        child_block = cast('ActionListPageBlockPresenceMixin', self.child_blocks[block_name])
+        instance_model = cast('type[SupportedModel]', instance._meta.model)
+        sub_block_name = child_block.model_instance_container_blocks[instance_model]
         return (block_name, sub_block_name)
 
     def contains_model_instance(self, instance: SupportedModel, blocks: StreamValue):
@@ -67,7 +68,7 @@ class ActionListPageBlockPresenceMixin(_Base):
             del blocks[i]
 
 
-if typing.TYPE_CHECKING:
+if TYPE_CHECKING:
     _FormBase = AplansAdminModelForm
 else:
     _FormBase = forms.Form

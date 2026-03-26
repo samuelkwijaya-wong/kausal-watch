@@ -785,12 +785,15 @@ class ActionButtonHelper(AplansButtonHelper):
 
 
 class ActionEditView(
-    InitializeFormWithInitialPlanMixin[Action],
-    SnippetsEditViewCompatibilityMixin[Action],
+    InitializeFormWithInitialPlanMixin[Action, ActionAdminForm],
+    SnippetsEditViewCompatibilityMixin[Action, ActionAdminForm],
     SingleObjectMixin[Action],
-    AplansEditView[Action],
+    AplansEditView[Action, ActionAdminForm],
 ):
     model_admin: ActionAdmin
+    instance: Action
+    object: Action
+    model: type[Action]
 
     def get_success_url(self):
         url = change_log_message_url_or_none(self.instance)

@@ -232,7 +232,7 @@ class OrderedModel(models.Model):
         return self.order
 
     @abc.abstractmethod
-    def filter_siblings(self, qs: QuerySet[Self, Self]) -> QuerySet[Self, Self]:
+    def filter_siblings(self, qs: QuerySet[Any]) -> QuerySet[Any]:
         raise NotImplementedError('Implement in subclass')
 
     def get_sort_order_max(self) -> int:

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+from typing import cast
 
 from celery import Celery
 from celery.signals import setup_logging
@@ -22,7 +23,7 @@ def config_loggers(*args, **kwargs):
 
     from django.conf import settings
 
-    dictConfig(settings.LOGGING)
+    dictConfig(cast('dict[str, object]', settings.LOGGING))
 
 
 # Load task modules from all registered Django app configs.

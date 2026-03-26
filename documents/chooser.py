@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, cast
+from typing import TYPE_CHECKING, Any, cast
 
 from django.core.paginator import Paginator
 from django.template.response import TemplateResponse
@@ -86,7 +86,7 @@ def chooser(request: HttpRequest):
     if len(collections) < 2:
         collections = None
     else:
-        collections = Collection.order_for_display(collections)
+        collections = cast('CollectionQuerySet', cast('Any', Collection).order_for_display(collections))
 
     documents = documents.order_by('-created_at')
     documents_exist = documents.exists()

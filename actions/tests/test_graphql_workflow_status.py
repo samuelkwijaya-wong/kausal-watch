@@ -8,7 +8,7 @@ pytestmark = pytest.mark.django_db
 @pytest.fixture
 def query_action_workflow_status():
     return """
-      query ($id: ID!) {
+      query ($id: ID!, $lang: String!) @locale(lang: $lang) {
         action(id: $id) {
           workflowStatus {
             hasUnpublishedChanges
@@ -46,7 +46,7 @@ def test_workflow_status_exposed_for_action(
 
     data = graphql_client_query_data(
         query_action_workflow_status,
-        variables={'id': action.id},
+        variables={'id': action.id, 'lang': 'en'},
     )
     workflow_status_data = data['action']['workflowStatus']
     assert workflow_status_data['hasUnpublishedChanges'] is True
@@ -74,5 +74,5 @@ def test_workflow_status_not_exposed_with_no_plan_access(
     person.general_admin_plans.add(plan)
     client.force_login(user)
 
-    data = graphql_client_query(query_action_workflow_status, variables={'id': action.id})
+    data = graphql_client_query(query_action_workflow_status, variables={'id': action.id, 'lang': 'en'})
     assert data['data']['action']['workflowStatus'] is None

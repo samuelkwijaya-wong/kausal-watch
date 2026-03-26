@@ -16,7 +16,7 @@ def create_site_general_content(sender, **kwargs):
     obj.owner_name = plan.organization.name
 
     with translation.override(plan.primary_language):
-        obj.official_name_description = gettext(_('According to the action plan'))
+        obj.official_name_description = gettext('According to the action plan')
     obj.github_api_repository = 'https://github.com/kausaltech/kausal-watch'
     obj.github_ui_repository = 'https://github.com/kausaltech/kausal-watch-ui'
     obj.save()

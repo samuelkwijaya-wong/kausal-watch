@@ -133,9 +133,7 @@ class TestPlanFilterVisibility:
 
         # Mock get_adminable_plans to return both plans
         user.get_adminable_plans = Mock(  # type: ignore[method-assign]
-            return_value=Plan.objects.qs.filter(
-                id__in=[active_plan.id, inactive_plan.id]
-            )
+            return_value=Plan.objects.qs.filter(id__in=[active_plan.id, inactive_plan.id])
         )
 
         mock_request = Mock()

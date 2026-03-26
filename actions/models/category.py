@@ -48,8 +48,8 @@ if TYPE_CHECKING:
     from kausal_common.models.types import FK, MLMM, RevMany, RevManyQS, RevManyToManyQS
     from kausal_common.users import UserOrAnon
 
-    from actions.models.action import BaseChangeLogMessage
     from actions.models.plan import Plan
+    from admin_site.models import BaseChangeLogMessage
     from indicators.models import Indicator
     from pages.models import CategoryPage, CategoryTypePage, CategoryTypePageLevelLayout
 
@@ -598,10 +598,10 @@ class Category(ModelWithAttributes, CategoryBase, ClusterableModel, PlanRelatedM
         return [self.type.plan]
 
     @classmethod
-    def filter_by_plan(cls, plan: Plan, qs: QuerySet[Self, Self]) -> QuerySet[Self]:
+    def filter_by_plan(cls, plan: Plan, qs: QuerySet[Self]) -> QuerySet[Self]:
         return qs.filter(type__plan=plan)
 
-    def filter_siblings(self, qs: models.QuerySet[Self, Self]) -> models.QuerySet[Self, Self]:
+    def filter_siblings(self, qs: QuerySet[Self]) -> QuerySet[Self]:
         return qs.filter(type=self.type)
 
     def set_plan(self, plan):  # pyright: ignore[reportUnusedParameter]

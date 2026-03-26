@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from datetime import timedelta
 from logging import getLogger
 from typing import TYPE_CHECKING
@@ -35,9 +37,8 @@ if TYPE_CHECKING:
     from feedback.models import UserFeedback
     from indicators.models import Indicator
 
-    from .notifications import (
-        Notification,
-    )
+    from .models import AutomaticNotificationTemplate
+    from .notifications import Notification
     from .recipients import NotificationRecipient
 
 logger = getLogger(__name__)
@@ -130,6 +131,7 @@ class NotificationEngine:
             raise InvalidStateException('Task %s already completed' % (str(task),))
 
         diff = (task.due_at - self.now.date()).days
+        notif: TaskDueSoonNotification | TaskLateNotification
         if diff < 0:
             # Task is late
             notif = TaskLateNotification(self.plan, task, -diff)
@@ -154,6 +156,7 @@ class NotificationEngine:
         if indicator.updated_values_due_at is None:
             return
         diff = (indicator.updated_values_due_at - self.now.date()).days
+        notif: UpdatedIndicatorValuesDueSoonNotification | UpdatedIndicatorValuesLateNotification
         if diff < 0:
             # Updated indicator values are late
             notif = UpdatedIndicatorValuesLateNotification(self.plan, indicator, -diff)
@@ -188,6 +191,7 @@ class NotificationEngine:
             diff = (task.due_at - self.now.date()).days
             if diff <= N_DAYS:
                 count += 1
+        notif: NotEnoughTasksNotification | ActionNotUpdatedNotification
         if count < TASK_COUNT:
             notif = NotEnoughTasksNotification(self.plan, action)
             template = self.templates_by_type.get(NotificationType.NOT_ENOUGH_TASKS.identifier)
@@ -264,7 +268,7 @@ class NotificationEngine:
         self.action_contact_person_recipients: dict[int, Sequence[NotificationRecipient]] = {}
         self.indicator_contact_person_recipients: dict[int, Sequence[NotificationRecipient]] = {}
         self.organization_plan_admin_recipients: dict[int, Sequence[NotificationRecipient]] = {}
-        self.plan_admin_recipients: Sequence[NotificationRecipient] = []
+        self.plan_admin_recipients = []
 
         self._fetch_data()
 
@@ -313,13 +317,17 @@ class NotificationEngine:
                     ttype = notification_type.identifier
                     if self.only_type and ttype != self.only_type:
                         continue
+                    template: AutomaticNotificationTemplate | ManuallyScheduledNotificationTemplate
                     if notification_type == NotificationType.MANUALLY_SCHEDULED:
-                        template = queue_items[0].notification.obj
+                        manual_template = queue_items[0].notification.obj
+                        assert isinstance(manual_template, ManuallyScheduledNotificationTemplate)
+                        template = manual_template
                     else:
-                        template = self.templates_by_type.get(ttype)
-                        if template is None:
+                        automatic_template = self.templates_by_type.get(ttype)
+                        if automatic_template is None:
                             logger.debug('No template for %s' % ttype)
                             continue
+                        template = automatic_template
 
                     notification = queue_items[0].notification
                     content_blocks = notification.get_content_blocks(base_template, template)

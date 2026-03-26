@@ -7,6 +7,7 @@ from django.conf import settings
 from django.contrib.admin.utils import quote, unquote
 from django.core.exceptions import ImproperlyConfigured, PermissionDenied, ValidationError
 from django.db import transaction
+from django.forms import ModelForm
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils import timezone
@@ -16,6 +17,7 @@ from django.utils.text import capfirst
 from django.utils.translation import gettext as _
 from wagtail import hooks
 from wagtail.admin import messages
+from wagtail.admin.forms import WagtailAdminModelForm
 from wagtail.admin.templatetags.wagtailadmin_tags import user_display_name
 from wagtail.admin.utils import get_latest_str
 from wagtail.locks import BasicLock, ScheduledForPublishLock, WorkflowLock
@@ -36,28 +38,66 @@ from actions.models.action import Action
 if TYPE_CHECKING:
     from collections.abc import Iterable
 
+    from django.db.models import QuerySet
     from django.db.models.base import Model
+    from django.http import HttpResponse, JsonResponse
     from django.http.request import HttpRequest
-    from wagtail.admin.views.generic import BaseObjectMixin
+    from django.views.generic import TemplateView
+    from django.views.generic.edit import ProcessFormView
+    from django_stubs_ext import StrOrPromise
+    from wagtail.admin.views.generic import BaseObjectMixin, mixins as wagtail_mixins
+    from wagtail.admin.views.generic.base import WagtailAdminTemplateMixin
     from wagtail.admin.views.generic.permissions import PermissionCheckedMixin
     from wagtail.permission_policies.base import BasePermissionPolicy
 
     from wagtail_modeladmin.helpers.url import AdminURLHelper
     from wagtail_modeladmin.views import InstanceSpecificView, ModelFormView
 
-    class ModelFormViewMixinBase[M: Model](ModelFormView[M], InstanceSpecificView[M], BaseObjectMixin[M]): ...
+    class ModelFormViewMixinBase[M: Model](ModelFormView[M], InstanceSpecificView[M], BaseObjectMixin[M]):
+        pass
+
+    class CreateEditViewOptionalFeaturesBase[M: Model, FormT: ModelForm[Any]](
+        wagtail_mixins.PanelMixin,
+        PermissionCheckedMixin,
+        wagtail_mixins.BeforeAfterHookMixin[FormT],
+        WagtailAdminTemplateMixin,
+        wagtail_mixins.JsonPostResponseMixin,
+        ProcessFormView,
+    ):
+        def get_available_actions(self) -> list[str]: ...
+        def get_edit_url(self) -> str: ...
+        def get_error_message(self) -> str | None: ...
+        def save_action(self) -> HttpResponse | JsonResponse: ...
+        def get_success_buttons(self) -> list[tuple[str, StrOrPromise, bool]]: ...
+        def get_success_url(self) -> str: ...
+        def setup(self, request: HttpRequest, *args: Any, **kwargs: Any) -> None: ...
+        def get_object(self, queryset: QuerySet[M] | None = None) -> M: ...  # pyright: ignore[reportUnusedParameter]
+
+    class PermissionCheckedMixinBase(PermissionCheckedMixin, TemplateView):
+        pass
+
+    class BeforeAfterHookMixinBase[FormT: ModelForm[Any] = WagtailAdminModelForm[Any]](TemplateView):
+        def form_valid(self, form: FormT) -> HttpResponse: ...
 
 else:
-    PermissionCheckedMixin = object
+
+    class PermissionCheckedMixinBase:
+        pass
 
     class ModelFormViewMixinBase[M: Model]:
+        pass
+
+    class BeforeAfterHookMixinBase[FormT]:
+        pass
+
+    class CreateEditViewOptionalFeaturesBase[M: Model, FormT: ModelForm[Any]]:
         pass
 
 # The mixins in this file have been copied from Wagtail to avoid unexpected upstream changes. We use them in ActionAdmin
 # for our MVP workflow functionality. They should be phased out ASAP by moving ActionAdmin to snippets.
 
 
-class CreateEditViewOptionalFeaturesMixin[M: Action](ModelFormViewMixinBase[M]):
+class CreateEditViewOptionalFeaturesMixin[M: Action, FormT: ModelForm[Any]](CreateEditViewOptionalFeaturesBase[M, FormT]):
     # Source: wagtail.admin.views.generic.CreateEditViewOptionalFeaturesMixin
     """
     A mixin for generic CreateView/EditView.
@@ -81,14 +121,14 @@ class CreateEditViewOptionalFeaturesMixin[M: Action](ModelFormViewMixinBase[M]):
         self.args = args
         self.kwargs = kwargs
 
-        self.revision_enabled = self.model and issubclass(self.model, RevisionMixin)
-        self.draftstate_enabled = self.model and issubclass(self.model, DraftStateMixin)
-        self.locking_enabled = self.model and issubclass(self.model, LockableMixin) and self.view_name != 'create'
+        self.revision_enabled = bool(self.model and issubclass(self.model, RevisionMixin))
+        self.draftstate_enabled = bool(self.model and issubclass(self.model, DraftStateMixin))
+        self.locking_enabled = bool(self.model and issubclass(self.model, LockableMixin) and self.view_name != 'create')
 
         # Set the object before super().setup() as LocaleMixin.setup() needs it
         self.object = cast('M', self.get_object())
         self.lock = self.get_lock()
-        self.locked_for_user = self.lock and self.lock.for_user(request.user)
+        self.locked_for_user = bool(self.lock and self.lock.for_user(request.user))
         super().setup(request, *args, **kwargs)  # type: ignore[misc]
 
     @cached_property
@@ -168,7 +208,7 @@ class CreateEditViewOptionalFeaturesMixin[M: Action](ModelFormViewMixinBase[M]):
             self.object,
             self.request.user,
         )
-        available_action_names = [name for name, verbose_name, modal in available_actions]
+        available_action_names = [name for name, _verbose_name, _modal in available_actions]
         return self.workflow_action in available_action_names
 
     def get_available_actions(self):
@@ -240,8 +280,8 @@ class CreateEditViewOptionalFeaturesMixin[M: Action](ModelFormViewMixinBase[M]):
             )
         return super().get_error_message()
 
-    def get_success_message(self, instance=None):
-        object = instance or self.object
+    def get_success_message(self, instance=None):  # noqa: C901
+        obj = instance or self.object
 
         message = _("%(model_name)s '%(object)s' updated.")
         if self.view_name == 'create':
@@ -249,7 +289,7 @@ class CreateEditViewOptionalFeaturesMixin[M: Action](ModelFormViewMixinBase[M]):
 
         if self.action == 'publish':
             # Scheduled publishing
-            if object.go_live_at and object.go_live_at > timezone.now():
+            if obj.go_live_at and obj.go_live_at > timezone.now():
                 message = _(
                     "%(model_name)s '%(object)s' has been scheduled for publishing.",
                 )
@@ -258,7 +298,7 @@ class CreateEditViewOptionalFeaturesMixin[M: Action](ModelFormViewMixinBase[M]):
                     message = _(
                         "%(model_name)s '%(object)s' created and scheduled for publishing.",
                     )
-                elif object.live:
+                elif obj.live:
                     message = _(
                         "%(model_name)s '%(object)s' is live and this version has been scheduled for publishing.",
                     )
@@ -298,7 +338,7 @@ class CreateEditViewOptionalFeaturesMixin[M: Action](ModelFormViewMixinBase[M]):
 
         return message % {
             'model_name': capfirst(self.model._meta.verbose_name),
-            'object': get_latest_str(object),
+            'object': get_latest_str(obj),
         }
 
     def get_success_url(self):
@@ -310,10 +350,6 @@ class CreateEditViewOptionalFeaturesMixin[M: Action](ModelFormViewMixinBase[M]):
         return super().get_success_url()
 
     def save_instance(self):
-        """
-        Called after the form is successfully validated - saves the object to the db
-        and returns the new object. Override this to implement custom save logic.
-        """
         if self.draftstate_enabled:
             instance = self.form.save(commit=False)
 
@@ -348,6 +384,7 @@ class CreateEditViewOptionalFeaturesMixin[M: Action](ModelFormViewMixinBase[M]):
             return hook_response
 
         # Skip permission check as it's already done in get_available_actions
+        assert self.new_revision is not None
         self.new_revision.publish(user=self.request.user, skip_permission_checks=True)
 
         hook_response = self.run_hook('after_publish', self.request, self.object)
@@ -361,11 +398,12 @@ class CreateEditViewOptionalFeaturesMixin[M: Action](ModelFormViewMixinBase[M]):
             # If the workflow was in the needs changes state, resume the existing workflow on submission
             self.workflow_state.resume(self.request.user)
         else:
+            assert self.workflow is not None
             # Otherwise start a new workflow
             try:
                 self.workflow.start(self.object, self.request.user)
             except ValidationError as e:
-                messages.validation_error(self.request, ' '.join(e.messages), self.form)
+                messages.validation_error(self.request, ' '.join(e.messages), self.form)  # pyright: ignore[reportArgumentType]
                 return redirect(self.get_edit_url())
 
         plan = self.object.plan
@@ -378,6 +416,8 @@ class CreateEditViewOptionalFeaturesMixin[M: Action](ModelFormViewMixinBase[M]):
         return None
 
     def restart_workflow_action(self):
+        assert self.workflow_state is not None
+        assert self.workflow is not None
         self.workflow_state.cancel(user=self.request.user)
         self.workflow.start(self.object, self.request.user)
 
@@ -545,7 +585,7 @@ class CreateEditViewOptionalFeaturesMixin[M: Action](ModelFormViewMixinBase[M]):
         return context
 
     def post(self, request, *args, **kwargs):
-        form = self.get_form()
+        form = self.get_form()  # type: ignore[attr-defined]
         # Make sure object is not locked
         if not self.locked_for_user and form.is_valid():
             return self.form_valid(form)
@@ -557,10 +597,6 @@ class HookResponseMixin:
     """A mixin for class-based views to run hooks by `hook_name`."""
 
     def run_hook(self, hook_name, *args, **kwargs):
-        """
-        Run the named hook, passing args and kwargs to each function registered under that hook name.
-        If any return an HttpResponse, stop processing and return that response.
-        """
         for fn in hooks.get_hooks(hook_name):
             result = fn(*args, **kwargs)
             if hasattr(result, 'status_code'):
@@ -568,36 +604,14 @@ class HookResponseMixin:
         return None
 
 
-class BeforeAfterHookMixin(HookResponseMixin):
+class BeforeAfterHookMixin[FormT: ModelForm[Any] = WagtailAdminModelForm[Any]](
+    BeforeAfterHookMixinBase[FormT], HookResponseMixin
+):
     # Source: wagtail.admin.views.generic.mixins.BeforeAfterHookMixin
-    """
-    A mixin for class-based views to support hooks like `before_edit_page` and
-    `after_edit_page`, which are triggered during execution of some operation and
-    can return a response to halt that operation and/or change the view response.
-    """
-
     def run_before_hook(self):
-        """
-        Define how to run the hooks before the operation is executed.
-        The `self.run_hook(hook_name, *args, **kwargs)` from HookResponseMixin
-        can be utilised to call the hooks.
-
-        If this method returns a response, the operation will be aborted and the
-        hook response will be returned as the view response, skipping the default
-        response.
-        """
         return
 
     def run_after_hook(self):
-        """
-        Define how to run the hooks after the operation is executed.
-        The `self.run_hook(hook_name, *args, **kwargs)` from HookResponseMixin
-        can be utilised to call the hooks.
-
-        If this method returns a response, it will be returned as the view
-        response immediately after the operation finishes, skipping the default
-        response.
-        """
         return
 
     def dispatch(self, *args, **kwargs):
@@ -617,10 +631,17 @@ class BeforeAfterHookMixin(HookResponseMixin):
         return response
 
 
-class GenericModelEditViewMixin(BeforeAfterHookMixin):
+class GenericModelEditViewMixin[FormT: ModelForm[Any] = WagtailAdminModelForm[Any]](BeforeAfterHookMixin[FormT]):
     # Source: wagtail.admin.views.generic.models.EditView
     success_message: str | None = None
     actions = ['edit']
+    request: HttpRequest
+    object: Any
+    edit_url_name: str | None = None
+
+    if TYPE_CHECKING:
+
+        def get_success_url(self) -> str: ...
 
     def setup(self, request, *args, **kwargs):
         super().setup(request, *args, **kwargs)
@@ -668,7 +689,7 @@ class GenericModelEditViewMixin(BeforeAfterHookMixin):
         return reverse(self.edit_url_name, args=(quote(self.object.pk),))
 
 
-class WatchPermissionCheckedMixin(PermissionCheckedMixin):
+class WatchPermissionCheckedMixin(PermissionCheckedMixinBase):
     # Source: wagtail.admin.views.generic.permissions.PermissionCheckedMixin
     """
     Mixin for class-based views to enforce permission checks according to
@@ -680,7 +701,7 @@ class WatchPermissionCheckedMixin(PermissionCheckedMixin):
     * permission_required (an action name such as 'add', 'change' or 'delete')
     * any_permission_required (a list of action names - the user must have
       one or more of those permissions)
-    """
+    """  # noqa: D205
 
     request: HttpRequest
     permission_required: str | None = None
@@ -691,9 +712,8 @@ class WatchPermissionCheckedMixin(PermissionCheckedMixin):
             if self.permission_required is not None and not self.user_has_permission(self.permission_required):
                 raise PermissionDenied
 
-            if self.any_permission_required is not None:
-                if not self.user_has_any_permission(self.any_permission_required):
-                    raise PermissionDenied
+            if self.any_permission_required is not None and not self.user_has_any_permission(self.any_permission_required):
+                raise PermissionDenied
 
         return super().dispatch(request, *args, **kwargs)
 
@@ -709,9 +729,9 @@ class WatchPermissionCheckedMixin(PermissionCheckedMixin):
         )
 
 
-class SnippetsEditViewCompatibilityMixin[M: Action](
-    CreateEditViewOptionalFeaturesMixin[M],
-    GenericModelEditViewMixin,
+class SnippetsEditViewCompatibilityMixin[M: Action, FormT: ModelForm[Any]](
+    CreateEditViewOptionalFeaturesMixin[M, FormT],
+    GenericModelEditViewMixin[FormT],
     WatchPermissionCheckedMixin,
 ):
     # Source: wagtail.snippets.views.snippets.EditView and other classes
@@ -748,13 +768,13 @@ class SnippetsEditViewCompatibilityMixin[M: Action](
     def get(self, request, *args, **kwargs):
         # Copied from django.views.generic.edit.BaseUpdateView; omitting causes problems with
         # CreateEditViewOptionalFeaturesMixin
-        self.object = cast('M', self.get_object())
+        self.object = cast('Action', self.get_object())
         return super().get(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
         # Copied from django.views.generic.edit.BaseUpdateView; omitting causes problems with
         # CreateEditViewOptionalFeaturesMixin
-        self.object = cast('M', self.get_object())
+        self.object = cast('Action', self.get_object())
         return super().post(request, *args, **kwargs)
 
     def get_object(self, queryset=None):

@@ -4,6 +4,7 @@ import importlib.util
 import typing
 from urllib.parse import urlparse
 
+import wagtail.documents.urls as wagtaildocs_urls
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.auth.views import LogoutView
@@ -13,9 +14,6 @@ from django.views.generic import TemplateView
 from django.views.i18n import JavaScriptCatalog
 from wagtail.admin import urls as wagtailadmin_urls  # type: ignore[attr-defined]  # pyright: ignore[reportAttributeAccessIssue]
 from wagtail.admin.views.pages import search  # type: ignore[attr-defined]
-from wagtail.documents import (
-    urls as wagtaildocs_urls,  # type: ignore[attr-defined]  # pyright: ignore[reportAttributeAccessIssue]
-)
 
 from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
 from wagtailautocomplete.urls.admin import urlpatterns as autocomplete_admin_urls

@@ -29,7 +29,7 @@ class ActionGraphGenerator(GraphGenerator):
     def fetch_data(self):
         action_qs = self.plan.actions.unmerged()
         self.actions = {obj.id: obj for obj in action_qs}
-        action_indicators = ActionIndicator.objects.visible_for_public().filter(action__in=action_qs)
+        action_indicators = ActionIndicator.objects.get_queryset().visible_for_public().filter(action__in=action_qs)
         for ai in action_indicators:
             act = self.actions[ai.action_id]
             if not hasattr(act, '_indicators'):
@@ -217,7 +217,8 @@ class OrganizationGraphGenerator(GraphGenerator):
         d['url'] = self.request.build_absolute_uri(url) if self.request else url
         d['abbreviation'] = obj.abbreviation
         d['type'] = 'organization'
-        d['classification'] = self.org_classes.get(obj.classification_id).name
+        classification = self.org_classes.get(obj.classification_id)
+        d['classification'] = classification.name if classification is not None else None
         d['object_id'] = obj.id
         d['name'] = obj.name
         d['id'] = self.make_node_id(obj)
