@@ -173,6 +173,11 @@ class PlanFeatures(PlanRelatedModelWithRevision):
         verbose_name=_('Enable community engagement'),
         help_text=_('Enable community engagement features such as pledges for this plan.'),
     )
+    enable_action_pdf_export_in_public_ui = models.BooleanField(
+        default=False,
+        verbose_name=_('Enable PDF export of actions in public UI'),
+        help_text=_('Enable users of the public UI to export actions to PDF.'),
+    )
 
     class AccessibilityConformanceLevel(models.TextChoices):
         DEFAULT = 'default', 'No extra accessibility fixes active'
@@ -224,4 +229,5 @@ class PlanFeatures(PlanRelatedModelWithRevision):
         'indicators_open_in_modal',
         'enable_change_log',
         'enable_community_engagement',
+        'enable_action_pdf_export_in_public_ui',
     ]
