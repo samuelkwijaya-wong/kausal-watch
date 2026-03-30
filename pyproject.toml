@@ -154,6 +154,7 @@ lint = [
 ]
 prod = [
   "gunicorn",
+  "gunicorn-prometheus-exporter",
   "rustface>=0.1; sys_platform=='linux'",
   "uvicorn[standard]",
   "uvicorn-worker",

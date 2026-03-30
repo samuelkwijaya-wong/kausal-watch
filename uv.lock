@@ -1378,6 +1378,21 @@ wheels = [
 ]
 
 [[package]]
+name = "gunicorn-prometheus-exporter"
+version = "0.2.4"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "gunicorn", marker = "(platform_machine == 'arm64' and sys_platform == 'darwin') or (platform_machine == 'x86_64' and sys_platform == 'linux')" },
+    { name = "prometheus-client", marker = "(platform_machine == 'arm64' and sys_platform == 'darwin') or (platform_machine == 'x86_64' and sys_platform == 'linux')" },
+    { name = "psutil", marker = "(platform_machine == 'arm64' and sys_platform == 'darwin') or (platform_machine == 'x86_64' and sys_platform == 'linux')" },
+    { name = "pyyaml", marker = "(platform_machine == 'arm64' and sys_platform == 'darwin') or (platform_machine == 'x86_64' and sys_platform == 'linux')" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/32/2b/7db654d458353654c3c58511fa5cbe015c02a755b894765595aca3b3def6/gunicorn_prometheus_exporter-0.2.4.tar.gz", hash = "sha256:d1c1025064a114726a2f9c21e0a68f2d568713c153ad8e4f457739eb6022a19d", size = 52655, upload-time = "2025-10-19T13:07:48.471Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/3f/96/1c56eda6559137f20ec99e89dc8021b75dfd9f74ed1900cd6007bbb326e8/gunicorn_prometheus_exporter-0.2.4-py3-none-any.whl", hash = "sha256:d44bdac936f11075f2c5ec1ad7aa87b51a9fbe51f57d3283a21a0bc2d0eeee0c", size = 52938, upload-time = "2025-10-19T13:07:47.08Z" },
+]
+
+[[package]]
 name = "h11"
 version = "0.16.0"
 source = { registry = "https://pypi.org/simple" }
@@ -1871,6 +1886,7 @@ lint = [
 ]
 prod = [
     { name = "gunicorn", marker = "(platform_machine == 'arm64' and sys_platform == 'darwin') or (platform_machine == 'x86_64' and sys_platform == 'linux')" },
+    { name = "gunicorn-prometheus-exporter", marker = "(platform_machine == 'arm64' and sys_platform == 'darwin') or (platform_machine == 'x86_64' and sys_platform == 'linux')" },
     { name = "rustface", marker = "platform_machine == 'x86_64' and sys_platform == 'linux'" },
     { name = "uvicorn", extra = ["standard"], marker = "(platform_machine == 'arm64' and sys_platform == 'darwin') or (platform_machine == 'x86_64' and sys_platform == 'linux')" },
     { name = "uvicorn-worker", marker = "(platform_machine == 'arm64' and sys_platform == 'darwin') or (platform_machine == 'x86_64' and sys_platform == 'linux')" },
@@ -2022,6 +2038,7 @@ lint = [
 ]
 prod = [
     { name = "gunicorn" },
+    { name = "gunicorn-prometheus-exporter" },
     { name = "rustface", marker = "sys_platform == 'linux'", specifier = ">=0.1" },
     { name = "uvicorn", extras = ["standard"] },
     { name = "uvicorn-worker" },
