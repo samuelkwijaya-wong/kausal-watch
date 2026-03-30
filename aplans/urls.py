@@ -20,7 +20,7 @@ from wagtailautocomplete.urls.admin import urlpatterns as autocomplete_admin_url
 
 from kausal_common.admin_site.views import RootRedirectView
 from kausal_common.datasets.api import all_routers as datasets_api_nested_routers, router as datasets_api_root_router
-from kausal_common.deployment.health_check_view import health_view
+from kausal_common.deployment.health_check_view import diagnostics_view, liveness_view, readiness_view
 
 from aplans.graphql_views import WatchGraphQLView
 
@@ -180,7 +180,10 @@ urlpatterns = [
     re_path('^report_export/(?:(?P<plan_identifier>[-a-z0-9]+)/)?$', export_report_view, name='action-report-export'),
     path('auth/', include('social_django.urls', namespace='social')),
     path('logout/', KausalLogoutView.as_view(), name='logout'),
-    path('healthz/', csrf_exempt(health_view)),
+    path('livez/', liveness_view, name='liveness'),
+    path('readyz/', csrf_exempt(readiness_view), name='readiness'),
+    path('healthz/', csrf_exempt(readiness_view), name='healthcheck'),
+    path('diagnostics/', csrf_exempt(diagnostics_view), name='diagnostics'),
     path('', include('admin_site.urls')),
     path('', RootRedirectView.as_view(), name='root-redirect'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
