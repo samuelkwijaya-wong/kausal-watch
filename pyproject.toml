@@ -33,6 +33,7 @@ dependencies = [
   "django-image-cropping",
   "django-modeltrans",
   "django-npm",
+  "django-prometheus",
   "django-oauth-toolkit",
   "django-parler",
   "django-redis",
