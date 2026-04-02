@@ -83,14 +83,14 @@ class ImageNode(DjangoNode[AplansImage]):
 
             try:
                 width = int(width_str)
-                if width <= 100 or width > 1600:
+                if width <= 100 or width > 9999:
                     raise Exception()  # noqa: TRY301
             except Exception:
                 raise GraphQLError('invalid width: %d' % width, nodes=info.field_nodes) from None
 
             try:
                 height = int(height_str)
-                if height <= 100 or height > 1600:
+                if height <= 100 or height > 9999:
                     raise Exception()  # noqa: TRY301
             except Exception:
                 raise GraphQLError('invalid height: %d' % height, nodes=info.field_nodes) from None
