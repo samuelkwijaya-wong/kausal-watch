@@ -206,6 +206,8 @@ strict_optional = true
 fixed_format_cache = true
 always_true = [ "IS_WATCH", "IS_MYPY" ]
 always_false = [ "IS_PATHS" ]
+local_partial_types = true
+allow_redefinition_new = true
 
 [[tool.mypy.overrides]]
 module = [
