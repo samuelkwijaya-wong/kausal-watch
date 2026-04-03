@@ -7,10 +7,13 @@ from django.db.models import Model
 from django.http.request import HttpRequest
 
 from kausal_common.context.single import SingleValueContext, SubclassableContext
+from kausal_common.users import user_or_bust
 
 if typing.TYPE_CHECKING:
     from aplans.cache import PlanSpecificCache, WatchObjectCache
     from aplans.types import WatchAdminRequest
+
+    from actions.models.plan import Plan
 
 
 @dataclass
@@ -47,3 +50,14 @@ def get_admin_cache_from_context() -> PlanSpecificCache | None:
     request = ctx_request.get()
     cache = getattr(request, 'admin_cache', None)
     return cache
+
+
+def get_active_admin_plan(request: HttpRequest) -> Plan:
+    """
+    Return the active admin plan for the given request.
+
+    The request user must have been previously authenticated and have admin privileges.
+    """
+
+    user = user_or_bust(request.user)
+    return user.get_active_admin_plan()
