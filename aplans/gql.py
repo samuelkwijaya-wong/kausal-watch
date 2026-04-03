@@ -16,6 +16,8 @@ from actions.models import Plan
 from .graphql_types import SBInfo as Info
 
 if TYPE_CHECKING:
+    from collections.abc import Callable
+
     from strawberry.extensions import FieldExtension
     from strawberry_django.mutations.fields import DjangoMutationBase
 
@@ -42,12 +44,12 @@ def mutation(*, extensions: list[FieldExtension] | None = None, **kwargs: Unpack
 
 
 @overload
-def mutation(resolver: ResolverFunc, **kwargs: Unpack[MutationArgs]) -> DjangoMutationBase: ...
+def mutation(resolver: ResolverFunc, **kwargs: Unpack[MutationArgs]) -> Callable[[ResolverFunc], DjangoMutationBase]: ...
 
 
 def mutation(
     resolver: ResolverFunc | None = None, *, extensions: list[FieldExtension] | None = None, **kwargs: Unpack[MutationArgs]
-) -> DjangoMutationBase:
+) -> Callable[[ResolverFunc], DjangoMutationBase] | DjangoMutationBase:
     ret = base_mutation(extensions=extensions, **kwargs)
     if resolver is not None:
         return ret(resolver)

@@ -45,6 +45,7 @@ if TYPE_CHECKING:
     from wagtail.admin.panels.base import Panel
 
     from kausal_common.models.permission_policy import ObjectSpecificAction
+    from kausal_common.users import UserOrAnon
 
     from actions.models.plan import Plan
 
@@ -55,7 +56,7 @@ else:
     from wagtailgeowidget.edit_handlers import GoogleMapsPanel
 
 
-class OrganizationPermissionPolicy(ModelPermissionPolicy):
+class OrganizationPermissionPolicy(ModelPermissionPolicy[Organization, Any, OrganizationQuerySet]):
     def user_has_permission(self, user: User | AnonymousUser, action: str) -> bool:
         assert isinstance(user, User)
 
@@ -75,7 +76,7 @@ class OrganizationPermissionPolicy(ModelPermissionPolicy):
         # in relevant places to call user_has_permission_for_instance
         return False
 
-    def user_has_permission_for_instance(self, user: User | AnonymousUser, action: str, instance: Organization) -> bool:
+    def user_has_permission_for_instance(self, user: UserOrAnon, action: str, instance: Organization) -> bool:
         assert isinstance(user, User)
 
         if user.is_superuser:
@@ -109,7 +110,7 @@ class OrganizationPermissionPolicy(ModelPermissionPolicy):
         raise NotImplementedError
 
 
-class OrganizationForm(NodeForm):
+class OrganizationForm(NodeForm[Organization]):
     user: User
 
     def __init__(self, *args, **kwargs):
@@ -170,7 +171,7 @@ class OrganizationViewSet(SnippetViewSet[Organization, OrganizationForm, Organiz
     menu_label = _('Organizations')
     icon = 'kausal-organization'
     menu_order = 220
-    permission_policy = OrganizationPermissionPolicy(model)
+    permission_policy = OrganizationPermissionPolicy(model)  # pyright: ignore[reportAssignmentType]
     index_view_class = OrganizationIndexView
     add_view_class = OrganizationCreateView
     edit_view_class = OrganizationEditView

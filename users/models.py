@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from dataclasses import dataclass
 from enum import StrEnum, auto
 from functools import cached_property
@@ -12,7 +10,6 @@ from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from wagtail.users.models import UserProfile
 
-from orgs.models import Organization, OrganizationMetadataAdmin
 from users.managers import UserManager
 
 from .base import AbstractUser
@@ -32,6 +29,7 @@ if TYPE_CHECKING:
     from actions.models.action import ActionQuerySet
     from actions.models.plan import PlanQuerySet
     from indicators.models import Indicator, IndicatorQuerySet
+    from orgs.models import Organization, OrganizationQuerySet
     from people.models import Person
 
 
@@ -94,6 +92,8 @@ class UserPermissionCache:
 
     @cached_property
     def admin_for_organizations(self) -> list[Organization]:
+        from orgs.models import Organization
+
         person = self.corresponding_person
         if not person:
             return []
@@ -305,13 +305,15 @@ class User(AbstractUser):
 
         return self._get_editable_roles(action, ActionResponsibleParty)
 
-    def _get_admin_orgs(self) -> models.QuerySet[Organization]:
+    def _get_admin_orgs(self) -> OrganizationQuerySet:
+        from orgs.models import Organization
+
         person = self.get_corresponding_person()
         if not person:
-            return Organization.objects.none()
+            return Organization.objects.get_queryset().none()
 
         orgs = person.organization_plan_admins.values_list('organization')
-        return Organization.objects.filter(id__in=orgs)
+        return Organization.objects.get_queryset().filter(id__in=orgs)
 
     def is_organization_admin_for_action(self, action: Action | None = None, plan: Plan | None = None):
         cache = self.get_cache()
@@ -353,8 +355,10 @@ class User(AbstractUser):
         return indicator in indicators
 
     def get_adminable_organizations(self):
+        from orgs.models import Organization
+
         if self.is_superuser:
-            return Organization.objects.all()
+            return Organization.objects.get_queryset().all()
 
         return self._get_admin_orgs()
 
@@ -561,6 +565,8 @@ class User(AbstractUser):
         return self.is_general_admin_for_plan(category_type.plan)
 
     def can_modify_organization(self, organization=None):
+        from orgs.models import OrganizationMetadataAdmin
+
         # TBD: How does this method differ from Organization.user_can_edit()? Does it make sense to have both?
         if self.is_superuser:
             return True
@@ -621,8 +627,10 @@ class User(AbstractUser):
         self,
         person: Person,
         plan: Plan | None = None,
-        orgs: dict | None = None,
+        orgs: dict[int, Organization] | None = None,
     ) -> bool:
+        from orgs.models import Organization
+
         # orgs is a performance optimization, a pre-populated
         # dict for cases where this function is called from within a loop
 

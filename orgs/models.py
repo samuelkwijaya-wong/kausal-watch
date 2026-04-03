@@ -12,6 +12,7 @@ from modelcluster.fields import ParentalKey
 
 import sentry_sdk
 
+from kausal_common.models.permissions import PermissionedModel, PermissionedQuerySet
 from kausal_common.models.types import MLModelManager
 from kausal_common.organizations.models import (
     BaseNamespace,
@@ -36,6 +37,7 @@ if typing.TYPE_CHECKING:
     from actions.models.action import ActionResponsibleParty
     from actions.models.plan import PlanQuerySet
     from images.models import AplansImage
+    from orgs.wagtail_admin import OrganizationPermissionPolicy
     from people.models import Person
     from users.models import User
 
@@ -44,7 +46,7 @@ class OrganizationClass(BaseOrganizationClass):
     pass
 
 
-class OrganizationQuerySet(BaseOrganizationQuerySet['Organization']):  # type: ignore[override]
+class OrganizationQuerySet(BaseOrganizationQuerySet['Organization'], PermissionedQuerySet['Organization']):  # type: ignore[override]
     @override
     def editable_by_user(self, user: User) -> Self:
         if user.is_superuser:
@@ -142,7 +144,7 @@ del _OrganizationManager
 
 
 @reversion.register()
-class Organization(BaseOrganization, IndirectPlanRelatedModel, Node[OrganizationQuerySet]):
+class Organization(BaseOrganization, IndirectPlanRelatedModel, Node[OrganizationQuerySet], PermissionedModel):
     VIEWSET_CLASS = 'orgs.wagtail_admin.OrganizationViewSet'  # for AdminButtonsMixin
 
     _reported_missing_parent_paths: ClassVar[set[str]] = set()
@@ -180,6 +182,12 @@ class Organization(BaseOrganization, IndirectPlanRelatedModel, Node[Organization
     logo_id: int | None
 
     _cached_parent_obj: Organization | None
+
+    @classmethod
+    def permission_policy(cls) -> OrganizationPermissionPolicy:
+        from orgs.wagtail_admin import OrganizationPermissionPolicy
+
+        return OrganizationPermissionPolicy(cls)
 
     @property
     def parent(self):

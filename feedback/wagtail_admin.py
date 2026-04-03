@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 
 from django.contrib.admin.utils import quote
 from django.urls import path, reverse
-from django.utils.translation import gettext_lazy as _
+from django.utils.translation import gettext, gettext_lazy as _
 from wagtail.admin.forms import WagtailAdminModelForm
 from wagtail.admin.ui.tables import BooleanColumn
 from wagtail.coreutils import multigetattr
@@ -134,13 +134,13 @@ class UserFeedbackIndexView(IndexView[UserFeedback, QS[UserFeedback]]):
         self.additional_fields_cache = duplicates_removed
         return self.additional_fields_cache
 
-    def to_row_dict(self, item) -> OrderedDict[str, str]:
+    def to_row_dict(self, item: UserFeedback) -> OrderedDict[str, str]:
         """
         Override the default implementation from SpreadsheetExportMixin.
 
         Expands 'additional_fields' to individual columns in the exported spreadsheet.
         """
-        row_dict = OrderedDict()
+        row_dict: OrderedDict[str, str] = OrderedDict()
 
         for field in self.list_export:
             try:
@@ -151,7 +151,7 @@ class UserFeedbackIndexView(IndexView[UserFeedback, QS[UserFeedback]]):
                     raise
 
                 # The field might still not exist in this particular item's additional_fields. Use N/A as a fallback.
-                value = _('N/A')
+                value = gettext('N/A')
                 if item.additional_fields is not None:
                     value = item.additional_fields.get(field, _('N/A'))
 

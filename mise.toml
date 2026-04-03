@@ -36,12 +36,11 @@ run = "vault login -address=https://vault.kausal.tech -path=keycloak -method=oid
 description = "Export the GraphQL schema from the Django project"
 run = [
   'mkdir -p __generated__',
-  '''
-    #!/usr/bin/env bash
-    set -e
-    echo "Exporting main schema..."
-    python manage.py export_schema aplans.schema > __generated__/schema.graphql
-    echo "Exporting test mode schema..."
-    ENABLE_TEST_MODE=1 python manage.py export_schema aplans.schema > __generated__/schema-test-mode.graphql
-  '''
+  'python manage.py export_schema aplans.schema > __generated__/schema.graphql',
+  'ENABLE_TEST_MODE=1 python manage.py export_schema aplans.schema > __generated__/schema-test-mode.graphql'
 ]
+
+[tasks.portless]
+description = "Run the backend with Portless"
+run = "portless --name watch-backend --app-port 8042 kausal_common/development/tools/portless-backend.sh"
+raw = true

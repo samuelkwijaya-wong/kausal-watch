@@ -96,7 +96,7 @@ class UnitSuffixWidget(autocomplete.ListSelect2):
         )
 
 
-class FactorForm(forms.ModelForm):
+class FactorForm(forms.ModelForm[DatasetMetric]):
     """
     Form for a single factor (DatasetMetric) with extra fields for the result metric.
 

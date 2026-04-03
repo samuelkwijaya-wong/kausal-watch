@@ -38,7 +38,8 @@ class TestUserInput:
 @sb.type
 class TestMode(TestModeMutation):
     @gql.mutation
-    def create_test_user(self, info: gql.Info, input: TestUserInput) -> UserNode:
+    @staticmethod
+    def create_test_user(info: gql.Info, input: TestUserInput) -> UserNode:
         user = User(email=input.email, is_superuser=input.is_superuser)
         user.set_password(input.password)
         user.is_active = True
