@@ -775,7 +775,7 @@ class StaticBlockToStructBlockWorkaroundMixin(_StructBlock):
         return super().bulk_to_python(values)
 
 
-def _matches_hostname_pattern(
+def matches_hostname_pattern(
     hostname: str,
     pattern: str,
     *,
@@ -846,7 +846,7 @@ def get_hostname_redirect_hostname(
     for from_pattern, to_hostname in redirect_hostnames:
         if hostname == to_hostname or hostname in allowed_non_wildcard_hosts:
             continue
-        is_match, wildcard_subdomain_part = _matches_hostname_pattern(hostname, from_pattern)
+        is_match, wildcard_subdomain_part = matches_hostname_pattern(hostname, from_pattern)
         if not is_match:
             continue
 

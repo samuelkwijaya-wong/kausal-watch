@@ -48,7 +48,7 @@ from aplans.utils import (
     IdentifierField,
     OrderedModel,
     PlanRelatedModelWithRevision,
-    _matches_hostname_pattern,
+    matches_hostname_pattern,
 )
 
 from actions.permission_policy import PlanPermissionPolicy
@@ -102,7 +102,7 @@ def _matches_any_wildcard_domain(domain: str, wildcard_domains: list[str]) -> bo
     domain_lower = domain.lower()
     for wd in wildcard_domains:
         if '*' in wd:
-            is_match, _ = _matches_hostname_pattern(domain_lower, wd, allow_shortened=True)
+            is_match, _ = matches_hostname_pattern(domain_lower, wd, allow_shortened=True)
             if is_match:
                 return True
         elif domain_lower == wd:
@@ -163,7 +163,7 @@ def get_canonical_wildcard_hostname(
     for wd in all_wildcard_domains:
         if '*' not in wd:
             continue
-        is_match, matched_region = _matches_hostname_pattern(domain, wd, allow_shortened=True)
+        is_match, matched_region = matches_hostname_pattern(domain, wd, allow_shortened=True)
         if is_match and matched_region:
             plan_region = plan.country.code.lower()
             if matched_region.lower() != plan_region:
