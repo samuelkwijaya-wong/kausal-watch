@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from aplans.utils import matches_hostname_pattern, get_hostname_redirect_hostname
+from aplans.utils import get_hostname_redirect_hostname, matches_hostname_pattern
 
 
 class TestMatchesHostnamePatternLegacyShortened:
