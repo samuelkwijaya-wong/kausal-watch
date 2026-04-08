@@ -101,11 +101,12 @@ def get_timezones() -> list[tuple[str, str]]:
 def _matches_any_wildcard_domain(domain: str, wildcard_domains: list[str]) -> bool:
     domain_lower = domain.lower()
     for wd in wildcard_domains:
-        if '*' in wd:
-            is_match, _ = matches_hostname_pattern(domain_lower, wd, allow_shortened=True)
+        wd_lower = wd.lower()
+        if '*' in wd_lower:
+            is_match, _ = matches_hostname_pattern(domain_lower, wd_lower, allow_shortened=True)
             if is_match:
                 return True
-        elif domain_lower == wd:
+        elif domain_lower == wd_lower:
             return True
     return False
 
