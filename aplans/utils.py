@@ -783,12 +783,18 @@ def matches_hostname_pattern(
 ) -> tuple[bool, str | None]:
     """
     Check if hostname matches pattern with strict wildcard rules.
+    This is called with the plan identifier stripped from the
+    beginning of the hostname.
 
     Wildcards (*) match only valid subdomain parts (no periods).
-    Example: '*.example.com' matches 'test.example.com' but not 'foo.bar.example.com'.
+
+    Wildcards are intended to be placeholders for country codes of
+    plans, not the plan identifiers which are simply prepended
+    to the hostname pattern to get the final hostname.
+    Example: '*.example.com' matches 'fi.example.com' but not 'foo.bar.example.com'.
 
     Args:
-        hostname: The hostname to check (e.g., 'test.example.com')
+        hostname: The hostname to check (e.g., 'de.example.com')
         pattern: The pattern with optional wildcards (e.g., '*.example.com')
         allow_shortened: If True, also match hostnames that have one fewer part
             than the pattern, where the wildcard part is missing.  This is used
