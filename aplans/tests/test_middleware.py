@@ -20,7 +20,7 @@ def request_factory():
     return RequestFactory()
 
 
-@override_settings(REDIRECT_HOSTNAMES=(('*.watch.example.com', 'watch.example.com'),))
+@override_settings(REDIRECT_HOSTNAMES=(('*.watch.example.com', 'admin.watch.example.com'),))
 def test_wildcard_hostname_redirect(request_factory):
     """Test wildcard pattern matching and redirect."""
     middleware = HostnameRedirectMiddleware(get_response_success)
@@ -29,7 +29,7 @@ def test_wildcard_hostname_redirect(request_factory):
     response = middleware(request)
 
     assert response.status_code == 301
-    assert response['Location'] == 'http://watch.example.com/'
+    assert response['Location'] == 'http://admin.watch.example.com/'
 
 
 @override_settings(REDIRECT_HOSTNAMES=(('*.watch.example.com', 'watch.example.com'),))

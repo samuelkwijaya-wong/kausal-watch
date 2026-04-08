@@ -775,7 +775,12 @@ class StaticBlockToStructBlockWorkaroundMixin(_StructBlock):
         return super().bulk_to_python(values)
 
 
-def _matches_hostname_pattern(hostname: str, pattern: str) -> tuple[bool, str | None]:
+def _matches_hostname_pattern(
+    hostname: str,
+    pattern: str,
+    *,
+    allow_shortened: bool = False,
+) -> tuple[bool, str | None]:
     """
     Check if hostname matches pattern with strict wildcard rules.
 
@@ -785,6 +790,10 @@ def _matches_hostname_pattern(hostname: str, pattern: str) -> tuple[bool, str | 
     Args:
         hostname: The hostname to check (e.g., 'test.example.com')
         pattern: The pattern with optional wildcards (e.g., '*.example.com')
+        allow_shortened: If True, also match hostnames that have one fewer part
+            than the pattern, where the wildcard part is missing.  This is used
+            in the plan-domain context to handle legacy hostnames like
+            ``<plan>.domain`` that should redirect to ``<plan>.<country>.domain``.
 
     Returns:
         Tuple of:
@@ -794,6 +803,16 @@ def _matches_hostname_pattern(hostname: str, pattern: str) -> tuple[bool, str | 
     """
     hostname_parts = hostname.split('.')
     pattern_parts = pattern.split('.')
+
+    if allow_shortened and len(hostname_parts) + 1 == len(pattern_parts):
+        try:
+            wildcard_idx = pattern_parts.index('*')
+        except ValueError:
+            return False, None
+        remaining = pattern_parts[:wildcard_idx] + pattern_parts[wildcard_idx + 1 :]
+        if hostname_parts != remaining:
+            return False, None
+        return True, None
 
     # Must have same number of parts
     if len(hostname_parts) != len(pattern_parts):

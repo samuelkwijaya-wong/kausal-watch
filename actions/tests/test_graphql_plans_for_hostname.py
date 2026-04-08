@@ -9,6 +9,20 @@ from actions.models.plan import PublicationStatus
 pytestmark = pytest.mark.django_db
 
 
+GET_PLAN_DOMAIN_QUERY = """
+  query GetPlansByHostname($hostname: String) {
+    plansForHostname(hostname: $hostname) {
+      ... on Plan {
+        identifier
+      }
+      domain(hostname: $hostname) {
+        hostname
+        redirectToHostname
+      }
+    }
+  }
+"""
+
 GET_PLANS_BY_HOSTNAME_QUERY = """
   query GetPlansByHostname($hostname: String) {
     plansForHostname(hostname: $hostname) {
@@ -126,18 +140,38 @@ def test_get_correct_domain_by_hostname(
         assert message is None
 
 
-DUMMY_DOMAIN = 'dummy.io'
+@pytest.fixture(params=['settings', 'header', 'both'], ids=['via_settings', 'via_header', 'via_both'])
+def hostname_plan_domains_with_country_wildcard(request, settings):
+    """Provide wildcard pattern domain via Django settings, x-wildcard-domains request header, or both."""
+    retval = {}
+    settings.HOSTNAME_PLAN_DOMAINS = []
+    if request.param in ('settings', 'both'):
+        settings.HOSTNAME_PLAN_DOMAINS = ['watch.*.dummy.io']
+    if request.param in ('header', 'both'):
+        retval.update({'headers': {'x-wildcard-domains': 'watch.*.dummy.io'}})
+    return retval
 
 
-@pytest.fixture
-def use_dummy_plan_hostname(settings):
-    settings.HOSTNAME_PLAN_DOMAINS = [DUMMY_DOMAIN]
+@pytest.fixture(params=['settings', 'header', 'both'], ids=['via_settings', 'via_header', 'via_both'])
+def hostname_plan_domains_without_country_wildcard(request, settings):
+    """Provide exact (non-wildcard) domain via Django settings, x-wildcard-domains request header, or both."""
+    retval = {}
+    settings.HOSTNAME_PLAN_DOMAINS = []
+    if request.param in ('settings', 'both'):
+        settings.HOSTNAME_PLAN_DOMAINS = ['dummy.io']
+    if request.param in ('header', 'both'):
+        retval.update({'headers': {'x-wildcard-domains': 'dummy.io'}})
+    return retval
 
 
 @pytest.mark.parametrize('delta_minutes', [-5, 5, None])
 @pytest.mark.parametrize(argnames='expose_flag', argvalues=[True, False])
 def test_plans_for_hostname_without_domains(
-    graphql_client_query_data, use_dummy_plan_hostname, plan_factory, delta_minutes, expose_flag
+    graphql_client_query_data,
+    hostname_plan_domains_without_country_wildcard,
+    plan_factory,
+    delta_minutes,
+    expose_flag,
 ):
     published_at = None
     if delta_minutes is not None:
@@ -147,7 +181,8 @@ def test_plans_for_hostname_without_domains(
     plan.features.save()
     data = graphql_client_query_data(
         GET_PLANS_BY_HOSTNAME_QUERY,
-        variables={'hostname': f'{plan.identifier}.{DUMMY_DOMAIN}'},
+        variables={'hostname': f'{plan.identifier}.dummy.io'},
+        **hostname_plan_domains_without_country_wildcard,
     )
     planData = data['plansForHostname'][0]
     assert len(planData['domains']) == 0
@@ -156,3 +191,216 @@ def test_plans_for_hostname_without_domains(
         assert planData['identifier'] == plan.identifier
     else:
         assert 'identifier' not in planData
+
+
+def test_wildcard_pattern_resolves_plan(graphql_client_query_data, hostname_plan_domains_with_country_wildcard, plan_factory):
+    """Plan resolved via identifier.watch.fi.dummy.io when wildcard domain watch.*.dummy.io is configured."""
+    plan = plan_factory(country='FI')
+    hostname = f'{plan.identifier}.watch.fi.dummy.io'
+    data = graphql_client_query_data(
+        GET_PLAN_DOMAIN_QUERY,
+        variables={'hostname': hostname},
+        **hostname_plan_domains_with_country_wildcard,
+    )
+    plans = data['plansForHostname']
+    assert len(plans) == 1
+    assert plans[0]['identifier'] == plan.identifier
+    assert plans[0]['domain']['redirectToHostname'] is None
+
+
+def test_wildcard_pattern_and_exact_domain_coexist(
+    graphql_client_query_data, hostname_plan_domains_with_country_wildcard, settings, plan_factory
+):
+    """Both pattern and exact domain entries work when configured together."""
+    settings.HOSTNAME_PLAN_DOMAINS = settings.HOSTNAME_PLAN_DOMAINS + ['exact.example.com']
+    plan = plan_factory(country='FI')
+
+    # Via pattern
+    hostname_pattern = f'{plan.identifier}.watch.fi.dummy.io'
+    data = graphql_client_query_data(
+        GET_PLAN_DOMAIN_QUERY,
+        variables={'hostname': hostname_pattern},
+        **hostname_plan_domains_with_country_wildcard,
+    )
+    assert len(data['plansForHostname']) == 1
+    assert data['plansForHostname'][0]['identifier'] == plan.identifier
+    assert data['plansForHostname'][0]['domain']['redirectToHostname'] is None
+
+    # Via exact domain
+    hostname_exact = f'{plan.identifier}.exact.example.com'
+    data = graphql_client_query_data(
+        GET_PLAN_DOMAIN_QUERY,
+        variables={'hostname': hostname_exact},
+        **hostname_plan_domains_with_country_wildcard,
+    )
+    assert len(data['plansForHostname']) == 1
+    assert data['plansForHostname'][0]['identifier'] == plan.identifier
+    assert data['plansForHostname'][0]['domain']['redirectToHostname'] is None
+
+
+def test_exact_domain_still_works_with_no_patterns(
+    graphql_client_query_data,
+    hostname_plan_domains_without_country_wildcard,
+    plan_factory,
+):
+    """Backward compat: exact domain entries still resolve plans."""
+    plan = plan_factory()
+    hostname = f'{plan.identifier}.dummy.io'
+    data = graphql_client_query_data(
+        GET_PLAN_DOMAIN_QUERY,
+        variables={'hostname': hostname},
+        **hostname_plan_domains_without_country_wildcard,
+    )
+    plans = data['plansForHostname']
+    assert len(plans) == 1
+    assert plans[0]['identifier'] == plan.identifier
+    assert plans[0]['domain']['redirectToHostname'] is None
+
+
+def test_cross_region_redirect(graphql_client_query_data, hostname_plan_domains_with_country_wildcard, plan_factory):
+    """Finnish plan accessed via watch.de.dummy.io gets redirect to watch.fi.dummy.io."""
+    plan = plan_factory(country='FI')
+    hostname = f'{plan.identifier}.watch.de.dummy.io'
+    data = graphql_client_query_data(
+        GET_PLAN_DOMAIN_QUERY,
+        variables={'hostname': hostname},
+        **hostname_plan_domains_with_country_wildcard,
+    )
+    plans = data['plansForHostname']
+    assert len(plans) == 1
+    domain = plans[0]['domain']
+    assert domain['redirectToHostname'] == f'{plan.identifier}.watch.fi.dummy.io'
+
+
+def test_correct_region_no_redirect(graphql_client_query_data, hostname_plan_domains_with_country_wildcard, plan_factory):
+    """Finnish plan accessed via watch.fi.dummy.io has no redirect."""
+    plan = plan_factory(country='FI')
+    hostname = f'{plan.identifier}.watch.fi.dummy.io'
+    data = graphql_client_query_data(
+        GET_PLAN_DOMAIN_QUERY,
+        variables={'hostname': hostname},
+        **hostname_plan_domains_with_country_wildcard,
+    )
+    plans = data['plansForHostname']
+    assert len(plans) == 1
+    domain = plans[0]['domain']
+    assert domain['redirectToHostname'] is None
+
+
+def test_non_pattern_domain_no_redirect(
+    graphql_client_query_data,
+    hostname_plan_domains_without_country_wildcard,
+    plan_factory,
+):
+    """Old-style exact domain — no redirect even if plan has a different country."""
+    plan = plan_factory(country='FI')
+    hostname = f'{plan.identifier}.dummy.io'
+    data = graphql_client_query_data(
+        GET_PLAN_DOMAIN_QUERY,
+        variables={'hostname': hostname},
+        **hostname_plan_domains_without_country_wildcard,
+    )
+    plans = data['plansForHostname']
+    assert len(plans) == 1
+    domain = plans[0]['domain']
+    assert domain['redirectToHostname'] is None
+
+
+def test_default_hostname_with_wildcard_pattern(settings, plan_factory):
+    """default_hostname() generates identifier.watch.fi.dummy.io for plan with country='FI' and pattern watch.*.dummy.io."""
+    settings.HOSTNAME_PLAN_DOMAINS = ['watch.*.dummy.io']
+    plan = plan_factory(country='FI')
+    assert plan.default_hostname() == f'{plan.identifier}.watch.fi.dummy.io'
+
+
+def test_default_hostname_with_exact_domain(settings, plan_factory):
+    """default_hostname() with exact domain still works as before."""
+    settings.HOSTNAME_PLAN_DOMAINS = ['dummy.io']
+    plan = plan_factory()
+    assert plan.default_hostname() == f'{plan.identifier}.dummy.io'
+
+
+def test_default_hostname_pattern_no_country_raises(settings, plan_factory):
+    """default_hostname() raises if plan has no country and domain is a pattern."""
+    settings.HOSTNAME_PLAN_DOMAINS = ['watch.*.dummy.io']
+    plan = plan_factory(country='')
+    with pytest.raises(Exception, match='no country set'):
+        plan.default_hostname()
+
+
+# --- Tests for legacy hostname redirect (<plan>.domain → <plan>.<country>.domain) ---
+
+
+def test_legacy_hostname_resolves_and_redirects(graphql_client_query_data, settings, plan_factory):
+    """Legacy <plan>.dummy.io with pattern *.dummy.io resolves the plan and redirects to <plan>.<country>.dummy.io."""
+    settings.HOSTNAME_PLAN_DOMAINS = ['*.dummy.io']
+    plan = plan_factory(country='FI')
+    hostname = f'{plan.identifier}.dummy.io'
+    data = graphql_client_query_data(
+        GET_PLAN_DOMAIN_QUERY,
+        variables={'hostname': hostname},
+    )
+    plans = data['plansForHostname']
+    assert len(plans) == 1
+    assert plans[0]['identifier'] == plan.identifier
+    assert plans[0]['domain']['redirectToHostname'] == f'{plan.identifier}.fi.dummy.io'
+
+
+def test_canonical_hostname_no_redirect_simple_wildcard(graphql_client_query_data, settings, plan_factory):
+    """Canonical <plan>.<country>.dummy.io with pattern *.dummy.io has no redirect."""
+    settings.HOSTNAME_PLAN_DOMAINS = ['*.dummy.io']
+    plan = plan_factory(country='FI')
+    hostname = f'{plan.identifier}.fi.dummy.io'
+    data = graphql_client_query_data(
+        GET_PLAN_DOMAIN_QUERY,
+        variables={'hostname': hostname},
+    )
+    plans = data['plansForHostname']
+    assert len(plans) == 1
+    domain = plans[0]['domain']
+    assert domain['redirectToHostname'] is None
+
+
+def test_wrong_region_redirect_simple_wildcard(graphql_client_query_data, settings, plan_factory):
+    """<plan>.<wrong_country>.dummy.io with pattern *.dummy.io redirects to correct country."""
+    settings.HOSTNAME_PLAN_DOMAINS = ['*.dummy.io']
+    plan = plan_factory(country='FI')
+    hostname = f'{plan.identifier}.de.dummy.io'
+    data = graphql_client_query_data(
+        GET_PLAN_DOMAIN_QUERY,
+        variables={'hostname': hostname},
+    )
+    plans = data['plansForHostname']
+    assert len(plans) == 1
+    domain = plans[0]['domain']
+    assert domain['redirectToHostname'] == f'{plan.identifier}.fi.dummy.io'
+
+
+def test_legacy_hostname_no_redirect_without_country(graphql_client_query_data, settings, plan_factory):
+    """Legacy <plan>.dummy.io with no country set on plan does not redirect."""
+    settings.HOSTNAME_PLAN_DOMAINS = ['*.dummy.io']
+    plan = plan_factory(country='')
+    hostname = f'{plan.identifier}.dummy.io'
+    data = graphql_client_query_data(
+        GET_PLAN_DOMAIN_QUERY,
+        variables={'hostname': hostname},
+    )
+    plans = data['plansForHostname']
+    assert len(plans) == 1
+    domain = plans[0]['domain']
+    assert domain['redirectToHostname'] is None
+
+
+def test_legacy_hostname_resolves_and_redirects_for_mid_wildcard(graphql_client_query_data, settings, plan_factory):
+    """Legacy <plan>.watch.dummy.io with pattern watch.*.dummy.io resolves the plan and redirects to <plan>.watch.fi.dummy.io."""
+    settings.HOSTNAME_PLAN_DOMAINS = ['watch.*.dummy.io']
+    plan = plan_factory(country='FI')
+    hostname = f'{plan.identifier}.watch.dummy.io'
+    data = graphql_client_query_data(
+        GET_PLAN_DOMAIN_QUERY,
+        variables={'hostname': hostname},
+    )
+    plans = data['plansForHostname']
+    assert len(plans) == 1
+    assert plans[0]['identifier'] == plan.identifier
+    assert plans[0]['domain']['redirectToHostname'] == f'{plan.identifier}.watch.fi.dummy.io'

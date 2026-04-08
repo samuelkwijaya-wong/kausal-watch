@@ -48,6 +48,7 @@ from aplans.utils import (
     IdentifierField,
     OrderedModel,
     PlanRelatedModelWithRevision,
+    _matches_hostname_pattern,
 )
 
 from actions.permission_policy import PlanPermissionPolicy
@@ -97,9 +98,27 @@ def get_timezones() -> list[tuple[str, str]]:
     return [(x, x) for x in sorted(zoneinfo.available_timezones(), key=str.lower)]
 
 
+def _matches_any_wildcard_domain(domain: str, wildcard_domains: list[str]) -> bool:
+    domain_lower = domain.lower()
+    for wd in wildcard_domains:
+        if '*' in wd:
+            is_match, _ = _matches_hostname_pattern(domain_lower, wd, allow_shortened=True)
+            if is_match:
+                return True
+        elif domain_lower == wd:
+            return True
+    return False
+
+
 def get_plan_identifier_from_wildcard_domain(
     hostname: str, request: WatchRequest | WatchGraphQLContext | None = None
 ) -> tuple[str, str] | tuple[None, None]:
+    """
+    Match the incoming hostname having a plan identifier + potential country code with a wildcard domain.
+
+    Returns a tuple of (plan_identifier, matched wildcard domain)
+
+    """
     from aplans.schema_context import WatchGraphQLContext
 
     # Get plan identifier from hostname for development and testing
@@ -109,9 +128,60 @@ def get_plan_identifier_from_wildcard_domain(
     else:
         req_wildcards = getattr(request, 'wildcard_domains', None) or []
     wildcard_domains = (settings.HOSTNAME_PLAN_DOMAINS or []) + req_wildcards
-    if len(parts) == 2 and parts[1].lower() in wildcard_domains:
+    if len(parts) == 2 and _matches_any_wildcard_domain(parts[1], wildcard_domains):
         return (parts[0], parts[1])
     return (None, None)
+
+
+def _get_all_wildcard_domains(
+    request: WatchRequest | WatchGraphQLContext | None = None,
+) -> list[str]:
+    from aplans.schema_context import WatchGraphQLContext
+
+    if isinstance(request, WatchGraphQLContext):
+        req_wildcards = request.wildcard_domains
+    else:
+        req_wildcards = getattr(request, 'wildcard_domains', None) or []
+    return (settings.HOSTNAME_PLAN_DOMAINS or []) + req_wildcards
+
+
+def get_canonical_wildcard_hostname(
+    hostname: str,
+    plan: Plan,
+    request: WatchRequest | WatchGraphQLContext | None = None,
+) -> str | None:
+    """If hostname uses wrong region for this plan, return the correct hostname."""
+    if not plan.country:
+        return None
+    parts = hostname.split('.', maxsplit=1)
+    if len(parts) != 2:
+        return None
+    identifier, domain = parts
+
+    all_wildcard_domains = _get_all_wildcard_domains(request)
+
+    for wd in all_wildcard_domains:
+        if '*' not in wd:
+            continue
+        is_match, matched_region = _matches_hostname_pattern(domain, wd, allow_shortened=True)
+        if is_match and matched_region:
+            plan_region = plan.country.code.lower()
+            if matched_region.lower() != plan_region:
+                domain_parts = domain.split('.')
+                pattern_parts = wd.split('.')
+                for i, pp in enumerate(pattern_parts):
+                    if pp == '*':
+                        domain_parts[i] = plan_region
+                        break
+                return f'{identifier}.{".".join(domain_parts)}'
+        elif is_match and matched_region is None:
+            plan_region = plan.country.code.lower()
+            domain_parts = domain.split('.')
+            pattern_parts = wd.split('.')
+            wildcard_idx = pattern_parts.index('*')
+            domain_parts.insert(wildcard_idx, plan_region)
+            return f'{identifier}.{".".join(domain_parts)}'
+    return None
 
 
 def get_page_translation(page: Page, fallback=True) -> Page:
@@ -1099,7 +1169,12 @@ class Plan(ClusterableModel, ModelWithPrimaryLanguage, PermissionedModel, Search
             default_domain = next(iter(hostname_plan_domains))
         except StopIteration as e:
             raise Exception('Cannot create default hostname if no hostname plan domains are configured') from e
-        return '%s.%s' % (self.identifier, default_domain)
+        if '*' in default_domain:
+            country_code = self.country.code.lower() if self.country else None
+            if not country_code:
+                raise Exception(f"Plan '{self.identifier}' has no country set; cannot resolve wildcard domain '{default_domain}'")
+            default_domain = default_domain.replace('*', country_code, 1)
+        return f'{self.identifier}.{default_domain}'
 
     def get_all_related_plans(self, inclusive=False) -> PlanQuerySet:
         q = Q(related_plans=self)
