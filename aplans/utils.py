@@ -783,6 +783,7 @@ def matches_hostname_pattern(
 ) -> tuple[bool, str | None]:
     """
     Check if hostname matches pattern with strict wildcard rules.
+
     This is called with the plan identifier stripped from the
     beginning of the hostname.
 
