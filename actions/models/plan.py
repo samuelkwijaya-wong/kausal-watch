@@ -93,6 +93,10 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
+# Placeholder used in hostname patterns where country code is injected
+COUNTRY_PLACEHOLDER = '<country>'
+
+
 @cache
 def get_timezones() -> list[tuple[str, str]]:
     return [(x, x) for x in sorted(zoneinfo.available_timezones(), key=str.lower)]
@@ -102,8 +106,8 @@ def _matches_any_wildcard_domain(domain: str, wildcard_domains: list[str]) -> bo
     domain_lower = domain.lower()
     for wd in wildcard_domains:
         wd_lower = wd.lower()
-        if '*' in wd_lower:
-            is_match, _ = matches_hostname_pattern(domain_lower, wd_lower, allow_shortened=True)
+        if COUNTRY_PLACEHOLDER in wd_lower:
+            is_match, _ = matches_hostname_pattern(domain_lower, wd_lower, allow_shortened=True, placeholder=COUNTRY_PLACEHOLDER)
             if is_match:
                 return True
         elif domain_lower == wd_lower:
@@ -162,16 +166,16 @@ def get_canonical_wildcard_hostname(
     all_wildcard_domains = _get_all_wildcard_domains(request)
 
     for wd in all_wildcard_domains:
-        if '*' not in wd:
+        if COUNTRY_PLACEHOLDER not in wd:
             continue
-        is_match, matched_region = matches_hostname_pattern(domain, wd, allow_shortened=True)
+        is_match, matched_region = matches_hostname_pattern(domain, wd, allow_shortened=True, placeholder=COUNTRY_PLACEHOLDER)
         if is_match and matched_region:
             plan_region = plan.country.code.lower()
             if matched_region.lower() != plan_region:
                 domain_parts = domain.split('.')
                 pattern_parts = wd.split('.')
                 for i, pp in enumerate(pattern_parts):
-                    if pp == '*':
+                    if pp == COUNTRY_PLACEHOLDER:
                         domain_parts[i] = plan_region
                         break
                 return f'{identifier}.{".".join(domain_parts)}'
@@ -179,7 +183,7 @@ def get_canonical_wildcard_hostname(
             plan_region = plan.country.code.lower()
             domain_parts = domain.split('.')
             pattern_parts = wd.split('.')
-            wildcard_idx = pattern_parts.index('*')
+            wildcard_idx = pattern_parts.index(COUNTRY_PLACEHOLDER)
             domain_parts.insert(wildcard_idx, plan_region)
             return f'{identifier}.{".".join(domain_parts)}'
     return None
@@ -1170,11 +1174,11 @@ class Plan(ClusterableModel, ModelWithPrimaryLanguage, PermissionedModel, Search
             default_domain = next(iter(hostname_plan_domains))
         except StopIteration as e:
             raise Exception('Cannot create default hostname if no hostname plan domains are configured') from e
-        if '*' in default_domain:
+        if COUNTRY_PLACEHOLDER in default_domain:
             country_code = self.country.code.lower() if self.country else None
             if not country_code:
                 raise Exception(f"Plan '{self.identifier}' has no country set; cannot resolve wildcard domain '{default_domain}'")
-            default_domain = default_domain.replace('*', country_code, 1)
+            default_domain = default_domain.replace(COUNTRY_PLACEHOLDER, country_code, 1)
         return f'{self.identifier}.{default_domain}'
 
     def get_all_related_plans(self, inclusive=False) -> PlanQuerySet:

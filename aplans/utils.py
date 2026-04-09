@@ -776,10 +776,7 @@ class StaticBlockToStructBlockWorkaroundMixin(_StructBlock):
 
 
 def matches_hostname_pattern(
-    hostname: str,
-    pattern: str,
-    *,
-    allow_shortened: bool = False,
+    hostname: str, pattern: str, *, allow_shortened: bool = False, placeholder: str = '*'
 ) -> tuple[bool, str | None]:
     """
     Check if hostname matches pattern with strict wildcard rules.
@@ -787,20 +784,22 @@ def matches_hostname_pattern(
     This is called with the plan identifier stripped from the
     beginning of the hostname.
 
-    Wildcards (*) match only valid subdomain parts (no periods).
+    Wildcards ('*' or any placeholder) match only valid subdomain parts (no periods).
 
-    Wildcards are intended to be placeholders for country codes of
-    plans, not the plan identifiers which are simply prepended
+    Wildcards are intended to be placeholders, often for country codes of
+    plans, and not the plan identifiers which are simply prepended
     to the hostname pattern to get the final hostname.
-    Example: '*.example.com' matches 'fi.example.com' but not 'foo.bar.example.com'.
+    Example: '<country>.example.com' matches 'fi.example.com' but not 'foo.bar.example.com'
+             when the placeholder parameter is '<country>'
 
     Args:
         hostname: The hostname to check (e.g., 'de.example.com')
-        pattern: The pattern with optional wildcards (e.g., '*.example.com')
+        pattern: The pattern with optional wildcards (e.g., '<country>.example.com')
         allow_shortened: If True, also match hostnames that have one fewer part
             than the pattern, where the wildcard part is missing.  This is used
             in the plan-domain context to handle legacy hostnames like
             ``<plan>.domain`` that should redirect to ``<plan>.<country>.domain``.
+        placeholder: String to use as wildcard placeholder
 
     Returns:
         Tuple of:
@@ -813,7 +812,7 @@ def matches_hostname_pattern(
 
     if allow_shortened and len(hostname_parts) + 1 == len(pattern_parts):
         try:
-            wildcard_idx = pattern_parts.index('*')
+            wildcard_idx = pattern_parts.index(placeholder)
         except ValueError:
             return False, None
         remaining = pattern_parts[:wildcard_idx] + pattern_parts[wildcard_idx + 1 :]
@@ -828,7 +827,7 @@ def matches_hostname_pattern(
     match = None
 
     for hostname_part, pattern_part in zip(hostname_parts, pattern_parts, strict=True):
-        if pattern_part == '*':
+        if pattern_part == placeholder:
             # Wildcard matches any valid subdomain part
             # Valid: alphanumeric and hyphens, not starting/ending with hyphen
             if not hostname_part:

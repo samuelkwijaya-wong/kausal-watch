@@ -60,7 +60,7 @@ class TestGetViewUrlNoClientUrl:
 
 
 class TestGetViewUrlWithWildcardDomain:
-    """Test get_view_url when client_url matches a HOSTNAME_PLAN_DOMAINS entry (non-* pattern)."""
+    """Test get_view_url when client_url matches a HOSTNAME_PLAN_DOMAINS entry (without <country> pattern)."""
 
     def test_returns_url_with_plan_identifier(self, plan, wildcard_domain):
         url = plan.get_view_url(client_url='https://anything.dummy.io', **wildcard_domain)
@@ -149,30 +149,30 @@ def plan_with_country():
 
 @pytest.fixture(params=['settings', 'request', 'both'], ids=['via_settings', 'via_request', 'via_both'])
 def mid_wildcard_domain(request, settings):
-    """Provide watch.*.dummy.io pattern via settings, request, or both."""
+    """Provide watch.<country>.dummy.io pattern via settings, request, or both."""
     retval = {}
     settings.HOSTNAME_PLAN_DOMAINS = []
     if request.param in ('settings', 'both'):
-        settings.HOSTNAME_PLAN_DOMAINS = ['watch.*.dummy.io']
+        settings.HOSTNAME_PLAN_DOMAINS = ['watch.<country>.dummy.io']
     if request.param in ('request', 'both'):
-        retval.update({'request': SimpleNamespace(wildcard_domains=['watch.*.dummy.io'])})
+        retval.update({'request': SimpleNamespace(wildcard_domains=['watch.<country>.dummy.io'])})
     return retval
 
 
 @pytest.fixture(params=['settings', 'request', 'both'], ids=['via_settings', 'via_request', 'via_both'])
 def simple_wildcard_domain(request, settings):
-    """Provide *.dummy.io pattern via settings, request, or both."""
+    """Provide <country>.dummy.io pattern via settings, request, or both."""
     retval = {}
     settings.HOSTNAME_PLAN_DOMAINS = []
     if request.param in ('settings', 'both'):
-        settings.HOSTNAME_PLAN_DOMAINS = ['*.dummy.io']
+        settings.HOSTNAME_PLAN_DOMAINS = ['<country>.dummy.io']
     if request.param in ('request', 'both'):
-        retval.update({'request': SimpleNamespace(wildcard_domains=['*.dummy.io'])})
+        retval.update({'request': SimpleNamespace(wildcard_domains=['<country>.dummy.io'])})
     return retval
 
 
 class TestGetViewUrlWithMidWildcardDomain:
-    """Test get_view_url when client_url matches a watch.*.dummy.io pattern."""
+    """Test get_view_url when client_url matches a watch.<country>.dummy.io pattern."""
 
     def test_returns_url_with_plan_identifier(self, plan_with_country, mid_wildcard_domain):
         plan = plan_with_country
@@ -217,7 +217,7 @@ class TestGetViewUrlWithMidWildcardDomain:
 
 
 class TestGetViewUrlWithSimpleWildcardDomain:
-    """Test get_view_url when client_url matches a *.dummy.io pattern."""
+    """Test get_view_url when client_url matches a <country>.dummy.io pattern."""
 
     def test_returns_url_with_plan_identifier(self, plan_with_country, simple_wildcard_domain):
         plan = plan_with_country
