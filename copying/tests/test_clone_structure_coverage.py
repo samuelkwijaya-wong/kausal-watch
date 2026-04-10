@@ -28,11 +28,13 @@ def _check_coverage(model_class: type[Model], structure: CloneStructure, visited
         return
     visited.add(model_class)
 
+    relation_names = set()
     covered = set(structure.keys())
     missing = []
     for field in model_class._meta.get_fields():
         if not isinstance(field, (ManyToOneRel, ManyToManyRel)):
             continue
+        relation_names.add(field.name)
         related = field.related_model
         # The type stubs allow `related_model` to be a string for unresolved
         # lazy relations, but all models are fully initialized by test time.
@@ -52,6 +54,13 @@ def _check_coverage(model_class: type[Model], structure: CloneStructure, visited
         raise AssertionError(
             f'{model_class.__name__} has relations not accounted for in its clone structure.\n'
             'Add them as sub-structures to copy, or mark as EXCLUDED:\n' + '\n'.join(missing)
+        )
+
+    bogus = covered - relation_names
+    if bogus:
+        raise AssertionError(
+            f'{model_class.__name__} clone structure contains keys that do not match any relation on the model:\n'
+            + '\n'.join(f"  '{name}'" for name in sorted(bogus))
         )
 
 

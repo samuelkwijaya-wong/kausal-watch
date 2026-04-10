@@ -84,7 +84,6 @@ PLAN_CLONE_STRUCTURE: CloneStructure = {
         'actions': EXCLUDED,  # Action already copied via Plan → actions
     },
     'action_implementation_phases': {
-        'actions': EXCLUDED,  # Action already copied via Plan → actions
         'action': EXCLUDED,  # reverse OneToOne from Action.latest_phase; Action already copied
     },
     'action_schedules': {
@@ -92,7 +91,6 @@ PLAN_CLONE_STRUCTURE: CloneStructure = {
         'actionschedulethrough': EXCLUDED,  # ActionScheduleThrough already copied via actions → action_schedule_through
     },
     'action_statuses': {
-        'actions': EXCLUDED,  # Action already copied via Plan → actions
         'action': EXCLUDED,  # reverse OneToOne from Action.latest_status; Action already copied
     },
     'features': {},
