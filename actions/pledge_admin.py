@@ -3,18 +3,22 @@ from __future__ import annotations
 import csv
 from collections import OrderedDict
 from functools import cached_property
+from io import BytesIO
 from typing import TYPE_CHECKING
 
 from django.core.exceptions import ValidationError
 from django.db.models import Count
+from django.http import FileResponse, StreamingHttpResponse
 from django.utils.translation import gettext_lazy as _
 from wagtail.admin.panels import (
     FieldPanel,
     MultiFieldPanel,
     ObjectList,
 )
+from wagtail.admin.ui.components import Component
 from wagtail.admin.ui.tables import Column
 from wagtail.admin.views.mixins import Echo
+from wagtail.admin.widgets.button import Button
 from wagtail.images.widgets import AdminImageChooser
 from wagtail.snippets.models import register_snippet
 
@@ -196,17 +200,59 @@ class PledgeEditView(PledgeViewMixin, WatchEditView[Pledge]):
     """Custom edit view for Pledge with dynamic attribute panels."""
 
 
+class _DropdownLabel(Component):
+    """Non-interactive group label rendered inside a dropdown."""
+
+    def __init__(self, label: str, priority: int = 0) -> None:
+        self.label = label
+        self.priority = priority
+
+    def render_html(self, parent_context=None):
+        from django.utils.html import format_html
+        return format_html(
+            '<div style="padding: 0.5rem 1.5rem 0.25rem; font-size: 0.75rem; font-weight: 600;'
+            ' text-transform: uppercase; color: var(--w-color-text-label-menus-default); opacity: 0.7;">{}</div>',
+            self.label,
+        )
+
+    def __lt__(self, other): return (self.priority, self.label) < (getattr(other, 'priority', 0), getattr(other, 'label', ''))
+    def __le__(self, other): return (self.priority, self.label) <= (getattr(other, 'priority', 0), getattr(other, 'label', ''))
+    def __gt__(self, other): return (self.priority, self.label) > (getattr(other, 'priority', 0), getattr(other, 'label', ''))
+    def __ge__(self, other): return (self.priority, self.label) >= (getattr(other, 'priority', 0), getattr(other, 'label', ''))
+    def __eq__(self, other): return self.priority == getattr(other, 'priority', 0) and self.label == getattr(other, 'label', '')
+
+
+class _DropdownDivider(Component):
+    """Horizontal rule rendered inside a dropdown."""
+
+    def __init__(self, priority: int = 0) -> None:
+        self.label = ''
+        self.priority = priority
+
+    def render_html(self, parent_context=None):
+        from django.utils.safestring import mark_safe
+        return mark_safe(
+            '<hr style="border: none; border-top: 1px solid var(--w-color-border-furniture); margin: 0.25rem 0;">'
+        )
+
+    def __lt__(self, other): return (self.priority, self.label) < (getattr(other, 'priority', 0), getattr(other, 'label', ''))
+    def __le__(self, other): return (self.priority, self.label) <= (getattr(other, 'priority', 0), getattr(other, 'label', ''))
+    def __gt__(self, other): return (self.priority, self.label) > (getattr(other, 'priority', 0), getattr(other, 'label', ''))
+    def __ge__(self, other): return (self.priority, self.label) >= (getattr(other, 'priority', 0), getattr(other, 'label', ''))
+    def __eq__(self, other): return self.priority == getattr(other, 'priority', 0)
+
+
 class PledgeIndexView(WatchIndexView[Pledge]):
     """Custom index view for Pledge with spreadsheet export support."""
 
     export_headings = {
         'commitment_count': _('Number of commitments'),
     }
-    show_export_buttons = True
+    show_export_buttons = False
 
     @property
     def list_export(self) -> list[str]:
-        return ['id', 'name', 'slug', 'commitment_count'] + [f'user_data:{key}' for key in self._user_data_keys]
+        return ['id', 'name', 'slug', 'commitment_count']
 
     @list_export.setter
     def list_export(self, value: list[str]) -> None:
@@ -221,10 +267,23 @@ class PledgeIndexView(WatchIndexView[Pledge]):
     def export_filename(self, value: str) -> None:
         pass
 
-    def get_heading(self, queryset, field: str) -> str:
-        if field.startswith('user_data:'):
-            return field.removeprefix('user_data:')
-        return super().get_heading(queryset, field)
+    def get_header_more_buttons(self):
+        buttons = list(super().get_header_more_buttons())
+
+        def _url(export_type, fmt):
+            params = self.request.GET.copy()
+            params['export'] = fmt
+            params['export_type'] = export_type
+            return self.request.path + '?' + params.urlencode()
+
+        buttons += [
+            _DropdownLabel(str(_('Export')), priority=89),
+            Button(_('Export as Excel'),              url=self.get_export_url('xlsx'), icon_name='download', priority=90),
+            Button(_('Export pledges as CSV'),        url=_url('pledges',     'csv'),  icon_name='download', priority=91),
+            Button(_('Export commitments as CSV'),    url=_url('commitments', 'csv'),  icon_name='download', priority=92),
+            _DropdownDivider(priority=93),
+        ]
+        return sorted(buttons)
 
     @cached_property
     def _user_data_keys(self) -> list[str]:
@@ -251,21 +310,99 @@ class PledgeIndexView(WatchIndexView[Pledge]):
             yield self.write_csv_row(writer, self.to_row_dict(item))
 
     def to_row_dict(self, item: Pledge) -> OrderedDict[str, str]:
-        row: OrderedDict[str, str] = OrderedDict()
-        row['id'] = str(item.pk)
-        row['name'] = str(item.name)
-        row['slug'] = item.slug
-        row['commitment_count'] = str(getattr(item, 'commitment_count', item.commitments.count()))
+        return OrderedDict([
+            ('id', str(item.pk)),
+            ('name', str(item.name)),
+            ('slug', item.slug),
+            ('commitment_count', str(getattr(item, 'commitment_count', item.commitments.count()))),
+        ])
 
-        # Collect user_data values from all commitments for this pledge
-        commitments_user_data = list(
-            item.commitments.exclude(pledge_user__user_data={}).values_list('pledge_user__user_data', flat=True)
-        )
+    def render_to_response(self, context, **response_kwargs):
+        if self.is_export and self.request.GET.get('export_type') == 'commitments':
+            return self.write_commitments_csv_response(context['object_list'])
+        return super().render_to_response(context, **response_kwargs)
+
+    @property
+    def _commitment_export_fields(self) -> list[str]:
+        return ['pledge_id', 'pledge_name', 'commitment_created_at', 'user_id'] + [
+            f'user_data:{key}' for key in self._user_data_keys
+        ]
+
+    @property
+    def _commitment_export_headings(self) -> dict[str, str]:
+        headings: dict[str, str] = {
+            'pledge_id': str(_('Pledge ID')),
+            'pledge_name': str(_('Pledge name')),
+            'commitment_created_at': str(_('Commitment date')),
+            'user_id': str(_('User ID')),
+        }
         for key in self._user_data_keys:
-            values = [str(ud.get(key)) for ud in commitments_user_data if ud and key in ud]
-            row[f'user_data:{key}'] = ', '.join(values)
+            headings[f'user_data:{key}'] = key
+        return headings
 
-        return row
+    def _commitment_export_rows(self, queryset):
+        """Yield one dict per commitment across all pledges in the queryset."""
+        for pledge in queryset:
+            for commitment in pledge.commitments.select_related('pledge_user').order_by('created_at'):
+                user_data = commitment.pledge_user.user_data or {}
+                row: dict[str, str] = {
+                    'pledge_id': str(pledge.pk),
+                    'pledge_name': str(pledge.name),
+                    'commitment_created_at': commitment.created_at.isoformat(),
+                    'user_id': str(commitment.pledge_user.uuid),
+                }
+                for key in self._user_data_keys:
+                    row[f'user_data:{key}'] = str(user_data[key]) if key in user_data else ''
+                yield row
+
+    def _commitment_export_filename(self) -> str:
+        plan = user_or_bust(self.request.user).get_active_admin_plan()
+        return f'{_("Pledge Commitments")} - {plan}'
+
+    def write_commitments_csv_response(self, queryset) -> StreamingHttpResponse:
+        fields = self._commitment_export_fields
+        headings = self._commitment_export_headings
+
+        def _stream():
+            writer = csv.DictWriter(Echo(), fieldnames=fields, quoting=csv.QUOTE_ALL)
+            yield writer.writerow(headings)
+            for row in self._commitment_export_rows(queryset):
+                yield writer.writerow(row)
+
+        response = StreamingHttpResponse(_stream(), content_type='text/csv')
+        response['Content-Disposition'] = f'attachment; filename="{self._commitment_export_filename()}.csv"'
+        return response
+
+    def write_xlsx_response(self, queryset) -> FileResponse:
+        from openpyxl import Workbook
+
+        output = BytesIO()
+        workbook = Workbook(write_only=True, iso_dates=True)
+
+        # Pledges sheet
+        pledges_sheet = workbook.create_sheet(title=str(_('Pledges')))
+        pledges_sheet.append([self.get_heading(queryset, f) for f in self.list_export])
+        for item in queryset:
+            row = self.to_row_dict(item)
+            pledges_sheet.append([row[f] for f in self.list_export])
+
+        # Commitments sheet
+        commitment_fields = self._commitment_export_fields
+        commitment_headings = self._commitment_export_headings
+        commitments_sheet = workbook.create_sheet(title=str(_('Commitments')))
+        commitments_sheet.append([commitment_headings[f] for f in commitment_fields])
+        for row in self._commitment_export_rows(queryset):
+            commitments_sheet.append([row[f] for f in commitment_fields])
+
+        workbook.save(output)
+        output.seek(0)
+
+        return FileResponse(
+            output,
+            as_attachment=True,
+            content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            filename=f'{self.export_filename}.xlsx',
+        )
 
 
 class PledgeViewSet(WatchViewSet[Pledge]):
