@@ -349,7 +349,7 @@ class PledgeIndexView(WatchIndexView[Pledge]):
             headings[f'user_data:{key}'] = key
         return headings
 
-    def _commitment_export_rows(self, queryset) -> Generator[dict[str, str], None, None]:
+    def _commitment_export_rows(self, queryset) -> Generator[dict[str, str]]:
         """Yield one dict per commitment across all pledges in the queryset."""
         for pledge in queryset:
             for commitment in pledge.commitments.select_related('pledge_user').order_by('created_at'):
