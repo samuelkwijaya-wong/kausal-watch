@@ -2,9 +2,11 @@ from __future__ import annotations
 
 import csv
 import io
+from io import BytesIO
 from typing import TYPE_CHECKING
 
 from django.db.models import Count
+from django.http import StreamingHttpResponse
 
 import pytest
 
@@ -230,3 +232,84 @@ class TestCommitmentsExportCSV:
         rows = _parse_commitments_csv_rows(view, qs)
 
         assert rows[0]['location'] == 'City, State'
+
+
+def _parse_xlsx_workbook(view: PledgeIndexView, queryset):
+    """Call write_xlsx_response and return an openpyxl Workbook for inspection."""
+    import openpyxl  # type: ignore[import-untyped]
+
+    response = view.write_xlsx_response(queryset)
+    raw = b''.join(response.streaming_content)  # type: ignore[arg-type]
+    return openpyxl.load_workbook(BytesIO(raw))
+
+
+class TestCombinedXlsxExport:
+    @pytest.fixture(autouse=True)
+    def setup(self, plan_admin_user):
+        self.user = plan_admin_user
+        self.plan = self.user.get_active_admin_plan()
+        self.plan.features.enable_community_engagement = True
+        self.plan.features.save()
+
+    def test_xlsx_sheet_names(self, rf):
+        """XLSX export should contain 'Pledges' and 'Commitments' sheets."""
+        view, qs = _get_view_and_queryset(rf, self.user, self.plan, {'export': 'xlsx'})
+        wb = _parse_xlsx_workbook(view, qs)
+
+        assert 'Pledges' in wb.sheetnames
+        assert 'Commitments' in wb.sheetnames
+
+    def test_xlsx_pledges_sheet_one_row_per_pledge(self, rf):
+        """Pledges sheet should have one data row per pledge."""
+        PledgeFactory.create(plan=self.plan, name='Alpha')
+        PledgeFactory.create(plan=self.plan, name='Beta')
+
+        view, qs = _get_view_and_queryset(rf, self.user, self.plan, {'export': 'xlsx'})
+        wb = _parse_xlsx_workbook(view, qs)
+
+        data_rows = list(wb['Pledges'].iter_rows(min_row=2, values_only=True))
+        assert len(data_rows) == 2
+
+    def test_xlsx_commitments_sheet_one_row_per_commitment(self, rf):
+        """Commitments sheet should have one data row per commitment."""
+        pledge = PledgeFactory.create(plan=self.plan)
+        for _ in range(3):
+            PledgeCommitment.objects.create(pledge=pledge, pledge_user=PledgeUser.objects.create())
+
+        view, qs = _get_view_and_queryset(rf, self.user, self.plan, {'export': 'xlsx'})
+        wb = _parse_xlsx_workbook(view, qs)
+
+        data_rows = list(wb['Commitments'].iter_rows(min_row=2, values_only=True))
+        assert len(data_rows) == 3
+
+    def test_xlsx_user_data_in_own_columns(self, rf):
+        """User data values should appear in separate named columns in the Commitments sheet."""
+        pledge = PledgeFactory.create(plan=self.plan)
+        PledgeCommitment.objects.create(
+            pledge=pledge,
+            pledge_user=PledgeUser.objects.create(user_data={'zip_code': '00100', 'city': 'Helsinki'}),
+        )
+
+        view, qs = _get_view_and_queryset(rf, self.user, self.plan, {'export': 'xlsx'})
+        wb = _parse_xlsx_workbook(view, qs)
+
+        ws = wb['Commitments']
+        header = [cell.value for cell in next(ws.iter_rows(min_row=1, max_row=1))]
+        assert 'zip_code' in header
+        assert 'city' in header
+        zip_idx = header.index('zip_code')
+        data_row = list(ws.iter_rows(min_row=2, max_row=2, values_only=True))[0]
+        assert data_row[zip_idx] == '00100'
+
+    def test_render_to_response_routes_commitments_csv(self, rf):
+        """render_to_response with export_type=commitments and export=csv returns a streaming CSV."""
+        pledge = PledgeFactory.create(plan=self.plan)
+        PledgeCommitment.objects.create(pledge=pledge, pledge_user=PledgeUser.objects.create())
+
+        view, qs = _get_view_and_queryset(
+            rf, self.user, self.plan, {'export': 'csv', 'export_type': 'commitments'}
+        )
+        response = view.render_to_response({'object_list': qs})
+
+        assert isinstance(response, StreamingHttpResponse)
+        assert 'text/csv' in response['Content-Type']
