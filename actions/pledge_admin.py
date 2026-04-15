@@ -38,9 +38,12 @@ from .models import Pledge
 from .models.pledge import PledgeCommitment
 
 if TYPE_CHECKING:
+    from collections.abc import Generator
+
     from django.contrib.auth.base_user import AbstractBaseUser
     from django.contrib.auth.models import AnonymousUser
     from django.http import HttpRequest
+    from django.utils.safestring import SafeString
 
 
 class PledgePermissionPolicy(PlanRelatedPermissionPolicy):
@@ -207,7 +210,9 @@ class _DropdownLabel(Component):
         self.label = label
         self.priority = priority
 
-    def render_html(self, parent_context=None):
+    __hash__ = None  # type: ignore[assignment]
+
+    def render_html(self, parent_context=None) -> SafeString:
         from django.utils.html import format_html
         return format_html(
             '<div style="padding: 0.5rem 1.5rem 0.25rem; font-size: 0.75rem; font-weight: 600;'
@@ -229,7 +234,9 @@ class _DropdownDivider(Component):
         self.label = ''
         self.priority = priority
 
-    def render_html(self, parent_context=None):
+    __hash__ = None  # type: ignore[assignment]
+
+    def render_html(self, parent_context=None) -> SafeString:
         from django.utils.safestring import mark_safe
         return mark_safe(
             '<hr style="border: none; border-top: 1px solid var(--w-color-border-furniture); margin: 0.25rem 0;">'
@@ -270,7 +277,7 @@ class PledgeIndexView(WatchIndexView[Pledge]):
     def get_header_more_buttons(self):
         buttons = list(super().get_header_more_buttons())
 
-        def _url(export_type, fmt):
+        def _url(export_type: str, fmt: str) -> str:
             params = self.request.GET.copy()
             params['export'] = fmt
             params['export_type'] = export_type
@@ -318,7 +325,9 @@ class PledgeIndexView(WatchIndexView[Pledge]):
         ])
 
     def render_to_response(self, context, **response_kwargs):
-        if self.is_export and self.request.GET.get('export_type') == 'commitments':
+        if (self.is_export
+                and self.request.GET.get('export_type') == 'commitments'
+                and self.request.GET.get('export') == 'csv'):
             return self.write_commitments_csv_response(context['object_list'])
         return super().render_to_response(context, **response_kwargs)
 
@@ -340,7 +349,7 @@ class PledgeIndexView(WatchIndexView[Pledge]):
             headings[f'user_data:{key}'] = key
         return headings
 
-    def _commitment_export_rows(self, queryset):
+    def _commitment_export_rows(self, queryset) -> Generator[dict[str, str], None, None]:
         """Yield one dict per commitment across all pledges in the queryset."""
         for pledge in queryset:
             for commitment in pledge.commitments.select_related('pledge_user').order_by('created_at'):
@@ -363,7 +372,7 @@ class PledgeIndexView(WatchIndexView[Pledge]):
         fields = self._commitment_export_fields
         headings = self._commitment_export_headings
 
-        def _stream():
+        def _stream() -> Generator[bytes, None, None]:
             writer = csv.DictWriter(Echo(), fieldnames=fields, quoting=csv.QUOTE_ALL)
             yield writer.writerow(headings)
             for row in self._commitment_export_rows(queryset):
