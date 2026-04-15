@@ -372,7 +372,7 @@ class PledgeIndexView(WatchIndexView[Pledge]):
         fields = self._commitment_export_fields
         headings = self._commitment_export_headings
 
-        def _stream() -> Generator[bytes, None, None]:
+        def _stream() -> Generator[bytes]:
             writer = csv.DictWriter(Echo(), fieldnames=fields, quoting=csv.QUOTE_ALL)
             yield writer.writerow(headings)
             for row in self._commitment_export_rows(queryset):
