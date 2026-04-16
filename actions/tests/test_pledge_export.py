@@ -298,7 +298,7 @@ class TestCombinedXlsxExport:
         assert 'zip_code' in header
         assert 'city' in header
         zip_idx = header.index('zip_code')
-        data_row = list(ws.iter_rows(min_row=2, max_row=2, values_only=True))[0]
+        data_row = next(iter(ws.iter_rows(min_row=2, max_row=2, values_only=True)))
         assert data_row[zip_idx] == '00100'
 
     def test_render_to_response_routes_commitments_csv(self, rf):
