@@ -23,9 +23,8 @@ from wagtail.admin.widgets.button import Button
 from wagtail.images.widgets import AdminImageChooser
 from wagtail.snippets.models import register_snippet
 
-from openpyxl import Workbook
-
 from dal import autocomplete
+from openpyxl import Workbook
 
 from kausal_common.users import user_or_bust
 
