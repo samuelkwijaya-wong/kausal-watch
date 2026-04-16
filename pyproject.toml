@@ -100,6 +100,7 @@ dependencies = [
   "tinycss2",
   "treelib",
   "tzdata",
+  "types-openpyxl",
   "unidecode",
   "uritemplate",
   "uuid-utils",
