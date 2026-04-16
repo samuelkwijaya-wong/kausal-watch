@@ -322,6 +322,7 @@ class RestrictedPlanNode(DjangoObjectType[Plan]):
 class PlanNode(DjangoNode[Plan]):
     id = graphene.ID(source='identifier', required=True)
     last_action_identifier = graphene.ID()
+    timezone = graphene.String(required=True)  # use string representation of timezone instead of enum
     serve_file_base_url = graphene.String(required=True)
     pages = graphene.List(graphene.NonNull(get_page_interface))
     action_list_page = graphene.Field(get_action_list_page_node)

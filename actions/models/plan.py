@@ -601,6 +601,8 @@ class Plan(ClusterableModel, ModelWithPrimaryLanguage, PermissionedModel, Search
         'action_dependency_roles',
         'kausal_paths_instance_uuid',
         'is_active',
+        'timezone',
+        'country',
     ]
 
     search_fields = [
