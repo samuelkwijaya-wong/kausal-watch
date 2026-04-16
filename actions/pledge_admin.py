@@ -23,6 +23,8 @@ from wagtail.admin.widgets.button import Button
 from wagtail.images.widgets import AdminImageChooser
 from wagtail.snippets.models import register_snippet
 
+from openpyxl import Workbook
+
 from dal import autocomplete
 
 from kausal_common.users import user_or_bust
@@ -366,8 +368,6 @@ class PledgeIndexView(WatchIndexView[Pledge]):
         return response
 
     def write_xlsx_response(self, queryset) -> FileResponse:
-        from openpyxl import Workbook
-
         output = BytesIO()
         workbook = Workbook(write_only=True, iso_dates=True)
 
