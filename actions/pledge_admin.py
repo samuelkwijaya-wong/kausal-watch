@@ -16,6 +16,7 @@ from wagtail.admin.panels import (
     ObjectList,
 )
 from wagtail.admin.ui.components import Component
+from wagtail.admin.ui.menus import MenuItem
 from wagtail.admin.ui.tables import Column
 from wagtail.admin.views.mixins import Echo
 from wagtail.admin.widgets.button import Button
@@ -203,14 +204,11 @@ class PledgeEditView(PledgeViewMixin, WatchEditView[Pledge]):
     """Custom edit view for Pledge with dynamic attribute panels."""
 
 
-class _DropdownLabel(Component):
+class _DropdownLabel(MenuItem, Component):
     """Non-interactive group label rendered inside a dropdown."""
 
     def __init__(self, label: str, priority: int = 0) -> None:
-        self.label = label
-        self.priority = priority
-
-    __hash__ = None  # type: ignore[assignment]
+        super().__init__(label, '', icon_name = '', priority=priority)
 
     def render_html(self, parent_context=None) -> SafeString:
         from django.utils.html import format_html
@@ -220,33 +218,18 @@ class _DropdownLabel(Component):
             self.label,
         )
 
-    def __lt__(self, other): return (self.priority, self.label) < (getattr(other, 'priority', 0), getattr(other, 'label', ''))
-    def __le__(self, other): return (self.priority, self.label) <= (getattr(other, 'priority', 0), getattr(other, 'label', ''))
-    def __gt__(self, other): return (self.priority, self.label) > (getattr(other, 'priority', 0), getattr(other, 'label', ''))
-    def __ge__(self, other): return (self.priority, self.label) >= (getattr(other, 'priority', 0), getattr(other, 'label', ''))
-    def __eq__(self, other): return self.priority == getattr(other, 'priority', 0) and self.label == getattr(other, 'label', '')
 
-
-class _DropdownDivider(Component):
+class _DropdownDivider(MenuItem, Component):
     """Horizontal rule rendered inside a dropdown."""
 
     def __init__(self, priority: int = 0) -> None:
-        self.label = ''
-        self.priority = priority
-
-    __hash__ = None  # type: ignore[assignment]
+        super().__init__('', '', icon_name = '', priority=priority)
 
     def render_html(self, parent_context=None) -> SafeString:
         from django.utils.safestring import mark_safe
         return mark_safe(
             '<hr style="border: none; border-top: 1px solid var(--w-color-border-furniture); margin: 0.25rem 0;">'
         )
-
-    def __lt__(self, other): return (self.priority, self.label) < (getattr(other, 'priority', 0), getattr(other, 'label', ''))
-    def __le__(self, other): return (self.priority, self.label) <= (getattr(other, 'priority', 0), getattr(other, 'label', ''))
-    def __gt__(self, other): return (self.priority, self.label) > (getattr(other, 'priority', 0), getattr(other, 'label', ''))
-    def __ge__(self, other): return (self.priority, self.label) >= (getattr(other, 'priority', 0), getattr(other, 'label', ''))
-    def __eq__(self, other): return self.priority == getattr(other, 'priority', 0)
 
 
 class PledgeIndexView(WatchIndexView[Pledge]):
