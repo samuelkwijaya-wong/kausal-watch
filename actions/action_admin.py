@@ -9,7 +9,7 @@ from typing import Any, Unpack, cast
 from django.contrib import admin, messages
 from django.contrib.admin.utils import quote
 from django.contrib.contenttypes.models import ContentType
-from django.core.exceptions import ValidationError
+from django.core.exceptions import PermissionDenied, ValidationError
 from django.forms import BaseModelFormSet
 from django.urls import path, re_path, reverse
 from django.utils import timezone
@@ -17,6 +17,7 @@ from django.utils.translation import gettext_lazy as _, pgettext_lazy
 from django.views.generic.detail import SingleObjectMixin
 from modelcluster.forms import childformset_factory
 from wagtail import hooks
+from wagtail.admin import messages as wagtail_messages
 from wagtail.admin.forms.models import WagtailAdminModelForm, formfield_for_dbfield
 from wagtail.admin.panels import (
     FieldPanel,
@@ -25,6 +26,7 @@ from wagtail.admin.panels import (
     ObjectList,
 )
 from wagtail.admin.panels.base import Panel
+from wagtail.admin.views.generic.models import RevisionsCompareView
 from wagtail.admin.widgets import AdminAutoHeightTextInput
 from wagtail.permissions import ModelPermissionPolicy
 from wagtail.snippets.action_menu import SnippetActionMenu
@@ -74,6 +76,7 @@ from reports.views import MarkActionAsCompleteView
 from .action_admin_mixins import SnippetsEditViewCompatibilityMixin
 from .admin_utils import change_log_message_url_or_none
 from .models.action import Action, ActionContactPerson, ActionResponsibleParty, ActionTask
+from .revision_compare import get_action_comparisons, get_changed_field_labels
 
 if typing.TYPE_CHECKING:
     from collections.abc import Iterable, Sequence
@@ -808,6 +811,7 @@ class ActionEditView(
             )
         # Display warnings for any attributes that were lost during draft deserialization
         self._display_draft_attribute_warnings()
+        self._display_draft_changes_summary()
         return context
 
     def _display_draft_attribute_warnings(self) -> None:
@@ -829,6 +833,40 @@ class ActionEditView(
             else:
                 msg = warning.message
             messages.warning(self.request, msg)
+
+    def _display_draft_changes_summary(self) -> None:
+        """
+        Display a message summarizing which fields have unpublished changes.
+
+        This makes the changes made by editors visible to moderators reviewing the action: the
+        message lists the changed fields and links to a view showing the full differences between
+        the live version and the latest draft.
+        """
+        if self.request.method != 'GET':
+            return
+        obj = self.object
+        if obj is None or obj.pk is None:
+            return
+        if not obj.plan.features.enable_moderation_workflow or not self.draftstate_enabled:
+            return
+        live_object = getattr(self, 'live_object', None)
+        if live_object is None or not live_object.live or not live_object.has_unpublished_changes:
+            return
+
+        user = user_or_bust(self.request.user)
+        try:
+            changed_fields = get_changed_field_labels(self.get_edit_handler(), live_object, obj, user)
+        except Exception:
+            logger.exception('Failed to determine changed fields for action %s', obj.pk)
+            return
+        if not changed_fields:
+            return
+
+        compare_url = self.url_helper.get_action_url('compare', quote(obj.pk), 'live', 'latest')
+        msg = _("This draft contains unpublished changes to the following fields: %(fields)s.") % {
+            'fields': ', '.join(changed_fields),
+        }
+        wagtail_messages.info(self.request, msg, buttons=[wagtail_messages.button(compare_url, _("View changes"))])
 
     def get_description(self):
         action = self.instance
@@ -853,6 +891,46 @@ class ActionEditView(
         assert self.model_admin is not None
         edit_handler = self.model_admin.get_edit_handler(instance_being_edited=self.object)
         return edit_handler.bind_to_model(self.model_admin.model)
+
+
+class ActionRevisionsCompareView(RevisionsCompareView):
+    """
+    Show the differences between two versions of an action.
+
+    Mainly used by moderators to see what an editor changed in a draft that was submitted for
+    moderation, by comparing the live version against the latest revision.
+    """
+
+    model = Action
+    model_admin: ActionAdmin | None = None
+    header_icon = 'kausal-action'
+
+    def dispatch(self, request, *args, **kwargs):
+        user = user_or_bust(request.user)
+        if not user.can_modify_action(self.object) and not user.can_approve_action(self.object):
+            raise PermissionDenied
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_object(self, queryset=None):
+        obj = super().get_object(queryset)
+        assert isinstance(obj, Action)
+        return obj
+
+    def _get_instance_being_edited(self, revision_a: Action, revision_b: Action) -> Action:
+        # The edit handler construction needs an instance whose draft attributes determine how
+        # attribute panels are set up; prefer the newer version, like the edit view does.
+        if getattr(revision_b, 'draft_attributes', None) is not None:
+            return revision_b
+        return self.object
+
+    def _get_comparison(self, revision_a: Action, revision_b: Action) -> list[Any]:
+        assert self.model_admin is not None
+        user = user_or_bust(self.request.user)
+        with ctx_instance.activate(self.object):
+            edit_handler = self.model_admin.get_edit_handler(
+                instance_being_edited=self._get_instance_being_edited(revision_a, revision_b),
+            ).bind_to_model(Action)
+        return get_action_comparisons(edit_handler, revision_a, revision_b, user)
 
 
 @modeladmin_register
@@ -1284,6 +1362,14 @@ class ActionAdmin(AplansModelAdmin[Action]):
     def confirm_workflow_cancellation_view(self):
         return self.confirm_workflow_cancellation_view_class.as_view(model=self.model)
 
+    @property
+    def compare_view(self):
+        return ActionRevisionsCompareView.as_view(
+            model_admin=self,
+            edit_url_name=self.get_url_name('edit'),
+            index_url_name=self.get_url_name('list'),
+        )
+
     def get_admin_urls_for_registration(self):
         urls: tuple[URLPattern, ...] = super().get_admin_urls_for_registration()
         mark_as_complete_url = re_path(
@@ -1322,10 +1408,17 @@ class ActionAdmin(AplansModelAdmin[Action]):
             )
             for view_name, route in snippet_view_routes.items()
         )
+        compare_url = path(
+            f'{self.opts.app_label}/{self.opts.model_name}/compare/'
+            '<str:pk>/<str:revision_id_a>...<str:revision_id_b>/',
+            self.compare_view,
+            name=self.url_helper.get_action_url_name('compare'),
+        )
         return urls + (
             mark_as_complete_url,
             undo_marking_as_complete_url,
             *snippet_view_urls,
+            compare_url,
         )
 
     def _get_field_customization_panels(
