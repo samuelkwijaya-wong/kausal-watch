@@ -10,6 +10,7 @@ from wagtail.admin.panels import FieldPanel, ObjectList
 import pytest
 from pytest_django.asserts import assertContains
 
+from actions.action_admin import RelatedModelWithRolePanel
 from actions.attributes import (
     AttributeFieldPanel,
     AttributeType as AttributeTypeWrapper,
@@ -19,9 +20,11 @@ from actions.attributes import (
 from actions.models.action import Action, ActionContactPerson, ActionTask
 from actions.models.attributes import AttributeType
 from actions.revision_compare import get_action_comparisons, get_changed_field_labels
-from actions.tests.factories import AttributeTypeFactory
+from actions.tests.factories import ActionContactFactory, AttributeRichTextFactory, AttributeTypeFactory, PlanFactory
 from admin_site.tests.factories import ClientPlanFactory
 from admin_site.wagtail import CondensedInlinePanel
+from people.tests.factories import PersonFactory
+from users.tests.factories import UserFactory
 
 if typing.TYPE_CHECKING:
     from users.models import User
@@ -38,15 +41,11 @@ def moderated_action(plan_with_single_task_moderation) -> Action:
 
 
 @pytest.fixture
-def moderator_user(moderated_action, action_contact_factory) -> User:
-    acp = action_contact_factory(action=moderated_action, role=ActionContactPerson.Role.MODERATOR)
-    return acp.person.user
-
-
-@pytest.fixture
-def editor_user(moderated_action, action_contact_factory) -> User:
-    acp = action_contact_factory(action=moderated_action, role=ActionContactPerson.Role.EDITOR)
-    return acp.person.user
+def moderator_user(moderated_action) -> User:
+    acp = ActionContactFactory.create(action=moderated_action, role=ActionContactPerson.Role.MODERATOR)
+    user = acp.person.user
+    assert user is not None
+    return user
 
 
 def _make_draft(action: Action, **changes):
@@ -150,10 +149,10 @@ def test_compare_view_shows_changes_to_moderator(client, moderated_action, moder
     assertContains(response, 'deletion')
 
 
-def test_compare_view_forbidden_for_unrelated_user(client, moderated_action, user_factory):
+def test_compare_view_forbidden_for_unrelated_user(client, moderated_action):
     ClientPlanFactory(plan=moderated_action.plan)
     _make_draft(moderated_action, name='A completely new name')
-    unrelated_user = user_factory()
+    unrelated_user = UserFactory.create()
 
     url = reverse(
         'actions_action_modeladmin_compare',
@@ -184,3 +183,97 @@ def test_edit_view_shows_no_summary_without_draft_changes(client, moderated_acti
     response = client.get(url)
     assert response.status_code == 200
     assert 'unpublished changes' not in response.content.decode('utf-8')
+
+
+def _make_action_attribute_type(plan, **kwargs):
+    action_ct = ContentType.objects.get(app_label='actions', model='action')
+    plan_ct = ContentType.objects.get(app_label='actions', model='plan')
+    return AttributeTypeFactory.create(
+        object_content_type=action_ct,
+        scope_content_type=plan_ct,
+        scope_id=plan.id,
+        **kwargs,
+    )
+
+
+def test_attribute_missing_from_draft_not_reported_as_deleted(plan_with_single_task_moderation, moderated_action, moderator_user):
+    """A revision that does not track an attribute type must not show it as a deleted change."""
+    attribute_type_model = _make_action_attribute_type(
+        plan_with_single_task_moderation, name='Read-only info', format=AttributeType.AttributeFormat.RICH_TEXT
+    )
+    AttributeRichTextFactory.create(type=attribute_type_model, content_object=moderated_action, text='<p>Existing value</p>')
+    wrapper: AttributeTypeWrapper[typing.Any] = AttributeTypeWrapper.from_model_instance(attribute_type_model)
+
+    live = Action.objects.get(pk=moderated_action.pk)
+    # Draft saved without any draft attributes (e.g. the attribute was read-only in the form).
+    moderated_action.save_revision()
+    draft = moderated_action.latest_revision.as_object()
+
+    edit_handler = ObjectList([
+        AttributeFieldPanel('name', attribute_type=wrapper, language=''),
+    ]).bind_to_model(Action)
+    comparisons = get_action_comparisons(edit_handler, live, draft, moderator_user)
+    assert comparisons == []
+
+
+def test_rich_text_attribute_formatting_change_is_detected(plan_with_single_task_moderation, moderated_action, moderator_user):
+    """Formatting-only rich text changes are invisible in the display string but must be flagged."""
+    attribute_type_model = _make_action_attribute_type(
+        plan_with_single_task_moderation, name='Details', format=AttributeType.AttributeFormat.RICH_TEXT
+    )
+    AttributeRichTextFactory.create(type=attribute_type_model, content_object=moderated_action, text='<p>hello <b>world</b></p>')
+    wrapper: AttributeTypeWrapper[typing.Any] = AttributeTypeWrapper.from_model_instance(attribute_type_model)
+
+    live = Action.objects.get(pk=moderated_action.pk)
+    draft_attributes = DraftAttributes()
+    draft_attributes.update(wrapper, GenericTextAttributeAttributeValue(text_vals={'text': '<p>hello world</p>'}))
+    moderated_action.draft_attributes = draft_attributes
+    moderated_action.save_revision()
+    draft = moderated_action.latest_revision.as_object()
+
+    edit_handler = ObjectList([
+        AttributeFieldPanel('name', attribute_type=wrapper, language=''),
+    ]).bind_to_model(Action)
+    comparisons = get_action_comparisons(edit_handler, live, draft, moderator_user)
+    assert len(comparisons) == 1
+
+
+def test_contact_person_changes_visible_through_read_only_panels(moderated_action, moderator_user):
+    """Contact person changes must be compared even when the user has no editable roles."""
+    live = Action.objects.get(pk=moderated_action.pk)
+    person = PersonFactory.create(organization=moderated_action.plan.organization)
+    moderated_action.contact_persons.add(ActionContactPerson(person=person, role=ActionContactPerson.Role.EDITOR))
+    moderated_action.save_revision()
+    draft = moderated_action.latest_revision.as_object()
+
+    # With no editable roles, all child panels are read-only variants that do not inherit
+    # from InlinePanel.
+    edit_handler = ObjectList([
+        RelatedModelWithRolePanel(
+            action=moderated_action,
+            relation_name='contact_persons',
+            _cls=ActionContactPerson,
+            editable_roles=[],
+        ),
+    ]).bind_to_model(Action)
+    comparisons = get_action_comparisons(edit_handler, live, draft, moderator_user)
+    assert len(comparisons) == 1
+    assert comparisons[0].is_child_relation
+
+
+def test_compare_view_switches_plan_when_active_plan_differs(client, moderated_action, superuser):
+    """The compare view must build the diff against the action's plan, not the active plan."""
+    ClientPlanFactory(plan=moderated_action.plan)
+    other_plan = PlanFactory.create()
+    superuser.selected_admin_plan = other_plan
+    superuser.save()
+    _make_draft(moderated_action, name='A completely new name')
+
+    url = reverse(
+        'actions_action_modeladmin_compare',
+        kwargs=dict(pk=moderated_action.pk, revision_id_a='live', revision_id_b='latest'),
+    )
+    client.force_login(superuser)
+    response = client.get(url)
+    assert response.status_code == 302
+    assert reverse('change-admin-plan', kwargs=dict(plan_id=moderated_action.plan_id)) in response['Location']

@@ -8,9 +8,11 @@ from typing import Any, Unpack, cast
 
 from django.contrib import admin, messages
 from django.contrib.admin.utils import quote
+from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.forms import BaseModelFormSet
+from django.http import HttpResponseRedirect, QueryDict
 from django.urls import path, re_path, reverse
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _, pgettext_lazy
@@ -37,6 +39,7 @@ from wagtail.snippets.views.snippets import (
     UsageView,
 )
 
+import sentry_sdk
 from dal import autocomplete, forward as dal_forward
 
 from kausal_common.people.chooser import PersonChooser
@@ -854,9 +857,12 @@ class ActionEditView(
             return
 
         user = user_or_bust(self.request.user)
+        # Reuse the edit handler that ModelFormView.setup() already built for this request.
+        edit_handler = getattr(self, 'edit_handler', None) or self.get_edit_handler()
         try:
-            changed_fields = get_changed_field_labels(self.get_edit_handler(), live_object, obj, user)
-        except Exception:
+            changed_fields = get_changed_field_labels(edit_handler, live_object, obj, user)
+        except Exception as e:
+            sentry_sdk.capture_exception(e)
             logger.exception('Failed to determine changed fields for action %s', obj.pk)
             return
         if not changed_fields:
@@ -909,6 +915,13 @@ class ActionRevisionsCompareView(RevisionsCompareView):
         user = user_or_bust(request.user)
         if not user.can_modify_action(self.object) and not user.can_approve_action(self.object):
             raise PermissionDenied
+        # The comparison panels must be built against the action's own plan. Mirror the edit
+        # view's behavior (PlanRelatedViewModelAdminMixin) by switching the active plan first.
+        if user.get_active_admin_plan(required=False) != self.object.plan:
+            querystring = QueryDict(mutable=True)
+            querystring[REDIRECT_FIELD_NAME] = request.get_full_path()
+            url = reverse('change-admin-plan', kwargs=dict(plan_id=self.object.plan_id))
+            return HttpResponseRedirect(url + '?' + querystring.urlencode())
         return super().dispatch(request, *args, **kwargs)
 
     def get_object(self, queryset=None):

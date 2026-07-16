@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import contextlib
 import functools
 import typing
 from typing import Any
@@ -10,6 +11,7 @@ from django.utils.text import capfirst
 from wagtail.admin.compare import ChildRelationComparison, M2MFieldComparison, diff_text
 from wagtail.admin.panels import FieldPanel, InlinePanel, PanelGroup
 
+import sentry_sdk
 from loguru import logger
 
 from actions.models.action import Action
@@ -18,17 +20,66 @@ from admin_site.wagtail import AdminOnlyPanel
 if typing.TYPE_CHECKING:
     from collections.abc import Iterator
 
+    from django.db.models import Model
     from django_stubs_ext import StrOrPromise
     from wagtail.admin.compare import FieldComparison
     from wagtail.admin.panels.base import Panel
 
-    from actions.attributes import AttributeFieldPanel, AttributeType as AttributeTypeWrapper
+    from actions.attributes import AttributeFieldPanel, AttributeType as AttributeTypeWrapper, AttributeValue
+    from actions.models.attributes import Attribute
     from actions.models.category import CategoryType
     from users.models import User
 
 logger = logger.bind(name='actions.revision_compare')
 
 CATEGORY_FIELD_PREFIX = 'categories_'
+
+# Child model fields that carry ordering or bookkeeping data and should not be compared.
+CHILD_RELATION_EXCLUDED_FIELDS = frozenset({'sort_order', 'order'})
+
+
+def _text_vals_match(text_vals: dict[str, str], attribute: Attribute) -> bool:
+    """
+    Check draft text values against the corresponding fields of a database attribute.
+
+    Only the languages tracked in the draft are compared, so languages that were not part of
+    the form that produced the draft do not cause false positives.
+    """
+    return all((value or '') == (getattr(attribute, field_name, None) or '') for field_name, value in text_vals.items())
+
+
+def _draft_value_matches_attribute(value: AttributeValue, attribute: Attribute) -> bool | None:
+    """
+    Check whether a serialized draft value is equal to a database attribute.
+
+    The comparison uses the underlying values (choice PKs, raw rich text HTML, category PKs)
+    rather than the display strings, so changes that are invisible in the display rendering
+    (e.g. formatting-only rich text edits) are still detected.
+
+    Returns None for unknown attribute value types, in which case the caller should fall back
+    to comparing display strings.
+    """
+    from actions.attributes import (
+        CategoryChoiceAttributeValue,
+        GenericTextAttributeAttributeValue,
+        NumericAttributeValue,
+        OptionalChoiceWithTextAttributeValue,
+        OrderedChoiceAttributeValue,
+    )
+
+    if isinstance(value, OrderedChoiceAttributeValue):
+        return (value.option.pk if value.option else None) == attribute.choice_id  # type: ignore[attr-defined]
+    if isinstance(value, CategoryChoiceAttributeValue):
+        return sorted(c.pk for c in value.categories) == sorted(c.pk for c in attribute.categories.all())  # type: ignore[attr-defined]
+    if isinstance(value, OptionalChoiceWithTextAttributeValue):
+        if (value.option.pk if value.option else None) != attribute.choice_id:  # type: ignore[attr-defined]
+            return False
+        return _text_vals_match(value.text_vals, attribute)
+    if isinstance(value, GenericTextAttributeAttributeValue):
+        return _text_vals_match(value.text_vals, attribute)
+    if isinstance(value, NumericAttributeValue):
+        return value.value == attribute.value  # type: ignore[attr-defined]
+    return None
 
 
 class AttributeComparison:
@@ -51,33 +102,42 @@ class AttributeComparison:
     ):
         self.attribute_type = attribute_type
         self.language = language
-        self.val_a = self._display_value(obj_a)
-        self.val_b = self._display_value(obj_b)
+        self._side_a = self._effective_value(obj_a)
+        self._side_b = self._effective_value(obj_b)
+        self.val_a = self._display_value(*self._side_a)
+        self.val_b = self._display_value(*self._side_b)
 
-    def _display_value(self, obj: Action) -> str:
+    def _effective_value(self, obj: Action) -> tuple[AttributeValue | None, Attribute | None, Action]:
+        """
+        Resolve the value of this attribute for one version of the action.
+
+        Returns (draft_value, db_attribute, obj); exactly one of the first two is meaningful.
+        A revision that does not track this attribute type at all (e.g. because it was not
+        editable in the form that produced the revision) falls back to the published database
+        value instead of being treated as deleted.
+        """
         draft_attributes = getattr(obj, 'draft_attributes', None)
         if draft_attributes is not None:
-            # The object comes from a revision; read the value from the serialized draft attributes.
             try:
-                attribute_value = draft_attributes.get_value_for_attribute_type(self.attribute_type)
+                value = draft_attributes.get_value_for_attribute_type(self.attribute_type)
             except KeyError:
-                return ''
-            if not attribute_value.should_exist_in_database():
-                return ''
-            attribute = attribute_value.instantiate_attribute(self.attribute_type, obj)
-            if not self.language:
-                return str(attribute)
-            with translation.override(self.language):
-                return str(attribute)
+                pass
+            else:
+                if not value.should_exist_in_database():
+                    # An explicitly cleared value.
+                    return (None, None, obj)
+                return (value, None, obj)
+        attribute = self.attribute_type.get_attributes(obj).first()
+        return (None, attribute, obj)
 
-        # The object is the live version; read the values from the database.
-        def get_value() -> str:
-            return ' '.join(str(x) for x in self.attribute_type.get_attributes(obj))
-
-        if not self.language:
-            return get_value()
-        with translation.override(self.language):
-            return get_value()
+    def _display_value(self, draft_value: AttributeValue | None, attribute: Attribute | None, obj: Action) -> str:
+        language_context = translation.override(self.language) if self.language else contextlib.nullcontext()
+        with language_context:
+            if draft_value is not None:
+                return str(draft_value.instantiate_attribute(self.attribute_type, obj))
+            if attribute is not None:
+                return str(attribute)
+            return ''
 
     def field_label(self) -> str:
         label = str(self.attribute_type.instance)
@@ -89,7 +149,30 @@ class AttributeComparison:
         return diff_text(self.val_a, self.val_b).to_html()
 
     def has_changed(self) -> bool:
-        return self.val_a != self.val_b
+        draft_a, attr_a, _ = self._side_a
+        draft_b, attr_b, _ = self._side_b
+
+        if draft_a is None and draft_b is None:
+            # Both sides resolve to the database state of the same action, which is identical
+            # by definition; this also covers revisions that do not track the attribute.
+            if attr_a is None or attr_b is None:
+                return (attr_a is None) != (attr_b is None)
+            return attr_a.pk != attr_b.pk
+
+        if draft_a is not None and draft_b is not None:
+            return draft_a.serialize() != draft_b.serialize()
+
+        # One side is a draft value, the other the database state; compare underlying values
+        # so that changes invisible in the display rendering are still detected.
+        draft_value = draft_a if draft_a is not None else draft_b
+        attribute = attr_b if draft_a is not None else attr_a
+        assert draft_value is not None
+        if attribute is None:
+            return True
+        matches = _draft_value_matches_attribute(draft_value, attribute)
+        if matches is None:
+            return self.val_a != self.val_b
+        return not matches
 
 
 class CategoryTypeComparison(M2MFieldComparison):
@@ -193,6 +276,47 @@ def _compare_inline_panel(panel: InlinePanel, ctx: ComparisonContext) -> ChildRe
     )
 
 
+def _get_model_field_comparisons(model: type[Model]) -> list:
+    """Build comparators for a child model's editable fields, excluding the parent link."""
+    comparisons = []
+    for field in model._meta.concrete_fields:
+        if not field.editable or field.primary_key or field.name in CHILD_RELATION_EXCLUDED_FIELDS:
+            continue
+        if field.is_relation and field.related_model is Action:
+            continue
+        bound_panel = FieldPanel(field.name).bind_to_model(model)
+        # get_comparison_class is missing from the FieldPanel type stub
+        comparator_class = bound_panel.get_comparison_class()  # type: ignore[attr-defined]
+        comparisons.append(functools.partial(comparator_class, field))
+    return comparisons
+
+
+def _compare_relation_panel(panel: Panel, ctx: ComparisonContext) -> ChildRelationComparison | None:
+    """
+    Compare a child relation exposed by a panel that is not a regular InlinePanel.
+
+    Read-only panels for contact persons and responsible parties (and their role-grouping
+    container) only declare a `relation_name`; without this, changes to those relations would
+    be invisible to reviewers who lack edit rights on them.
+    """
+    relation_name = getattr(panel, 'relation_name', None)
+    if not relation_name or relation_name in ctx.seen_relations:
+        return None
+    manager = getattr(Action, relation_name, None)
+    rel = getattr(manager, 'rel', None)
+    if rel is None or rel.related_name != relation_name:
+        return None
+    ctx.seen_relations.add(relation_name)
+    heading: StrOrPromise = panel.heading or relation_name.replace('_', ' ')
+    return ChildRelationComparison(
+        rel,
+        _get_model_field_comparisons(rel.related_model),
+        ctx.obj_a,
+        ctx.obj_b,
+        label=capfirst(str(heading)),
+    )
+
+
 def _compare_single_panel(panel: Panel, ctx: ComparisonContext) -> Any | None:
     from actions.attributes import AttributeFieldPanel
 
@@ -202,20 +326,31 @@ def _compare_single_panel(panel: Panel, ctx: ComparisonContext) -> Any | None:
         return _compare_field_panel(panel, ctx)
     if isinstance(panel, InlinePanel):
         return _compare_inline_panel(panel, ctx)
+    if getattr(panel, 'relation_name', None):
+        return _compare_relation_panel(panel, ctx)
     return None
 
 
-def _walk_panel(panel: Panel, ctx: ComparisonContext) -> Iterator[Any]:
+def _panel_produces_comparison(panel: Panel) -> bool:
     from actions.attributes import AttributeFieldPanel
 
+    if isinstance(panel, (AttributeFieldPanel, FieldPanel, InlinePanel)):
+        return True
+    # Panels that only declare a relation name (e.g. read-only contact person panels and their
+    # role-grouping container) are compared through the underlying relation.
+    return bool(getattr(panel, 'relation_name', None))
+
+
+def _walk_panel(panel: Panel, ctx: ComparisonContext) -> Iterator[Any]:
     if isinstance(panel, AdminOnlyPanel) and not ctx.user.is_general_admin_for_plan(ctx.obj_a.plan):
         return
 
-    if isinstance(panel, (AttributeFieldPanel, FieldPanel, InlinePanel)):
+    if _panel_produces_comparison(panel):
         try:
             comparison = _compare_single_panel(panel, ctx)
-        except Exception:
+        except Exception as e:
             # A single field that cannot be compared should not break the whole comparison view.
+            sentry_sdk.capture_exception(e)
             logger.exception(f'Failed to compare panel {panel!r} of action {ctx.obj_a.pk}')
             return
         if comparison is not None:
@@ -250,7 +385,8 @@ def get_action_comparisons(
     for comparison in _walk_panel(edit_handler, ctx):
         try:
             changed = comparison.has_changed()
-        except Exception:
+        except Exception as e:
+            sentry_sdk.capture_exception(e)
             logger.exception(f'Failed to compare field {type(comparison).__name__} of action {obj_a.pk}')
             continue
         if only_changed and not changed:
