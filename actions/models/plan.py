@@ -1092,9 +1092,14 @@ class Plan(ClusterableModel, ModelWithPrimaryLanguage, PermissionedModel, Search
         return formatted_date
 
     def is_visible_for_user(self, user: UserOrAnon | None) -> bool:
-        """Use permission policy to check visibility."""
-        if self.features.expose_unpublished_plan_only_to_authenticated_user is False:
-            return True
+        """
+        Use permission policy to check visibility.
+
+        The policy is the single source of truth for how
+        `expose_unpublished_plan_only_to_authenticated_user` interacts with the
+        publication state, so don't short-circuit on the flag here; doing so
+        would also skip the policy's `is_active` check.
+        """
         if user is None:  # TODO: remove this once all places where None is used are fixed
             user = AnonymousUser()
         return self.permission_policy().user_has_permission_for_instance(user, 'view', self)

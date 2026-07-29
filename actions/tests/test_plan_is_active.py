@@ -195,3 +195,24 @@ class TestPlanPermissionPolicy:
 
         assert active_plan in visible_plans
         assert inactive_plan in visible_plans
+
+    def test_is_visible_for_user_excludes_inactive_plan_with_expose_flag_off(self, plan_factory):
+        """
+        Test that the instance-level check does not bypass the is_active gate.
+
+        `expose_unpublished_plan_only_to_authenticated_user` only governs how the
+        publication state affects visibility; it must not expose a deactivated plan.
+        """
+        inactive_plan = plan_factory(is_active=False, published_at=timezone.now() - timedelta(days=1))
+        inactive_plan.features.expose_unpublished_plan_only_to_authenticated_user = False
+        inactive_plan.features.save()
+
+        assert inactive_plan.is_visible_for_user(AnonymousUser()) is False
+
+    def test_is_visible_for_user_includes_unpublished_plan_with_expose_flag_off(self, plan_factory):
+        """Test that turning the expose flag off makes an unpublished plan publicly visible."""
+        unpublished_plan = plan_factory(is_active=True, published_at=None)
+        unpublished_plan.features.expose_unpublished_plan_only_to_authenticated_user = False
+        unpublished_plan.features.save()
+
+        assert unpublished_plan.is_visible_for_user(AnonymousUser()) is True

@@ -42,6 +42,14 @@ GET_PLANS_BY_HOSTNAME_QUERY = """
   }
 """
 
+GET_PLANS_BY_HOSTNAME_TYPENAME_QUERY = """
+  query GetPlansByHostname($hostname: String) {
+    plansForHostname(hostname: $hostname) {
+      __typename
+    }
+  }
+"""
+
 GET_PLANS_BY_HOSTNAME_QUERY_STATUSMESSAGE = """
   query GetPlansByHostname($hostname: String) {
     plansForHostname(hostname: $hostname) {
@@ -81,7 +89,9 @@ def test_get_plans_by_hostname(
     Test getPlansByHostname query with excplicit PlanDomains and without authentication.
 
     With PlanDomains specified, the plan visibility follows the publication status of the
-    plan but can be overridden via the domain.
+    plan but can be overridden via the domain. When
+    `expose_unpublished_plan_only_to_authenticated_user` is off, the publication status
+    does not restrict visibility at all, unless the domain overrides it explicitly.
     """
     published_at = None
     if delta_minutes is not None:
@@ -112,10 +122,67 @@ def test_get_plans_by_hostname(
             'publishedAt': published_at.isoformat() if published_at else None,
         },
     ]
-    if expected_publication_status == PublicationStatus.PUBLISHED:
+    exposed_despite_publication_status = publication_status_override is None and not expose_flag
+    if expected_publication_status == PublicationStatus.PUBLISHED or exposed_despite_publication_status:
         expected[0]['identifier'] = plan.identifier
         expected[0]['id'] = plan.identifier
     assert plans == expected
+
+
+@pytest.mark.parametrize('authenticated', [False, True], ids=['anonymous', 'superuser'])
+@pytest.mark.parametrize('expose_flag', [False, True], ids=['flag_off', 'flag_on'])
+@pytest.mark.parametrize(
+    'delta_minutes',
+    [-5, 5, None],
+    ids=['published', 'scheduled', 'unpublished'],
+)
+@pytest.mark.parametrize(
+    'publication_status_override',
+    [None, PublicationStatus.PUBLISHED, PublicationStatus.UNPUBLISHED],
+    ids=['no_override', 'override_published', 'override_unpublished'],
+)
+def test_plan_visibility_matrix(
+    client,
+    graphql_client_query_data,
+    plan_factory,
+    plan_domain_factory,
+    superuser,
+    publication_status_override,
+    delta_minutes,
+    expose_flag,
+    authenticated,
+):
+    """
+    Check which node type `plansForHostname` returns across the whole visibility matrix.
+
+    Turning `expose_unpublished_plan_only_to_authenticated_user` off must make an
+    unpublished plan public, and turning it on must not lock out users who are allowed
+    to see the plan. Only an explicit domain override outranks both.
+    """
+    published_at = None
+    if delta_minutes is not None:
+        published_at = timezone.now() + timedelta(minutes=delta_minutes)
+    plan = plan_factory(published_at=published_at)
+    plan.features.expose_unpublished_plan_only_to_authenticated_user = expose_flag
+    plan.features.save()
+    domain = plan_domain_factory(plan=plan, publication_status_override=publication_status_override)
+
+    if authenticated:
+        client.force_login(superuser)
+
+    if publication_status_override is not None:
+        expected_typename = 'Plan' if publication_status_override == PublicationStatus.PUBLISHED else 'RestrictedPlanNode'
+    elif not expose_flag or delta_minutes == -5 or authenticated:
+        expected_typename = 'Plan'
+    else:
+        expected_typename = 'RestrictedPlanNode'
+
+    data = graphql_client_query_data(
+        GET_PLANS_BY_HOSTNAME_TYPENAME_QUERY,
+        variables={'hostname': domain.hostname},
+    )
+
+    assert data['plansForHostname'] == [{'__typename': expected_typename}]
 
 
 @pytest.mark.parametrize(

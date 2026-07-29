@@ -298,6 +298,13 @@ class PlanInterface(graphene.Interface[T], Generic[T]):
         only=('features__expose_unpublished_plan_only_to_authenticated_user',),
     )
     def resolve_login_enabled(root: Plan, _info: GQLInfo) -> bool:
+        """
+        Tell the UI whether signing in might grant access to a restricted plan.
+
+        This is deliberately not `allow_public_site_login` (which governs the
+        ordinary login link on a plan that is already visible); a plan is only
+        restricted for reasons that authenticating can resolve when this flag is on.
+        """
         return root.features.expose_unpublished_plan_only_to_authenticated_user
 
     @staticmethod
@@ -320,11 +327,7 @@ class PlanInterface(graphene.Interface[T], Generic[T]):
         domains = instance.domains.filter(plan=instance, hostname=context_hostname)
         first_domain = domains.first()
 
-        if instance.features.expose_unpublished_plan_only_to_authenticated_user is False:
-            if first_domain is None or first_domain.status == PublicationStatus.PUBLISHED:
-                return PlanNode
-            return RestrictedPlanNode
-
+        # A manually set override on the domain wins over everything else.
         if first_domain:
             override = first_domain.publication_status_override
             if override is not None:
@@ -332,6 +335,9 @@ class PlanInterface(graphene.Interface[T], Generic[T]):
                     return PlanNode
                 if override == PublicationStatus.UNPUBLISHED:
                     return RestrictedPlanNode
+        # Otherwise the permission policy decides, which is also where
+        # `expose_unpublished_plan_only_to_authenticated_user` is interpreted:
+        # when it is off, the publication state does not restrict visibility at all.
         if instance.is_visible_for_user(info.context.user):
             return PlanNode
         return RestrictedPlanNode
