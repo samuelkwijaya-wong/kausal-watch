@@ -86,6 +86,7 @@ class ActionGraphGenerator(GraphGenerator):
             obj_type = 'indicator'
             d['indicator_level'] = self.get_indicator_level(obj)
             d['time_resolution'] = obj.time_resolution
+            d['value_rounding'] = obj.value_rounding
 
             if obj.latest_value is not None:
                 lv = obj.latest_value
